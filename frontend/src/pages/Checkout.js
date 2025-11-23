@@ -23,6 +23,8 @@ const PACKS = {
   },
 };
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+
 const Checkout = () => {
   const { packId } = useParams();
   const navigate = useNavigate();
@@ -87,7 +89,7 @@ const Checkout = () => {
       console.log("📦 Payload envoyé:", payload);
 
       // 2️⃣ Envoyer la requête POST au backend
-      const response = await fetch("http://localhost:8000/api/checkout", {
+      const response = await fetch(`${API_BASE_URL}/api/checkout`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

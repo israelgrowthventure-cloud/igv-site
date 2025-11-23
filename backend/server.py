@@ -29,25 +29,27 @@ db = client[db_name]
 
 # ==================== CREATE APP ====================
 app = FastAPI(title="IGV Backend", version="1.0.0")
-@app.get("/")
-def home():
-    return {"status": "ok", "service": "igv-backend"}
 
+# Healthcheck route pour Render
+@app.get("/")
+def healthcheck():
+    return {"status": "ok"}
 
 # ==================== CORS CONFIGURATION ====================
 # ✅ PLACER ICI : après app = FastAPI(), avant les routes
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:3000",      # Frontend React (port 3000)
-        "http://localhost:3001",      # Frontend React (port 3001)
-        "http://localhost:5173",      # Vite dev server
+        "http://localhost:3000",
+        "http://localhost:3001",
+        "http://localhost:5173",
         "https://israelgrowthventure.com",
-        "https://www.israelgrowthventure.com"
+        "https://www.israelgrowthventure.com",
+        "https://igv-site.onrender.com"  # ✅ Autorise le frontend Render
     ],
-    allow_credentials=True,           # Autoriser les cookies
-    allow_methods=["*"],              # Autoriser tous les verbes (GET, POST, OPTIONS, etc.)
-    allow_headers=["*"],              # Autoriser tous les headers
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # Configure logging
@@ -221,6 +223,8 @@ async def health_check():
 
 # ==================== E-commerce Routes ====================
 
+FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:3000")
+
 @app.post("/api/checkout", response_model=CheckoutResponse)
 async def create_checkout_session(checkout: CheckoutRequest):
     """
@@ -258,8 +262,8 @@ async def create_checkout_session(checkout: CheckoutRequest):
                 "order_pack_id": checkout.packId,
                 "order_customer_name": checkout.customer.fullName,
             },
-            success_url="http://localhost:3000/success?session_id={CHECKOUT_SESSION_ID}",
-            cancel_url=f"http://localhost:3000/checkout/{checkout.packId}",
+            success_url=f"{FRONTEND_URL}/success?session_id={{CHECKOUT_SESSION_ID}}",
+            cancel_url=f"{FRONTEND_URL}/checkout/{checkout.packId}",
         )
     except stripe.error.StripeError as e:
         logger.error(f"Stripe error creating session: {str(e)}")

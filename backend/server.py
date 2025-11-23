@@ -29,6 +29,10 @@ db = client[db_name]
 
 # ==================== CREATE APP ====================
 app = FastAPI(title="IGV Backend", version="1.0.0")
+@app.get("/")
+def home():
+    return {"status": "ok", "service": "igv-backend"}
+
 
 # ==================== CORS CONFIGURATION ====================
 # ✅ PLACER ICI : après app = FastAPI(), avant les routes

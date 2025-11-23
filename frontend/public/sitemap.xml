@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  
+  <!-- Home FR -->
+  <url>
+    <loc>https://www.israelgrowthventure.com/</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.israelgrowthventure.com/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.israelgrowthventure.com/en/" />
+    <xhtml:link rel="alternate" hreflang="he" href="https://www.israelgrowthventure.com/he/" />
+    <priority>1.0</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+  
+  <!-- Home EN -->
+  <url>
+    <loc>https://www.israelgrowthventure.com/en/</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.israelgrowthventure.com/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.israelgrowthventure.com/en/" />
+    <xhtml:link rel="alternate" hreflang="he" href="https://www.israelgrowthventure.com/he/" />
+    <priority>1.0</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+  
+  <!-- Home HE -->
+  <url>
+    <loc>https://www.israelgrowthventure.com/he/</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.israelgrowthventure.com/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.israelgrowthventure.com/en/" />
+    <xhtml:link rel="alternate" hreflang="he" href="https://www.israelgrowthventure.com/he/" />
+    <priority>1.0</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+  
+  <!-- About -->
+  <url>
+    <loc>https://www.israelgrowthventure.com/about</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.israelgrowthventure.com/about" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.israelgrowthventure.com/en/about" />
+    <xhtml:link rel="alternate" hreflang="he" href="https://www.israelgrowthventure.com/he/about" />
+    <priority>0.9</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  
+  <!-- Packs -->
+  <url>
+    <loc>https://www.israelgrowthventure.com/packs</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.israelgrowthventure.com/packs" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.israelgrowthventure.com/en/packs" />
+    <xhtml:link rel="alternate" hreflang="he" href="https://www.israelgrowthventure.com/he/packs" />
+    <priority>0.9</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+  
+  <!-- Future Commerce -->
+  <url>
+    <loc>https://www.israelgrowthventure.com/future-commerce</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.israelgrowthventure.com/future-commerce" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.israelgrowthventure.com/en/future-commerce" />
+    <xhtml:link rel="alternate" hreflang="he" href="https://www.israelgrowthventure.com/he/future-commerce" />
+    <priority>0.8</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+  
+  <!-- Contact -->
+  <url>
+    <loc>https://www.israelgrowthventure.com/contact</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.israelgrowthventure.com/contact" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.israelgrowthventure.com/en/contact" />
+    <xhtml:link rel="alternate" hreflang="he" href="https://www.israelgrowthventure.com/he/contact" />
+    <priority>0.8</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  
+  <!-- Appointment -->
+  <url>
+    <loc>https://www.israelgrowthventure.com/appointment</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.israelgrowthventure.com/appointment" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.israelgrowthventure.com/en/appointment" />
+    <xhtml:link rel="alternate" hreflang="he" href="https://www.israelgrowthventure.com/he/appointment" />
+    <priority>0.7</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  
+  <!-- Terms -->
+  <url>
+    <loc>https://www.israelgrowthventure.com/terms</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.israelgrowthventure.com/terms" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.israelgrowthventure.com/en/terms" />
+    <xhtml:link rel="alternate" hreflang="he" href="https://www.israelgrowthventure.com/he/terms" />
+    <priority>0.5</priority>
+    <changefreq>yearly</changefreq>
+  </url>
+  
+</urlset>

@@ -1,5 +1,5 @@
 import React, { Suspense } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import { Toaster } from 'sonner';
 import './i18n/config';
@@ -30,30 +30,40 @@ const Loading = () => (
   </div>
 );
 
+// Wrapper pour layout conditionnel
+function AppLayout() {
+  const location = useLocation();
+  const isAdminPage = location.pathname === '/admin' || location.pathname.startsWith('/admin/');
+
+  return (
+    <div className="App">
+      <Toaster position="top-right" richColors />
+      {!isAdminPage && <Header />}
+      <main>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/packs" element={<Packs />} />
+          <Route path="/checkout/:packId" element={<Checkout />} />
+          <Route path="/future-commerce" element={<FutureCommerce />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/appointment" element={<Appointment />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/admin" element={<Admin />} />
+          <Route path="*" element={<Home />} />
+        </Routes>
+      </main>
+      {!isAdminPage && <Footer />}
+    </div>
+  );
+}
+
 function App() {
   return (
     <HelmetProvider>
       <Suspense fallback={<Loading />}>
         <BrowserRouter>
-          <div className="App">
-            <Toaster position="top-right" richColors />
-            <Header />
-            <main>
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/about" element={<About />} />
-                <Route path="/packs" element={<Packs />} />
-                <Route path="/checkout/:packId" element={<Checkout />} />
-                <Route path="/future-commerce" element={<FutureCommerce />} />
-                <Route path="/contact" element={<Contact />} />
-                <Route path="/appointment" element={<Appointment />} />
-                <Route path="/terms" element={<Terms />} />
-                <Route path="/admin" element={<Admin />} />
-                <Route path="*" element={<Home />} />
-              </Routes>
-            </main>
-            <Footer />
-          </div>
+          <AppLayout />
         </BrowserRouter>
       </Suspense>
     </HelmetProvider>

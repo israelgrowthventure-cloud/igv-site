@@ -17,8 +17,8 @@ import FutureCommerce from './pages/FutureCommerce';
 import Contact from './pages/Contact';
 import Appointment from './pages/Appointment';
 import Terms from './pages/Terms';
-import Checkout from './pages/Checkout';
 import Admin from './pages/Admin';
+import ContentEditor from './pages/ContentEditor';
 
 // Loading component
 const Loading = () => (
@@ -33,7 +33,7 @@ const Loading = () => (
 // Wrapper pour layout conditionnel
 function AppLayout() {
   const location = useLocation();
-  const isAdminPage = location.pathname === '/admin' || location.pathname.startsWith('/admin/');
+  const isAdminPage = location.pathname === '/admin' || location.pathname === '/editor' || location.pathname.startsWith('/admin/');
 
   return (
     <div className="App">
@@ -50,6 +50,7 @@ function AppLayout() {
           <Route path="/appointment" element={<Appointment />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="/admin" element={<Admin />} />
+          <Route path="/editor" element={<ContentEditor />} />
           <Route path="*" element={<Home />} />
         </Routes>
       </main>

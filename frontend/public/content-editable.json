@@ -1,0 +1,201 @@
+{
+  "hero": {
+    "title": {
+      "fr": "Israël Growth Venture",
+      "en": "Israel Growth Venture",
+      "he": "ישראל גרוות' ונצ'ר"
+    },
+    "subtitle": {
+      "fr": "Votre partenaire stratégique pour une expansion réussie en Israël",
+      "en": "Your strategic partner for successful expansion in Israel",
+      "he": "השותף האסטרטגי שלכם להתרחבות מוצלחת בישראל"
+    },
+    "description": {
+      "fr": "Nous sommes spécialisés dans l'accompagnement des marques pour leur expansion réussie sur le marché israélien. Avec notre expertise et notre réseau, nous proposons des solutions sur mesure pour aider les entreprises à s'implanter, se développer et prospérer dans l'un des marchés les plus dynamiques et innovants du monde.",
+      "en": "We specialize in supporting brands for their successful expansion into the Israeli market. With our expertise and network, we offer tailored solutions to help businesses establish, develop and thrive in one of the world's most dynamic and innovative markets.",
+      "he": "אנחנו מתמחים בליווי מותגים להתרחבות מוצלחת בשוק הישראלי. עם המומחיות והרשת שלנו, אנחנו מציעים פתרונות מותאמים אישית לעזור לעסקים להתבסס, להתפתח ולשגשג באחד השווקים הדינמיים והחדשניים ביותר בעולם."
+    },
+    "ctaPrimary": {
+      "fr": "Réserver un rendez-vous",
+      "en": "Book an appointment",
+      "he": "קביעת פגישה"
+    },
+    "ctaSecondary": {
+      "fr": "En savoir plus",
+      "en": "Learn more",
+      "he": "מידע נוסף"
+    },
+    "image": "/static/media/hero-image.jpg"
+  },
+  "features": [
+    {
+      "title": {
+        "fr": "Expertise Locale",
+        "en": "Local Expertise",
+        "he": "מומחיות מקומית"
+      },
+      "description": {
+        "fr": "Une connaissance approfondie du marché israélien et de ses particularités",
+        "en": "In-depth knowledge of the Israeli market and its specificities",
+        "he": "הכרה מעמיקה של השוק הישראלי והמאפיינים שלו"
+      },
+      "icon": "Users"
+    },
+    {
+      "title": {
+        "fr": "Réseau Établi",
+        "en": "Established Network",
+        "he": "רשת מבוססת"
+      },
+      "description": {
+        "fr": "Des connexions stratégiques avec les principaux acteurs du marché",
+        "en": "Strategic connections with key market players",
+        "he": "קשרים אסטרטגיים עם שחקני השוק המרכזיים"
+      },
+      "icon": "TrendingUp"
+    },
+    {
+      "title": {
+        "fr": "Solutions Sur Mesure",
+        "en": "Tailored Solutions",
+        "he": "פתרונות מותאמים אישית"
+      },
+      "description": {
+        "fr": "Des stratégies personnalisées adaptées à vos objectifs d'expansion",
+        "en": "Personalized strategies adapted to your expansion goals",
+        "he": "אסטרטגיות מותאמות אישית למטרות ההתרחבות שלכם"
+      },
+      "icon": "Building"
+    }
+  ],
+  "packs": [
+    {
+      "id": "startup",
+      "name": {
+        "fr": "Pack Démarrage",
+        "en": "Startup Pack",
+        "he": "חבילת התחלה"
+      },
+      "description": {
+        "fr": "Idéal pour les petites entreprises qui démarrent",
+        "en": "Ideal for small businesses getting started",
+        "he": "אידיאלי לעסקים קטנים המתחילים"
+      },
+      "price": {
+        "EUR": 2999,
+        "USD": 3299,
+        "ILS": 11999
+      },
+      "features": [
+        {
+          "fr": "Étude de marché initiale",
+          "en": "Initial market study",
+          "he": "מחקר שוק ראשוני"
+        },
+        {
+          "fr": "Plan d'expansion personnalisé",
+          "en": "Personalized expansion plan",
+          "he": "תוכנית התרחבות מותאמת אישית"
+        },
+        {
+          "fr": "Support par email",
+          "en": "Email support",
+          "he": "תמיכה במייל"
+        }
+      ]
+    },
+    {
+      "id": "growth",
+      "name": {
+        "fr": "Pack Croissance",
+        "en": "Growth Pack",
+        "he": "חבילת צמיחה"
+      },
+      "description": {
+        "fr": "Pour les entreprises en phase de croissance",
+        "en": "For businesses in growth phase",
+        "he": "לעסקים בשלב צמיחה"
+      },
+      "price": {
+        "EUR": 5999,
+        "USD": 6599,
+        "ILS": 23999
+      },
+      "features": [
+        {
+          "fr": "Tout du Pack Démarrage",
+          "en": "Everything from Startup Pack",
+          "he": "כל מה שבחבילת ההתחלה"
+        },
+        {
+          "fr": "Mise en relation avec partenaires locaux",
+          "en": "Connection with local partners",
+          "he": "חיבור לשותפים מקומיים"
+        },
+        {
+          "fr": "Support téléphonique prioritaire",
+          "en": "Priority phone support",
+          "he": "תמיכה טלפונית עדיפות"
+        },
+        {
+          "fr": "Accompagnement réglementaire",
+          "en": "Regulatory support",
+          "he": "ליווי רגולטורי"
+        }
+      ]
+    },
+    {
+      "id": "excellence",
+      "name": {
+        "fr": "Pack Excellence",
+        "en": "Excellence Pack",
+        "he": "חבילת מצוינות"
+      },
+      "description": {
+        "fr": "Solution complète pour une expansion réussie",
+        "en": "Complete solution for successful expansion",
+        "he": "פתרון מלא להתרחבות מוצלחת"
+      },
+      "price": {
+        "EUR": 9999,
+        "USD": 10999,
+        "ILS": 39999
+      },
+      "features": [
+        {
+          "fr": "Tout du Pack Croissance",
+          "en": "Everything from Growth Pack",
+          "he": "כל מה שבחבילת הצמיחה"
+        },
+        {
+          "fr": "Accompagnement dédié sur 12 mois",
+          "en": "Dedicated support for 12 months",
+          "he": "ליווי ייעודי למשך 12 חודשים"
+        },
+        {
+          "fr": "Gestion complète de l'implantation",
+          "en": "Complete establishment management",
+          "he": "ניהול מלא של ההתבססות"
+        },
+        {
+          "fr": "Accès réseau VIP",
+          "en": "VIP network access",
+          "he": "גישה לרשת VIP"
+        }
+      ]
+    }
+  ],
+  "contact": {
+    "email": "contact@israelgrowthventure.com",
+    "phone": "+972 XX XXX XXXX",
+    "address": {
+      "fr": "Tel Aviv, Israël",
+      "en": "Tel Aviv, Israel",
+      "he": "תל אביב, ישראל"
+    }
+  },
+  "images": {
+    "logo": "/static/media/logo-normal-IGV-petit.png",
+    "heroImage": "/static/media/hero-business.jpg"
+  }
+}

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import igvLogo from "../assets/igv-logo.png";
+import igvLogo from "../assets/logo-normal-IGV-petit.png";
 import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Menu, X, Globe } from 'lucide-react';
@@ -41,9 +41,8 @@ const Header = () => {
             <img
               src={igvLogo}
               alt="Israel Growth Venture"
-              className="h-12 w-auto"
+              className="h-16 w-auto"
             />
-            <span className="text-white font-bold text-xl">IGV</span>
             <div className="hidden md:block">
               <div className="text-lg font-bold text-gray-900">Israel Growth Venture</div>
               <div className="text-xs text-gray-600">{t('hero.subtitle').substring(0, 40)}...</div>

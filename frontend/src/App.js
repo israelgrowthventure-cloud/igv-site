@@ -13,12 +13,14 @@ import Footer from './components/Footer';
 import Home from './pages/Home';
 import About from './pages/About';
 import Packs from './pages/Packs';
+import Checkout from './pages/Checkout';
 import FutureCommerce from './pages/FutureCommerce';
 import Contact from './pages/Contact';
 import Appointment from './pages/Appointment';
 import Terms from './pages/Terms';
 import Admin from './pages/Admin';
 import ContentEditor from './pages/ContentEditor';
+import SimpleAdmin from './pages/SimpleAdmin';
 
 // Loading component
 const Loading = () => (
@@ -33,7 +35,7 @@ const Loading = () => (
 // Wrapper pour layout conditionnel
 function AppLayout() {
   const location = useLocation();
-  const isAdminPage = location.pathname === '/admin' || location.pathname === '/editor' || location.pathname.startsWith('/admin/');
+  const isAdminPage = location.pathname === '/admin' || location.pathname === '/editor' || location.pathname === '/simple-admin' || location.pathname.startsWith('/admin/');
 
   return (
     <div className="App">
@@ -51,6 +53,7 @@ function AppLayout() {
           <Route path="/terms" element={<Terms />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/editor" element={<ContentEditor />} />
+          <Route path="/simple-admin" element={<SimpleAdmin />} />
           <Route path="*" element={<Home />} />
         </Routes>
       </main>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Save, Upload, X, ImageIcon } from 'lucide-react';
+import { Save, Upload, X, Image } from 'lucide-react';
 import { toast } from 'sonner';
 
 const SimpleAdmin = () => {

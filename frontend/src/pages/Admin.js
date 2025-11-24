@@ -1,571 +1,487 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Save, LogOut, Eye, EyeOff, Settings } from 'lucide-react';
+import { Save, Upload, X, Image } from 'lucide-react';
+import { toast } from 'sonner';
 
-const Admin = () => {
-  const navigate = useNavigate();
-  const [isAuth, setIsAuth] = useState(false);
-  const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
+const SimpleAdmin = () => {
   const [content, setContent] = useState(null);
-  const [activeTab, setActiveTab] = useState('hero');
+  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [message, setMessage] = useState('');
-
-  const ADMIN_PASSWORD = 'igv2025';
+  const [activeTab, setActiveTab] = useState('hero');
+  const [activeLanguage, setActiveLanguage] = useState('fr');
 
   useEffect(() => {
-    // Charger les données de contenu
-    const loadContent = async () => {
-      try {
-        const response = await fetch('/content.json');
-        if (response.ok) {
-          const data = await response.json();
-          setContent(data);
-        }
-      } catch (error) {
-        console.error('Erreur chargement contenu:', error);
-      }
-    };
+    loadContent();
+  }, []);
 
-    if (isAuth) {
-      loadContent();
-    }
-  }, [isAuth]);
-
-  const handleLogin = (e) => {
-    e.preventDefault();
-    if (password === ADMIN_PASSWORD) {
-      setIsAuth(true);
-      setPassword('');
-      setMessage('');
-    } else {
-      setMessage('❌ Mot de passe incorrect');
-      setPassword('');
-    }
-  };
-
-  const handleAddFeature = () => {
-    if (currentFeature.trim()) {
-      setPacks(prev => ({
-        ...prev,
-        [selectedPack]: {
-          ...prev[selectedPack],
-          features: [...prev[selectedPack].features, currentFeature]
-        }
-      }));
-      setCurrentFeature('');
-    }
-  };
-
-  const handleRemoveFeature = (index) => {
-    setPacks(prev => ({
-      ...prev,
-      [selectedPack]: {
-        ...prev[selectedPack],
-        features: prev[selectedPack].features.filter((_, i) => i !== index)
-      }
-    }));
-  };
-
-  const handleSave = async () => {
-    setSaving(true);
-    setMessage('');
+  const loadContent = async () => {
     try {
-      const response = await fetch('/api/admin/save-content', {
+      const response = await fetch('/content.json');
+      const data = await response.json();
+      setContent(data);
+      setLoading(false);
+    } catch (error) {
+      toast.error('Erreur lors du chargement du contenu');
+      setLoading(false);
+    }
+  };
+
+  const saveContent = async () => {
+    setSaving(true);
+    try {
+      // Sauvegarde locale dans le navigateur
+      localStorage.setItem('igv_content', JSON.stringify(content));
+      
+      // Tentative de sauvegarde sur le serveur
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:8000'}/api/admin/save-content`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${ADMIN_PASSWORD}`
+          'Authorization': 'Bearer igv2025'
         },
         body: JSON.stringify(content)
       });
 
       if (response.ok) {
-        setMessage('✅ Contenu sauvegardé avec succès!');
-        setTimeout(() => setMessage(''), 3000);
-        // Recharger la page pour voir les changements
-        window.location.reload();
+        toast.success('✅ Contenu sauvegardé avec succès !');
       } else {
-        setMessage('❌ Erreur lors de la sauvegarde');
+        toast.warning('💾 Sauvegardé localement (backend non disponible)');
       }
     } catch (error) {
-      console.error('Erreur sauvegarde:', error);
-      setMessage('❌ Erreur: ' + error.message);
-    } finally {
-      setSaving(false);
+      toast.warning('💾 Sauvegardé localement dans votre navigateur');
+    }
+    setSaving(false);
+  };
+
+  const handleImageUpload = async (e, section, field) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    try {
+      // Conversion en base64 pour stockage local
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64 = reader.result;
+        updateField(section, field, base64);
+        toast.success('✅ Image chargée !');
+      };
+      reader.readAsDataURL(file);
+    } catch (error) {
+      toast.error('Erreur lors du chargement de l\'image');
     }
   };
 
-  const handleLogout = () => {
-    setIsAuth(false);
-    setPassword('');
-    navigate('/');
+  const updateField = (section, field, value) => {
+    setContent(prev => ({
+      ...prev,
+      [section]: {
+        ...prev[section],
+        [field]: value
+      }
+    }));
   };
 
-  // Écran de connexion
-  if (!isAuth) {
-    return (
-      <div className="min-h-screen pt-20 bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center px-4">
-        <div className="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full">
-          <div className="flex items-center justify-center mb-6">
-            <Settings className="text-blue-600 mr-2" size={32} />
-            <h1 className="text-3xl font-bold text-gray-900">Admin IGV</h1>
-          </div>
-          <form onSubmit={handleLogin} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Mot de passe administrateur
-              </label>
-              <div className="relative">
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-                  placeholder="••••••••"
-                  autoFocus
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-3 text-gray-600"
-                >
-                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                </button>
-              </div>
-            </div>
-            {message && <p className="text-sm text-red-600 text-center">{message}</p>}
-            <button
-              type="submit"
-              className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 font-semibold transition-colors"
-            >
-              Se connecter
-            </button>
-          </form>
-          <p className="text-xs text-gray-500 mt-4 text-center">
-            Panel de gestion du contenu
-          </p>
-        </div>
-      </div>
-    );
-  }
+  const updatePackField = (packName, field, value) => {
+    setContent(prev => ({
+      ...prev,
+      packs: {
+        ...prev.packs,
+        [packName]: {
+          ...prev.packs[packName],
+          [field]: value
+        }
+      }
+    }));
+  };
 
-  if (!content) {
+  const updatePackFeature = (packName, index, value) => {
+    setContent(prev => ({
+      ...prev,
+      packs: {
+        ...prev.packs,
+        [packName]: {
+          ...prev.packs[packName],
+          features: prev.packs[packName].features.map((f, i) => i === index ? value : f)
+        }
+      }
+    }));
+  };
+
+  const addPackFeature = (packName) => {
+    setContent(prev => ({
+      ...prev,
+      packs: {
+        ...prev.packs,
+        [packName]: {
+          ...prev.packs[packName],
+          features: [...prev.packs[packName].features, 'Nouvelle caractéristique']
+        }
+      }
+    }));
+  };
+
+  const removePackFeature = (packName, index) => {
+    setContent(prev => ({
+      ...prev,
+      packs: {
+        ...prev.packs,
+        [packName]: {
+          ...prev.packs[packName],
+          features: prev.packs[packName].features.filter((_, i) => i !== index)
+        }
+      }
+    }));
+  };
+
+  if (loading) {
     return (
-      <div className="min-h-screen pt-20 flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
           <div className="inline-block w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-          <p className="mt-4 text-gray-600">Chargement du contenu...</p>
+          <p className="mt-4 text-gray-600">Chargement...</p>
         </div>
       </div>
     );
   }
 
-  // Écran d'édition
   return (
-    <div className="min-h-screen pt-20 bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">✏️ Éditeur de Contenu</h1>
-          <button
-            onClick={() => { setIsAuth(false); navigate('/'); }}
-            className="flex items-center space-x-2 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700"
-          >
-            <LogOut size={18} />
-            <span>Déconnexion</span>
-          </button>
-        </div>
-
-        {message && (
-          <div className={`mb-6 p-4 rounded-lg ${message.startsWith('✅') ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-            {message}
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <div className="bg-white shadow-sm border-b sticky top-0 z-10">
+        <div className="max-w-7xl mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">🎯 Admin IGV</h1>
+              <p className="text-sm text-gray-600">Gestion complète du contenu</p>
+            </div>
+            <button
+              onClick={saveContent}
+              disabled={saving}
+              className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
+            >
+              {saving ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  Sauvegarde...
+                </>
+              ) : (
+                <>
+                  <Save size={20} />
+                  Sauvegarder
+                </>
+              )}
+            </button>
           </div>
-        )}
+        </div>
+      </div>
 
-        {/* Tabs de navigation */}
-        <div className="grid grid-cols-5 gap-2 mb-8">
-          {['hero', 'packs', 'features', 'contact', 'settings'].map(tab => (
+      {/* Tabs */}
+      <div className="max-w-7xl mx-auto px-4 py-6">
+        <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
+          {['hero', 'packs', 'contact', 'images'].map(tab => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`py-3 px-4 rounded-lg font-semibold transition-colors ${
+              className={`px-4 py-2 rounded-lg font-medium transition whitespace-nowrap ${
                 activeTab === tab
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-300'
+                  ? 'bg-blue-600 text-white shadow-lg'
+                  : 'bg-white text-gray-700 hover:bg-gray-100'
               }`}
             >
-              {tab.charAt(0).toUpperCase() + tab.slice(1)}
+              {tab === 'hero' && '🏠 Accueil'}
+              {tab === 'packs' && '💼 Packs & Prix'}
+              {tab === 'contact' && '📞 Contact'}
+              {tab === 'images' && '🖼️ Images'}
             </button>
           ))}
         </div>
 
-        {/* Contenu éditable */}
-        <div className="bg-white rounded-xl shadow-lg p-8">
-          {/* TAB: HERO */}
-          {activeTab === 'hero' && (
-            <div className="space-y-6">
-              <h2 className="text-2xl font-bold text-gray-900">Bannière d'accueil (Hero)</h2>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Titre principal</label>
-                <input
-                  type="text"
-                  value={content.hero.title}
-                  onChange={(e) => setContent({ ...content, hero: { ...content.hero, title: e.target.value } })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                />
-              </div>
+        {/* Hero Section */}
+        {activeTab === 'hero' && (
+          <div className="bg-white rounded-xl shadow-lg p-6 space-y-6">
+            <h2 className="text-xl font-bold text-gray-900 mb-4">📝 Page d'accueil</h2>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Titre principal
+              </label>
+              <input
+                type="text"
+                value={content.hero.title}
+                onChange={(e) => updateField('hero', 'title', e.target.value)}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Israel Growth Venture"
+              />
+            </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Sous-titre</label>
-                <input
-                  type="text"
-                  value={content.hero.subtitle}
-                  onChange={(e) => setContent({ ...content, hero: { ...content.hero, subtitle: e.target.value } })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                />
-              </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Sous-titre
+              </label>
+              <input
+                type="text"
+                value={content.hero.subtitle}
+                onChange={(e) => updateField('hero', 'subtitle', e.target.value)}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
-                <textarea
-                  value={content.hero.description}
-                  onChange={(e) => setContent({ ...content, hero: { ...content.hero, description: e.target.value } })}
-                  rows="4"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                />
-              </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Description
+              </label>
+              <textarea
+                value={content.hero.description}
+                onChange={(e) => updateField('hero', 'description', e.target.value)}
+                rows={5}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
 
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Bouton principal</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Bouton principal
+                </label>
                 <input
                   type="text"
                   value={content.hero.cta_button}
-                  onChange={(e) => setContent({ ...content, hero: { ...content.hero, cta_button: e.target.value } })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                  onChange={(e) => updateField('hero', 'cta_button', e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
-
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Bouton secondaire</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Bouton secondaire
+                </label>
                 <input
                   type="text"
                   value={content.hero.secondary_button}
-                  onChange={(e) => setContent({ ...content, hero: { ...content.hero, secondary_button: e.target.value } })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                  onChange={(e) => updateField('hero', 'secondary_button', e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
             </div>
-          )}
+          </div>
+        )}
 
-          {/* TAB: PACKS */}
-          {activeTab === 'packs' && (
-            <div className="space-y-8">
-              <h2 className="text-2xl font-bold text-gray-900">Nos Packs</h2>
-              
-              {Object.keys(content.packs).map(packKey => (
-                <div key={packKey} className="border-l-4 border-blue-600 pl-6 py-6 bg-gray-50 rounded-lg p-6">
-                  <h3 className="text-xl font-bold text-gray-900 mb-4">{content.packs[packKey].name}</h3>
-                  
-                  <div className="grid grid-cols-2 gap-4 mb-4">
+        {/* Packs Section */}
+        {activeTab === 'packs' && (
+          <div className="space-y-6">
+            {Object.entries(content.packs).map(([packKey, pack]) => (
+              <div key={packKey} className="bg-white rounded-xl shadow-lg p-6">
+                <h3 className="text-lg font-bold text-gray-900 mb-4">
+                  {packKey === 'analyse' && '📊 Pack Analyse'}
+                  {packKey === 'succursales' && '🏢 Pack Succursales'}
+                  {packKey === 'franchise' && '🤝 Pack Franchise'}
+                </h3>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Nom du pack
+                    </label>
+                    <input
+                      type="text"
+                      value={pack.name}
+                      onChange={(e) => updatePackField(packKey, 'name', e.target.value)}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-2">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Nom du pack</label>
-                      <input
-                        type="text"
-                        value={content.packs[packKey].name}
-                        onChange={(e) => setContent({
-                          ...content,
-                          packs: {
-                            ...content.packs,
-                            [packKey]: { ...content.packs[packKey], name: e.target.value }
-                          }
-                        })}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                      />
-                    </div>
-                    
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Prix</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Prix
+                      </label>
                       <input
                         type="number"
-                        value={content.packs[packKey].price}
-                        onChange={(e) => setContent({
-                          ...content,
-                          packs: {
-                            ...content.packs,
-                            [packKey]: { ...content.packs[packKey], price: Number(e.target.value) }
-                          }
-                        })}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                        value={pack.price}
+                        onChange={(e) => updatePackField(packKey, 'price', parseInt(e.target.value))}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Devise
+                      </label>
+                      <select
+                        value={pack.currency}
+                        onChange={(e) => updatePackField(packKey, 'currency', e.target.value)}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      >
+                        <option value="€">€ EUR</option>
+                        <option value="$">$ USD</option>
+                        <option value="₪">₪ ILS</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Durée
+                      </label>
+                      <input
+                        type="text"
+                        value={pack.duration}
+                        onChange={(e) => updatePackField(packKey, 'duration', e.target.value)}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       />
                     </div>
                   </div>
 
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Description
+                    </label>
                     <textarea
-                      value={content.packs[packKey].description}
-                      onChange={(e) => setContent({
-                        ...content,
-                        packs: {
-                          ...content.packs,
-                          [packKey]: { ...content.packs[packKey], description: e.target.value }
-                        }
-                      })}
-                      rows="2"
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                    />
-                  </div>
-
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Durée</label>
-                    <input
-                      type="text"
-                      value={content.packs[packKey].duration}
-                      onChange={(e) => setContent({
-                        ...content,
-                        packs: {
-                          ...content.packs,
-                          [packKey]: { ...content.packs[packKey], duration: e.target.value }
-                        }
-                      })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-3">Fonctionnalités</label>
-                    <div className="space-y-2 mb-3">
-                      {content.packs[packKey].features.map((feature, idx) => (
-                        <div key={idx} className="flex justify-between items-center bg-white p-3 rounded border border-gray-300">
-                          <input
-                            type="text"
-                            value={feature}
-                            onChange={(e) => {
-                              const newFeatures = [...content.packs[packKey].features];
-                              newFeatures[idx] = e.target.value;
-                              setContent({
-                                ...content,
-                                packs: {
-                                  ...content.packs,
-                                  [packKey]: { ...content.packs[packKey], features: newFeatures }
-                                }
-                              });
-                            }}
-                            className="flex-1 outline-none"
-                          />
-                          <button
-                            onClick={() => {
-                              const newFeatures = content.packs[packKey].features.filter((_, i) => i !== idx);
-                              setContent({
-                                ...content,
-                                packs: {
-                                  ...content.packs,
-                                  [packKey]: { ...content.packs[packKey], features: newFeatures }
-                                }
-                              });
-                            }}
-                            className="text-red-600 hover:text-red-800 ml-3 font-semibold"
-                          >
-                            Supprimer
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                    <input
-                      type="text"
-                      placeholder="Ajouter une fonctionnalité"
-                      onKeyPress={(e) => {
-                        if (e.key === 'Enter' && e.target.value.trim()) {
-                          setContent({
-                            ...content,
-                            packs: {
-                              ...content.packs,
-                              [packKey]: {
-                                ...content.packs[packKey],
-                                features: [...content.packs[packKey].features, e.target.value]
-                              }
-                            }
-                          });
-                          e.target.value = '';
-                        }
-                      }}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
+                      value={pack.description}
+                      onChange={(e) => updatePackField(packKey, 'description', e.target.value)}
+                      rows={3}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                   </div>
                 </div>
-              ))}
-            </div>
-          )}
 
-          {/* TAB: FEATURES */}
-          {activeTab === 'features' && (
-            <div className="space-y-6">
-              <h2 className="text-2xl font-bold text-gray-900">Nos Points Forts</h2>
-              
-              {content.features.map((feature, idx) => (
-                <div key={idx} className="border border-gray-300 rounded-lg p-6 bg-gray-50">
-                  <div className="mb-3">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Titre</label>
-                    <input
-                      type="text"
-                      value={feature.title}
-                      onChange={(e) => {
-                        const newFeatures = [...content.features];
-                        newFeatures[idx].title = e.target.value;
-                        setContent({ ...content, features: newFeatures });
-                      }}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                    />
+                {/* Features */}
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <label className="block text-sm font-medium text-gray-700">
+                      ✨ Caractéristiques incluses
+                    </label>
+                    <button
+                      onClick={() => addPackFeature(packKey)}
+                      className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                    >
+                      + Ajouter
+                    </button>
                   </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
-                    <textarea
-                      value={feature.description}
-                      onChange={(e) => {
-                        const newFeatures = [...content.features];
-                        newFeatures[idx].description = e.target.value;
-                        setContent({ ...content, features: newFeatures });
-                      }}
-                      rows="2"
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                    />
+                  <div className="space-y-2">
+                    {pack.features.map((feature, index) => (
+                      <div key={index} className="flex gap-2">
+                        <input
+                          type="text"
+                          value={feature}
+                          onChange={(e) => updatePackFeature(packKey, index, e.target.value)}
+                          className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        />
+                        <button
+                          onClick={() => removePackFeature(packKey, index)}
+                          className="px-3 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition"
+                        >
+                          <X size={18} />
+                        </button>
+                      </div>
+                    ))}
                   </div>
-                  
-                  <button
-                    onClick={() => {
-                      const newFeatures = content.features.filter((_, i) => i !== idx);
-                      setContent({ ...content, features: newFeatures });
-                    }}
-                    className="mt-3 text-red-600 hover:text-red-800 font-semibold"
-                  >
-                    Supprimer cette section
-                  </button>
                 </div>
-              ))}
-              
-              <button
-                onClick={() => {
-                  setContent({
-                    ...content,
-                    features: [...content.features, { title: 'Nouveau point fort', description: '' }]
-                  });
-                }}
-                className="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 font-semibold"
-              >
-                + Ajouter une section
-              </button>
-            </div>
-          )}
-
-          {/* TAB: CONTACT */}
-          {activeTab === 'contact' && (
-            <div className="space-y-6">
-              <h2 className="text-2xl font-bold text-gray-900">Informations de Contact</h2>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Titre</label>
-                <input
-                  type="text"
-                  value={content.contact.title}
-                  onChange={(e) => setContent({ ...content, contact: { ...content.contact, title: e.target.value } })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                />
               </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
-                <textarea
-                  value={content.contact.description}
-                  onChange={(e) => setContent({ ...content, contact: { ...content.contact, description: e.target.value } })}
-                  rows="3"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                <input
-                  type="email"
-                  value={content.contact.email}
-                  onChange={(e) => setContent({ ...content, contact: { ...content.contact, email: e.target.value } })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Téléphone</label>
-                <input
-                  type="tel"
-                  value={content.contact.phone}
-                  onChange={(e) => setContent({ ...content, contact: { ...content.contact, phone: e.target.value } })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                />
-              </div>
-            </div>
-          )}
-
-          {/* TAB: SETTINGS */}
-          {activeTab === 'settings' && (
-            <div className="space-y-6">
-              <h2 className="text-2xl font-bold text-gray-900">Paramètres Généraux</h2>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Titre du site</label>
-                <input
-                  type="text"
-                  value={content.site.title}
-                  onChange={(e) => setContent({ ...content, site: { ...content.site, title: e.target.value } })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Slogan</label>
-                <input
-                  type="text"
-                  value={content.site.tagline}
-                  onChange={(e) => setContent({ ...content, site: { ...content.site, tagline: e.target.value } })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
-                <textarea
-                  value={content.site.description}
-                  onChange={(e) => setContent({ ...content, site: { ...content.site, description: e.target.value } })}
-                  rows="3"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                />
-              </div>
-
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-6">
-                <p className="text-sm text-blue-800">
-                  <strong>💡 Conseil :</strong> Tous les changements seront sauvegardés dans la base de contenu du site.
-                </p>
-              </div>
-            </div>
-          )}
-
-          {/* Bouton de sauvegarde */}
-          <div className="flex space-x-4 pt-8 border-t border-gray-300 mt-8">
-            <button
-              onClick={handleSave}
-              disabled={saving}
-              className="flex items-center space-x-2 bg-green-600 text-white px-8 py-3 rounded-lg hover:bg-green-700 font-semibold disabled:opacity-50 transition-colors"
-            >
-              <Save size={20} />
-              <span>{saving ? 'Sauvegarde...' : '💾 Sauvegarder tous les changements'}</span>
-            </button>
+            ))}
           </div>
+        )}
+
+        {/* Contact Section */}
+        {activeTab === 'contact' && (
+          <div className="bg-white rounded-xl shadow-lg p-6 space-y-6">
+            <h2 className="text-xl font-bold text-gray-900 mb-4">📞 Informations de contact</h2>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Email
+              </label>
+              <input
+                type="email"
+                value={content.contact.email}
+                onChange={(e) => updateField('contact', 'email', e.target.value)}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Téléphone
+              </label>
+              <input
+                type="tel"
+                value={content.contact.phone}
+                onChange={(e) => updateField('contact', 'phone', e.target.value)}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Titre section
+              </label>
+              <input
+                type="text"
+                value={content.contact.title}
+                onChange={(e) => updateField('contact', 'title', e.target.value)}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Description
+              </label>
+              <textarea
+                value={content.contact.description}
+                onChange={(e) => updateField('contact', 'description', e.target.value)}
+                rows={3}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Images Section */}
+        {activeTab === 'images' && (
+          <div className="bg-white rounded-xl shadow-lg p-6 space-y-6">
+            <h2 className="text-xl font-bold text-gray-900 mb-4">🖼️ Gestion des images</h2>
+            
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+              <p className="text-sm text-blue-800">
+                💡 <strong>Info:</strong> Pour uploader des images, vous devez configurer un serveur d'upload. 
+                En attendant, vous pouvez utiliser des URLs d'images hébergées ailleurs.
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  URL Logo principal
+                </label>
+                <input
+                  type="url"
+                  placeholder="https://example.com/logo.png"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  URL Image hero
+                </label>
+                <input
+                  type="url"
+                  placeholder="https://example.com/hero.jpg"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Info Footer */}
+      <div className="max-w-7xl mx-auto px-4 py-6">
+        <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+          <p className="text-sm text-green-800">
+            ✅ <strong>Sauvegarde:</strong> Vos modifications sont sauvegardées localement. 
+            Pour les déployer sur le site, contactez votre développeur.
+          </p>
         </div>
       </div>
     </div>
   );
 };
 
-export default Admin;
+export default SimpleAdmin;

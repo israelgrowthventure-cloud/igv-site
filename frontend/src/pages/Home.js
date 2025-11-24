@@ -9,7 +9,6 @@ const Home = () => {
   const [location, setLocation] = useState(null);
 
   useEffect(() => {
-    // Detect user location on mount
     api.detectLocation().then(data => {
       setLocation(data);
     });
@@ -21,201 +20,92 @@ const Home = () => {
       title: t('steps.step1.title'),
       description: t('steps.step1.description'),
       icon: Users,
-      image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=600&h=400&fit=crop'
     },
     {
       number: '2',
       title: t('steps.step2.title'),
       description: t('steps.step2.description'),
       icon: TrendingUp,
-      image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&h=400&fit=crop'
     },
     {
       number: '3',
       title: t('steps.step3.title'),
       description: t('steps.step3.description'),
       icon: Building,
-      image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=600&h=400&fit=crop'
     }
   ];
 
-  const services = [
-    t('about.description'),
-    t('about.collaboration'),
-    t('about.support')
-  ];
-
-  // Initial data from JSON file
-  const [data, setData] = useState(homeContent);
-
-  const formConfig = {
-    id: "home",
-    label: "Page d'accueil",
-    initialValues: data,
-    fields: [
-      { name: "title", label: "Titre", component: "text" },
-      { name: "subtitle", label: "Sous-titre", component: "text" },
-      { name: "content", label: "Contenu HTML", component: "textarea" },
-    ],
-    onSubmit: async (values) => {
-      // Local-only: update state. To persist to repo, set up Tina git client or Tina Cloud.
-      setData(values);
-      alert("Modifications appliquées en local (dev). Pour enregistrer dans le repo, configure Tina Git client.");
-    },
-  };
-
-  const [editableData, form] = useForm(formConfig);
-  usePlugin(form);
-
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <section className="relative pt-32 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
-        {/* Background gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-blue-50 -z-10" />
-        
+      <section className="relative pt-32 pb-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div data-testid="hero-section">
-              <h1 className="text-4xl sm:text-5xl font-bold" style={{ color: '#2C3A94' }}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+            {/* Left side - Text */}
+            <div>
+              <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
                 {t('hero.title')}
               </h1>
-              <p className="text-xl text-gray-600 mb-4 font-medium">
+              <p className="text-xl text-gray-600 mb-8">
                 {t('hero.subtitle')}
               </p>
-              <p className="text-base text-gray-600 mb-8 leading-relaxed">
+              <p className="text-lg text-gray-700 mb-8">
                 {t('hero.description')}
               </p>
+              
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link
                   to="/appointment"
-                  className="inline-flex items-center justify-center px-8 py-4 bg-blue-600 text-white text-base font-semibold rounded-xl hover:bg-blue-700 transition-all shadow-lg hover:shadow-xl"
-                  data-testid="hero-appointment-btn"
+                  className="inline-flex items-center justify-center px-8 py-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold"
                 >
-                  {t('hero.bookAppointment')}
-                  <ArrowRight className="ml-2 w-5 h-5" />
+                  {t('hero.cta')} <ArrowRight className="ml-2" size={20} />
                 </Link>
                 <Link
                   to="/about"
-                  className="inline-flex items-center justify-center px-8 py-4 bg-white text-blue-600 text-base font-semibold rounded-xl hover:bg-gray-50 transition-all shadow-md border-2 border-blue-600"
-                  data-testid="hero-learn-more-btn"
+                  className="inline-flex items-center justify-center px-8 py-4 border-2 border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 font-semibold"
                 >
-                  {t('hero.cta')}
+                  {t('hero.secondary')}
                 </Link>
               </div>
-              
+
               {location && (
-                <div className="mt-6 text-sm text-gray-500">
-                  <span className="inline-flex items-center gap-2">
-                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                    {t('pricing.region')}: {location.country}
-                  </span>
-                </div>
+                <p className="text-sm text-gray-500 mt-6">
+                  📍 Prix selon votre région: {location.country}
+                </p>
               )}
             </div>
-            
+
+            {/* Right side - Image */}
             <div className="relative">
-              <img
-                src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=800&h=600&fit=crop"
-                alt="Israel Business"
-                className="rounded-2xl shadow-2xl"
-              />
-              <div className="absolute -bottom-6 -left-6 bg-white p-6 rounded-xl shadow-xl">
-                <div className="flex items-center space-x-4">
-                  <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                    <CheckCircle className="w-6 h-6 text-blue-600" />
-                  </div>
-                  <div>
-                    <div className="text-2xl font-bold text-gray-900">20+</div>
-                    <div className="text-sm text-gray-600">Years Experience</div>
-                  </div>
-                </div>
+              <div className="bg-gradient-to-br from-blue-400 to-blue-600 rounded-lg shadow-2xl overflow-hidden h-96">
+                <img 
+                  src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=600&h=400&fit=crop"
+                  alt="Team collaboration"
+                  className="w-full h-full object-cover"
+                />
               </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* About Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-              {t('about.title')}
-            </h2>
-          </div>
-          
-          <div className="grid md:grid-cols-2 gap-8 mb-12">
-            <div className="space-y-6">
-              {services.map((service, index) => (
-                <div key={index} className="flex items-start space-x-4">
-                  <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
-                    <CheckCircle className="w-5 h-5 text-blue-600" />
-                  </div>
-                  <p className="text-base text-gray-600 leading-relaxed">{service}</p>
-                </div>
-              ))}
-            </div>
-            <div>
-              <img
-                src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=600&h=400&fit=crop"
-                alt="Team"
-                className="rounded-xl shadow-lg w-full h-full object-cover"
-              />
-            </div>
-          </div>
-          
-          <div className="text-center">
-            <Link
-              to="/about"
-              className="inline-flex items-center px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
-              data-testid="about-learn-more-btn"
-            >
-              {t('hero.cta')}
-              <ArrowRight className="ml-2 w-4 h-4" />
-            </Link>
           </div>
         </div>
       </section>
 
       {/* Steps Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-white to-blue-50">
+      <section className="py-20 px-4 bg-gray-50">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-              Comment ça marche ?
-            </h2>
-            <p className="text-lg text-gray-600">
-              Un processus simple et efficace en 3 étapes
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
+          <h2 className="text-4xl font-bold text-gray-900 mb-12 text-center">
+            {t('steps.title')}
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {steps.map((step, index) => {
-              const Icon = step.icon;
+              const IconComponent = step.icon;
               return (
-                <div
-                  key={index}
-                  className="relative bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow overflow-hidden group"
-                  data-testid={`step-${step.number}`}
-                >
-                  <div className="aspect-video overflow-hidden">
-                    <img
-                      src={step.image}
-                      alt={step.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
+                <div key={index} className="bg-white p-8 rounded-lg shadow hover:shadow-lg">
+                  <div className="flex items-center justify-center w-12 h-12 bg-blue-600 text-white rounded-full mb-4 font-bold">
+                    {step.number}
                   </div>
-                  <div className="p-6">
-                    <div className="flex items-center space-x-4 mb-4">
-                      <div className="w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center text-xl font-bold">
-                        {step.number}
-                      </div>
-                      <Icon className="w-8 h-8 text-blue-600" />
-                    </div>
-                    <h3 className="text-lg font-bold text-gray-900 mb-2">{step.title}</h3>
-                    <p className="text-sm text-gray-600">{step.description}</p>
-                  </div>
+                  <IconComponent className="text-blue-600 mb-4" size={32} />
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">{step.title}</h3>
+                  <p className="text-gray-600">{step.description}</p>
                 </div>
               );
             })}
@@ -223,109 +113,32 @@ const Home = () => {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-blue-600">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-6">
-            Prêt à commencer votre expansion ?
+      {/* Packs CTA */}
+      <section className="py-20 px-4 bg-white">
+        <div className="max-w-7xl mx-auto text-center">
+          <h2 className="text-4xl font-bold text-gray-900 mb-8">
+            {t('packs.title')}
           </h2>
-          <p className="text-lg text-blue-100 mb-8">
-            Contactez-nous aujourd'hui pour une consultation gratuite
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              to="/appointment"
-              className="inline-flex items-center justify-center px-8 py-4 bg-white text-blue-600 text-base font-semibold rounded-lg hover:bg-gray-100 transition-colors"
-              data-testid="cta-appointment-btn"
-            >
-              {t('hero.bookAppointment')}
-              <ArrowRight className="ml-2 w-5 h-5" />
-            </Link>
-            <Link
-              to="/contact"
-              className="inline-flex items-center justify-center px-8 py-4 bg-transparent text-white text-base font-semibold rounded-lg border-2 border-white hover:bg-white/10 transition-colors"
-              data-testid="cta-contact-btn"
-            >
-              {t('nav.contact')}
-            </Link>
-          </div>
+          <Link
+            to="/packs"
+            className="inline-block px-8 py-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold"
+          >
+            {t('packs.viewAll')} →
+          </Link>
         </div>
       </section>
 
-      <main className="max-w-4xl mx-auto py-12">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">{editableData.title}</h1>
-          <h2 className="text-xl text-gray-600 mb-4">{editableData.subtitle}</h2>
-        </div>
-
-        <div
-          className="prose mb-12"
-          dangerouslySetInnerHTML={{ __html: editableData.content }}
-        />
-
-        <section className="bg-white p-6 rounded-lg shadow-md">
-          <h3 className="text-lg font-semibold mb-4">Éditer la page (dev only)</h3>
-
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Titre</label>
-              <input
-                {...register("title")}
-                className="w-full px-3 py-2 border rounded"
-                placeholder="Titre"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Sous-titre</label>
-              <input
-                {...register("subtitle")}
-                className="w-full px-3 py-2 border rounded"
-                placeholder="Sous-titre"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Contenu HTML</label>
-              <textarea
-                {...register("content")}
-                className="w-full px-3 py-2 border rounded h-40"
-                placeholder="<p>Contenu HTML</p>"
-              />
-            </div>
-
-            <div className="flex items-center space-x-3">
-              <button
-                type="submit"
-                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-              >
-                Enregistrer (local)
-              </button>
-            </div>
-          </form>
-        </section>
-      </main>
-
-      <main className="max-w-4xl mx-auto py-12">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">{data.title}</h1>
-          <h2 className="text-xl text-gray-600 mb-4">{data.subtitle}</h2>
-        </div>
-
-        <div
-          className="prose prose-lg"
-          dangerouslySetInnerHTML={{ __html: data.content }}
-        />
-
-        <section className="mt-12 bg-blue-50 p-6 rounded-lg">
+      {/* Admin Info */}
+      <section className="py-8 px-4 bg-blue-50">
+        <div className="max-w-7xl mx-auto">
           <p className="text-sm text-gray-600">
-            💡 Pour éditer cette page, lancez : <code>npm run tina:dev</code> et accédez à{" "}
-            <a href="http://localhost:3000/admin" className="text-blue-600 underline">
-              http://localhost:3000/admin
-            </a>
+            💡 Pour éditer cette page, accédez à{" "}
+            <Link to="/admin" className="text-blue-600 underline font-semibold">
+              /admin
+            </Link>
           </p>
-        </section>
-      </main>
+        </div>
+      </section>
     </div>
   );
 };

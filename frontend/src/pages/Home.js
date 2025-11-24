@@ -45,6 +45,28 @@ const Home = () => {
     t('about.support')
   ];
 
+  // Initial data from JSON file
+  const [data, setData] = useState(homeContent);
+
+  const formConfig = {
+    id: "home",
+    label: "Page d'accueil",
+    initialValues: data,
+    fields: [
+      { name: "title", label: "Titre", component: "text" },
+      { name: "subtitle", label: "Sous-titre", component: "text" },
+      { name: "content", label: "Contenu HTML", component: "textarea" },
+    ],
+    onSubmit: async (values) => {
+      // Local-only: update state. To persist to repo, set up Tina git client or Tina Cloud.
+      setData(values);
+      alert("Modifications appliquées en local (dev). Pour enregistrer dans le repo, configure Tina Git client.");
+    },
+  };
+
+  const [editableData, form] = useForm(formConfig);
+  usePlugin(form);
+
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
@@ -229,6 +251,81 @@ const Home = () => {
           </div>
         </div>
       </section>
+
+      <main className="max-w-4xl mx-auto py-12">
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold mb-2">{editableData.title}</h1>
+          <h2 className="text-xl text-gray-600 mb-4">{editableData.subtitle}</h2>
+        </div>
+
+        <div
+          className="prose mb-12"
+          dangerouslySetInnerHTML={{ __html: editableData.content }}
+        />
+
+        <section className="bg-white p-6 rounded-lg shadow-md">
+          <h3 className="text-lg font-semibold mb-4">Éditer la page (dev only)</h3>
+
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Titre</label>
+              <input
+                {...register("title")}
+                className="w-full px-3 py-2 border rounded"
+                placeholder="Titre"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Sous-titre</label>
+              <input
+                {...register("subtitle")}
+                className="w-full px-3 py-2 border rounded"
+                placeholder="Sous-titre"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Contenu HTML</label>
+              <textarea
+                {...register("content")}
+                className="w-full px-3 py-2 border rounded h-40"
+                placeholder="<p>Contenu HTML</p>"
+              />
+            </div>
+
+            <div className="flex items-center space-x-3">
+              <button
+                type="submit"
+                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              >
+                Enregistrer (local)
+              </button>
+            </div>
+          </form>
+        </section>
+      </main>
+
+      <main className="max-w-4xl mx-auto py-12">
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold mb-2">{data.title}</h1>
+          <h2 className="text-xl text-gray-600 mb-4">{data.subtitle}</h2>
+        </div>
+
+        <div
+          className="prose prose-lg"
+          dangerouslySetInnerHTML={{ __html: data.content }}
+        />
+
+        <section className="mt-12 bg-blue-50 p-6 rounded-lg">
+          <p className="text-sm text-gray-600">
+            💡 Pour éditer cette page, lancez : <code>npm run tina:dev</code> et accédez à{" "}
+            <a href="http://localhost:3000/admin" className="text-blue-600 underline">
+              http://localhost:3000/admin
+            </a>
+          </p>
+        </section>
+      </main>
     </div>
   );
 };

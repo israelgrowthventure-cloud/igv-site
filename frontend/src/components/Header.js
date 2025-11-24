@@ -41,21 +41,13 @@ const Header = () => {
             <img
               src={igvLogo}
               alt="Israel Growth Venture"
-              className="h-16 w-auto"
+              className="h-12 w-auto"
             />
             <span className="text-white font-bold text-xl">IGV</span>
-            <div className="hidden md:block leading-tight">
-    <div 
-        className="text-lg font-extrabold"
-        style={{ color: '#5C63EC' }}
-    >
-        Israel Growth Venture
-    </div>
-
-    <div className="text-xs text-gray-600">
-        {t('hero.subtitle').substring(0, 40)}…
-    </div>
-</div>
+            <div className="hidden md:block">
+              <div className="text-lg font-bold text-gray-900">Israel Growth Venture</div>
+              <div className="text-xs text-gray-600">{t('hero.subtitle').substring(0, 40)}...</div>
+            </div>
           </Link>
 
           {/* Desktop Navigation */}

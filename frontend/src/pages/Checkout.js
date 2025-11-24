@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { ArrowLeft, Loader } from 'lucide-react';
 
+const API_BASE_URL = "http://localhost:8000";
+
 const PACKS = {
   analyse: {
     id: 'analyse',
@@ -22,8 +24,6 @@ const PACKS = {
     note: "Développement complet de votre réseau de franchise en Israël. Pack dédié au lancement de votre réseau. Déploiement élargi sur devis."
   },
 };
-
-const API_BASE_URL = import.meta?.env?.VITE_API_URL || "https://igv-backend.onrender.com";
 
 const Checkout = () => {
   const { packId } = useParams();

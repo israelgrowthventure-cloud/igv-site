@@ -18,6 +18,7 @@ import Contact from './pages/Contact';
 import Appointment from './pages/Appointment';
 import Terms from './pages/Terms';
 import Checkout from './pages/Checkout';
+import Admin from './pages/Admin';
 
 // Loading component
 const Loading = () => (
@@ -47,6 +48,7 @@ function App() {
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/appointment" element={<Appointment />} />
                 <Route path="/terms" element={<Terms />} />
+                <Route path="/admin" element={<Admin />} />
                 <Route path="*" element={<Home />} />
               </Routes>
             </main>

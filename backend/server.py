@@ -453,6 +453,79 @@ async def detect_location():
             currency='€'
         )
 
+# ==================== ADMIN ENDPOINTS ====================
+
+ADMIN_PASSWORD = "igv2025"
+
+class PackData(BaseModel):
+    analyse: dict
+    succursales: dict
+    franchise: dict
+
+@api_router.post("/admin/save-content")
+async def save_content(request: Request, data: dict):
+    """Sauvegarder tout le contenu du site (protégé par password)"""
+    auth_header = request.headers.get("Authorization", "")
+    
+    if not auth_header.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Missing authorization header")
+    
+    token = auth_header.replace("Bearer ", "")
+    
+    if token != ADMIN_PASSWORD:
+        raise HTTPException(status_code=401, detail="Invalid password")
+    
+    try:
+        # Sauvegarder dans content.json
+        content_file = Path(__file__).parent / ".." / "frontend" / "public" / "content.json"
+        content_file.parent.mkdir(parents=True, exist_ok=True)
+        
+        with open(content_file, 'w', encoding='utf-8') as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+        
+        logger.info("Content saved successfully")
+        
+        return {
+            "success": True,
+            "message": "Contenu sauvegardé avec succès",
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        }
+    except Exception as e:
+        logger.error(f"Error saving content: {e}")
+        raise HTTPException(status_code=500, detail=f"Error saving content: {str(e)}")
+
+@api_router.post("/admin/save-packs")
+async def save_packs(request: Request, packs_data: PackData):
+    """Sauvegarder les données des packs (protégé par password)"""
+    auth_header = request.headers.get("Authorization", "")
+    
+    if not auth_header.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Missing authorization header")
+    
+    token = auth_header.replace("Bearer ", "")
+    
+    if token != ADMIN_PASSWORD:
+        raise HTTPException(status_code=401, detail="Invalid password")
+    
+    try:
+        # Sauvegarder dans un fichier JSON accessible au frontend
+        packs_file = Path(__file__).parent / ".." / "frontend" / "public" / "packs-data.json"
+        packs_file.parent.mkdir(parents=True, exist_ok=True)
+        
+        with open(packs_file, 'w', encoding='utf-8') as f:
+            json.dump(packs_data.model_dump(), f, ensure_ascii=False, indent=2)
+        
+        logger.info("Packs data saved successfully")
+        
+        return {
+            "success": True,
+            "message": "Packs sauvegardés avec succès",
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        }
+    except Exception as e:
+        logger.error(f"Error saving packs: {e}")
+        raise HTTPException(status_code=500, detail=f"Error saving packs: {str(e)}")
+
 # ==================== Include API Router ====================
 # Les routes du api_router seront préfixées par /api
 # Donc @api_router.post("/contact") devient POST /api/contact
@@ -464,3 +537,4 @@ async def shutdown_db_client():
     """Close MongoDB connection on shutdown"""
     client.close()
     logger.info("MongoDB connection closed")
+

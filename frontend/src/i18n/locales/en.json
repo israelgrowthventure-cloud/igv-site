@@ -42,6 +42,7 @@
   "packs": {
     "title": "Our Packs",
     "subtitle": "Solutions tailored to your expansion needs",
+    "viewAll": "View all packs",
     "analyse": {
       "name": "Analysis Pack",
       "description": "Complete analysis of the Israeli market for up to 3 store openings",

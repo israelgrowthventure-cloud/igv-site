@@ -127,18 +127,6 @@ const Home = () => {
           </Link>
         </div>
       </section>
-
-      {/* Admin Info */}
-      <section className="py-8 px-4 bg-blue-50">
-        <div className="max-w-7xl mx-auto">
-          <p className="text-sm text-gray-600">
-            💡 Pour éditer cette page, accédez à{" "}
-            <Link to="/admin" className="text-blue-600 underline font-semibold">
-              /admin
-            </Link>
-          </p>
-        </div>
-      </section>
     </div>
   );
 };

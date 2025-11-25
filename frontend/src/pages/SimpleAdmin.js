@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Save, Upload, X, Image } from 'lucide-react';
 import { toast } from 'sonner';
+import { API_BASE_URL } from '../config/apiConfig';
 
 const SimpleAdmin = () => {
   const [content, setContent] = useState(null);
@@ -32,7 +33,7 @@ const SimpleAdmin = () => {
       localStorage.setItem('igv_content', JSON.stringify(content));
       
       // Tentative de sauvegarde sur le serveur
-      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:8000'}/api/admin/save-content`, {
+      const response = await fetch(`${API_BASE_URL}/api/admin/save-content`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

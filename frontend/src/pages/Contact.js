@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Mail, MapPin, Send } from 'lucide-react';
 import { api } from '../utils/api';
+import { API_BASE_URL } from '../config/apiConfig';
 import { toast } from 'sonner';
 
 const Contact = () => {
@@ -27,7 +28,7 @@ const Contact = () => {
   setLoading(true);
 
   try {
-    const response = await fetch('http://localhost:8000/api/contact', {
+    const response = await fetch(`${API_BASE_URL}/api/contact`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

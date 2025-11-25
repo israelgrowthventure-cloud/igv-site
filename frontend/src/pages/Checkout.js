@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { ArrowLeft, Loader } from 'lucide-react';
-
-const API_BASE_URL = "http://localhost:8000";
+import { API_BASE_URL } from '../config/apiConfig';
 
 const PACKS = {
   analyse: {

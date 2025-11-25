@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Save, RefreshCw, Eye, Edit3 } from 'lucide-react';
+import { API_BASE_URL } from '../config/apiConfig';
 
 const ContentEditor = () => {
   const [content, setContent] = useState(null);
@@ -20,7 +21,7 @@ const ContentEditor = () => {
   const handleSave = async () => {
     setSaving(true);
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:8000'}/api/admin/save-content`, {
+      const response = await fetch(`${API_BASE_URL}/api/admin/save-content`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

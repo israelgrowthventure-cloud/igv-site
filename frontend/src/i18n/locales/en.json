@@ -82,7 +82,13 @@
       "note": "Complete development of your franchise network in Israel. Pack dedicated to launching your network. Expanded deployment upon quote."
     },
     "cta": "Request an Invoice",
-    "ctaTalk": "Talk about this pack"
+    "ctaTalk": "Talk about this pack",
+    "orderButton": "Order this pack",
+    "customPack": {
+      "title": "Need a custom pack?",
+      "description": "Every project is unique. Contact us to discuss a tailored solution adapted to your specific needs.",
+      "contact": "Contact us"
+    }
   },
   "futureCommerce": {
     "title": "The retail you practice is dead.",
@@ -202,7 +208,8 @@
   },
   "pricing": {
     "region": "Price according to your region",
-    "detecting": "Detecting..."
+    "detecting": "Detecting...",
+    "or": "or"
   },
   "checkout": {
     "title": "Payment",

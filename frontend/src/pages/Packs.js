@@ -13,6 +13,21 @@ const Packs = () => {
   const [packsPricing, setPacksPricing] = useState({});
   const [loading, setLoading] = useState(true);
 
+  // Fonction pour inverser les chiffres en hébreu (RTL)
+  const formatPriceForLanguage = (priceString) => {
+    if (!priceString) return '';
+    
+    if (i18n.language === 'he') {
+      // Pour l'hébreu, inverser uniquement les groupes de chiffres
+      // Ex: "7 000 ₪" -> "000 7 ₪"
+      return priceString.replace(/\d[\d\s]*/g, (match) => {
+        // Inverser les chiffres et espaces dans le groupe
+        return match.split('').reverse().join('');
+      });
+    }
+    return priceString;
+  };
+
   useEffect(() => {
     const fetchAllPricing = async () => {
       if (!zone || geoLoading) return;
@@ -150,23 +165,23 @@ const Packs = () => {
                   {/* Price */}
                   <div className="mb-6">
                     {loading ? (
-                      <div className="text-xl font-bold">Chargement...</div>
+                      <div className="text-xl font-bold">{t('checkout.loading')}</div>
                     ) : packPricing ? (
                       <div>
                         <div className={`text-4xl font-bold mb-2 ${
                           pack.highlighted ? 'text-white' : 'text-gray-900'
                         }`}>
-                          {packPricing.display.total}
+                          {formatPriceForLanguage(packPricing.display.total)}
                         </div>
                         <div className={`text-sm ${
                           pack.highlighted ? 'text-blue-100' : 'text-gray-600'
                         }`}>
-                          <div>ou {packPricing.display.three_times}</div>
-                          <div>ou {packPricing.display.twelve_times}</div>
+                          <div>{t('pricing.or')} {formatPriceForLanguage(packPricing.display.three_times)}</div>
+                          <div>{t('pricing.or')} {formatPriceForLanguage(packPricing.display.twelve_times)}</div>
                         </div>
                       </div>
                     ) : (
-                      <div className="text-xl font-bold">Prix sur demande</div>
+                      <div className="text-xl font-bold">{t('pricing.region')}</div>
                     )}
                   </div>
 
@@ -204,7 +219,7 @@ const Packs = () => {
                     }`}
                     data-testid={`order-pack-${pack.id}`}
                   >
-                    Commander ce pack
+                    {t('packs.orderButton')}
                   </button>
                 </div>
               );
@@ -217,10 +232,10 @@ const Packs = () => {
       <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gray-50">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">
-            Besoin d'un pack personnalisé ?
+            {t('packs.customPack.title')}
           </h2>
           <p className="text-base text-gray-600 mb-6">
-            Chaque projet est unique. Contactez-nous pour discuter d'une solution sur mesure adaptée à vos besoins spécifiques.
+            {t('packs.customPack.description')}
           </p>
           <a
             href="mailto:contact@israelgrowthventure.com"
@@ -228,7 +243,7 @@ const Packs = () => {
             data-testid="custom-pack-contact"
           >
             <Mail className="w-5 h-5 mr-2" />
-            Nous contacter
+            {t('packs.customPack.contact')}
           </a>
         </div>
       </section>

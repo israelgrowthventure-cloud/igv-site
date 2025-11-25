@@ -82,7 +82,13 @@
       "note": "Développement complet de votre réseau de franchise en Israël. Pack dédié au lancement de votre réseau. Déploiement élargi sur devis."
     },
     "cta": "Demander une facture",
-    "ctaTalk": "Parler de ce pack"
+    "ctaTalk": "Parler de ce pack",
+    "orderButton": "Commander ce pack",
+    "customPack": {
+      "title": "Besoin d'un pack personnalisé ?",
+      "description": "Chaque projet est unique. Contactez-nous pour discuter d'une solution sur mesure adaptée à vos besoins spécifiques.",
+      "contact": "Nous contacter"
+    }
   },
   "futureCommerce": {
     "title": "Le commerce tel que vous le pratiquez est mort.",
@@ -202,7 +208,8 @@
   },
   "pricing": {
     "region": "Prix selon votre région",
-    "detecting": "Détection en cours..."
+    "detecting": "Détection en cours...",
+    "or": "ou"
   },
   "checkout": {
     "title": "Paiement",

@@ -262,8 +262,8 @@ async def create_checkout_session(checkout: CheckoutRequest):
                 "order_pack_id": checkout.packId,
                 "order_customer_name": checkout.customer.fullName,
             },
-            success_url=f"{FRONTEND_URL}/success?session_id={{CHECKOUT_SESSION_ID}}",
-            cancel_url=f"{FRONTEND_URL}/checkout/{checkout.packId}",
+            success_url=f"{FRONTEND_URL}/packs?payment=success",
+            cancel_url=f"{FRONTEND_URL}/packs?payment=cancel",
         )
     except stripe.error.StripeError as e:
         logger.error(f"Stripe error creating session: {str(e)}")

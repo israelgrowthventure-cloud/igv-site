@@ -118,7 +118,8 @@ def get_currency_for_zone(zone: Zone) -> str:
     """
     Retourne la devise (code Stripe) pour une zone.
     """
-    return PRICING_CONFIG[zone]["currency"]
+    currency = PRICING_CONFIG[zone]["currency"]
+    return currency.value if isinstance(currency, Currency) else currency
 
 def get_currency_symbol(zone: Zone) -> str:
     """

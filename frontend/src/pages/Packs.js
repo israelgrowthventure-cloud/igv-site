@@ -2,28 +2,56 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Check, Mail } from 'lucide-react';
-import { api } from '../utils/api';
-import { getPricing } from '../utils/pricing';
+import { useGeo } from '../context/GeoContext';
+import { API_BASE_URL } from '../config/apiConfig';
 import { toast } from 'sonner';
 
 const Packs = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [location, setLocation] = useState(null);
-  const [pricing, setPricing] = useState(null);
+  const { zone, country_name, isLoading: geoLoading } = useGeo();
+  const [packsPricing, setPacksPricing] = useState({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api.detectLocation().then(data => {
-      setLocation(data);
-      setPricing(getPricing(data.region));
-      setLoading(false);
-    }).catch(() => {
-      setLocation({ region: 'europe', country: 'France', currency: '€' });
-      setPricing(getPricing('europe'));
-      setLoading(false);
-    });
-  }, []);
+    const fetchAllPricing = async () => {
+      if (!zone || geoLoading) return;
+      
+      try {
+        const packs = ['analyse', 'succursales', 'franchise'];
+        const pricingPromises = packs.map(packId =>
+          fetch(`${API_BASE_URL}/api/pricing?packId=${packId}&zone=${zone}`)
+            .then(res => res.json())
+            .then(data => ({ [packId]: data }))
+        );
+        
+        const results = await Promise.all(pricingPromises);
+        const pricingData = results.reduce((acc, curr) => ({ ...acc, ...curr }), {});
+        setPacksPricing(pricingData);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching pricing:', error);
+        // Fallback vers prix Israël en cas d'erreur
+        setPacksPricing({
+          analyse: {
+            zone: 'IL',
+            display: { total: '7 000 ₪', three_times: '3 x 2 334 ₪', twelve_times: '12 x 584 ₪' }
+          },
+          succursales: {
+            zone: 'IL',
+            display: { total: '55 000 ₪', three_times: '3 x 18 334 ₪', twelve_times: '12 x 4 584 ₪' }
+          },
+          franchise: {
+            zone: 'IL',
+            display: { total: '55 000 ₪', three_times: '3 x 18 334 ₪', twelve_times: '12 x 4 584 ₪' }
+          }
+        });
+        setLoading(false);
+      }
+    };
+
+    fetchAllPricing();
+  }, [zone, geoLoading]);
 
   // Configuration des packs
   const packsConfig = [
@@ -90,10 +118,10 @@ const Packs = () => {
             {t('packs.subtitle')}
           </p>
           {loading ? (
-            <p className="text-sm text-gray-500">{t('pricing.detecting')}</p>
-          ) : location && (
+            <p className="text-sm text-gray-500">Détection de votre région...</p>
+          ) : country_name && (
             <p className="text-sm text-gray-500">
-              {t('pricing.region')}: <span className="font-semibold text-blue-600">{location.country}</span>
+              Prix selon votre région : <span className="font-semibold text-blue-600">{country_name}</span>
             </p>
           )}
         </div>
@@ -104,7 +132,7 @@ const Packs = () => {
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-3 gap-8">
             {packsConfig.map((pack) => {
-              const packPrice = pricing?.packs[pack.id];
+              const packPricing = packsPricing[pack.id];
               
               return (
                 <div
@@ -140,13 +168,19 @@ const Packs = () => {
                   {/* Price */}
                   <div className="mb-6">
                     {loading ? (
-                      <div className="text-xl font-bold">{t('pricing.detecting')}</div>
-                    ) : packPrice ? (
+                      <div className="text-xl font-bold">Chargement...</div>
+                    ) : packPricing ? (
                       <div>
-                        <div className={`text-4xl font-bold ${
+                        <div className={`text-4xl font-bold mb-2 ${
                           pack.highlighted ? 'text-white' : 'text-gray-900'
                         }`}>
-                          {packPrice.label}
+                          {packPricing.display.total}
+                        </div>
+                        <div className={`text-sm ${
+                          pack.highlighted ? 'text-blue-100' : 'text-gray-600'
+                        }`}>
+                          <div>ou {packPricing.display.three_times}</div>
+                          <div>ou {packPricing.display.twelve_times}</div>
                         </div>
                       </div>
                     ) : (

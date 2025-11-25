@@ -44,22 +44,37 @@ const Checkout = () => {
 
   // Charger les prix pour ce pack et cette zone
   useEffect(() => {
-    if (!geoLoading && zone) {
+    const fetchPricing = async () => {
+      if (!zone) return; // Attendre que la zone soit chargée
+      
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/pricing?packId=${packId}&zone=${zone}`);
+        if (!response.ok) throw new Error('Failed to fetch pricing');
+        const data = await response.json();
+        setPricing(data);
+      } catch (err) {
+        console.error('Error fetching pricing:', err);
+        // En cas d'erreur, utiliser des prix par défaut pour ne pas bloquer l'utilisateur
+        setPricing({
+          zone: zone || 'IL',
+          currency: 'ils',
+          currency_symbol: '₪',
+          total_price: packId === 'analyse' ? 7000 : 55000,
+          monthly_3x: packId === 'analyse' ? 2334 : 18334,
+          monthly_12x: packId === 'analyse' ? 584 : 4584,
+          display: {
+            total: packId === 'analyse' ? '7 000 ₪' : '55 000 ₪',
+            three_times: packId === 'analyse' ? '3 x 2 334 ₪' : '3 x 18 334 ₪',
+            twelve_times: packId === 'analyse' ? '12 x 584 ₪' : '12 x 4 584 ₪'
+          }
+        });
+      }
+    };
+
+    if (!geoLoading) {
       fetchPricing();
     }
   }, [zone, packId, geoLoading]);
-
-  const fetchPricing = async () => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/pricing?packId=${packId}&zone=${zone}`);
-      if (!response.ok) throw new Error('Failed to fetch pricing');
-      const data = await response.json();
-      setPricing(data);
-    } catch (err) {
-      console.error('Error fetching pricing:', err);
-      setError('Impossible de charger les prix. Veuillez réessayer.');
-    }
-  };
 
   // Noms des packs
   const PACK_NAMES = {

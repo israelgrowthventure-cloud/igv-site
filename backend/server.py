@@ -265,17 +265,17 @@ async def get_geo_location(request: Request):
     
     logger.info(f"Geo request from IP: {client_ip}")
     
-    # Fallback par défaut
+    # Fallback par défaut vers Israël (zone de secours)
     default_response = GeoResponse(
         ip=client_ip,
-        country_code="FR",
-        country_name="France",
-        zone=Zone.EU
+        country_code="IL",
+        country_name="Israel",
+        zone=Zone.IL
     )
     
     # Si IP locale, retourner le défaut
     if client_ip in ["127.0.0.1", "localhost", "::1"]:
-        logger.info("Local IP detected, using EU default")
+        logger.info("Local IP detected, using IL default")
         return default_response
     
     try:
@@ -312,7 +312,7 @@ async def get_geo_location(request: Request):
 async def get_pricing(packId: str, zone: Optional[str] = None):
     """
     Retourne le pricing pour un pack donné dans une zone spécifique.
-    Si zone n'est pas fournie, utilise EU par défaut.
+    Si zone n'est pas fournie, utilise IL par défaut (zone de secours).
     """
     # Validation du pack
     try:
@@ -325,7 +325,7 @@ async def get_pricing(packId: str, zone: Optional[str] = None):
     
     # Validation de la zone
     if zone is None:
-        zone = Zone.EU
+        zone = Zone.IL  # Zone de secours : Israël
     else:
         try:
             zone = Zone(zone)

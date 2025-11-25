@@ -16,6 +16,7 @@
     "subtitle": "Your Strategic Partner for Successful Expansion in Israel",
     "description": "We specialize in supporting brands for their successful expansion into the Israeli market. With our expertise and network, we offer tailored solutions to help businesses establish, grow, and thrive in one of the most dynamic and innovative markets in the world.",
     "cta": "Learn More",
+    "secondary": "About Us",
     "bookAppointment": "Book an Appointment"
   },
   "about": {
@@ -26,6 +27,7 @@
     "service": "If you are looking to establish and grow your brand or expand your concept through franchises or branches, the Israel Growth Venture team is at your service."
   },
   "steps": {
+    "title": "How It Works?",
     "step1": {
       "title": "Schedule a Meeting with an Expert",
       "description": "Discuss your expansion project in Israel with our specialists."
@@ -53,7 +55,7 @@
         "Strategic recommendations",
         "Support for up to 3 openings"
       ],
-      "note": "For more openings, contact us."
+      "note": "Complete diagnostic of your brand's potential in Israel. This pack does not include property search or store openings."
     },
     "succursales": {
       "name": "Branches Pack",
@@ -64,7 +66,8 @@
         "Administrative and legal support",
         "Opening support",
         "Post-opening follow-up"
-      ]
+      ],
+      "note": "Turnkey solution for opening branches in Israel. Pack designed for your first 3 branches. Beyond that, support upon quote."
     },
     "franchise": {
       "name": "Franchise Pack",
@@ -75,7 +78,8 @@
         "Franchisee search",
         "Training and support",
         "Ongoing support"
-      ]
+      ],
+      "note": "Complete development of your franchise network in Israel. Pack dedicated to launching your network. Expanded deployment upon quote."
     },
     "cta": "Request an Invoice",
     "ctaTalk": "Talk about this pack"
@@ -199,5 +203,31 @@
   "pricing": {
     "region": "Price according to your region",
     "detecting": "Detecting..."
+  },
+  "checkout": {
+    "title": "Payment",
+    "packNotFound": "Pack Not Found",
+    "packNotFoundDesc": "The pack you requested does not exist.",
+    "backToPacks": "Back to Packs",
+    "selectPaymentPlan": "Select Your Payment Plan",
+    "oneTimePayment": "One-Time Payment",
+    "threeTimesPayment": "3 Monthly Payments",
+    "twelveTimesPayment": "12 Monthly Payments",
+    "customerInfo": "Customer Information",
+    "fullName": "Full Name",
+    "fullNamePlaceholder": "John Doe",
+    "company": "Company (optional)",
+    "companyPlaceholder": "Your company",
+    "email": "Email",
+    "emailPlaceholder": "john@example.com",
+    "phone": "Phone (optional)",
+    "phonePlaceholder": "+1 234 567 890",
+    "country": "Country",
+    "countryPlaceholder": "United States",
+    "proceedToPayment": "Proceed to Payment",
+    "processing": "Processing...",
+    "loading": "Loading...",
+    "errorPrefix": "Error",
+    "packNote": "Note"
   }
 }

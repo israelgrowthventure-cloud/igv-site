@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { ArrowLeft, Loader, Check } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { API_BASE_URL } from '../config/apiConfig';
 import { useGeo } from '../context/GeoContext';
 import { PLAN_TYPES, formatPrice } from '../config/pricingConfig';
@@ -29,6 +30,7 @@ const PACKS = {
 const Checkout = () => {
   const { packId } = useParams();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { zone, isLoading: geoLoading } = useGeo();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -78,29 +80,29 @@ const Checkout = () => {
 
   // Noms des packs
   const PACK_NAMES = {
-    analyse: 'Pack Analyse',
-    succursales: 'Pack Succursales',
-    franchise: 'Pack Franchise',
+    analyse: t('packs.analyse.name'),
+    succursales: t('packs.succursales.name'),
+    franchise: t('packs.franchise.name'),
   };
 
   const PACK_NOTES = {
-    analyse: "Diagnostic complet du potentiel de votre marque en Israël. Ce pack ne comprend pas la recherche ni l'ouverture de points de vente.",
-    succursales: "Solution clé en main pour l'ouverture de succursales en Israël. Pack conçu pour vos 3 premières succursales. Au-delà, accompagnement sur devis.",
-    franchise: "Développement complet de votre réseau de franchise en Israël. Pack dédié au lancement de votre réseau. Déploiement élargi sur devis.",
+    analyse: t('packs.analyse.note'),
+    succursales: t('packs.succursales.note'),
+    franchise: t('packs.franchise.note'),
   };
 
   if (!PACK_NAMES[packId]) {
     return (
       <div className="min-h-screen pt-20 flex items-center justify-center bg-gray-50">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Pack introuvable</h1>
-          <p className="text-gray-600 mb-6">Le pack que vous demandez n'existe pas.</p>
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">{t('checkout.packNotFound')}</h1>
+          <p className="text-gray-600 mb-6">{t('checkout.packNotFoundDesc')}</p>
           <Link
             to="/packs"
             className="inline-flex items-center px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Retourner aux packs
+            {t('checkout.backToPacks')}
           </Link>
         </div>
       </div>
@@ -210,7 +212,7 @@ const Checkout = () => {
       <div className="min-h-screen pt-20 flex items-center justify-center bg-gray-50">
         <div className="text-center">
           <Loader className="w-12 h-12 animate-spin text-blue-600 mx-auto mb-4" />
-          <p className="text-gray-600">Chargement...</p>
+          <p className="text-gray-600">{t('checkout.loading')}</p>
         </div>
       </div>
     );

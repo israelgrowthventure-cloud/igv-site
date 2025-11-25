@@ -12,10 +12,11 @@
     "cart": "Panier"
   },
   "hero": {
-    "title": "Israël Growth Venture",
+    "title": "Israel Growth Venture",
     "subtitle": "Votre partenaire stratégique pour une expansion réussie en Israël",
     "description": "Nous sommes spécialisés dans l'accompagnement des marques pour leur expansion réussie sur le marché israélien. Avec notre expertise et notre réseau, nous proposons des solutions sur mesure pour aider les entreprises à s'implanter, se développer et prospérer dans l'un des marchés les plus dynamiques et innovants du monde.",
     "cta": "En savoir plus",
+    "secondary": "Qui sommes-nous",
     "bookAppointment": "Réserver un rendez-vous"
   },
   "about": {
@@ -26,6 +27,7 @@
     "service": "Si vous cherchez à établir et développer votre marque ou à étendre votre concept par le biais de franchises ou de succursales, l'équipe Israel Growth Venture est à votre service."
   },
   "steps": {
+    "title": "Comment ça marche ?",
     "step1": {
       "title": "Planifiez une réunion avec un expert",
       "description": "Discutez de votre projet d'expansion en Israël avec nos spécialistes."
@@ -53,7 +55,7 @@
         "Recommandations stratégiques",
         "Support jusqu'à 3 ouvertures"
       ],
-      "note": "Pour plus d'ouvertures, nous consulter."
+      "note": "Diagnostic complet du potentiel de votre marque en Israël. Ce pack ne comprend pas la recherche ni l'ouverture de points de vente."
     },
     "succursales": {
       "name": "Pack Succursales",
@@ -64,7 +66,8 @@
         "Support administratif et légal",
         "Accompagnement à l'ouverture",
         "Suivi post-ouverture"
-      ]
+      ],
+      "note": "Solution clé en main pour l'ouverture de succursales en Israël. Pack conçu pour vos 3 premières succursales. Au-delà, accompagnement sur devis."
     },
     "franchise": {
       "name": "Pack Franchise",
@@ -75,7 +78,8 @@
         "Recherche de franchisés",
         "Formation et accompagnement",
         "Support continu"
-      ]
+      ],
+      "note": "Développement complet de votre réseau de franchise en Israël. Pack dédié au lancement de votre réseau. Déploiement élargi sur devis."
     },
     "cta": "Demander une facture",
     "ctaTalk": "Parler de ce pack"
@@ -199,5 +203,31 @@
   "pricing": {
     "region": "Prix selon votre région",
     "detecting": "Détection en cours..."
+  },
+  "checkout": {
+    "title": "Paiement",
+    "packNotFound": "Pack introuvable",
+    "packNotFoundDesc": "Le pack que vous demandez n'existe pas.",
+    "backToPacks": "Retour aux packs",
+    "selectPaymentPlan": "Sélectionnez votre plan de paiement",
+    "oneTimePayment": "Paiement comptant",
+    "threeTimesPayment": "Paiement en 3 fois",
+    "twelveTimesPayment": "Paiement sur 12 mois",
+    "customerInfo": "Informations client",
+    "fullName": "Nom complet",
+    "fullNamePlaceholder": "John Doe",
+    "company": "Société (optionnel)",
+    "companyPlaceholder": "Votre entreprise",
+    "email": "Email",
+    "emailPlaceholder": "john@exemple.com",
+    "phone": "Téléphone (optionnel)",
+    "phonePlaceholder": "+33 6 12 34 56 78",
+    "country": "Pays",
+    "countryPlaceholder": "France",
+    "proceedToPayment": "Procéder au paiement",
+    "processing": "Traitement...",
+    "loading": "Chargement...",
+    "errorPrefix": "Erreur",
+    "packNote": "Note"
   }
 }

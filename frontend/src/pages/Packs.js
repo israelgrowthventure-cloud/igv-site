@@ -118,10 +118,10 @@ const Packs = () => {
             {t('packs.subtitle')}
           </p>
           {loading ? (
-            <p className="text-sm text-gray-500">Détection de votre région...</p>
+            <p className="text-sm text-gray-500">{t('pricing.detecting')}</p>
           ) : country_name && (
             <p className="text-sm text-gray-500">
-              Prix selon votre région : <span className="font-semibold text-blue-600">{country_name}</span>
+              {t('pricing.region')} : <span className="font-semibold text-blue-600">{country_name}</span>
             </p>
           )}
         </div>

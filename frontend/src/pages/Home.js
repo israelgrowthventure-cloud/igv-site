@@ -2,17 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ArrowRight, CheckCircle, TrendingUp, Users, Building } from 'lucide-react';
-import { api } from '../utils/api';
+import { useGeo } from '../context/GeoContext';
 
 const Home = () => {
-  const { t } = useTranslation();
-  const [location, setLocation] = useState(null);
-
-  useEffect(() => {
-    api.detectLocation().then(data => {
-      setLocation(data);
-    });
-  }, []);
+  const { t, i18n } = useTranslation();
+  const { country_name, isLoading } = useGeo();
 
   const steps = [
     {
@@ -68,9 +62,9 @@ const Home = () => {
                 </Link>
               </div>
 
-              {location && (
+              {!isLoading && country_name && (
                 <p className="text-sm text-gray-500 mt-6">
-                  📍 Prix selon votre région: {location.country}
+                  📍 {t('pricing.region')} : {country_name}
                 </p>
               )}
             </div>

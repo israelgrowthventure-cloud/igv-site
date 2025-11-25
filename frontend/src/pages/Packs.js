@@ -7,7 +7,7 @@ import { API_BASE_URL } from '../config/apiConfig';
 import { toast } from 'sonner';
 
 const Packs = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const { zone, country_name, isLoading: geoLoading } = useGeo();
   const [packsPricing, setPacksPricing] = useState({});
@@ -57,46 +57,28 @@ const Packs = () => {
   const packsConfig = [
     {
       id: 'analyse',
-      name: 'Pack Analyse',
-      description: 'Diagnostic complet du potentiel de votre marque en Israël',
-      features: [
-        'Étude détaillée du marché israélien dans votre segment',
-        'Analyse de la concurrence et des zones à fort potentiel',
-        'Identification des formats et villes prioritaires',
-        'Scénarios d\'implantation (succursales, franchise, master)',
-        'Recommandations stratégiques et estimation budgétaire'
-      ],
-      note: 'Ce pack ne comprend pas la recherche ni l\'ouverture de points de vente.',
+      name: t('packs.analyse.name'),
+      description: t('packs.analyse.description'),
+      features: t('packs.analyse.features', { returnObjects: true }),
+      note: t('packs.analyse.note'),
       highlighted: false,
       checkoutPath: '/checkout/analyse'
     },
     {
       id: 'succursales',
-      name: 'Pack Succursales',
-      description: 'Solution clé en main pour l\'ouverture de succursales en Israël',
-      features: [
-        'Analyse de marché incluse (sur la base du Pack Analyse)',
-        'Recherche et qualification de locaux commerciaux ciblés',
-        'Négociation avec les propriétaires / centres commerciaux',
-        'Accompagnement jusqu\'à l\'ouverture opérationnelle',
-        'Revue de performance 3 mois après ouverture (ajustements, recommandations)'
-      ],
-      note: 'Pack conçu pour vos 3 premières succursales. Au-delà, accompagnement sur devis.',
+      name: t('packs.succursales.name'),
+      description: t('packs.succursales.description'),
+      features: t('packs.succursales.features', { returnObjects: true }),
+      note: t('packs.succursales.note'),
       highlighted: true,
       checkoutPath: '/checkout/succursales'
     },
     {
       id: 'franchise',
-      name: 'Pack Franchise',
-      description: 'Développement complet de votre réseau de franchise en Israël',
-      features: [
-        'Analyse de la franchise et adaptation au marché israélien',
-        'Structuration du dossier franchise (offre, modèle économique, profil franchisé)',
-        'Préconisations juridiques pour contrat de franchise (avec vos avocats)',
-        'Recherche et sélection de master franchisé / franchisés',
-        'Accompagnement jusqu\'à la signature des premiers contrats'
-      ],
-      note: 'Pack dédié au lancement de votre réseau. Déploiement élargi sur devis.',
+      name: t('packs.franchise.name'),
+      description: t('packs.franchise.description'),
+      features: t('packs.franchise.features', { returnObjects: true }),
+      note: t('packs.franchise.note'),
       highlighted: false,
       checkoutPath: '/checkout/franchise'
     }
@@ -107,7 +89,7 @@ const Packs = () => {
   };
 
   return (
-    <div className="min-h-screen pt-20">
+    <div className="min-h-screen pt-20" dir={i18n.language === 'he' ? 'rtl' : 'ltr'}>
       {/* Hero */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 to-white">
         <div className="max-w-7xl mx-auto text-center">

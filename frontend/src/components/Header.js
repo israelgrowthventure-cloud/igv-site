@@ -37,15 +37,15 @@ const Header = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           {/* Logo & Title */}
-          <Link to="/" className="flex items-center space-x-3">
+          <Link to="/" className={`flex items-center space-x-3 ${i18n.language === 'he' ? 'mr-8' : 'ml-8'}`}>
             <img
               src={igvLogo}
               alt="Israel Growth Venture"
-              className="h-16 w-auto mx-1"
+              className="h-16 w-auto"
             />
             <div className="hidden md:block">
               <div className="text-lg font-bold text-gray-900">Israel Growth Venture</div>
-              <div className="text-xs text-gray-600">{t('hero.subtitle').substring(0, 40)}...</div>
+              <div className="text-xs text-gray-600 max-w-xs">{t('hero.subtitle')}</div>
             </div>
           </Link>
 

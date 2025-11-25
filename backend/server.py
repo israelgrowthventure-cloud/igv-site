@@ -352,13 +352,14 @@ async def get_pricing(packId: str, zone: Optional[str] = None):
     }
     
     return PricingResponse(
-        zone=zone,
+        zone=zone.value,
         currency=currency,
         currency_symbol=currency_symbol,
         total_price=total_price,
         monthly_3x=monthly_3x,
         monthly_12x=monthly_12x,
-        display=display
+        display=display,
+        message="Pricing retrieved successfully"
     )
 
 # ==================== Health Check Route ====================

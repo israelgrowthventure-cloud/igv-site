@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { ArrowLeft, Loader } from 'lucide-react';
+import { ArrowLeft, Loader, Check } from 'lucide-react';
 import { API_BASE_URL } from '../config/apiConfig';
+import { useGeo } from '../context/GeoContext';
+import { PLAN_TYPES, formatPrice } from '../config/pricingConfig';
 
 const PACKS = {
   analyse: {
@@ -27,8 +29,11 @@ const PACKS = {
 const Checkout = () => {
   const { packId } = useParams();
   const navigate = useNavigate();
+  const { zone, isLoading: geoLoading } = useGeo();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [pricing, setPricing] = useState(null);
+  const [selectedPlan, setSelectedPlan] = useState(PLAN_TYPES.ONE_SHOT);
   const [formData, setFormData] = useState({
     fullName: '',
     company: '',
@@ -37,9 +42,39 @@ const Checkout = () => {
     country: ''
   });
 
-  const pack = PACKS[packId];
+  // Charger les prix pour ce pack et cette zone
+  useEffect(() => {
+    if (!geoLoading && zone) {
+      fetchPricing();
+    }
+  }, [zone, packId, geoLoading]);
 
-  if (!pack) {
+  const fetchPricing = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/pricing?packId=${packId}&zone=${zone}`);
+      if (!response.ok) throw new Error('Failed to fetch pricing');
+      const data = await response.json();
+      setPricing(data);
+    } catch (err) {
+      console.error('Error fetching pricing:', err);
+      setError('Impossible de charger les prix. Veuillez réessayer.');
+    }
+  };
+
+  // Noms des packs
+  const PACK_NAMES = {
+    analyse: 'Pack Analyse',
+    succursales: 'Pack Succursales',
+    franchise: 'Pack Franchise',
+  };
+
+  const PACK_NOTES = {
+    analyse: "Diagnostic complet du potentiel de votre marque en Israël. Ce pack ne comprend pas la recherche ni l'ouverture de points de vente.",
+    succursales: "Solution clé en main pour l'ouverture de succursales en Israël. Pack conçu pour vos 3 premières succursales. Au-delà, accompagnement sur devis.",
+    franchise: "Développement complet de votre réseau de franchise en Israël. Pack dédié au lancement de votre réseau. Déploiement élargi sur devis.",
+  };
+
+  if (!PACK_NAMES[packId]) {
     return (
       <div className="min-h-screen pt-20 flex items-center justify-center bg-gray-50">
         <div className="text-center">
@@ -65,18 +100,46 @@ const Checkout = () => {
     }));
   };
 
+  const getSelectedAmount = () => {
+    if (!pricing) return null;
+    
+    switch (selectedPlan) {
+      case PLAN_TYPES.ONE_SHOT:
+        return pricing.total_price;
+      case PLAN_TYPES.THREE_TIMES:
+        return pricing.monthly_3x;
+      case PLAN_TYPES.TWELVE_TIMES:
+        return pricing.monthly_12x;
+      default:
+        return pricing.total_price;
+    }
+  };
+
+  const getDisplayPrice = () => {
+    if (!pricing) return '';
+    
+    switch (selectedPlan) {
+      case PLAN_TYPES.ONE_SHOT:
+        return pricing.display.total;
+      case PLAN_TYPES.THREE_TIMES:
+        return pricing.display.three_times;
+      case PLAN_TYPES.TWELVE_TIMES:
+        return pricing.display.twelve_times;
+      default:
+        return pricing.display.total;
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("👉 handleSubmit appelé, envoi de la commande...");
     setError(null);
     setLoading(true);
 
     try {
-      // 1️⃣ Construire le payload conforme au backend
       const payload = {
-        packId: pack.id,
-        packName: pack.name,
-        priceLabel: pack.priceLabel,
+        packId: packId,
+        packName: PACK_NAMES[packId],
+        priceLabel: getDisplayPrice(),
         customer: {
           fullName: formData.fullName.trim(),
           company: formData.company ? formData.company.trim() : null,
@@ -84,10 +147,10 @@ const Checkout = () => {
           phone: formData.phone.trim(),
           country: formData.country.trim(),
         },
+        planType: selectedPlan,
+        zone: zone,
       };
-      console.log("📦 Payload envoyé:", payload);
 
-      // 2️⃣ Envoyer la requête POST au backend
       const response = await fetch(`${API_BASE_URL}/api/checkout`, {
         method: "POST",
         headers: {
@@ -96,12 +159,10 @@ const Checkout = () => {
         body: JSON.stringify(payload),
       });
 
-      // 3️⃣ Gérer les erreurs HTTP (400, 500, etc.)
       if (!response.ok) {
         const text = await response.text();
         console.error("❌ Erreur backend:", response.status, text);
         
-        // Message d'erreur plus détaillé selon le code
         let errorMessage = "Erreur lors de la création de la commande.";
         if (response.status === 400) {
           errorMessage = "Données invalides. Vérifiez vos informations.";
@@ -112,30 +173,33 @@ const Checkout = () => {
         throw new Error(errorMessage);
       }
 
-      // 4️⃣ Parser la réponse JSON
       const data = await response.json();
-      console.log("✅ Réponse du backend:", data);
 
-      // 5️⃣ Vérifier que paymentUrl est présent et valide
       if (!data.paymentUrl || typeof data.paymentUrl !== 'string') {
-        console.error("⚠️ paymentUrl manquant ou invalide dans la réponse:", data);
         throw new Error("URL de paiement non reçue du serveur. Réessayez.");
       }
 
-      // 6️⃣ Rediriger vers Stripe Checkout
-      console.log("🔗 Redirection vers Stripe:", data.paymentUrl);
-      
-      // Petit délai pour éviter les clics doubles (optionnel mais recommandé)
       setTimeout(() => {
         window.location.href = data.paymentUrl;
       }, 300);
 
     } catch (err) {
-      console.error("⚠️ Erreur catch:", err.message);
+      console.error("⚠️ Erreur:", err.message);
       setError(err.message || "Une erreur est survenue. Veuillez réessayer.");
       setLoading(false);
     }
   };
+
+  if (geoLoading || !pricing) {
+    return (
+      <div className="min-h-screen pt-20 flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <Loader className="w-12 h-12 animate-spin text-blue-600 mx-auto mb-4" />
+          <p className="text-gray-600">Chargement...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen pt-20 bg-gray-50">
@@ -168,6 +232,83 @@ const Checkout = () => {
               )}
 
               <form onSubmit={handleSubmit} className="space-y-5">
+                {/* Payment Plan Selection */}
+                <div className="mb-6 p-4 bg-blue-50 rounded-lg">
+                  <label className="block text-sm font-medium text-gray-700 mb-3">
+                    Mode de paiement <span className="text-red-500">*</span>
+                  </label>
+                  <div className="space-y-3">
+                    {/* One Shot */}
+                    <label className="flex items-center p-4 border-2 rounded-lg cursor-pointer transition-colors hover:bg-white" 
+                      style={{
+                        borderColor: selectedPlan === PLAN_TYPES.ONE_SHOT ? '#2563eb' : '#e5e7eb',
+                        backgroundColor: selectedPlan === PLAN_TYPES.ONE_SHOT ? 'white' : 'transparent'
+                      }}>
+                      <input
+                        type="radio"
+                        name="paymentPlan"
+                        value={PLAN_TYPES.ONE_SHOT}
+                        checked={selectedPlan === PLAN_TYPES.ONE_SHOT}
+                        onChange={(e) => setSelectedPlan(e.target.value)}
+                        className="w-4 h-4 text-blue-600"
+                      />
+                      <div className="ml-3 flex-1">
+                        <div className="flex justify-between items-center">
+                          <span className="font-semibold text-gray-900">Paiement comptant</span>
+                          <span className="text-lg font-bold text-blue-600">{pricing.display.total}</span>
+                        </div>
+                        <p className="text-sm text-gray-500 mt-1">Paiement en une fois</p>
+                      </div>
+                    </label>
+
+                    {/* 3 Times */}
+                    <label className="flex items-center p-4 border-2 rounded-lg cursor-pointer transition-colors hover:bg-white"
+                      style={{
+                        borderColor: selectedPlan === PLAN_TYPES.THREE_TIMES ? '#2563eb' : '#e5e7eb',
+                        backgroundColor: selectedPlan === PLAN_TYPES.THREE_TIMES ? 'white' : 'transparent'
+                      }}>
+                      <input
+                        type="radio"
+                        name="paymentPlan"
+                        value={PLAN_TYPES.THREE_TIMES}
+                        checked={selectedPlan === PLAN_TYPES.THREE_TIMES}
+                        onChange={(e) => setSelectedPlan(e.target.value)}
+                        className="w-4 h-4 text-blue-600"
+                      />
+                      <div className="ml-3 flex-1">
+                        <div className="flex justify-between items-center">
+                          <span className="font-semibold text-gray-900">Paiement en 3 fois</span>
+                          <span className="text-lg font-bold text-blue-600">{pricing.display.three_times}</span>
+                        </div>
+                        <p className="text-sm text-gray-500 mt-1">3 mensualités automatiques</p>
+                      </div>
+                    </label>
+
+                    {/* 12 Times */}
+                    <label className="flex items-center p-4 border-2 rounded-lg cursor-pointer transition-colors hover:bg-white"
+                      style={{
+                        borderColor: selectedPlan === PLAN_TYPES.TWELVE_TIMES ? '#2563eb' : '#e5e7eb',
+                        backgroundColor: selectedPlan === PLAN_TYPES.TWELVE_TIMES ? 'white' : 'transparent'
+                      }}>
+                      <input
+                        type="radio"
+                        name="paymentPlan"
+                        value={PLAN_TYPES.TWELVE_TIMES}
+                        checked={selectedPlan === PLAN_TYPES.TWELVE_TIMES}
+                        onChange={(e) => setSelectedPlan(e.target.value)}
+                        className="w-4 h-4 text-blue-600"
+                      />
+                      <div className="ml-3 flex-1">
+                        <div className="flex justify-between items-center">
+                          <span className="font-semibold text-gray-900">Paiement sur 12 mois</span>
+                          <span className="text-lg font-bold text-blue-600">{pricing.display.twelve_times}</span>
+                        </div>
+                        <p className="text-sm text-gray-500 mt-1">12 mensualités automatiques</p>
+                      </div>
+                    </label>
+                  </div>
+                </div>
+
                 {/* Full Name */}
                 <div>
                   <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-2">
@@ -273,17 +414,22 @@ const Checkout = () => {
               <div className="space-y-4">
                 <div>
                   <h4 className="text-sm font-medium text-gray-500">Pack</h4>
-                  <p className="text-lg font-bold text-gray-900">{pack.name}</p>
+                  <p className="text-lg font-bold text-gray-900">{PACK_NAMES[packId]}</p>
                 </div>
 
                 <div className="border-t border-gray-200 pt-4">
                   <h4 className="text-sm font-medium text-gray-500 mb-2">Prix</h4>
-                  <p className="text-3xl font-bold text-blue-600">{pack.priceLabel}</p>
+                  <p className="text-3xl font-bold text-blue-600">{getDisplayPrice()}</p>
+                  {selectedPlan !== PLAN_TYPES.ONE_SHOT && (
+                    <p className="text-sm text-gray-500 mt-2">
+                      Total: {pricing.display.total}
+                    </p>
+                  )}
                 </div>
 
                 <div className="border-t border-gray-200 pt-4">
                   <h4 className="text-sm font-medium text-gray-500 mb-2">Description</h4>
-                  <p className="text-xs text-gray-600 leading-relaxed">{pack.note}</p>
+                  <p className="text-xs text-gray-600 leading-relaxed">{PACK_NOTES[packId]}</p>
                 </div>
               </div>
             </div>

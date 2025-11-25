@@ -2,6 +2,7 @@ import React, { Suspense } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import { Toaster } from 'sonner';
+import { GeoProvider } from './context/GeoContext';
 import './i18n/config';
 import './App.css';
 
@@ -65,11 +66,13 @@ function AppLayout() {
 function App() {
   return (
     <HelmetProvider>
-      <Suspense fallback={<Loading />}>
-        <BrowserRouter>
-          <AppLayout />
-        </BrowserRouter>
-      </Suspense>
+      <GeoProvider>
+        <Suspense fallback={<Loading />}>
+          <BrowserRouter>
+            <AppLayout />
+          </BrowserRouter>
+        </Suspense>
+      </GeoProvider>
     </HelmetProvider>
   );
 }

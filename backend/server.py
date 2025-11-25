@@ -18,6 +18,19 @@ import stripe
 from dotenv import load_dotenv
 from fastapi.responses import PlainTextResponse
 
+# Import de la configuration pricing
+from pricing_config import (
+    Zone, PackType, PlanType, 
+    get_zone_from_country, 
+    get_price_for_pack,
+    get_currency_for_zone,
+    get_currency_symbol,
+    to_stripe_amount,
+    calculate_monthly_amount,
+    format_price,
+    PRICING_CONFIG
+)
+
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
@@ -120,11 +133,33 @@ class CheckoutRequest(BaseModel):
     packName: str
     priceLabel: str
     customer: CustomerInfo
+    planType: Optional[str] = "ONE_SHOT"  # "ONE_SHOT", "3X", "12X"
+    zone: Optional[str] = None  # Zone géographique détectée
 
 
 class CheckoutResponse(BaseModel):
     orderId: str
     paymentUrl: Optional[str]
+    message: str
+
+
+class GeoResponse(BaseModel):
+    """Réponse de géolocalisation"""
+    ip: str
+    country_code: str
+    country_name: str
+    zone: str
+
+
+class PricingResponse(BaseModel):
+    """Réponse de pricing pour un pack"""
+    zone: str
+    currency: str
+    currency_symbol: str
+    total_price: int
+    monthly_3x: int
+    monthly_12x: int
+    display: dict
     message: str
 
 # ==================== Helper Functions ====================
@@ -207,6 +242,130 @@ if not STRIPE_SECRET_KEY:
     logger.warning("STRIPE_SECRET_KEY not set in .env — Stripe will not work until configured.")
 stripe.api_key = STRIPE_SECRET_KEY
 
+# Mapping des prix (en centimes) pour les packs - DEPRECATED, utiliser pricing_config.py
+PACK_PRICES_EUR = {
+    "analyse": 300000,       # 3 000.00 EUR
+    "succursales": 1500000,  # 15 000.00 EUR
+    "franchise": 1500000,    # 15 000.00 EUR
+}
+
+# ==================== Geolocation & Pricing Routes ====================
+
+@app.get("/api/geo", response_model=GeoResponse)
+async def get_geo_location(request: Request):
+    """
+    Détecte la zone géographique de l'utilisateur via son IP.
+    Utilise ipapi.co comme service de géolocalisation.
+    """
+    # Récupérer l'IP du client (en tenant compte des proxies/load balancers)
+    client_ip = request.client.host
+    forwarded_for = request.headers.get("X-Forwarded-For")
+    if forwarded_for:
+        client_ip = forwarded_for.split(",")[0].strip()
+    
+    logger.info(f"Geo request from IP: {client_ip}")
+    
+    # Fallback par défaut
+    default_response = GeoResponse(
+        ip=client_ip,
+        country_code="FR",
+        country_name="France",
+        zone=Zone.EU
+    )
+    
+    # Si IP locale, retourner le défaut
+    if client_ip in ["127.0.0.1", "localhost", "::1"]:
+        logger.info("Local IP detected, using EU default")
+        return default_response
+    
+    try:
+        # Appel à ipapi.co
+        async with httpx.AsyncClient(timeout=5.0) as client:
+            response = await client.get(f"https://ipapi.co/{client_ip}/json/")
+            
+            if response.status_code == 200:
+                data = response.json()
+                country_code = data.get("country_code", "FR")
+                country_name = data.get("country_name", "France")
+                
+                # Déterminer la zone
+                zone = get_zone_from_country(country_code)
+                
+                logger.info(f"Geo detected: {country_code} -> {zone}")
+                
+                return GeoResponse(
+                    ip=client_ip,
+                    country_code=country_code,
+                    country_name=country_name,
+                    zone=zone
+                )
+            else:
+                logger.warning(f"ipapi.co returned status {response.status_code}")
+                return default_response
+                
+    except Exception as e:
+        logger.error(f"Error during geolocation: {str(e)}")
+        return default_response
+
+
+@app.get("/api/pricing", response_model=PricingResponse)
+async def get_pricing(packId: str, zone: Optional[str] = None):
+    """
+    Retourne le pricing pour un pack donné dans une zone spécifique.
+    Si zone n'est pas fournie, utilise EU par défaut.
+    """
+    # Validation du pack
+    try:
+        pack_type = PackType(packId)
+    except ValueError:
+        raise HTTPException(
+            status_code=400, 
+            detail=f"Pack invalide. Valeurs acceptées: {', '.join([p.value for p in PackType])}"
+        )
+    
+    # Validation de la zone
+    if zone is None:
+        zone = Zone.EU
+    else:
+        try:
+            zone = Zone(zone)
+        except ValueError:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Zone invalide. Valeurs acceptées: {', '.join([z.value for z in Zone])}"
+            )
+    
+    # Récupérer le prix
+    total_price = get_price_for_pack(zone, pack_type)
+    currency = get_currency_for_zone(zone)
+    currency_symbol = get_currency_symbol(zone)
+    
+    # Calculer les mensualités
+    monthly_3x = calculate_monthly_amount(total_price, 3)
+    monthly_12x = calculate_monthly_amount(total_price, 12)
+    
+    # Format d'affichage
+    display = {
+        "total": format_price(total_price, zone),
+        "three_times": f"3 x {format_price(monthly_3x, zone)}",
+        "twelve_times": f"12 x {format_price(monthly_12x, zone)}"
+    }
+    
+    return PricingResponse(
+        zone=zone,
+        currency=currency,
+        currency_symbol=currency_symbol,
+        total_price=total_price,
+        monthly_3x=monthly_3x,
+        monthly_12x=monthly_12x,
+        display=display
+    )
+
+# ==================== Health Check Route ====================
+if not STRIPE_SECRET_KEY:
+    logger.warning("STRIPE_SECRET_KEY not set in .env — Stripe will not work until configured.")
+stripe.api_key = STRIPE_SECRET_KEY
+
 # Mapping des prix (en centimes) pour les packs
 PACK_PRICES_EUR = {
     "analyse": 300000,       # 3 000.00 EUR
@@ -229,50 +388,126 @@ FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:3000")
 async def create_checkout_session(checkout: CheckoutRequest):
     """
     Crée une session Stripe Checkout et retourne l'URL de paiement.
+    Supporte le paiement en 1 fois, 3 fois ou 12 mois.
     """
-    logger.info(f"Checkout request received for pack: {checkout.packId}")
-    valid_packs = set(PACK_PRICES_EUR.keys())
-    if checkout.packId not in valid_packs:
-        logger.error(f"Invalid pack ID: {checkout.packId}")
-        raise HTTPException(status_code=400, detail=f"Pack invalide. Valeurs acceptées: {', '.join(valid_packs)}")
-
-    # Obtenir montant
-    amount = PACK_PRICES_EUR.get(checkout.packId)
-    if not amount:
-        logger.error("No amount configured for pack")
-        raise HTTPException(status_code=500, detail="Montant du pack non configuré")
-
+    logger.info(f"Checkout request received for pack: {checkout.packId}, plan: {checkout.planType}")
+    
+    # Validation du pack
     try:
-        session = stripe.checkout.Session.create(
-            payment_method_types=["card"],
-            mode="payment",
-            line_items=[{
-                "price_data": {
-                    "currency": "eur",
-                    "product_data": {
-                        "name": checkout.packName,
-                        "description": f"{checkout.packName} - {checkout.priceLabel}"
-                    },
-                    "unit_amount": amount,
-                },
-                "quantity": 1,
-            }],
-            customer_email=checkout.customer.email,
-            metadata={
-                "order_pack_id": checkout.packId,
-                "order_customer_name": checkout.customer.fullName,
-            },
-            success_url=f"{FRONTEND_URL}/packs?payment=success",
-            cancel_url=f"{FRONTEND_URL}/packs?payment=cancel",
+        pack_type = PackType(checkout.packId)
+    except ValueError:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Pack invalide. Valeurs acceptées: {', '.join([p.value for p in PackType])}"
         )
+    
+    # Validation de la zone
+    zone = Zone(checkout.zone) if checkout.zone else Zone.EU
+    
+    # Validation du plan
+    plan_type = PlanType(checkout.planType) if checkout.planType else PlanType.ONE_SHOT
+    
+    # Récupérer le prix total et la devise
+    total_price = get_price_for_pack(zone, pack_type)
+    currency = get_currency_for_zone(zone)
+    
+    # Création de la commande locale
+    order_id = create_order_in_db(checkout)
+    
+    try:
+        if plan_type == PlanType.ONE_SHOT:
+            # Paiement comptant en une fois
+            stripe_amount = to_stripe_amount(total_price, currency)
+            
+            session = stripe.checkout.Session.create(
+                payment_method_types=["card"],
+                mode="payment",
+                line_items=[{
+                    "price_data": {
+                        "currency": currency,
+                        "product_data": {
+                            "name": checkout.packName,
+                            "description": f"{checkout.packName} - Paiement comptant"
+                        },
+                        "unit_amount": stripe_amount,
+                    },
+                    "quantity": 1,
+                }],
+                customer_email=checkout.customer.email,
+                metadata={
+                    "order_id": order_id,
+                    "order_pack_id": checkout.packId,
+                    "order_customer_name": checkout.customer.fullName,
+                    "plan_type": plan_type,
+                    "zone": zone,
+                    "total_price": total_price,
+                },
+                success_url=f"{FRONTEND_URL}/packs?payment=success",
+                cancel_url=f"{FRONTEND_URL}/packs?payment=cancel",
+            )
+            
+        elif plan_type in [PlanType.THREE_TIMES, PlanType.TWELVE_TIMES]:
+            # Paiement échelonné via Subscription
+            installments = 3 if plan_type == PlanType.THREE_TIMES else 12
+            monthly_amount = calculate_monthly_amount(total_price, installments)
+            stripe_monthly_amount = to_stripe_amount(monthly_amount, currency)
+            
+            # Créer un produit et un prix Stripe pour la souscription
+            product = stripe.Product.create(
+                name=f"{checkout.packName} - {installments}x",
+                description=f"Paiement en {installments} mensualités"
+            )
+            
+            price = stripe.Price.create(
+                product=product.id,
+                unit_amount=stripe_monthly_amount,
+                currency=currency,
+                recurring={"interval": "month", "interval_count": 1}
+            )
+            
+            session = stripe.checkout.Session.create(
+                payment_method_types=["card"],
+                mode="subscription",
+                line_items=[{
+                    "price": price.id,
+                    "quantity": 1,
+                }],
+                customer_email=checkout.customer.email,
+                subscription_data={
+                    "metadata": {
+                        "order_id": order_id,
+                        "pack_id": checkout.packId,
+                        "plan_type": plan_type,
+                        "zone": zone,
+                        "total_installments": installments,
+                        "installment_amount": monthly_amount,
+                    },
+                    # Annuler automatiquement après N paiements
+                    "trial_settings": None,
+                },
+                metadata={
+                    "order_id": order_id,
+                    "order_pack_id": checkout.packId,
+                    "order_customer_name": checkout.customer.fullName,
+                    "plan_type": plan_type,
+                    "zone": zone,
+                    "installments": installments,
+                    "monthly_amount": monthly_amount,
+                },
+                success_url=f"{FRONTEND_URL}/packs?payment=success",
+                cancel_url=f"{FRONTEND_URL}/packs?payment=cancel",
+            )
+            
     except stripe.error.StripeError as e:
         logger.error(f"Stripe error creating session: {str(e)}")
         raise HTTPException(status_code=502, detail="Erreur de création de session de paiement")
 
-    # Création de la commande locale / logging (optionnel)
-    order_id = create_order_in_db(checkout)
-
-    return CheckoutResponse(orderId=order_id, paymentUrl=session.url, message="Redirection vers Stripe Checkout")
+    logger.info(f"Stripe session created: {session.id}")
+    return CheckoutResponse(
+        orderId=order_id, 
+        paymentUrl=session.url, 
+        message="Redirection vers Stripe Checkout"
+    )
 
 
 # Webhook Stripe (vérifie signature si STRIPE_WEBHOOK_SECRET présent)

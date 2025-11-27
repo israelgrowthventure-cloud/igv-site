@@ -32,6 +32,17 @@ if (!fs.existsSync(indexPath)) {
 console.log('✅ Build directory found');
 console.log(`📁 Static files served from: ${buildPath}`);
 
+// Health check endpoint avec version
+app.get('/api/health', (req, res) => {
+  res.json({
+    status: 'ok',
+    version: '2.0.0-spa-fix',
+    timestamp: new Date().toISOString(),
+    buildPath: buildPath,
+    indexExists: fs.existsSync(indexPath)
+  });
+});
+
 // Servir les fichiers statiques (CSS, JS, images, etc.)
 app.use(express.static(buildPath));
 

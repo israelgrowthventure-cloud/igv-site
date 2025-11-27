@@ -78,6 +78,7 @@ function AppLayout() {
           {/* Admin routes - Internal management */}
           <Route path="/admin" element={<Admin />} />
           <Route path="/editor" element={<ContentEditor />} />
+          <Route path="/content-editor" element={<ContentEditor />} />
           <Route path="/simple-admin" element={<SimpleAdmin />} />
           
           {/* ========================================

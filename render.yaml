@@ -41,10 +41,12 @@ services:
         value: https://igv-cms-backend.onrender.com
       - key: VITE_BACKEND_URL
         value: https://igv-cms-backend.onrender.com
+      - key: VITE_CMS_BACKEND_URL
+        value: https://igv-cms-backend.onrender.com
       - key: REACT_APP_CMS_API_URL
         value: https://igv-cms-backend.onrender.com/api
       - key: REACT_APP_CALENDAR_EMAIL
         value: israel.growth.venture@gmail.com
       - key: VITE_EDITOR_ACCESS_CODE
-        sync: false
+        value: IGV2025_EDITOR
     healthCheckPath: /

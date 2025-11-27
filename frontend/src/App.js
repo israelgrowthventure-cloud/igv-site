@@ -18,7 +18,7 @@ import Footer from './components/Footer';
  * 1. TECHNICAL/PAYMENT ROUTES (React Components - NOT CMS):
  *    - /checkout/:packId - Stripe payment processing
  *    - /appointment - Calendar booking
- *    - /admin, /editor, /simple-admin - Admin interfaces
+ *    - /editor - Protected drag & drop editor (Emergent Builder)
  * 
  * 2. CONTENT/MARKETING ROUTES (CMS-Driven):
  *    - / (home)
@@ -30,6 +30,7 @@ import Footer from './components/Footer';
  *    - Any future landing/content pages
  * 
  * CMS Backend: https://igv-cms-backend.onrender.com
+ * Editor Access: Protected by VITE_EDITOR_ACCESS_CODE
  */
 
 // CMS-powered universal page loader
@@ -39,10 +40,8 @@ import CmsPage from './pages/CmsPage';
 import Checkout from './pages/Checkout';
 import Appointment from './pages/Appointment';
 
-// Admin pages
-import Admin from './pages/Admin';
-import ContentEditor from './pages/ContentEditor';
-import SimpleAdmin from './pages/SimpleAdmin';
+// NEW: Drag & Drop Editor (Emergent Builder) - Protected
+import Editor from './pages/Editor';
 
 // Loading component
 const Loading = () => (
@@ -57,12 +56,13 @@ const Loading = () => (
 // Wrapper pour layout conditionnel
 function AppLayout() {
   const location = useLocation();
-  const isAdminPage = location.pathname === '/admin' || location.pathname === '/editor' || location.pathname === '/simple-admin' || location.pathname.startsWith('/admin/');
+  // L'éditeur gère son propre layout (pas de header/footer)
+  const isEditorPage = location.pathname === '/editor' || location.pathname === '/content-editor';
 
   return (
     <div className="App">
       <Toaster position="top-right" richColors />
-      {!isAdminPage && <Header />}
+      {!isEditorPage && <Header />}
       <main>
         <Routes>
           {/* ========================================
@@ -75,11 +75,9 @@ function AppLayout() {
           {/* Appointment - Calendar booking */}
           <Route path="/appointment" element={<Appointment />} />
           
-          {/* Admin routes - Internal management */}
-          <Route path="/admin" element={<Admin />} />
-          <Route path="/editor" element={<ContentEditor />} />
-          <Route path="/content-editor" element={<ContentEditor />} />
-          <Route path="/simple-admin" element={<SimpleAdmin />} />
+          {/* NEW: Drag & Drop Editor - Protected by code */}
+          <Route path="/editor" element={<Editor />} />
+          <Route path="/content-editor" element={<Editor />} />
           
           {/* ========================================
               CONTENT/MARKETING ROUTES (CMS-Driven)
@@ -90,7 +88,7 @@ function AppLayout() {
           <Route path="*" element={<CmsPage />} />
         </Routes>
       </main>
-      {!isAdminPage && <Footer />}
+      {!isEditorPage && <Footer />}
     </div>
   );
 }

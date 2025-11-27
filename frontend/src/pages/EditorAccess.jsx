@@ -14,7 +14,7 @@ const EditorAccess = ({ children }) => {
   // Vérifier si déjà authentifié au chargement
   useEffect(() => {
     const savedAuth = localStorage.getItem('editor_auth');
-    const expectedCode = import.meta.env.VITE_EDITOR_ACCESS_CODE;
+    const expectedCode = process.env.REACT_APP_EDITOR_ACCESS_CODE || 'IGV2025_EDITOR';
     
     // Si pas de code configuré, bloquer l'accès
     if (!expectedCode) {
@@ -34,7 +34,7 @@ const EditorAccess = ({ children }) => {
     e.preventDefault();
     setError('');
 
-    const expectedCode = import.meta.env.VITE_EDITOR_ACCESS_CODE;
+    const expectedCode = process.env.REACT_APP_EDITOR_ACCESS_CODE || 'IGV2025_EDITOR';
 
     if (!expectedCode) {
       setError('Éditeur non configuré. Contactez l\'administrateur.');

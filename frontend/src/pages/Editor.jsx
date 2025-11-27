@@ -17,8 +17,7 @@ const Editor = () => {
   useEffect(() => {
     // Vérifier l'authentification
     const authToken = localStorage.getItem('editor_auth');
-    const expectedCode = import.meta.env.VITE_EDITOR_ACCESS_CODE || 
-                         process.env.REACT_APP_EDITOR_ACCESS_CODE ||
+    const expectedCode = process.env.REACT_APP_EDITOR_ACCESS_CODE ||
                          'IGV2025_EDITOR';
     
     if (authToken === expectedCode) {

@@ -40,6 +40,7 @@ import CmsPage from './pages/CmsPage';
 import Checkout from './pages/Checkout';
 import Appointment from './pages/Appointment';
 import FutureCommerce from './pages/FutureCommerce';
+import Contact from './pages/Contact';
 
 // NEW: Drag & Drop Editor (Emergent Builder) - Protected
 import Editor from './pages/Editor';
@@ -78,6 +79,9 @@ function AppLayout() {
           
           {/* Future Commerce - Marketing page */}
           <Route path="/future-commerce" element={<FutureCommerce />} />
+          
+          {/* Contact - Form with backend submission */}
+          <Route path="/contact" element={<Contact />} />
           
           {/* NEW: Drag & Drop Editor - Protected by code */}
           <Route path="/editor" element={<Editor />} />

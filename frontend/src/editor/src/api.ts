@@ -1,12 +1,10 @@
 import axios from 'axios';
 import { Page, User } from './types';
 
-// PRODUCTION: Utilise le backend CMS Render
-// Les variables d'environnement sont définies dans Render Dashboard
 const API_URL = import.meta.env.VITE_CMS_BACKEND_URL || 'https://igv-cms-backend.onrender.com';
 
 const api = axios.create({
-  baseURL: `${API_URL}/api`,
+  baseURL: API_URL,
 });
 
 // Add token to requests

@@ -32,8 +32,9 @@ services:
   - type: web
     name: igv-site
     runtime: node
-    buildCommand: cd frontend && npm install && npm run build
-    startCommand: cd frontend && node server.js
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    startCommand: node server.js
     envVars:
       - key: NODE_VERSION
         value: 18.17.0

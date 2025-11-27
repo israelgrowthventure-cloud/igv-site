@@ -1,0 +1,340 @@
+{
+  "slug": "about",
+  "title": "Qui sommes-nous - Israel Growth Venture",
+  "status": "published",
+  "metadata": {
+    "seo_title": "À propos d'Israel Growth Venture - Expertise en expansion de marques",
+    "seo_description": "Plus de 20 ans d'expérience dans l'accompagnement de marques pour leur expansion en Israël. Découvrez notre équipe et nos valeurs."
+  },
+  "blocks": [
+    {
+      "id": "about-hero",
+      "type": "section",
+      "props": {
+        "background": "gradient-to-br from-blue-50 to-white",
+        "paddingY": "20",
+        "paddingX": "4"
+      },
+      "children": [
+        {
+          "id": "about-hero-title",
+          "type": "heading",
+          "props": {
+            "content": "Qui sommes-nous ?",
+            "level": 1,
+            "textAlign": "center",
+            "marginBottom": "6"
+          },
+          "children": []
+        },
+        {
+          "id": "about-hero-description",
+          "type": "text",
+          "props": {
+            "content": "Nous sommes une entreprise spécialisée dans le conseil en expansion de marques et la recherche active de biens immobiliers commerciaux. Notre équipe de spécialistes en conseil à l'implantation de marques vous conseillera et cherchera les meilleurs emplacements pour développer votre marque en Israël.",
+            "size": "lg",
+            "shade": "600",
+            "textAlign": "center",
+            "className": "max-w-3xl mx-auto leading-relaxed",
+            "marginBottom": "12"
+          },
+          "children": []
+        },
+        {
+          "id": "about-content-grid",
+          "type": "columns",
+          "props": {
+            "columns": 2,
+            "gap": "12",
+            "className": "items-center"
+          },
+          "children": [
+            {
+              "id": "about-text-column",
+              "type": "container",
+              "props": {
+                "className": "space-y-6"
+              },
+              "children": [
+                {
+                  "id": "about-text-1",
+                  "type": "text",
+                  "props": {
+                    "content": "Nous collaborons avec les municipalités et les principaux propriétaires immobiliers pour promouvoir activement et rechercher des clients pour divers projets de développement de zones commerciales.",
+                    "size": "base",
+                    "shade": "600",
+                    "className": "leading-relaxed"
+                  },
+                  "children": []
+                },
+                {
+                  "id": "about-text-2",
+                  "type": "text",
+                  "props": {
+                    "content": "Le marché israélien étant très difficile d'accès, notre équipe peut guider les clients depuis la création d'un business plan jusqu'à la sélection de l'équipe d'employés. Nous offrons un soutien complet pour assurer le succès de votre expansion.",
+                    "size": "base",
+                    "shade": "600",
+                    "className": "leading-relaxed"
+                  },
+                  "children": []
+                },
+                {
+                  "id": "about-text-3",
+                  "type": "text",
+                  "props": {
+                    "content": "Si vous cherchez à établir et développer votre marque ou à étendre votre concept par le biais de franchises ou de succursales, l'équipe Israel Growth Venture est à votre service.",
+                    "size": "base",
+                    "shade": "600",
+                    "className": "leading-relaxed"
+                  },
+                  "children": []
+                }
+              ]
+            },
+            {
+              "id": "about-image-column",
+              "type": "container",
+              "props": {
+                "className": "relative"
+              },
+              "children": [
+                {
+                  "id": "about-main-image",
+                  "type": "image",
+                  "props": {
+                    "src": "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=600&h=400&fit=crop",
+                    "alt": "Team collaboration",
+                    "rounded": true,
+                    "shadow": true,
+                    "className": "w-full"
+                  },
+                  "children": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "values-section",
+      "type": "section",
+      "props": {
+        "background": "white",
+        "paddingY": "20",
+        "paddingX": "4"
+      },
+      "children": [
+        {
+          "id": "values-title",
+          "type": "heading",
+          "props": {
+            "content": "Nos valeurs",
+            "level": 2,
+            "textAlign": "center",
+            "marginBottom": "4"
+          },
+          "children": []
+        },
+        {
+          "id": "values-subtitle",
+          "type": "text",
+          "props": {
+            "content": "Ce qui nous distingue",
+            "size": "lg",
+            "shade": "600",
+            "textAlign": "center",
+            "marginBottom": "12"
+          },
+          "children": []
+        },
+        {
+          "id": "values-grid",
+          "type": "columns",
+          "props": {
+            "columns": 4,
+            "gap": "8"
+          },
+          "children": [
+            {
+              "id": "value-expertise",
+              "type": "pricing",
+              "props": {
+                "title": "Expertise",
+                "description": "Plus de 20 ans d'expérience dans l'immobilier commercial et l'expansion de marques",
+                "className": "text-center p-6 rounded-xl bg-gradient-to-b from-blue-50 to-white hover:shadow-lg transition-shadow"
+              },
+              "children": []
+            },
+            {
+              "id": "value-results",
+              "type": "pricing",
+              "props": {
+                "title": "Résultats",
+                "description": "Approche orientée résultats avec un taux de réussite élevé pour nos clients",
+                "className": "text-center p-6 rounded-xl bg-gradient-to-b from-blue-50 to-white hover:shadow-lg transition-shadow"
+              },
+              "children": []
+            },
+            {
+              "id": "value-support",
+              "type": "pricing",
+              "props": {
+                "title": "Accompagnement",
+                "description": "Support complet de A à Z, de l'analyse initiale au suivi post-ouverture",
+                "className": "text-center p-6 rounded-xl bg-gradient-to-b from-blue-50 to-white hover:shadow-lg transition-shadow"
+              },
+              "children": []
+            },
+            {
+              "id": "value-network",
+              "type": "pricing",
+              "props": {
+                "title": "Réseau",
+                "description": "Réseau étendu de partenaires locaux et connexions avec les autorités",
+                "className": "text-center p-6 rounded-xl bg-gradient-to-b from-blue-50 to-white hover:shadow-lg transition-shadow"
+              },
+              "children": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "team-section",
+      "type": "section",
+      "props": {
+        "background": "gradient-to-b from-white to-blue-50",
+        "paddingY": "20",
+        "paddingX": "4"
+      },
+      "children": [
+        {
+          "id": "team-card",
+          "type": "container",
+          "props": {
+            "className": "max-w-5xl mx-auto bg-white rounded-2xl shadow-xl p-8 md:p-12"
+          },
+          "children": [
+            {
+              "id": "team-grid",
+              "type": "columns",
+              "props": {
+                "columns": 2,
+                "gap": "8",
+                "className": "items-center"
+              },
+              "children": [
+                {
+                  "id": "founder-image",
+                  "type": "image",
+                  "props": {
+                    "src": "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&h=400&fit=crop&crop=faces",
+                    "alt": "Mickael - Founder",
+                    "rounded": true,
+                    "shadow": true,
+                    "className": "w-full"
+                  },
+                  "children": []
+                },
+                {
+                  "id": "founder-bio",
+                  "type": "container",
+                  "props": {},
+                  "children": [
+                    {
+                      "id": "founder-name",
+                      "type": "heading",
+                      "props": {
+                        "content": "Mickael",
+                        "level": 3,
+                        "marginBottom": "4"
+                      },
+                      "children": []
+                    },
+                    {
+                      "id": "founder-title",
+                      "type": "text",
+                      "props": {
+                        "content": "Fondateur & CEO",
+                        "size": "base",
+                        "className": "text-blue-600 font-semibold mb-4"
+                      },
+                      "children": []
+                    },
+                    {
+                      "id": "founder-bio-1",
+                      "type": "text",
+                      "props": {
+                        "content": "Avec plus de 20 ans d'expérience en tant qu'agent immobilier professionnel à Paris et trois nominations comme meilleur agent du réseau Procomm, Mickael a acquis une expertise reconnue dans le domaine.",
+                        "size": "base",
+                        "shade": "600",
+                        "className": "leading-relaxed mb-4"
+                      },
+                      "children": []
+                    },
+                    {
+                      "id": "founder-bio-2",
+                      "type": "text",
+                      "props": {
+                        "content": "Passionné par l'aide aux entreprises à réussir dans ce pays dynamique, il comprend profondément les besoins de ses clients et développe des stratégies personnalisées pour maximiser leur succès.",
+                        "size": "base",
+                        "shade": "600",
+                        "className": "leading-relaxed"
+                      },
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "about-cta-section",
+      "type": "section",
+      "props": {
+        "background": "blue-600",
+        "paddingY": "20",
+        "paddingX": "4",
+        "textAlign": "center"
+      },
+      "children": [
+        {
+          "id": "cta-title",
+          "type": "heading",
+          "props": {
+            "content": "Travaillons ensemble",
+            "level": 2,
+            "className": "text-white",
+            "marginBottom": "6"
+          },
+          "children": []
+        },
+        {
+          "id": "cta-description",
+          "type": "text",
+          "props": {
+            "content": "Contactez-nous pour discuter de votre projet d'expansion en Israël",
+            "size": "lg",
+            "className": "text-blue-100 mb-8"
+          },
+          "children": []
+        },
+        {
+          "id": "cta-button",
+          "type": "button",
+          "props": {
+            "content": "Contact",
+            "to": "/contact",
+            "variant": "secondary",
+            "className": "bg-white text-blue-600 hover:bg-gray-100"
+          },
+          "children": []
+        }
+      ]
+    }
+  ]
+}

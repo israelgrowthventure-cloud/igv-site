@@ -1,0 +1,144 @@
+{
+  "slug": "home",
+  "title": "Homepage - Israel Growth Venture",
+  "status": "published",
+  "metadata": {
+    "seo_title": "Israel Growth Venture - Votre partenaire pour l'expansion en Israël",
+    "seo_description": "Spécialistes en accompagnement de marques pour l'expansion sur le marché israélien. Solutions sur mesure pour implantation, développement et succès."
+  },
+  "blocks": [
+    {
+      "id": "hero-section",
+      "type": "hero",
+      "props": {
+        "title": "Israel Growth Venture",
+        "subtitle": "Votre partenaire stratégique pour une expansion réussie en Israël",
+        "description": "Nous sommes spécialisés dans l'accompagnement des marques pour leur expansion réussie sur le marché israélien. Avec notre expertise et notre réseau, nous proposons des solutions sur mesure pour aider les entreprises à s'implanter, se développer et prospérer dans l'un des marchés les plus dynamiques et innovants du monde.",
+        "image": "https://images.unsplash.com/photo-1552664730-d307ca884978?w=600&h=400&fit=crop",
+        "imageAlt": "Team collaboration",
+        "background": "white",
+        "paddingY": "20"
+      },
+      "children": [
+        {
+          "id": "hero-cta-primary",
+          "type": "button",
+          "props": {
+            "content": "Prendre rendez-vous",
+            "to": "/appointment",
+            "variant": "primary",
+            "icon": "arrow"
+          },
+          "children": []
+        },
+        {
+          "id": "hero-cta-secondary",
+          "type": "button",
+          "props": {
+            "content": "Qui sommes-nous",
+            "to": "/about",
+            "variant": "secondary"
+          },
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "steps-section",
+      "type": "section",
+      "props": {
+        "background": "gray-50",
+        "paddingY": "20",
+        "paddingX": "4"
+      },
+      "children": [
+        {
+          "id": "steps-heading",
+          "type": "heading",
+          "props": {
+            "content": "Comment ça marche ?",
+            "level": 2,
+            "textAlign": "center",
+            "marginBottom": "12"
+          },
+          "children": []
+        },
+        {
+          "id": "steps-grid",
+          "type": "columns",
+          "props": {
+            "columns": 3,
+            "gap": "8"
+          },
+          "children": [
+            {
+              "id": "step-1",
+              "type": "pricing",
+              "props": {
+                "badge": "1",
+                "title": "Planifiez une réunion avec un expert",
+                "description": "Discutez de votre projet d'expansion en Israël avec nos spécialistes.",
+                "className": "bg-white hover:shadow-lg transition-shadow"
+              },
+              "children": []
+            },
+            {
+              "id": "step-2",
+              "type": "pricing",
+              "props": {
+                "badge": "2",
+                "title": "Obtenez une analyse préliminaire gratuite",
+                "description": "Nous évaluons votre potentiel et fournissons un premier aperçu des opportunités.",
+                "className": "bg-white hover:shadow-lg transition-shadow"
+              },
+              "children": []
+            },
+            {
+              "id": "step-3",
+              "type": "pricing",
+              "props": {
+                "badge": "3",
+                "title": "Nous gérons votre expansion",
+                "description": "De la recherche de propriété à l'établissement complet, nous vous soutenons à chaque étape.",
+                "className": "bg-white hover:shadow-lg transition-shadow"
+              },
+              "children": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "packs-cta-section",
+      "type": "section",
+      "props": {
+        "background": "white",
+        "paddingY": "20",
+        "paddingX": "4",
+        "textAlign": "center"
+      },
+      "children": [
+        {
+          "id": "packs-cta-heading",
+          "type": "heading",
+          "props": {
+            "content": "Nos Packs",
+            "level": 2,
+            "marginBottom": "8"
+          },
+          "children": []
+        },
+        {
+          "id": "packs-cta-button",
+          "type": "button",
+          "props": {
+            "content": "Voir tous les packs →",
+            "to": "/packs",
+            "variant": "primary"
+          },
+          "children": []
+        }
+      ]
+    }
+  ]
+}

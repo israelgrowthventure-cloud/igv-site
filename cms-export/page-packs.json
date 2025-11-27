@@ -1,0 +1,241 @@
+{
+  "slug": "packs",
+  "title": "Nos Packs - Israel Growth Venture",
+  "status": "published",
+  "metadata": {
+    "seo_title": "Nos Packs d'Expansion en Israël - IGV",
+    "seo_description": "Solutions adaptées pour votre expansion en Israël : Pack Analyse, Pack Succursales, Pack Franchise. Prix selon votre région."
+  },
+  "blocks": [
+    {
+      "id": "packs-hero",
+      "type": "section",
+      "props": {
+        "background": "gradient-to-br from-blue-50 to-white",
+        "paddingY": "20",
+        "paddingX": "4",
+        "textAlign": "center"
+      },
+      "children": [
+        {
+          "id": "packs-hero-title",
+          "type": "heading",
+          "props": {
+            "content": "Nos Packs",
+            "level": 1,
+            "marginBottom": "6"
+          },
+          "children": []
+        },
+        {
+          "id": "packs-hero-subtitle",
+          "type": "text",
+          "props": {
+            "content": "Solutions adaptées à vos besoins d'expansion",
+            "size": "lg",
+            "shade": "600",
+            "marginBottom": "4"
+          },
+          "children": []
+        },
+        {
+          "id": "packs-hero-region-note",
+          "type": "text",
+          "props": {
+            "content": "Prix selon votre région",
+            "size": "sm",
+            "shade": "500"
+          },
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "packs-grid-section",
+      "type": "section",
+      "props": {
+        "background": "white",
+        "paddingY": "20",
+        "paddingX": "4"
+      },
+      "children": [
+        {
+          "id": "packs-grid",
+          "type": "columns",
+          "props": {
+            "columns": 3,
+            "gap": "8"
+          },
+          "children": [
+            {
+              "id": "pack-analyse",
+              "type": "pricing",
+              "props": {
+                "title": "Pack Analyse",
+                "description": "Analyse complète du marché israélien pour jusqu'à 3 ouvertures de magasins",
+                "price": "À partir de 3 000 €",
+                "features": [
+                  "Étude détaillée du marché israélien dans votre segment",
+                  "Analyse de la concurrence et des zones à fort potentiel",
+                  "Identification des formats et villes prioritaires",
+                  "Scénarios d'implantation (succursales, franchise, master)",
+                  "Recommandations stratégiques et estimation budgétaire"
+                ],
+                "className": "bg-white border-2 border-gray-200 hover:border-blue-600 transition-colors shadow-lg"
+              },
+              "children": [
+                {
+                  "id": "pack-analyse-note",
+                  "type": "text",
+                  "props": {
+                    "content": "Diagnostic complet du potentiel de votre marque en Israël. Ce pack ne comprend pas la recherche ni l'ouverture de points de vente.",
+                    "size": "xs",
+                    "shade": "500",
+                    "className": "italic mb-6"
+                  },
+                  "children": []
+                },
+                {
+                  "id": "pack-analyse-button",
+                  "type": "button",
+                  "props": {
+                    "content": "Commander ce pack",
+                    "to": "/checkout/analyse",
+                    "variant": "primary",
+                    "className": "w-full"
+                  },
+                  "children": []
+                }
+              ]
+            },
+            {
+              "id": "pack-succursales",
+              "type": "pricing",
+              "props": {
+                "badge": "POPULAIRE",
+                "title": "Pack Succursales",
+                "description": "Solution complète pour l'ouverture de succursales en Israël",
+                "price": "À partir de 15 000 €",
+                "features": [
+                  "Analyse de marché incluse (sur la base du Pack Analyse)",
+                  "Recherche et qualification de locaux commerciaux ciblés",
+                  "Négociation avec les propriétaires / centres commerciaux",
+                  "Accompagnement jusqu'à l'ouverture opérationnelle",
+                  "Revue de performance 3 mois après ouverture (ajustements, recommandations)"
+                ],
+                "className": "bg-gradient-to-br from-blue-600 to-blue-700 text-white shadow-2xl transform scale-105"
+              },
+              "children": [
+                {
+                  "id": "pack-succursales-note",
+                  "type": "text",
+                  "props": {
+                    "content": "Solution clé en main pour l'ouverture de succursales en Israël. Pack conçu pour vos 3 premières succursales. Au-delà, accompagnement sur devis.",
+                    "size": "xs",
+                    "className": "italic mb-6 text-blue-100"
+                  },
+                  "children": []
+                },
+                {
+                  "id": "pack-succursales-button",
+                  "type": "button",
+                  "props": {
+                    "content": "Commander ce pack",
+                    "to": "/checkout/succursales",
+                    "variant": "secondary",
+                    "className": "w-full bg-white text-blue-600 hover:bg-gray-100"
+                  },
+                  "children": []
+                }
+              ]
+            },
+            {
+              "id": "pack-franchise",
+              "type": "pricing",
+              "props": {
+                "title": "Pack Franchise",
+                "description": "Développement complet de votre réseau de franchise",
+                "price": "À partir de 15 000 €",
+                "features": [
+                  "Analyse de la franchise et adaptation au marché israélien",
+                  "Structuration du dossier franchise (offre, modèle économique, profil franchisé)",
+                  "Préconisations juridiques pour contrat de franchise (avec vos avocats)",
+                  "Recherche et sélection de master franchisé / franchisés",
+                  "Accompagnement jusqu'à la signature des premiers contrats"
+                ],
+                "className": "bg-white border-2 border-gray-200 hover:border-blue-600 transition-colors shadow-lg"
+              },
+              "children": [
+                {
+                  "id": "pack-franchise-note",
+                  "type": "text",
+                  "props": {
+                    "content": "Développement complet de votre réseau de franchise en Israël. Pack dédié au lancement de votre réseau. Déploiement élargi sur devis.",
+                    "size": "xs",
+                    "shade": "500",
+                    "className": "italic mb-6"
+                  },
+                  "children": []
+                },
+                {
+                  "id": "pack-franchise-button",
+                  "type": "button",
+                  "props": {
+                    "content": "Commander ce pack",
+                    "to": "/checkout/franchise",
+                    "variant": "primary",
+                    "className": "w-full"
+                  },
+                  "children": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "custom-pack-section",
+      "type": "section",
+      "props": {
+        "background": "gray-50",
+        "paddingY": "16",
+        "paddingX": "4",
+        "textAlign": "center"
+      },
+      "children": [
+        {
+          "id": "custom-pack-title",
+          "type": "heading",
+          "props": {
+            "content": "Besoin d'un pack personnalisé ?",
+            "level": 2,
+            "marginBottom": "4"
+          },
+          "children": []
+        },
+        {
+          "id": "custom-pack-description",
+          "type": "text",
+          "props": {
+            "content": "Chaque projet est unique. Contactez-nous pour discuter d'une solution sur mesure adaptée à vos besoins spécifiques.",
+            "size": "base",
+            "shade": "600",
+            "marginBottom": "6"
+          },
+          "children": []
+        },
+        {
+          "id": "custom-pack-button",
+          "type": "button",
+          "props": {
+            "content": "Nous contacter",
+            "href": "mailto:israel.growth.venture@gmail.com",
+            "variant": "primary"
+          },
+          "children": []
+        }
+      ]
+    }
+  ]
+}

@@ -31,6 +31,9 @@ from pricing_config import (
     PRICING_CONFIG
 )
 
+# Import des routes CMS
+from cms_routes import cms_router
+
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
@@ -798,6 +801,9 @@ async def save_content(content: dict, request: Request):
 # Les routes du api_router seront préfixées par /api
 # Donc @api_router.post("/contact") devient POST /api/contact
 app.include_router(api_router)
+
+# Include CMS router
+app.include_router(cms_router)
 
 # ==================== Lifecycle Events ====================
 @app.on_event("shutdown")

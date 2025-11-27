@@ -32,15 +32,13 @@ if (!fs.existsSync(indexPath)) {
 console.log('✅ Build directory found');
 console.log(`📁 Static files served from: ${buildPath}`);
 
-app.use(express.static(buildPath, { 
-  fallthrough: true, // Continue to next handler if file not found
-  index: false // Don't auto-serve index.html from static middleware
-}));
+// Servir les fichiers statiques (CSS, JS, images, etc.)
+app.use(express.static(buildPath));
 
-// Pour toutes les routes, servir index.html (SPA React Router gère tout)
+// Pour toutes les routes NON-statiques, servir index.html (SPA React Router gère tout)
 app.get('*', (req, res) => {
   console.log(`Serving index.html for route: ${req.url}`);
-  res.sendFile(indexPath, (err) => {
+  res.status(200).sendFile(indexPath, (err) => {
     if (err) {
       console.error(`❌ Error serving index.html for ${req.url}:`, err);
       res.status(500).send('Internal Server Error');

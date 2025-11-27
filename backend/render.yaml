@@ -1,0 +1,35 @@
+services:
+  - type: web
+    name: igv-cms-backend
+    env: python
+    region: frankfurt
+    buildCommand: pip install --upgrade pip && pip install -r requirements.txt
+    startCommand: uvicorn server:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: PORT
+        value: 10000
+      - key: MONGO_URL
+        sync: false
+      - key: DB_NAME
+        value: igv_cms_db
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      - key: SMTP_HOST
+        value: smtp.gmail.com
+      - key: SMTP_PORT
+        value: 587
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASSWORD
+        sync: false
+      - key: CONTACT_EMAIL
+        value: israel.growth.venture@gmail.com
+      - key: FRONTEND_URL
+        value: https://israelgrowthventure.com
+      - key: CALENDAR_EMAIL
+        value: israel.growth.venture@gmail.com

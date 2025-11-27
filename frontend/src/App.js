@@ -39,6 +39,7 @@ import CmsPage from './pages/CmsPage';
 // Technical/functional pages (React components with business logic)
 import Checkout from './pages/Checkout';
 import Appointment from './pages/Appointment';
+import FutureCommerce from './pages/FutureCommerce';
 
 // NEW: Drag & Drop Editor (Emergent Builder) - Protected
 import Editor from './pages/Editor';
@@ -74,6 +75,9 @@ function AppLayout() {
           
           {/* Appointment - Calendar booking */}
           <Route path="/appointment" element={<Appointment />} />
+          
+          {/* Future Commerce - Marketing page */}
+          <Route path="/future-commerce" element={<FutureCommerce />} />
           
           {/* NEW: Drag & Drop Editor - Protected by code */}
           <Route path="/editor" element={<Editor />} />

@@ -43,9 +43,24 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Servir les fichiers statiques (CSS, JS, images, etc.)
-// IMPORTANT: setHeaders pour forcer les bons MIME types
+// Servir les fichiers statiques avec options strictes
+app.use('/static', express.static(path.join(buildPath, 'static'), {
+  setHeaders: (res, filepath) => {
+    if (filepath.endsWith('.js')) {
+      res.setHeader('Content-Type', 'application/javascript; charset=UTF-8');
+    } else if (filepath.endsWith('.css')) {
+      res.setHeader('Content-Type', 'text/css; charset=UTF-8');
+    } else if (filepath.endsWith('.png')) {
+      res.setHeader('Content-Type', 'image/png');
+    } else if (filepath.endsWith('.jpg') || filepath.endsWith('.jpeg')) {
+      res.setHeader('Content-Type', 'image/jpeg');
+    }
+  }
+}));
+
+// Servir les autres fichiers statiques à la racine (favicon, robots.txt, etc.)
 app.use(express.static(buildPath, {
+  index: false, // Ne pas servir index.html automatiquement
   setHeaders: (res, filepath) => {
     if (filepath.endsWith('.js')) {
       res.setHeader('Content-Type', 'application/javascript; charset=UTF-8');

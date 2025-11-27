@@ -11,46 +11,29 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 
 /**
- * CRITICAL ARCHITECTURE: HYBRID ROUTING
- * ======================================
- * This application uses a hybrid routing approach:
+ * CRITICAL ARCHITECTURE: STANDARD ROUTING (CMS DISABLED TEMPORARILY)
+ * ==================================================================
+ * Using standard React routing until CMS backend is deployed on Render.
  * 
- * 1. TECHNICAL/PAYMENT ROUTES (React Components - NOT CMS):
- *    - /checkout/:packId - Stripe payment processing
- *    - /appointment - Calendar booking
- *    - /admin, /editor, /simple-admin - Admin interfaces
- *    These routes preserve their original React components with full business logic,
- *    forms, API calls, and state management.
+ * ROUTES:
+ * - All pages use React components
+ * - CMS will be enabled once backend is live at igv-backend.onrender.com
  * 
- * 2. CONTENT/MARKETING ROUTES (CMS-Driven):
- *    - / (home)
- *    - /packs
- *    - /about
- *    - /contact
- *    - /terms
- *    - Any future landing/content pages
- *    These routes are handled by CmsPage which fetches content from the CMS API.
- * 
- * WHY THIS APPROACH:
- * - Technical pages require complex logic (payment, validation, API calls)
- * - Content pages benefit from visual editing without deployments
- * - Best of both worlds: code control for logic, CMS control for content
- * 
- * TO CHANGE CONTENT PAGES:
- * 1. Go to CMS admin interface
- * 2. Edit pages visually
- * 3. Publish - changes are immediate
- * 
- * TO ADD NEW CONTENT PAGES:
- * - Create page in CMS with desired slug
- * - Automatically accessible at /{slug}
- * - No code changes needed
+ * TO ENABLE CMS AFTER BACKEND DEPLOYMENT:
+ * 1. Deploy backend to Render (igv-backend service)
+ * 2. Test: https://igv-backend.onrender.com/api/health
+ * 3. Uncomment CmsPage routing below
+ * 4. Comment out React component routes
  */
 
-// CMS-powered universal page loader (for content pages only)
-import CmsPage from './pages/CmsPage';
+// Page Components
+import Home from './pages/Home';
+import Packs from './pages/Packs';
+import About from './pages/About';
+import Contact from './pages/Contact';
+import Terms from './pages/Terms';
 
-// Technical/functional pages (React components with business logic)
+// Technical/functional pages
 import Checkout from './pages/Checkout';
 import Appointment from './pages/Appointment';
 
@@ -58,6 +41,9 @@ import Appointment from './pages/Appointment';
 import Admin from './pages/Admin';
 import ContentEditor from './pages/ContentEditor';
 import SimpleAdmin from './pages/SimpleAdmin';
+
+// CMS Page (temporarily disabled until backend is deployed)
+// import CmsPage from './pages/CmsPage';
 
 // Loading component
 const Loading = () => (
@@ -81,27 +67,37 @@ function AppLayout() {
       <main>
         <Routes>
           {/* ========================================
-              TECHNICAL/PAYMENT ROUTES (React Components)
+              CONTENT PAGES (React Components)
               ======================================== */}
           
-          {/* Checkout - Stripe payment processing */}
-          <Route path="/checkout/:packId" element={<Checkout />} />
+          <Route path="/" element={<Home />} />
+          <Route path="/packs" element={<Packs />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/terms" element={<Terms />} />
           
-          {/* Appointment - Calendar booking */}
+          {/* ========================================
+              TECHNICAL/PAYMENT ROUTES
+              ======================================== */}
+          
+          <Route path="/checkout/:packId" element={<Checkout />} />
           <Route path="/appointment" element={<Appointment />} />
           
-          {/* Admin routes - Internal management */}
+          {/* ========================================
+              ADMIN ROUTES
+              ======================================== */}
+          
           <Route path="/admin" element={<Admin />} />
           <Route path="/editor" element={<ContentEditor />} />
           <Route path="/simple-admin" element={<SimpleAdmin />} />
           
           {/* ========================================
-              CONTENT/MARKETING ROUTES (CMS-Driven)
+              CMS ROUTING (DISABLED UNTIL BACKEND IS DEPLOYED)
               ======================================== */}
           
-          {/* Catch-all route for CMS pages */}
-          {/* This handles: /, /packs, /about, /contact, /terms, and any future content pages */}
+          {/* Uncomment after deploying CMS backend:
           <Route path="*" element={<CmsPage />} />
+          */}
         </Routes>
       </main>
       {!isAdminPage && <Footer />}

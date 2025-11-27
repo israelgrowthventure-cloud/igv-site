@@ -1,6 +1,2 @@
 /* Redirect all routes to index.html for React Router */
-/*
-  path: "/admin"
-  status: 200
-  force: false
-*/
+/*    /index.html   200

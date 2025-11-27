@@ -11,35 +11,50 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 
 /**
- * CRITICAL ARCHITECTURE CHANGE:
- * ==============================
- * This application is now 100% controlled by the visual CMS.
+ * CRITICAL ARCHITECTURE: HYBRID ROUTING
+ * ======================================
+ * This application uses a hybrid routing approach:
  * 
- * ALL pages (home, packs, about, contact, etc) are now dynamic and come from the CMS.
- * The only exception is the /admin route which is kept for administrative purposes.
+ * 1. TECHNICAL/PAYMENT ROUTES (React Components - NOT CMS):
+ *    - /checkout/:packId - Stripe payment processing
+ *    - /appointment - Calendar booking
+ *    - /admin, /editor, /simple-admin - Admin interfaces
+ *    These routes preserve their original React components with full business logic,
+ *    forms, API calls, and state management.
  * 
- * HOW IT WORKS:
- * - Every route (/, /packs, /about, etc) goes through <CmsPage />
- * - CmsPage fetches content from the CMS API based on the URL slug
- * - The CMS returns blocks (heading, text, image, button, etc)
- * - CmsPageRenderer renders these blocks into React components
+ * 2. CONTENT/MARKETING ROUTES (CMS-Driven):
+ *    - / (home)
+ *    - /packs
+ *    - /about
+ *    - /contact
+ *    - /terms
+ *    - Any future landing/content pages
+ *    These routes are handled by CmsPage which fetches content from the CMS API.
  * 
- * TO CHANGE ANY PAGE:
- * 1. Go to the CMS admin interface (separate application)
- * 2. Edit or create pages with the visual editor
- * 3. Publish changes
- * 4. Pages are immediately live - NO CODE DEPLOYMENT NEEDED
+ * WHY THIS APPROACH:
+ * - Technical pages require complex logic (payment, validation, API calls)
+ * - Content pages benefit from visual editing without deployments
+ * - Best of both worlds: code control for logic, CMS control for content
  * 
- * TO ADD NEW PAGES:
- * - Simply create a new page in the CMS with the desired slug
- * - It will be automatically accessible at /{slug}
- * - NO changes to this routing file required
+ * TO CHANGE CONTENT PAGES:
+ * 1. Go to CMS admin interface
+ * 2. Edit pages visually
+ * 3. Publish - changes are immediate
+ * 
+ * TO ADD NEW CONTENT PAGES:
+ * - Create page in CMS with desired slug
+ * - Automatically accessible at /{slug}
+ * - No code changes needed
  */
 
-// CMS-powered universal page loader
+// CMS-powered universal page loader (for content pages only)
 import CmsPage from './pages/CmsPage';
 
-// Keep admin pages for internal management
+// Technical/functional pages (React components with business logic)
+import Checkout from './pages/Checkout';
+import Appointment from './pages/Appointment';
+
+// Admin pages
 import Admin from './pages/Admin';
 import ContentEditor from './pages/ContentEditor';
 import SimpleAdmin from './pages/SimpleAdmin';
@@ -65,13 +80,27 @@ function AppLayout() {
       {!isAdminPage && <Header />}
       <main>
         <Routes>
-          {/* Admin routes - kept separate from CMS */}
+          {/* ========================================
+              TECHNICAL/PAYMENT ROUTES (React Components)
+              ======================================== */}
+          
+          {/* Checkout - Stripe payment processing */}
+          <Route path="/checkout/:packId" element={<Checkout />} />
+          
+          {/* Appointment - Calendar booking */}
+          <Route path="/appointment" element={<Appointment />} />
+          
+          {/* Admin routes - Internal management */}
           <Route path="/admin" element={<Admin />} />
           <Route path="/editor" element={<ContentEditor />} />
           <Route path="/simple-admin" element={<SimpleAdmin />} />
           
-          {/* ALL OTHER ROUTES: Powered by CMS */}
-          {/* This includes: /, /packs, /about, /contact, /terms, and ANY future pages */}
+          {/* ========================================
+              CONTENT/MARKETING ROUTES (CMS-Driven)
+              ======================================== */}
+          
+          {/* Catch-all route for CMS pages */}
+          {/* This handles: /, /packs, /about, /contact, /terms, and any future content pages */}
           <Route path="*" element={<CmsPage />} />
         </Routes>
       </main>

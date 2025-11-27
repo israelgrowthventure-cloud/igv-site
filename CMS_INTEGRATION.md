@@ -2,25 +2,44 @@
 
 ## 🎯 CRITICAL ARCHITECTURE CHANGE
 
-**This website is now 100% controlled by a visual CMS.**
+**This website uses a HYBRID architecture:**
 
-ALL pages (homepage, packs, about, contact, etc.) are now dynamic and come from the CMS backend.  
-The only exception is `/admin` routes which remain for administrative purposes.
+### CMS-Controlled Pages (Content/Marketing)
+- Homepage (`/`)
+- Packs (`/packs`)
+- About (`/about`)
+- Contact (`/contact`)
+- Terms (`/terms`)
+- Any future landing/content pages
+
+These pages are 100% controlled by the CMS. To change content, edit in the CMS admin interface - no code deployment needed.
+
+### React-Controlled Pages (Technical/Payment)
+- Checkout (`/checkout/:packId`) - Stripe payment processing
+- Appointment (`/appointment`) - Calendar booking
+- Admin routes (`/admin`, `/editor`, `/simple-admin`)
+
+These pages remain as React components with full business logic, forms, API calls, and state management. They are NOT controlled by the CMS.
 
 ---
 
 ## 📋 What Changed
 
 ### Before (Hardcoded Pages)
-- Every page was a React component with hardcoded HTML/JSX
+- Every content page was a React component with hardcoded HTML/JSX
 - To change content, you had to edit code and redeploy
 - Designers couldn't change layouts without developer help
+- Payment/technical pages had complex logic mixed with presentation
 
-### After (CMS-Controlled)
-- Every page is a collection of "blocks" defined in the CMS
+### After (Hybrid CMS + React)
+- **Content pages** are collections of "blocks" defined in the CMS
+- **Technical pages** remain as React components with full logic
 - To change content, edit in the CMS admin interface (no code deployment)
-- Designers have full control over layout, content, and styling
-- New pages can be added without touching code
+- To change payment logic, edit React components (requires deployment)
+- Designers have full control over content pages
+- Developers maintain control over technical functionality
+- New content pages can be added without touching code
+- Payment/checkout flows remain secure and testable
 
 ---
 

@@ -11,7 +11,10 @@ app.use((req, res, next) => {
 // Servir les fichiers statiques du build
 const buildPath = path.join(__dirname, 'build');
 console.log(`Static files served from: ${buildPath}`);
-app.use(express.static(buildPath));
+app.use(express.static(buildPath, { 
+  fallthrough: true, // Continue to next handler if file not found
+  index: false // Don't auto-serve index.html from static middleware
+}));
 
 // Pour toutes les routes, servir index.html (SPA React Router gère tout)
 app.get('*', (req, res) => {

@@ -11,29 +11,31 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 
 /**
- * CRITICAL ARCHITECTURE: STANDARD ROUTING (CMS DISABLED TEMPORARILY)
- * ==================================================================
- * Using standard React routing until CMS backend is deployed on Render.
+ * CRITICAL ARCHITECTURE: HYBRID ROUTING WITH CMS ENABLED
+ * =======================================================
+ * This application uses a hybrid routing approach with CMS fully activated:
  * 
- * ROUTES:
- * - All pages use React components
- * - CMS will be enabled once backend is live at igv-backend.onrender.com
+ * 1. TECHNICAL/PAYMENT ROUTES (React Components - NOT CMS):
+ *    - /checkout/:packId - Stripe payment processing
+ *    - /appointment - Calendar booking
+ *    - /admin, /editor, /simple-admin - Admin interfaces
  * 
- * TO ENABLE CMS AFTER BACKEND DEPLOYMENT:
- * 1. Deploy backend to Render (igv-backend service)
- * 2. Test: https://igv-backend.onrender.com/api/health
- * 3. Uncomment CmsPage routing below
- * 4. Comment out React component routes
+ * 2. CONTENT/MARKETING ROUTES (CMS-Driven):
+ *    - / (home)
+ *    - /packs
+ *    - /about
+ *    - /contact
+ *    - /future-commerce
+ *    - /terms
+ *    - Any future landing/content pages
+ * 
+ * CMS Backend: https://igv-cms-backend.onrender.com
  */
 
-// Page Components
-import Home from './pages/Home';
-import Packs from './pages/Packs';
-import About from './pages/About';
-import Contact from './pages/Contact';
-import Terms from './pages/Terms';
+// CMS-powered universal page loader
+import CmsPage from './pages/CmsPage';
 
-// Technical/functional pages
+// Technical/functional pages (React components with business logic)
 import Checkout from './pages/Checkout';
 import Appointment from './pages/Appointment';
 
@@ -41,9 +43,6 @@ import Appointment from './pages/Appointment';
 import Admin from './pages/Admin';
 import ContentEditor from './pages/ContentEditor';
 import SimpleAdmin from './pages/SimpleAdmin';
-
-// CMS Page (temporarily disabled until backend is deployed)
-// import CmsPage from './pages/CmsPage';
 
 // Loading component
 const Loading = () => (
@@ -67,37 +66,27 @@ function AppLayout() {
       <main>
         <Routes>
           {/* ========================================
-              CONTENT PAGES (React Components)
+              TECHNICAL/PAYMENT ROUTES (React Components)
               ======================================== */}
           
-          <Route path="/" element={<Home />} />
-          <Route path="/packs" element={<Packs />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/terms" element={<Terms />} />
-          
-          {/* ========================================
-              TECHNICAL/PAYMENT ROUTES
-              ======================================== */}
-          
+          {/* Checkout - Stripe payment processing */}
           <Route path="/checkout/:packId" element={<Checkout />} />
+          
+          {/* Appointment - Calendar booking */}
           <Route path="/appointment" element={<Appointment />} />
           
-          {/* ========================================
-              ADMIN ROUTES
-              ======================================== */}
-          
+          {/* Admin routes - Internal management */}
           <Route path="/admin" element={<Admin />} />
           <Route path="/editor" element={<ContentEditor />} />
           <Route path="/simple-admin" element={<SimpleAdmin />} />
           
           {/* ========================================
-              CMS ROUTING (DISABLED UNTIL BACKEND IS DEPLOYED)
+              CONTENT/MARKETING ROUTES (CMS-Driven)
               ======================================== */}
           
-          {/* Uncomment after deploying CMS backend:
+          {/* Catch-all route for CMS pages */}
+          {/* Handles: /, /packs, /about, /contact, /future-commerce, /terms, etc. */}
           <Route path="*" element={<CmsPage />} />
-          */}
         </Routes>
       </main>
       {!isAdminPage && <Footer />}

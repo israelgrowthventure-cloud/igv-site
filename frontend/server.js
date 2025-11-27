@@ -44,11 +44,23 @@ app.get('/api/health', (req, res) => {
 });
 
 // Servir les fichiers statiques (CSS, JS, images, etc.)
-app.use(express.static(buildPath));
+// IMPORTANT: setHeaders pour forcer les bons MIME types
+app.use(express.static(buildPath, {
+  setHeaders: (res, filepath) => {
+    if (filepath.endsWith('.js')) {
+      res.setHeader('Content-Type', 'application/javascript; charset=UTF-8');
+    } else if (filepath.endsWith('.css')) {
+      res.setHeader('Content-Type', 'text/css; charset=UTF-8');
+    }
+  }
+}));
 
 // Pour toutes les routes NON-statiques, servir index.html (SPA React Router gère tout)
 app.get('*', (req, res) => {
-  console.log(`Serving index.html for route: ${req.url}`);
+  // Ne pas logger les fichiers statiques
+  if (!req.url.startsWith('/static/')) {
+    console.log(`Serving index.html for route: ${req.url}`);
+  }
   res.status(200).sendFile(indexPath, (err) => {
     if (err) {
       console.error(`❌ Error serving index.html for ${req.url}:`, err);

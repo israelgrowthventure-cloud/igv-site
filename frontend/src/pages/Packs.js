@@ -31,44 +31,47 @@ const Packs = () => {
   useEffect(() => {
     const fetchAllPricing = async () => {
       if (!zone || geoLoading) return;
-      
+
       try {
-        const packs = ['analyse', 'succursales', 'franchise'];
-        const pricingPromises = packs.map(packId =>
-          fetch(`${API_BASE_URL}/api/pricing?packId=${packId}&zone=${zone}`)
-            .then(res => res.json())
-            .then(data => ({ [packId]: data }))
-        );
+        // Récupérer tous les packs et règles de pricing
+        const [packsRes, pricingRes] = await Promise.all([
+          fetch(`${API_BASE_URL}/api/packs`),
+          fetch(`${API_BASE_URL}/api/pricing-rules`)
+        ]);
+
+        const packs = await packsRes.json();
+        const pricingRules = await pricingRes.json();
+
+        // Trouver la règle de pricing pour la zone
+        const rule = pricingRules.find(r => r.zone === zone) || pricingRules.find(r => r.zone === 'IL');
         
-        const results = await Promise.all(pricingPromises);
-        const pricingData = results.reduce((acc, curr) => ({ ...acc, ...curr }), {});
+        // Calculer les prix pour chaque pack
+        const pricingData = {};
+        packs.forEach(pack => {
+          const basePrice = pack.base_price;
+          const adjustedPrice = Math.round(basePrice * rule.multiplier);
+          
+          pricingData[pack.slug] = {
+            zone: rule.zone,
+            display: {
+              total: `${adjustedPrice.toLocaleString()} ${rule.currency}`,
+              three_times: `3 x ${Math.round(adjustedPrice / 3).toLocaleString()} ${rule.currency}`,
+              twelve_times: `12 x ${Math.round(adjustedPrice / 12).toLocaleString()} ${rule.currency}`
+            }
+          };
+        });
+
         setPacksPricing(pricingData);
         setLoading(false);
       } catch (error) {
         console.error('Error fetching pricing:', error);
-        // Fallback vers prix Israël en cas d'erreur
-        setPacksPricing({
-          analyse: {
-            zone: 'IL',
-            display: { total: '7 000 ₪', three_times: '3 x 2 334 ₪', twelve_times: '12 x 584 ₪' }
-          },
-          succursales: {
-            zone: 'IL',
-            display: { total: '55 000 ₪', three_times: '3 x 18 334 ₪', twelve_times: '12 x 4 584 ₪' }
-          },
-          franchise: {
-            zone: 'IL',
-            display: { total: '55 000 ₪', three_times: '3 x 18 334 ₪', twelve_times: '12 x 4 584 ₪' }
-          }
-        });
+        toast.error(t('errors.loading_packs'));
         setLoading(false);
       }
     };
 
     fetchAllPricing();
-  }, [zone, geoLoading]);
-
-  // Configuration des packs
+  }, [zone, geoLoading, t]);  // Configuration des packs
   const packsConfig = [
     {
       id: 'analyse',

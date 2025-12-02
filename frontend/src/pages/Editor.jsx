@@ -2,40 +2,82 @@ import React, { useEffect, useState } from 'react';
 import EditorAccess from './EditorAccess';
 
 /**
- * Page principale de l'éditeur drag & drop Emergent
- * Charge le CMS Emergent complet après authentification par code
- * 
- * Le CMS Emergent est accessible uniquement après authentification par code
- * Variables d'environnement requises :
- * - VITE_EDITOR_ACCESS_CODE ou REACT_APP_EDITOR_ACCESS_CODE : Code de protection
- * - VITE_CMS_BACKEND_URL ou REACT_APP_CMS_API_URL : URL du backend CMS
+ * Éditeur CMS Simple - Édition directe du contenu JSON
+ * Accessible après authentification par code
+ * Sauvegarde dans localStorage avec export JSON
  */
 const Editor = () => {
   const [authenticated, setAuthenticated] = useState(false);
-  const [builderLoaded, setBuilderLoaded] = useState(false);
+  const [content, setContent] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [saved, setSaved] = useState(false);
+  const [activeSection, setActiveSection] = useState('home');
 
   useEffect(() => {
     // Vérifier l'authentification
     const authToken = localStorage.getItem('editor_auth');
-    const expectedCode = process.env.REACT_APP_EDITOR_ACCESS_CODE ||
-                         'IGV2025_EDITOR';
+    const expectedCode = process.env.REACT_APP_EDITOR_ACCESS_CODE || 'IGV2025_EDITOR';
     
     if (authToken === expectedCode) {
       setAuthenticated(true);
-      // Charger le builder dans un iframe
-      loadBuilder();
+      loadContent();
     }
   }, []);
 
-  const loadBuilder = () => {
+  const loadContent = async () => {
     try {
-      // Le builder Emergent est dans src/editor et utilise Vite
-      // Pour l'instant, nous affichons une interface de transition
-      // car le builder nécessite son propre serveur de dev Vite
-      setBuilderLoaded(true);
+      // Charger depuis localStorage d'abord (version modifiée)
+      const savedContent = localStorage.getItem('cms_content');
+      if (savedContent) {
+        setContent(JSON.parse(savedContent));
+      } else {
+        // Sinon charger le fichier public
+        const response = await fetch('/content-editable.json');
+        const data = await response.json();
+        setContent(data);
+      }
+      setLoading(false);
     } catch (error) {
-      console.error('Erreur chargement builder:', error);
+      console.error('Erreur chargement contenu:', error);
+      setLoading(false);
     }
+  };
+
+  const handleSave = () => {
+    localStorage.setItem('cms_content', JSON.stringify(content, null, 2));
+    setSaved(true);
+    setTimeout(() => setSaved(false), 3000);
+  };
+
+  const handleExport = () => {
+    const dataStr = JSON.stringify(content, null, 2);
+    const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+    const exportFileDefaultName = 'content-editable.json';
+    
+    const linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
+    linkElement.click();
+  };
+
+  const handleReset = () => {
+    if (window.confirm('Réinitialiser aux valeurs par défaut ? Toutes les modifications seront perdues.')) {
+      localStorage.removeItem('cms_content');
+      window.location.reload();
+    }
+  };
+
+  const updateField = (path, value) => {
+    const newContent = { ...content };
+    const keys = path.split('.');
+    let current = newContent;
+    
+    for (let i = 0; i < keys.length - 1; i++) {
+      current = current[keys[i]];
+    }
+    
+    current[keys[keys.length - 1]] = value;
+    setContent(newContent);
   };
 
   if (!authenticated) {
@@ -46,145 +88,323 @@ const Editor = () => {
     );
   }
 
-  // Interface de connexion au CMS backend
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+        <div className="text-white text-xl">Chargement du CMS...</div>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+        <div className="text-white text-xl">Chargement du CMS...</div>
+      </div>
+    );
+  }
+
+  // Interface d'édition du contenu
   return (
     <EditorAccess>
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center p-8">
-        <div className="max-w-4xl w-full">
-          {/* Header avec logo */}
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-blue-600 rounded-full mb-6">
-              <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-              </svg>
-            </div>
-            <h1 className="text-4xl font-bold text-white mb-4">
-              CMS Emergent - Éditeur Drag & Drop
-            </h1>
-            <p className="text-xl text-gray-400">
-              Interface de gestion de contenu visuel
-            </p>
-          </div>
-
-          {/* Cartes de fonctionnalités */}
-          <div className="grid md:grid-cols-2 gap-6 mb-12">
-            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-white mb-2">Authentification Active</h3>
-                  <p className="text-gray-400 text-sm">
-                    Accès sécurisé par code • Protection active
-                  </p>
-                </div>
+      <div className="min-h-screen bg-gray-900">
+        {/* Header */}
+        <div className="bg-gray-800 border-b border-gray-700 sticky top-0 z-50">
+          <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <h1 className="text-2xl font-bold text-white">CMS Éditeur</h1>
+              <div className="flex gap-2">
+                {['home', 'about', 'contact', 'packs', 'site'].map((section) => (
+                  <button
+                    key={section}
+                    onClick={() => setActiveSection(section)}
+                    className={`px-4 py-2 rounded-lg transition-colors ${
+                      activeSection === section
+                        ? 'bg-blue-600 text-white'
+                        : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                    }`}
+                  >
+                    {section.charAt(0).toUpperCase() + section.slice(1)}
+                  </button>
+                ))}
               </div>
             </div>
-
-            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" />
-                  </svg>
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-white mb-2">Backend CMS Connecté</h3>
-                  <p className="text-gray-400 text-sm">
-                    {process.env.REACT_APP_CMS_API_URL || 'https://igv-cms-backend.onrender.com/api'}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
-                  </svg>
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-white mb-2">Drag & Drop Builder</h3>
-                  <p className="text-gray-400 text-sm">
-                    Éditeur visuel • Blocs personnalisables
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-red-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
-                  </svg>
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-white mb-2">Ancien Admin Désactivé</h3>
-                  <p className="text-gray-400 text-sm">
-                    Route /admin supprimée • Uniquement CMS Emergent
-                  </p>
-                </div>
-              </div>
+            
+            <div className="flex gap-2">
+              {saved && (
+                <span className="px-4 py-2 bg-green-600 text-white rounded-lg">
+                  ✓ Sauvegardé
+                </span>
+              )}
+              <button
+                onClick={handleSave}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                💾 Sauvegarder
+              </button>
+              <button
+                onClick={handleExport}
+                className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+              >
+                📥 Exporter JSON
+              </button>
+              <button
+                onClick={handleReset}
+                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+              >
+                🔄 Réinitialiser
+              </button>
+              <a
+                href="/"
+                className="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors"
+              >
+                ← Retour au site
+              </a>
             </div>
           </div>
+        </div>
 
-          {/* Message d'intégration technique */}
-          <div className="bg-yellow-900/30 border border-yellow-700 rounded-xl p-8 mb-8">
-            <div className="flex items-start gap-4">
-              <svg className="w-8 h-8 text-yellow-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <div className="flex-1">
-                <h3 className="text-xl font-semibold text-yellow-400 mb-3">
-                  ⚙️ Intégration Technique en Cours
-                </h3>
-                <p className="text-yellow-200 mb-4">
-                  Le builder Emergent (TypeScript/Vite/React 19) nécessite une adaptation technique 
-                  pour fonctionner dans l'environnement principal (Create React App/React 18).
-                </p>
-                <div className="bg-yellow-900/50 rounded-lg p-4 mb-4">
-                  <p className="text-yellow-100 font-semibold mb-2">Options d'intégration complète :</p>
-                  <ul className="text-yellow-200 text-sm space-y-2">
-                    <li>• <strong>Option 1 :</strong> Héberger le builder sur un sous-domaine (ex: builder.israelgrowthventure.com)</li>
-                    <li>• <strong>Option 2 :</strong> Convertir le builder en React 18 compatible (migration technique)</li>
-                    <li>• <strong>Option 3 :</strong> Utiliser un iframe avec authentification partagée via localStorage</li>
-                  </ul>
+        {/* Content Editor */}
+        <div className="max-w-7xl mx-auto p-8">
+          <div className="bg-gray-800 rounded-xl p-8 border border-gray-700">
+            {/* Section HOME */}
+            {activeSection === 'home' && content?.pages?.home && (
+              <div className="space-y-6">
+                <h2 className="text-3xl font-bold text-white mb-6">Page d'accueil</h2>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Titre SEO</label>
+                  <input
+                    type="text"
+                    value={content.pages.home.seo_title}
+                    onChange={(e) => updateField('pages.home.seo_title', e.target.value)}
+                    className="w-full px-4 py-3 bg-gray-700 text-white rounded-lg border border-gray-600 focus:border-blue-500 focus:outline-none"
+                  />
                 </div>
-                <p className="text-yellow-200 text-sm">
-                  Le backend CMS est pleinement opérationnel et toutes les pages sont gérées via l'API.
-                  L'interface graphique du builder sera disponible après choix de l'option d'intégration.
-                </p>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Description SEO</label>
+                  <textarea
+                    value={content.pages.home.seo_description}
+                    onChange={(e) => updateField('pages.home.seo_description', e.target.value)}
+                    rows={3}
+                    className="w-full px-4 py-3 bg-gray-700 text-white rounded-lg border border-gray-600 focus:border-blue-500 focus:outline-none"
+                  />
+                </div>
+
+                <hr className="border-gray-700" />
+                <h3 className="text-xl font-semibold text-white">Hero Section</h3>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Titre Principal</label>
+                  <input
+                    type="text"
+                    value={content.pages.home.hero.title}
+                    onChange={(e) => updateField('pages.home.hero.title', e.target.value)}
+                    className="w-full px-4 py-3 bg-gray-700 text-white rounded-lg border border-gray-600 focus:border-blue-500 focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Sous-titre</label>
+                  <input
+                    type="text"
+                    value={content.pages.home.hero.subtitle}
+                    onChange={(e) => updateField('pages.home.hero.subtitle', e.target.value)}
+                    className="w-full px-4 py-3 bg-gray-700 text-white rounded-lg border border-gray-600 focus:border-blue-500 focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Description</label>
+                  <textarea
+                    value={content.pages.home.hero.description}
+                    onChange={(e) => updateField('pages.home.hero.description', e.target.value)}
+                    rows={4}
+                    className="w-full px-4 py-3 bg-gray-700 text-white rounded-lg border border-gray-600 focus:border-blue-500 focus:outline-none"
+                  />
+                </div>
+
+                <hr className="border-gray-700" />
+                <h3 className="text-xl font-semibold text-white">Étapes</h3>
+
+                {['step1', 'step2', 'step3'].map((step) => (
+                  <div key={step} className="bg-gray-700/50 p-4 rounded-lg">
+                    <h4 className="text-lg font-medium text-white mb-3">Étape {step.slice(-1)}</h4>
+                    <div className="space-y-3">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-2">Titre</label>
+                        <input
+                          type="text"
+                          value={content.pages.home.steps[step].title}
+                          onChange={(e) => updateField(`pages.home.steps.${step}.title`, e.target.value)}
+                          className="w-full px-4 py-2 bg-gray-600 text-white rounded border border-gray-500 focus:border-blue-500 focus:outline-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-2">Description</label>
+                        <textarea
+                          value={content.pages.home.steps[step].description}
+                          onChange={(e) => updateField(`pages.home.steps.${step}.description`, e.target.value)}
+                          rows={2}
+                          className="w-full px-4 py-2 bg-gray-600 text-white rounded border border-gray-500 focus:border-blue-500 focus:outline-none"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
-            </div>
+            )}
+
+            {/* Section ABOUT */}
+            {activeSection === 'about' && content?.pages?.about && (
+              <div className="space-y-6">
+                <h2 className="text-3xl font-bold text-white mb-6">Page À propos</h2>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Titre SEO</label>
+                  <input
+                    type="text"
+                    value={content.pages.about.seo_title}
+                    onChange={(e) => updateField('pages.about.seo_title', e.target.value)}
+                    className="w-full px-4 py-3 bg-gray-700 text-white rounded-lg border border-gray-600 focus:border-blue-500 focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Description SEO</label>
+                  <textarea
+                    value={content.pages.about.seo_description}
+                    onChange={(e) => updateField('pages.about.seo_description', e.target.value)}
+                    rows={3}
+                    className="w-full px-4 py-3 bg-gray-700 text-white rounded-lg border border-gray-600 focus:border-blue-500 focus:outline-none"
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Section CONTACT */}
+            {activeSection === 'contact' && content?.pages?.contact && (
+              <div className="space-y-6">
+                <h2 className="text-3xl font-bold text-white mb-6">Page Contact</h2>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Titre du formulaire</label>
+                  <input
+                    type="text"
+                    value={content.pages.contact.form.title}
+                    onChange={(e) => updateField('pages.contact.form.title', e.target.value)}
+                    className="w-full px-4 py-3 bg-gray-700 text-white rounded-lg border border-gray-600 focus:border-blue-500 focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Description</label>
+                  <textarea
+                    value={content.pages.contact.form.description}
+                    onChange={(e) => updateField('pages.contact.form.description', e.target.value)}
+                    rows={2}
+                    className="w-full px-4 py-3 bg-gray-700 text-white rounded-lg border border-gray-600 focus:border-blue-500 focus:outline-none"
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Section PACKS */}
+            {activeSection === 'packs' && content?.pages?.packs && (
+              <div className="space-y-6">
+                <h2 className="text-3xl font-bold text-white mb-6">Page Packs</h2>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Titre principal</label>
+                  <input
+                    type="text"
+                    value={content.pages.packs.heading}
+                    onChange={(e) => updateField('pages.packs.heading', e.target.value)}
+                    className="w-full px-4 py-3 bg-gray-700 text-white rounded-lg border border-gray-600 focus:border-blue-500 focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Description</label>
+                  <textarea
+                    value={content.pages.packs.description}
+                    onChange={(e) => updateField('pages.packs.description', e.target.value)}
+                    rows={2}
+                    className="w-full px-4 py-3 bg-gray-700 text-white rounded-lg border border-gray-600 focus:border-blue-500 focus:outline-none"
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Section SITE */}
+            {activeSection === 'site' && content?.site && (
+              <div className="space-y-6">
+                <h2 className="text-3xl font-bold text-white mb-6">Informations du site</h2>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Nom du site</label>
+                  <input
+                    type="text"
+                    value={content.site.name}
+                    onChange={(e) => updateField('site.name', e.target.value)}
+                    className="w-full px-4 py-3 bg-gray-700 text-white rounded-lg border border-gray-600 focus:border-blue-500 focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Slogan</label>
+                  <input
+                    type="text"
+                    value={content.site.tagline}
+                    onChange={(e) => updateField('site.tagline', e.target.value)}
+                    className="w-full px-4 py-3 bg-gray-700 text-white rounded-lg border border-gray-600 focus:border-blue-500 focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Email de contact</label>
+                  <input
+                    type="email"
+                    value={content.site.contact_email}
+                    onChange={(e) => updateField('site.contact_email', e.target.value)}
+                    className="w-full px-4 py-3 bg-gray-700 text-white rounded-lg border border-gray-600 focus:border-blue-500 focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Téléphone</label>
+                  <input
+                    type="text"
+                    value={content.site.phone}
+                    onChange={(e) => updateField('site.phone', e.target.value)}
+                    className="w-full px-4 py-3 bg-gray-700 text-white rounded-lg border border-gray-600 focus:border-blue-500 focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Adresse</label>
+                  <input
+                    type="text"
+                    value={content.site.address}
+                    onChange={(e) => updateField('site.address', e.target.value)}
+                    className="w-full px-4 py-3 bg-gray-700 text-white rounded-lg border border-gray-600 focus:border-blue-500 focus:outline-none"
+                  />
+                </div>
+              </div>
+            )}
           </div>
 
-          {/* Boutons d'action */}
-          <div className="flex gap-4">
-            <a
-              href="/"
-              className="flex-1 py-4 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors font-semibold text-center"
-            >
-              Retour au site
-            </a>
-            <button
-              onClick={() => {
-                localStorage.removeItem('editor_auth');
-                window.location.reload();
-              }}
-              className="flex-1 py-4 border border-gray-700 text-gray-300 rounded-xl hover:bg-gray-800 transition-colors font-semibold"
-            >
-              Déconnexion
-            </button>
-          </div>
-
-          {/* Footer info */}
-          <div className="mt-8 text-center text-gray-500 text-sm">
-            <p>CMS Emergent • Version Builder Intégré • Environnement Production</p>
+          {/* Instructions */}
+          <div className="mt-8 bg-blue-900/30 border border-blue-700 rounded-xl p-6">
+            <h3 className="text-xl font-semibold text-blue-300 mb-3">📝 Instructions</h3>
+            <ul className="text-blue-200 space-y-2 text-sm">
+              <li>✓ Modifiez les champs ci-dessus pour personnaliser le contenu</li>
+              <li>✓ Cliquez sur "Sauvegarder" pour enregistrer dans localStorage</li>
+              <li>✓ Les modifications sont visibles immédiatement sur le site</li>
+              <li>✓ Utilisez "Exporter JSON" pour sauvegarder une copie locale</li>
+              <li>✓ "Réinitialiser" efface toutes les modifications et revient au contenu original</li>
+            </ul>
           </div>
         </div>
       </div>
@@ -193,3 +413,4 @@ const Editor = () => {
 };
 
 export default Editor;
+

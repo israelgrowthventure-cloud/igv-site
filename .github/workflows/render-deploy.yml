@@ -5,9 +5,6 @@ on:
   push:
     branches:
       - main
-    paths:
-      - 'frontend/**'
-      - '.github/workflows/**'
 
 jobs:
   deploy:
@@ -54,9 +51,9 @@ jobs:
       - name: Monitor deployment
         run: |
           echo "🔍 Monitoring Render deployment..."
-          MAX_ATTEMPTS=15
+          MAX_ATTEMPTS=20
           ATTEMPT=0
-          OLD_HASH="4130aa42"
+          OLD_HASH="bf9fcd7e"
 
           while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
             ATTEMPT=$((ATTEMPT + 1))
@@ -71,6 +68,14 @@ jobs:
 
               if [ "$HASH" != "$OLD_HASH" ]; then
                 echo "🎉 NEW BUILD DEPLOYED: $BUNDLE"
+                
+                # Test routes
+                echo "Testing /api/health..."
+                curl -s https://igv-site.onrender.com/api/health
+                
+                echo -e "\nTesting /about..."
+                curl -I https://igv-site.onrender.com/about 2>&1 | grep "HTTP"
+                
                 exit 0
               fi
             fi
@@ -81,4 +86,5 @@ jobs:
           done
 
           echo "⚠️ Deployment monitoring timeout - check Render dashboard"
+          echo "Current bundle is still: main.$OLD_HASH.js"
           exit 1

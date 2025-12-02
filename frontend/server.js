@@ -3,6 +3,7 @@ const path = require('path');
 const fs = require('fs');
 const app = express();
 
+// Version: 2025-12-02-16:00 - Force rebuild
 // Log all requests for debugging
 app.use((req, res, next) => {
   console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);

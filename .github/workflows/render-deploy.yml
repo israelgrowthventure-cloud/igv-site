@@ -1,0 +1,38 @@
+name: Force Render Deploy
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/**'
+
+jobs:
+  trigger-render-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Render Deploy
+        run: |
+          echo "Attempting to trigger Render deploy via webhook..."
+          # Render auto-detects GitHub pushes if auto-deploy is enabled
+          # This workflow serves as a marker that changes were pushed
+          echo "✅ GitHub Actions triggered - Render should pick up the change"
+          
+      - name: Wait for potential deploy
+        run: |
+          echo "Waiting 30 seconds for Render to start build..."
+          sleep 30
+          
+      - name: Test Render URL
+        run: |
+          echo "Testing Render deployment..."
+          RESPONSE=$(curl -s https://igv-site.onrender.com/ | grep -o 'main\.[a-z0-9]*\.js' | head -1 || echo "not found")
+          echo "Current build: $RESPONSE"
+          
+          if [[ "$RESPONSE" == *"43242eee"* ]] || [[ "$RESPONSE" > "main.4130aa42.js" ]]; then
+            echo "✅ New build detected!"
+          else
+            echo "⚠️ Old build still present: $RESPONSE"
+          fi

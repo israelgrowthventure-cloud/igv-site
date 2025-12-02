@@ -33,16 +33,17 @@ import Footer from './components/Footer';
  * Editor Access: Protected by VITE_EDITOR_ACCESS_CODE
  */
 
-// CMS-powered universal page loader
-import CmsPage from './pages/CmsPage';
-
-// Technical/functional pages (React components with business logic)
+// Direct React pages (NO CMS - backend is down)
+import Home from './pages/Home';
+import About from './pages/About';
+import Packs from './pages/Packs';
+import Contact from './pages/Contact';
+import FutureCommerce from './pages/FutureCommerce';
 import Checkout from './pages/Checkout';
 import Appointment from './pages/Appointment';
-import FutureCommerce from './pages/FutureCommerce';
-import Contact from './pages/Contact';
+import Terms from './pages/Terms';
 
-// NEW: Drag & Drop Editor (Emergent Builder) - Protected
+// NEW: Simple Editor (JSON-based CMS)
 import Editor from './pages/Editor';
 
 // Loading component
@@ -67,33 +68,20 @@ function AppLayout() {
       {!isEditorPage && <Header />}
       <main>
         <Routes>
-          {/* ========================================
-              TECHNICAL/PAYMENT ROUTES (React Components)
-              ======================================== */}
+          {/* Direct React Routes - NO CMS (backend down) */}
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/packs" element={<Packs />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/future-commerce" element={<FutureCommerce />} />
+          <Route path="/terms" element={<Terms />} />
           
-          {/* Checkout - Stripe payment processing */}
+          {/* Technical routes */}
           <Route path="/checkout/:packId" element={<Checkout />} />
-          
-          {/* Appointment - Calendar booking */}
           <Route path="/appointment" element={<Appointment />} />
           
-          {/* Future Commerce - Marketing page */}
-          <Route path="/future-commerce" element={<FutureCommerce />} />
-          
-          {/* Contact - Form with backend submission */}
-          <Route path="/contact" element={<Contact />} />
-          
-          {/* NEW: Drag & Drop Editor - Protected by code */}
+          {/* Simple JSON-based CMS editor */}
           <Route path="/editor" element={<Editor />} />
-          <Route path="/content-editor" element={<Editor />} />
-          
-          {/* ========================================
-              CONTENT/MARKETING ROUTES (CMS-Driven)
-              ======================================== */}
-          
-          {/* Catch-all route for CMS pages */}
-          {/* Handles: /, /packs, /about, /contact, /future-commerce, /terms, etc. */}
-          <Route path="*" element={<CmsPage />} />
         </Routes>
       </main>
       {!isEditorPage && <Footer />}

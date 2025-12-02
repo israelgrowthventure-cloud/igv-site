@@ -73,10 +73,6 @@ services:
         value: israel.growth.venture@gmail.com
       - key: VITE_EDITOR_ACCESS_CODE
         value: IGV2025_EDITOR
-    routes:
-      - type: rewrite
-        source: /*
-        destination: /index.html
     headers:
       - path: /*
         name: Cache-Control

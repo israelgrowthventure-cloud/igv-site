@@ -1,4 +1,4 @@
-name: Force Render Deploy
+name: Deploy to Render
 
 on:
   workflow_dispatch:
@@ -10,29 +10,55 @@ on:
       - '.github/workflows/**'
 
 jobs:
-  trigger-render-deploy:
+  deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Trigger Render Deploy
+      - name: Trigger Render Deploy via Deploy Hook
         run: |
-          echo "Attempting to trigger Render deploy via webhook..."
-          # Render auto-detects GitHub pushes if auto-deploy is enabled
-          # This workflow serves as a marker that changes were pushed
-          echo "✅ GitHub Actions triggered - Render should pick up the change"
+          echo "🚀 Triggering Render deployment..."
+          RESPONSE=$(curl -s -w "\nHTTP_CODE:%{http_code}" -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL }}")
+          HTTP_CODE=$(echo "$RESPONSE" | grep "HTTP_CODE" | cut -d: -f2)
           
-      - name: Wait for potential deploy
-        run: |
-          echo "Waiting 30 seconds for Render to start build..."
-          sleep 30
-          
-      - name: Test Render URL
-        run: |
-          echo "Testing Render deployment..."
-          RESPONSE=$(curl -s https://igv-site.onrender.com/ | grep -o 'main\.[a-z0-9]*\.js' | head -1 || echo "not found")
-          echo "Current build: $RESPONSE"
-          
-          if [[ "$RESPONSE" == *"43242eee"* ]] || [[ "$RESPONSE" > "main.4130aa42.js" ]]; then
-            echo "✅ New build detected!"
+          if [ "$HTTP_CODE" == "200" ] || [ "$HTTP_CODE" == "201" ]; then
+            echo "✅ Deploy Hook called successfully (HTTP $HTTP_CODE)"
           else
-            echo "⚠️ Old build still present: $RESPONSE"
+            echo "❌ Deploy Hook failed (HTTP $HTTP_CODE)"
+            exit 1
           fi
+          
+      - name: Wait for Render build to start
+        run: |
+          echo "⏳ Waiting 60 seconds for Render to start building..."
+          sleep 60
+          
+      - name: Monitor deployment
+        run: |
+          echo "🔍 Monitoring Render deployment..."
+          MAX_ATTEMPTS=15
+          ATTEMPT=0
+          OLD_HASH="4130aa42"
+          
+          while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
+            ATTEMPT=$((ATTEMPT + 1))
+            echo "Check $ATTEMPT/$MAX_ATTEMPTS..."
+            
+            RESPONSE=$(curl -s "https://igv-site.onrender.com/?v=$RANDOM")
+            BUNDLE=$(echo "$RESPONSE" | grep -oP 'main\.\w+\.js' | head -1)
+            
+            if [ -n "$BUNDLE" ]; then
+              HASH=$(echo "$BUNDLE" | grep -oP 'main\.\K\w+(?=\.js)')
+              echo "  Current bundle: $BUNDLE"
+              
+              if [ "$HASH" != "$OLD_HASH" ]; then
+                echo "🎉 NEW BUILD DEPLOYED: $BUNDLE"
+                exit 0
+              fi
+            fi
+            
+            if [ $ATTEMPT -lt $MAX_ATTEMPTS ]; then
+              sleep 30
+            fi
+          done
+          
+          echo "⚠️ Deployment monitoring timeout - check Render dashboard"
+          exit 1

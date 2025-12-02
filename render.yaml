@@ -28,7 +28,9 @@ services:
         value: https://israelgrowthventure.com
     healthCheckPath: /api/health
 
-  # Frontend React with Express Server (Node.js)
+  # Frontend React with Express Server (Node.js) - LEGACY
+  # ⚠️ Ce service est maintenu pour compatibilité mais n'est plus utilisé
+  # ⚠️ Utiliser igv-site-v2 (static site) à la place
   - type: web
     name: igv-site
     runtime: node
@@ -52,4 +54,32 @@ services:
         value: IGV2025_EDITOR
     healthCheckPath: /
 
-# Trigger rebuild 2025-12-02 15:31
+  # Frontend React - NEW STATIC SITE (PRODUCTION)
+  # ✅ Service de production officiel pour israelgrowthventure.com
+  # ✅ Configuration optimale: Static Site avec Auto-Deploy
+  - type: static
+    name: igv-site-v2
+    runtime: node
+    buildCommand: cd frontend && npm ci && npm run build
+    staticPublishPath: frontend/build
+    envVars:
+      - key: NODE_VERSION
+        value: 18.17.0
+      - key: REACT_APP_API_BASE_URL
+        value: https://igv-cms-backend.onrender.com
+      - key: REACT_APP_CMS_API_URL
+        value: https://igv-cms-backend.onrender.com/api
+      - key: REACT_APP_CALENDAR_EMAIL
+        value: israel.growth.venture@gmail.com
+      - key: VITE_EDITOR_ACCESS_CODE
+        value: IGV2025_EDITOR
+    headers:
+      - path: /*
+        name: Cache-Control
+        value: public, max-age=3600
+      - path: /static/*
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
+
+# Service actif: igv-site-v2 (static site)
+# Dernière mise à jour: 2025-12-02T16:50:00Z

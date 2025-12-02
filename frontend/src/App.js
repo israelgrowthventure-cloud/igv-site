@@ -6,6 +6,10 @@ import { GeoProvider } from './context/GeoContext';
 import './i18n/config';
 import './App.css';
 
+// Build metadata for deployment tracking
+window.__IGV_BUILD_VERSION__ = '0.1.4';
+window.__IGV_BUILD_DATE__ = '2025-12-02T16:42:00Z';
+
 // Layout Components
 import Header from './components/Header';
 import Footer from './components/Footer';

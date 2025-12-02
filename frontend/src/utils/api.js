@@ -69,4 +69,100 @@ export const pagesAPI = {
   },
 };
 
+// Packs API
+export const packsAPI = {
+  getAll: async (activeOnly = false) => {
+    const response = await axios.get(`${API}/packs`, { params: { active_only: activeOnly } });
+    return response;
+  },
+  getById: async (id) => {
+    const response = await axios.get(`${API}/packs/${id}`);
+    return response;
+  },
+  create: async (data) => {
+    const response = await axios.post(`${API}/packs`, data);
+    return response;
+  },
+  update: async (id, data) => {
+    const response = await axios.put(`${API}/packs/${id}`, data);
+    return response;
+  },
+  delete: async (id) => {
+    const response = await axios.delete(`${API}/packs/${id}`);
+    return response;
+  },
+};
+
+// Pricing API
+export const pricingAPI = {
+  getRules: async () => {
+    const response = await axios.get(`${API}/pricing-rules`);
+    return response;
+  },
+  createRule: async (data) => {
+    const response = await axios.post(`${API}/pricing-rules`, data);
+    return response;
+  },
+  updateRule: async (id, data) => {
+    const response = await axios.put(`${API}/pricing-rules/${id}`, data);
+    return response;
+  },
+  deleteRule: async (id) => {
+    const response = await axios.delete(`${API}/pricing-rules/${id}`);
+    return response;
+  },
+  calculatePrice: async (packId, zone) => {
+    const response = await axios.post(`${API}/pricing-rules/calculate`, { pack_id: packId, zone });
+    return response;
+  },
+};
+
+// Translations API
+export const translationsAPI = {
+  getAll: async () => {
+    const response = await axios.get(`${API}/translations`);
+    return response;
+  },
+  update: async (data) => {
+    const response = await axios.put(`${API}/translations`, data);
+    return response;
+  },
+};
+
+// Auth API
+export const authAPI = {
+  login: async (email, password) => {
+    const response = await axios.post(`${API}/auth/login`, { email, password });
+    return response;
+  },
+  logout: async () => {
+    const response = await axios.post(`${API}/auth/logout`);
+    return response;
+  },
+  checkAuth: async () => {
+    const token = localStorage.getItem('authToken');
+    if (!token) return { data: { authenticated: false } };
+    const response = await axios.get(`${API}/auth/check`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response;
+  },
+};
+
+// Orders API
+export const ordersAPI = {
+  getAll: async () => {
+    const response = await axios.get(`${API}/orders`);
+    return response;
+  },
+  create: async (data) => {
+    const response = await axios.post(`${API}/orders`, data);
+    return response;
+  },
+  getById: async (id) => {
+    const response = await axios.get(`${API}/orders/${id}`);
+    return response;
+  },
+};
+
 export default api;

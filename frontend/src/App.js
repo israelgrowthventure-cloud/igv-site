@@ -37,7 +37,7 @@ import Footer from './components/Footer';
  * Editor Access: Protected by VITE_EDITOR_ACCESS_CODE
  */
 
-// Direct React pages (NO CMS - backend is down)
+// Public pages
 import Home from './pages/Home';
 import About from './pages/About';
 import Packs from './pages/Packs';
@@ -47,8 +47,13 @@ import Checkout from './pages/Checkout';
 import Appointment from './pages/Appointment';
 import Terms from './pages/Terms';
 
-// NEW: Simple Editor (JSON-based CMS)
-import Editor from './pages/Editor';
+// CMS Emergent Admin pages
+import LoginPage from './pages/admin/LoginPage';
+import Dashboard from './pages/admin/Dashboard';
+import PageEditor from './pages/admin/PageEditor';
+import PacksAdmin from './pages/admin/PacksAdmin';
+import PricingAdmin from './pages/admin/PricingAdmin';
+import TranslationsAdmin from './pages/admin/TranslationsAdmin';
 
 // Loading component
 const Loading = () => (
@@ -63,16 +68,16 @@ const Loading = () => (
 // Wrapper pour layout conditionnel
 function AppLayout() {
   const location = useLocation();
-  // L'éditeur gère son propre layout (pas de header/footer)
-  const isEditorPage = location.pathname === '/editor' || location.pathname === '/content-editor';
+  // Admin pages et editor gèrent leur propre layout
+  const isAdminPage = location.pathname.startsWith('/admin');
 
   return (
     <div className="App">
       <Toaster position="top-right" richColors />
-      {!isEditorPage && <Header />}
+      {!isAdminPage && <Header />}
       <main>
         <Routes>
-          {/* Direct React Routes - NO CMS (backend down) */}
+          {/* Public Routes */}
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/packs" element={<Packs />} />
@@ -84,11 +89,17 @@ function AppLayout() {
           <Route path="/checkout/:packId" element={<Checkout />} />
           <Route path="/appointment" element={<Appointment />} />
           
-          {/* Simple JSON-based CMS editor */}
-          <Route path="/editor" element={<Editor />} />
+          {/* CMS Emergent Admin Routes */}
+          <Route path="/admin/login" element={<LoginPage />} />
+          <Route path="/admin" element={<Dashboard />} />
+          <Route path="/admin/pages" element={<PageEditor />} />
+          <Route path="/admin/pages/:slug" element={<PageEditor />} />
+          <Route path="/admin/packs" element={<PacksAdmin />} />
+          <Route path="/admin/pricing" element={<PricingAdmin />} />
+          <Route path="/admin/translations" element={<TranslationsAdmin />} />
         </Routes>
       </main>
-      {!isEditorPage && <Footer />}
+      {!isAdminPage && <Footer />}
     </div>
   );
 }

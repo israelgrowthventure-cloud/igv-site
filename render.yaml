@@ -28,15 +28,13 @@ services:
         value: https://israelgrowthventure.com
     healthCheckPath: /api/health
 
-  # Frontend React with Express Server (Node.js) - PRODUCTION
-  # ✅ Service de production officiel pour israelgrowthventure.com
-  # ✅ Gère correctement le SPA routing avec server.js
+services:
+  # Frontend React with Express Server (Node.js)
   - type: web
     name: igv-site
-    runtime: node
-    rootDir: frontend
-    buildCommand: rm -rf node_modules build && npm install && npm run build
-    startCommand: npm start
+    env: node
+    buildCommand: cd frontend && npm install && npm run build
+    startCommand: cd frontend && npm start
     envVars:
       - key: NODE_VERSION
         value: 18.17.0
@@ -44,16 +42,8 @@ services:
         value: https://igv-backend.onrender.com
       - key: VITE_BACKEND_URL
         value: https://igv-backend.onrender.com
-      - key: VITE_CMS_BACKEND_URL
-        value: https://igv-backend.onrender.com
       - key: REACT_APP_CMS_API_URL
         value: https://igv-backend.onrender.com/api
       - key: REACT_APP_CALENDAR_EMAIL
         value: israel.growth.venture@gmail.com
-      - key: VITE_EDITOR_ACCESS_CODE
-        value: IGV2025_EDITOR
     healthCheckPath: /
-
-# Service actif: igv-site (web service Node.js avec Express pour SPA routing)
-# Domaine: israelgrowthventure.com doit pointer vers ce service
-# Dernière mise à jour: 2025-12-03T00:15:00Z

@@ -3,13 +3,14 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Check, Mail } from 'lucide-react';
 import { useGeo } from '../context/GeoContext';
-import { API_BASE_URL } from '../config/apiConfig';
+import { packsAPI, pricingAPI } from '../utils/api';
 import { toast } from 'sonner';
 
 const Packs = () => {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const { zone, country_name, isLoading: geoLoading } = useGeo();
+  const [packs, setPacks] = useState([]);
   const [packsPricing, setPacksPricing] = useState({});
   const [loading, setLoading] = useState(true);
 
@@ -29,81 +30,52 @@ const Packs = () => {
   };
 
   useEffect(() => {
-    const fetchAllPricing = async () => {
+    const fetchPacksAndPricing = async () => {
       if (!zone || geoLoading) return;
 
       try {
-        // Récupérer tous les packs et règles de pricing
-        const [packsRes, pricingRes] = await Promise.all([
-          fetch(`${API_BASE_URL}/api/packs`),
-          fetch(`${API_BASE_URL}/api/pricing-rules`)
-        ]);
-
-        const packs = await packsRes.json();
-        const pricingRules = await pricingRes.json();
-
-        // Trouver la règle de pricing pour la zone
-        const rule = pricingRules.find(r => r.zone === zone) || pricingRules.find(r => r.zone === 'IL');
+        // Récupérer les packs actifs du backend
+        const packsResponse = await packsAPI.getAll(true);
+        const packsData = packsResponse.data;
         
-        // Calculer les prix pour chaque pack
+        // Trier par ordre
+        const sortedPacks = packsData.sort((a, b) => a.order - b.order);
+        setPacks(sortedPacks);
+
+        // Calculer les prix pour chaque pack selon la zone
         const pricingData = {};
-        packs.forEach(pack => {
-          const basePrice = pack.base_price;
-          const adjustedPrice = Math.round(basePrice * rule.multiplier);
-          
-          pricingData[pack.slug] = {
-            zone: rule.zone,
-            display: {
-              total: `${adjustedPrice.toLocaleString()} ${rule.currency}`,
-              three_times: `3 x ${Math.round(adjustedPrice / 3).toLocaleString()} ${rule.currency}`,
-              twelve_times: `12 x ${Math.round(adjustedPrice / 12).toLocaleString()} ${rule.currency}`
-            }
-          };
-        });
+        for (const pack of sortedPacks) {
+          try {
+            const priceResponse = await pricingAPI.calculatePrice(pack.id, zone);
+            pricingData[pack.id] = priceResponse.data;
+          } catch (error) {
+            console.error(`Error calculating price for pack ${pack.id}:`, error);
+            // Fallback avec prix de base
+            pricingData[pack.id] = {
+              zone: zone,
+              display: {
+                total: `${pack.base_price.toLocaleString()} EUR`,
+                three_times: `3 x ${Math.round(pack.base_price / 3).toLocaleString()} EUR`,
+                twelve_times: `12 x ${Math.round(pack.base_price / 12).toLocaleString()} EUR`
+              }
+            };
+          }
+        }
 
         setPacksPricing(pricingData);
         setLoading(false);
       } catch (error) {
-        console.error('Error fetching pricing:', error);
-        toast.error(t('errors.loading_packs'));
+        console.error('Error fetching packs:', error);
+        toast.error(t('errors.loading_packs') || 'Error loading packs');
         setLoading(false);
       }
     };
 
-    fetchAllPricing();
-  }, [zone, geoLoading, t]);  // Configuration des packs
-  const packsConfig = [
-    {
-      id: 'analyse',
-      name: t('packs.analyse.name'),
-      description: t('packs.analyse.description'),
-      features: t('packs.analyse.features', { returnObjects: true }),
-      note: t('packs.analyse.note'),
-      highlighted: false,
-      checkoutPath: '/checkout/analyse'
-    },
-    {
-      id: 'succursales',
-      name: t('packs.succursales.name'),
-      description: t('packs.succursales.description'),
-      features: t('packs.succursales.features', { returnObjects: true }),
-      note: t('packs.succursales.note'),
-      highlighted: true,
-      checkoutPath: '/checkout/succursales'
-    },
-    {
-      id: 'franchise',
-      name: t('packs.franchise.name'),
-      description: t('packs.franchise.description'),
-      features: t('packs.franchise.features', { returnObjects: true }),
-      note: t('packs.franchise.note'),
-      highlighted: false,
-      checkoutPath: '/checkout/franchise'
-    }
-  ];
+    fetchPacksAndPricing();
+  }, [zone, geoLoading, t]);
 
-  const handleOrderPack = (checkoutPath) => {
-    navigate(checkoutPath);
+  const handleOrderPack = (packId) => {
+    navigate(`/checkout/${packId}`);
   };
 
   return (
@@ -131,20 +103,22 @@ const Packs = () => {
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-3 gap-8">
-            {packsConfig.map((pack) => {
+            {packs.map((pack, index) => {
               const packPricing = packsPricing[pack.id];
+              const isHighlighted = index === 1; // Le pack du milieu est mis en avant
+              const currentLang = i18n.language;
               
               return (
                 <div
                   key={pack.id}
                   className={`relative rounded-2xl p-8 ${
-                    pack.highlighted
+                    isHighlighted
                       ? 'bg-gradient-to-br from-blue-600 to-blue-700 text-white shadow-2xl scale-105'
                       : 'bg-white border-2 border-gray-200 hover:border-blue-600 transition-colors shadow-lg'
                   }`}
                   data-testid={`pack-${pack.id}`}
                 >
-                  {pack.highlighted && (
+                  {isHighlighted && (
                     <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
                       <span className="inline-block px-4 py-1 bg-yellow-400 text-gray-900 text-xs font-bold rounded-full">
                         POPULAIRE
@@ -154,14 +128,14 @@ const Packs = () => {
 
                   <div className="mb-6">
                     <h3 className={`text-2xl font-bold mb-2 ${
-                      pack.highlighted ? 'text-white' : 'text-gray-900'
+                      isHighlighted ? 'text-white' : 'text-gray-900'
                     }`}>
-                      {pack.name}
+                      {pack.name[currentLang] || pack.name.fr || pack.name}
                     </h3>
                     <p className={`text-sm ${
-                      pack.highlighted ? 'text-blue-100' : 'text-gray-600'
+                      isHighlighted ? 'text-blue-100' : 'text-gray-600'
                     }`}>
-                      {pack.description}
+                      {pack.description[currentLang] || pack.description.fr || pack.description}
                     </p>
                   </div>
 
@@ -172,12 +146,12 @@ const Packs = () => {
                     ) : packPricing ? (
                       <div>
                         <div className={`text-4xl font-bold mb-2 ${
-                          pack.highlighted ? 'text-white' : 'text-gray-900'
+                          isHighlighted ? 'text-white' : 'text-gray-900'
                         }`}>
                           {formatPriceForLanguage(packPricing.display.total)}
                         </div>
                         <div className={`text-sm ${
-                          pack.highlighted ? 'text-blue-100' : 'text-gray-600'
+                          isHighlighted ? 'text-blue-100' : 'text-gray-600'
                         }`}>
                           <div>{t('pricing.or')} {formatPriceForLanguage(packPricing.display.three_times)}</div>
                           <div>{t('pricing.or')} {formatPriceForLanguage(packPricing.display.twelve_times)}</div>
@@ -190,13 +164,13 @@ const Packs = () => {
 
                   {/* Features */}
                   <ul className="space-y-3 mb-8">
-                    {pack.features.map((feature, index) => (
-                      <li key={index} className="flex items-start space-x-3">
+                    {(pack.features[currentLang] || pack.features.fr || pack.features || []).map((feature, idx) => (
+                      <li key={idx} className="flex items-start space-x-3">
                         <Check className={`w-5 h-5 flex-shrink-0 mt-0.5 ${
-                          pack.highlighted ? 'text-blue-200' : 'text-blue-600'
+                          isHighlighted ? 'text-blue-200' : 'text-blue-600'
                         }`} />
                         <span className={`text-sm ${
-                          pack.highlighted ? 'text-blue-50' : 'text-gray-600'
+                          isHighlighted ? 'text-blue-50' : 'text-gray-600'
                         }`}>
                           {feature}
                         </span>
@@ -204,19 +178,11 @@ const Packs = () => {
                     ))}
                   </ul>
 
-                  {pack.note && (
-                    <p className={`text-xs mb-6 italic ${
-                      pack.highlighted ? 'text-blue-100' : 'text-gray-500'
-                    }`}>
-                      {pack.note}
-                    </p>
-                  )}
-
                   {/* CTA */}
                   <button
-                    onClick={() => handleOrderPack(pack.checkoutPath)}
+                    onClick={() => handleOrderPack(pack.id)}
                     className={`w-full py-3 px-4 rounded-lg font-semibold transition-colors ${
-                      pack.highlighted
+                      isHighlighted
                         ? 'bg-white text-blue-600 hover:bg-gray-100'
                         : 'bg-blue-600 text-white hover:bg-blue-700'
                     }`}

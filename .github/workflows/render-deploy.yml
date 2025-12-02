@@ -12,53 +12,73 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+      RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+
     steps:
+      - name: 🔑 Test Render API key
+        run: |
+          echo "🔑 Testing Render API key with /v1/services..."
+          RESPONSE=$(curl -s -w "\nHTTP_CODE:%{http_code}" \
+            -H "Authorization: Bearer $RENDER_API_KEY" \
+            https://api.render.com/v1/services)
+
+          HTTP_CODE=$(echo "$RESPONSE" | grep "HTTP_CODE" | cut -d: -f2)
+
+          if [ "$HTTP_CODE" = "200" ]; then
+            echo "✅ Render API key is valid (HTTP 200)"
+          else
+            echo "❌ Render API key test failed (HTTP $HTTP_CODE)"
+            exit 1
+          fi
+
       - name: Trigger Render Deploy via Deploy Hook
         run: |
           echo "🚀 Triggering Render deployment..."
-          RESPONSE=$(curl -s -w "\nHTTP_CODE:%{http_code}" -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL }}")
+          RESPONSE=$(curl -s -w "\nHTTP_CODE:%{http_code}" -X POST "$RENDER_DEPLOY_HOOK_URL")
           HTTP_CODE=$(echo "$RESPONSE" | grep "HTTP_CODE" | cut -d: -f2)
-          
-          if [ "$HTTP_CODE" == "200" ] || [ "$HTTP_CODE" == "201" ]; then
+
+          if [ "$HTTP_CODE" = "200" ] || [ "$HTTP_CODE" = "201" ]; then
             echo "✅ Deploy Hook called successfully (HTTP $HTTP_CODE)"
           else
             echo "❌ Deploy Hook failed (HTTP $HTTP_CODE)"
             exit 1
           fi
-          
+
       - name: Wait for Render build to start
         run: |
           echo "⏳ Waiting 60 seconds for Render to start building..."
           sleep 60
-          
+
       - name: Monitor deployment
         run: |
           echo "🔍 Monitoring Render deployment..."
           MAX_ATTEMPTS=15
           ATTEMPT=0
           OLD_HASH="4130aa42"
-          
+
           while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
             ATTEMPT=$((ATTEMPT + 1))
             echo "Check $ATTEMPT/$MAX_ATTEMPTS..."
-            
+
             RESPONSE=$(curl -s "https://igv-site.onrender.com/?v=$RANDOM")
             BUNDLE=$(echo "$RESPONSE" | grep -oP 'main\.\w+\.js' | head -1)
-            
+
             if [ -n "$BUNDLE" ]; then
               HASH=$(echo "$BUNDLE" | grep -oP 'main\.\K\w+(?=\.js)')
               echo "  Current bundle: $BUNDLE"
-              
+
               if [ "$HASH" != "$OLD_HASH" ]; then
                 echo "🎉 NEW BUILD DEPLOYED: $BUNDLE"
                 exit 0
               fi
             fi
-            
+
             if [ $ATTEMPT -lt $MAX_ATTEMPTS ]; then
               sleep 30
             fi
           done
-          
+
           echo "⚠️ Deployment monitoring timeout - check Render dashboard"
           exit 1

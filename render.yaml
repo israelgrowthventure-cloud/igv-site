@@ -33,7 +33,7 @@ services:
     name: igv-site
     runtime: node
     rootDir: frontend
-    buildCommand: npm install && npm run build
+    buildCommand: rm -rf node_modules build && npm install && npm run build
     startCommand: npm start
     envVars:
       - key: NODE_VERSION

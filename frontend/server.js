@@ -3,7 +3,10 @@ const path = require('path');
 const fs = require('fs');
 const app = express();
 
-// Version: 2025-12-02-16:00 - Force rebuild
+// Version: 2025-12-02-17:50 - Fix SPA routing
+console.log('🚀 Starting IGV Site Server...');
+console.log('📅 Version: 2025-12-02-17:50');
+
 // Log all requests for debugging
 app.use((req, res, next) => {
   console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
@@ -71,16 +74,18 @@ app.use(express.static(buildPath, {
   }
 }));
 
-// Pour toutes les routes NON-statiques, servir index.html (SPA React Router gère tout)
+// Pour toutes les routes NON-statiques, servir index.html (SPA React Router)
+// IMPORTANT: Ceci doit être le DERNIER handler
 app.get('*', (req, res) => {
-  // Ne pas logger les fichiers statiques
-  if (!req.url.startsWith('/static/')) {
-    console.log(`Serving index.html for route: ${req.url}`);
-  }
+  console.log(`🔄 SPA Fallback - Serving index.html for: ${req.url}`);
+  
+  res.setHeader('Content-Type', 'text/html; charset=utf-8');
   res.status(200).sendFile(indexPath, (err) => {
     if (err) {
       console.error(`❌ Error serving index.html for ${req.url}:`, err);
-      res.status(500).send('Internal Server Error');
+      res.status(500).send('Internal Server Error: Could not load application');
+    } else {
+      console.log(`✅ Successfully served index.html for: ${req.url}`);
     }
   });
 });

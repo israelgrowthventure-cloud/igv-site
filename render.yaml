@@ -41,11 +41,11 @@ services:
       - key: NODE_VERSION
         value: 18.17.0
       - key: REACT_APP_API_BASE_URL
-        value: https://igv-cms-backend.onrender.com
+        value: https://igv-backend.onrender.com
       - key: VITE_BACKEND_URL
-        value: https://igv-cms-backend.onrender.com
+        value: https://igv-backend.onrender.com
       - key: VITE_CMS_BACKEND_URL
-        value: https://igv-cms-backend.onrender.com
+        value: https://igv-backend.onrender.com
       - key: REACT_APP_CMS_API_URL
         value: https://igv-cms-backend.onrender.com/api
       - key: REACT_APP_CALENDAR_EMAIL
@@ -66,9 +66,9 @@ services:
       - key: NODE_VERSION
         value: 18.17.0
       - key: REACT_APP_API_BASE_URL
-        value: https://igv-cms-backend.onrender.com
+        value: https://igv-backend.onrender.com
       - key: REACT_APP_CMS_API_URL
-        value: https://igv-cms-backend.onrender.com/api
+        value: https://igv-backend.onrender.com/api
       - key: REACT_APP_CALENDAR_EMAIL
         value: israel.growth.venture@gmail.com
       - key: VITE_EDITOR_ACCESS_CODE

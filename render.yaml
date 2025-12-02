@@ -54,14 +54,6 @@ services:
         value: IGV2025_EDITOR
     healthCheckPath: /
 
-  # Frontend React - STATIC SITE (DÉSACTIVÉ - ne supporte pas SPA routing)
-  # ⚠️ Désactivé car Render static sites ne supportent pas _redirects
-  # ⚠️ Utiliser igv-site (web service) à la place
-  # - type: static
-  #   name: igv-site-v2
-  #   runtime: node
-  #   buildCommand: cd frontend && npm ci && npm run build
-  #   staticPublishPath: frontend/build
-
-# Service actif: igv-site (web service Node.js)
-# Dernière mise à jour: 2025-12-03T00:00:00Z
+# Service actif: igv-site (web service Node.js avec Express pour SPA routing)
+# Domaine: israelgrowthventure.com doit pointer vers ce service
+# Dernière mise à jour: 2025-12-03T00:15:00Z

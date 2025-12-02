@@ -1,13 +1,13 @@
-import React, { useEffect, useState, useRef } from 'react';
+﻿import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { pagesAPI } from '../utils/cms/cmsApi';
+import { pagesAPI } from '../utils/api';
 import { toast } from 'sonner';
 import { ArrowLeft, Save, Eye, Globe } from 'lucide-react';
 import grapesjs from 'grapesjs';
 import 'grapesjs/dist/css/grapes.min.css';
 import gjsPresetWebpage from 'grapesjs-preset-webpage';
 
-const PageEditor = () => {
+const Editor = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
   const editorRef = useRef(null);
@@ -283,5 +283,6 @@ const PageEditor = () => {
   );
 };
 
-export default PageEditor;
+export default Editor;
+
 

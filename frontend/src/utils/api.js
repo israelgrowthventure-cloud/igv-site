@@ -45,4 +45,28 @@ export const api = {
   }
 };
 
+// Pages API for CMS
+export const pagesAPI = {
+  getAll: async (publishedOnly = false) => {
+    const response = await axios.get(`${API}/pages`, { params: { published_only: publishedOnly } });
+    return response;
+  },
+  getBySlug: async (slug) => {
+    const response = await axios.get(`${API}/pages/${slug}`);
+    return response;
+  },
+  create: async (data) => {
+    const response = await axios.post(`${API}/pages`, data);
+    return response;
+  },
+  update: async (slug, data) => {
+    const response = await axios.put(`${API}/pages/${slug}`, data);
+    return response;
+  },
+  delete: async (slug) => {
+    const response = await axios.delete(`${API}/pages/${slug}`);
+    return response;
+  },
+};
+
 export default api;

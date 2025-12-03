@@ -1,5 +1,44 @@
 """
-Configuration centralisée des prix par zone géographique.
+Configuration centralisée des prix par zone géographique
+=========================================================
+
+Ce module gère la logique de pricing dynamique par zone géographique.
+Utilisé par le backend pour calculer les prix en fonction du pays de l'utilisateur.
+
+ZONES SUPPORTÉES:
+- EU: Europe (EUR)
+- US_CA: USA et Canada (USD)
+- IL: Israël (ILS)
+- ASIA_AFRICA: Asie et Afrique (USD)
+
+FONCTIONNALITÉS:
+- Mapping pays → zone (COUNTRY_TO_ZONE)
+- Prix par pack et par zone (PRICING_CONFIG)
+- Conversion monétaire pour Stripe (to_stripe_amount)
+- Calcul mensualités (3x, 12x)
+- Formatage prix localisé (format_price)
+
+STRUCTURE PRICING_CONFIG:
+{
+    Zone.EU: {
+        PackType.ANALYSE: 3000 EUR,
+        PackType.SUCCURSALES: 15000 EUR,
+        PackType.FRANCHISE: 15000 EUR
+    },
+    ...
+}
+
+UTILISATION DANS server.py:
+- get_zone_from_country(country_code) → Zone
+- get_price_for_pack(pack_type, zone) → int (prix en unité monétaire)
+- get_currency_for_zone(zone) → str (code devise ISO)
+- to_stripe_amount(amount, currency) → int (montant en centimes/agorot)
+
+ROUTES BACKEND UTILISANT CE MODULE:
+- GET /api/pricing?packId=...&zone=...
+- GET /api/pricing/country/{country_code}
+- POST /api/orders/create-payment-intent
+
 Tous les montants sont en unités métier (euros, dollars, shekels).
 Conversion en plus petites unités (cents/agorot) effectuée lors de la création de session Stripe.
 """

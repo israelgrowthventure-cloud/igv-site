@@ -1,3 +1,41 @@
+"""
+IGV Backend - API principale FastAPI
+=====================================
+
+Ce fichier est le point d'entrée principal du backend IGV.
+Il expose toutes les routes API utilisées par le frontend et le CMS.
+
+FRAMEWORK: FastAPI 0.110.1
+DATABASE: MongoDB (Motor 3.3.1 - async driver)
+AUTH: JWT (PyJWT 2.10.1) + bcrypt password hashing
+PAYMENTS: Stripe
+
+ROUTES PRINCIPALES:
+- /api/auth/* - Authentification JWT (register, login, me)
+- /api/pages/* - Gestion pages CMS (CRUD complet)
+- /api/packs/* - Packs de services (CRUD complet)
+- /api/pricing-rules/* - Règles de pricing géographique (CRUD)
+- /api/translations/* - Traductions i18n (CRUD)
+- /api/orders/* - Commandes et paiements Stripe
+- /api/health - Healthcheck pour monitoring Render
+
+VARIABLES D'ENVIRONNEMENT REQUISES:
+- MONGO_URL: URL MongoDB Atlas (CRITIQUE)
+- DB_NAME: Nom de la base de données
+- JWT_SECRET: Secret pour génération tokens JWT (32+ chars)
+- ADMIN_EMAIL: Email administrateur CMS
+- ADMIN_PASSWORD: Mot de passe administrateur
+- SMTP_*: Configuration email (host, port, user, password)
+- STRIPE_SECRET_KEY: Clé API Stripe
+- FRONTEND_URL: URL du frontend pour CORS
+- CORS_ORIGINS: Origins autorisés pour CORS
+
+DÉPLOIEMENT: Render Web Service
+- Build: pip install -r requirements.txt
+- Start: uvicorn server:app --host 0.0.0.0 --port $PORT
+- Health Check: /api/health
+"""
+
 from fastapi import FastAPI, APIRouter, HTTPException, Request, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.middleware.cors import CORSMiddleware

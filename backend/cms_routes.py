@@ -1,7 +1,29 @@
 """
-CMS Pages Management
-====================
-Routes pour gérer les pages du CMS (création, lecture, mise à jour, suppression)
+CMS Pages Management - Routes pour le CMS Emergent
+===================================================
+
+Ce module expose les routes API pour la gestion des pages CMS.
+Utilisé par le CMS Emergent (frontend/src/pages/admin/PageEditor.jsx)
+
+ROUTES EXPOSÉES:
+- GET /api/cms/pages - Liste toutes les pages
+- GET /api/cms/pages/{slug} - Détails d'une page
+- POST /api/cms/pages - Créer une page (authentification requise)
+- PUT /api/cms/pages/{slug} - Modifier une page (authentification requise)
+- DELETE /api/cms/pages/{slug} - Supprimer une page (admin uniquement)
+
+STOCKAGE:
+- Actuellement: mémoire (CMS_PAGES dict)
+- TODO: Migration vers MongoDB (collections pages)
+
+INTÉGRATION:
+- Importé dans server.py via: from cms_routes import cms_router
+- Monté sur l'application: app.include_router(cms_router)
+
+DÉPENDANCES:
+- FastAPI pour le routing
+- Pydantic pour la validation des modèles
+- JSON pour le stockage temporaire
 """
 
 from fastapi import APIRouter, HTTPException

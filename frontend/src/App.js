@@ -42,7 +42,8 @@ import Home from './pages/Home';
 import About from './pages/About';
 import Packs from './pages/Packs';
 import Contact from './pages/Contact';
-import FutureCommerce from './pages/FutureCommerce';
+import FutureCommercePage from './pages/FutureCommercePage';
+import DynamicPage from './pages/DynamicPage';
 import Checkout from './pages/Checkout';
 import Appointment from './pages/Appointment';
 import Terms from './pages/Terms';
@@ -82,8 +83,10 @@ function AppLayout() {
           <Route path="/about" element={<About />} />
           <Route path="/packs" element={<Packs />} />
           <Route path="/contact" element={<Contact />} />
-          <Route path="/future-commerce" element={<FutureCommerce />} />
+          <Route path="/le-commerce-de-demain" element={<FutureCommercePage />} />
+          <Route path="/future-commerce" element={<FutureCommercePage />} />
           <Route path="/terms" element={<Terms />} />
+          <Route path="/page/:slug" element={<DynamicPage />} />
           
           {/* Technical routes */}
           <Route path="/checkout/:packId" element={<Checkout />} />

@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { pagesAPI } from '../../utils/api';
 import { toast } from 'sonner';
-import { ArrowLeft, Save, Eye } from 'lucide-react';
+import { ArrowLeft, Save, Eye, Globe } from 'lucide-react';
 import grapesjs from 'grapesjs';
 import 'grapesjs/dist/css/grapes.min.css';
 import gjsPresetWebpage from 'grapesjs-preset-webpage';
-import { pagesAPI } from '../../utils/api';
 
 const PageEditor = () => {
   const { slug } = useParams();
@@ -284,3 +284,4 @@ const PageEditor = () => {
 };
 
 export default PageEditor;
+

@@ -193,6 +193,7 @@ class Pack(BaseModel):
     features: Dict[str, List[str]]
     base_price: float
     currency: str = "EUR"
+    slug: Optional[str] = None  # Slug pour compatibilité pricing/checkout (analyse, succursales, franchise)
     order: int = 0
     active: bool = True
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
@@ -203,6 +204,7 @@ class PackCreate(BaseModel):
     features: Dict[str, List[str]]
     base_price: float
     currency: str = "EUR"
+    slug: Optional[str] = None
     order: int = 0
     active: bool = True
 

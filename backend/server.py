@@ -78,6 +78,13 @@ from cms_routes import cms_router
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
+# Configure logging AVANT toute utilisation
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
+
 # MongoDB connection with timeout and error handling
 mongo_url = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
 db_name = os.environ.get('DB_NAME', 'igv_db')
@@ -120,13 +127,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger(__name__)
 
 # JWT Configuration
 JWT_SECRET = os.environ.get('JWT_SECRET', 'your-secret-key-change-in-production')

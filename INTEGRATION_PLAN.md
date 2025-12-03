@@ -122,22 +122,35 @@ Chaque pack affiche ses propres features multilingues (FR/EN/HE):
 
 ---
 
-## 4️⃣ CHECKOUT - PERFORMANCE & COMPATIBILITÉ
+## 4️⃣ CHECKOUT - PERFORMANCE & BUG FIXES
 
-### Problème Initial
-- Temps de réponse: **16.91s** (spinner bloqué)
-- Cause: aucun timeout sur appels Stripe API
+### Problème 1: Performance (RÉSOLU)
+- **Symptôme**: Temps de réponse 16.91s (spinner bloqué)
+- **Cause**: Aucun timeout sur appels Stripe API
+- **Solution**: Ajout timeout Stripe (backend/server.py lignes 587-589)
+  ```python
+  stripe.max_network_retries = 2
+  stripe.default_http_client = stripe.http_client.RequestsClient(timeout=10)
+  ```
+- **Résultat**: Temps de réponse **1.24s** ✅
 
-### Solution Implémentée
-**Fichier**: `backend/server.py` (lignes 587-589)
-```python
-stripe.max_network_retries = 2
-stripe.default_http_client = stripe.http_client.RequestsClient(timeout=10)
-```
-
-### Résultat
-- **Temps de réponse: 1.24s** ✅
-- Test: `test_checkout_prod.py`
+### Problème 2: Bug Pricing 400 (RÉSOLU)
+- **Symptôme**: Spinner infini sur page checkout, erreur 400 dans console
+- **Cause**: Frontend envoyait UUID du pack, API pricing attendait slug
+  - Frontend: `packId=19a1f57b-e064-4f40-a2cb-ee56373e70d1`
+  - API: attendait `packId=succursales`
+- **Solution**: Ajout conversion UUID→slug dans Checkout.js (ligne 107)
+  ```javascript
+  // Convertir UUID vers slug avant appel API pricing
+  const nameToSlugMap = {
+    'Pack Analyse': 'analyse',
+    'Pack Succursales': 'succursales',
+    'Pack Franchise': 'franchise'
+  };
+  const slugToUse = nameToSlugMap[pack.name?.fr] || packId;
+  ```
+- **Gestion d'erreur améliorée**: Message clair au lieu de spinner infini
+- **Test**: `diagnose_checkout_bug.py` + `test_post_fix.py`
 
 ### Compatibilité Slugs
 **Problème**: Frontend envoyait UUIDs, backend attendait slugs
@@ -227,7 +240,7 @@ Créer page:   https://israelgrowthventure.com/admin/pages/new
 
 ---
 
-## 6️⃣ ACCÈS ADMIN
+## 6️⃣ ACCÈS ADMIN & CMS
 
 ### Compte Principal
 ```
@@ -236,14 +249,32 @@ Mot de passe: Admin@igv
 Rôle:         admin
 ```
 
-### URLs Admin
+### URLs Admin - Dashboard Simple
 ```
-Login:     https://israelgrowthventure.com/admin/login
-Dashboard: https://israelgrowthventure.com/admin
-Packs:     https://israelgrowthventure.com/admin/packs
-Pages CMS: https://israelgrowthventure.com/admin/pages
-Pricing:   https://israelgrowthventure.com/admin/pricing
+Login:         https://israelgrowthventure.com/admin/login
+Dashboard:     https://israelgrowthventure.com/admin
+Gestion Packs: https://israelgrowthventure.com/admin/packs
+Pricing:       https://israelgrowthventure.com/admin/pricing
+Traductions:   https://israelgrowthventure.com/admin/translations
 ```
+
+### URLs CMS Drag & Drop (GrapesJS)
+```
+Liste Pages:    https://israelgrowthventure.com/admin/pages
+Créer Page:     https://israelgrowthventure.com/admin/pages/new
+Éditer Page:    https://israelgrowthventure.com/admin/pages/{slug}/edit
+```
+
+**Procédure d'accès GrapesJS**:
+1. Se connecter sur https://israelgrowthventure.com/admin/login
+2. Cliquer sur "Pages" dans le menu ou aller sur /admin/pages
+3. Cliquer sur "Créer une page" ou sélectionner une page existante
+4. L'éditeur GrapesJS se charge automatiquement avec:
+   - Panneau Blocks (gauche): éléments drag & drop
+   - Canvas central: zone d'édition visuelle
+   - Panneau Styles (droite): propriétés CSS
+   - Sélecteur de langue: FR / EN / HE
+   - Boutons: Sauvegarder / Publier
 
 ### Permissions
 - Gestion des packs (CRUD)
@@ -371,6 +402,12 @@ bdc4cd4 - "feat(packs): add slug field to Pack model for pricing/checkout compat
 
 # Commit 3: Support slugs frontend
 05125dd - "fix(checkout): support pack slugs (analyse/succursales/franchise) for pricing & checkout"
+
+# Commit 4: Documentation complète
+ce90673 - "docs: comprehensive INTEGRATION_PLAN.md + production test scripts"
+
+# Commit 5: Fix bug checkout pricing 400
+1372336 - "fix(checkout): resolve pricing 400 error by using slug instead of UUID"
 ```
 
 ---

@@ -3,8 +3,10 @@ services:
   - type: web
     name: igv-cms-backend
     runtime: python
-    buildCommand: cd backend && pip install -r requirements.txt
-    startCommand: cd backend && uvicorn server:app --host 0.0.0.0 --port $PORT
+    plan: starter
+    region: frankfurt
+    buildCommand: cd backend && pip install --upgrade pip && pip install -r requirements.txt
+    startCommand: cd backend && uvicorn server:app --host 0.0.0.0 --port $PORT --timeout-keep-alive 65
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.0
@@ -40,8 +42,10 @@ services:
   - type: web
     name: igv-site-web
     env: node
+    plan: starter
+    region: frankfurt
     buildCommand: cd frontend && npm install && npm run build
-    startCommand: cd frontend && npm start
+    startCommand: cd frontend && node server.js
     envVars:
       - key: NODE_VERSION
         value: 18.17.0

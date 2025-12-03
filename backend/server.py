@@ -592,7 +592,7 @@ stripe.api_key = STRIPE_SECRET_KEY
 
 # Configure Stripe with timeout to prevent slow checkout
 stripe.max_network_retries = 2
-stripe.default_http_client = stripe.http_client.RequestsClient(timeout=10)
+# Note: stripe.http_client deprecated in newer versions - using default client
 
 # Mapping des prix (en centimes) pour les packs
 PACK_PRICES_EUR = {

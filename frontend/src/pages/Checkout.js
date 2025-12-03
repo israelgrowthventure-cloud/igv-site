@@ -101,12 +101,32 @@ const Checkout = () => {
       if (!zone || !pack) return;
       
       try {
-        const response = await fetch(`${API_BASE_URL}/api/pricing?packId=${packId}&zone=${zone}`);
-        if (!response.ok) throw new Error('Failed to fetch pricing');
+        // Convertir le packId (qui peut être un UUID ou un slug) en slug pour l'API pricing
+        const isSlug = ['analyse', 'succursales', 'franchise'].includes(packId);
+        let slugToUse = packId;
+        
+        if (!isSlug) {
+          // Mapper le nom français vers le slug
+          const nameToSlugMap = {
+            'Pack Analyse': 'analyse',
+            'Pack Succursales': 'succursales',
+            'Pack Franchise': 'franchise'
+          };
+          slugToUse = nameToSlugMap[pack.name?.fr] || packId;
+        }
+        
+        const response = await fetch(`${API_BASE_URL}/api/pricing?packId=${slugToUse}&zone=${zone}`);
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.detail || 'Failed to fetch pricing');
+        }
         const data = await response.json();
         setPricing(data);
+        setError(null); // Clear any previous errors
       } catch (err) {
         console.error('Error fetching pricing:', err);
+        setError(`Impossible de récupérer le tarif: ${err.message}`);
+        setPricing(null);
       }
     };
 
@@ -124,13 +144,17 @@ const Checkout = () => {
     );
   }
 
-  // Afficher une erreur si le pack n'existe pas
+  // Afficher une erreur si le pack n'existe pas ou si le pricing a échoué
   if (error || !pack) {
     return (
       <div className="min-h-screen pt-20 flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Pack introuvable</h1>
-          <p className="text-gray-600 mb-6">Le pack que vous demandez n'existe pas.</p>
+        <div className="text-center max-w-md mx-auto px-4">
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">
+            {error?.includes('tarif') ? 'Erreur de tarification' : 'Pack introuvable'}
+          </h1>
+          <p className="text-gray-600 mb-6">
+            {error || 'Le pack que vous demandez n\'existe pas.'}
+          </p>
           <Link
             to="/packs"
             className="inline-flex items-center px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"

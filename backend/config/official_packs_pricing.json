@@ -1,0 +1,226 @@
+{
+  "metadata": {
+    "version": "1.0.0",
+    "last_updated": "2025-12-03",
+    "source": "Grille tarifaire officielle IGV - Source de vérité absolue",
+    "notes": "Ce fichier est la SOURCE DE VÉRITÉ pour tous les prix et descriptions des packs IGV"
+  },
+  "packs": [
+    {
+      "id": "analyse",
+      "slug": "pack-analyse",
+      "name": {
+        "fr": "Pack Analyse",
+        "en": "Analysis Pack",
+        "he": "חבילת ניתוח"
+      },
+      "description": {
+        "fr": "Analyse du potentiel de la marque et définition du plan d'expansion.",
+        "en": "Analysis of brand potential and expansion plan definition.",
+        "he": "ניתוח פוטנציאל המותג ותוכנית הרחבה."
+      },
+      "notes": {
+        "fr": "Prestation de conseil seule. AUCUNE ouverture de magasin incluse. Analyse valable pour un scope jusqu'à 3 ouvertures.",
+        "en": "Consulting service only. NO store opening included. Analysis valid for a scope of up to 3 openings.",
+        "he": "שירות ייעוץ בלבד. אין פתיחת חנויות כלולה. ניתוח עבור היקף של עד 3 פתיחות."
+      },
+      "features": {
+        "fr": [
+          "Analyse complète du marché israélien",
+          "Étude de la concurrence et des zones à fort potentiel",
+          "Identification des formats et villes prioritaires",
+          "Scénarios d'implantation (succursales, franchise, master)",
+          "Recommandations stratégiques et estimation budgétaire"
+        ],
+        "en": [
+          "Complete Israeli market analysis",
+          "Competition and high-potential zones study",
+          "Priority formats and cities identification",
+          "Implementation scenarios (branches, franchise, master)",
+          "Strategic recommendations and budget estimation"
+        ],
+        "he": [
+          "ניתוח מלא של השוק הישראלי",
+          "מחקר תחרות ואזורים בעלי פוטנציאל גבוה",
+          "זיהוי פורמטים וערים עדיפים",
+          "תרחישי הטמעה (סניפים, זכיינות, מאסטר)",
+          "המלצות אסטרטגיות והערכת תקציב"
+        ]
+      },
+      "pricing": {
+        "EU": {
+          "amount": 3000,
+          "currency": "EUR",
+          "symbol": "€",
+          "display": "3 000 €"
+        },
+        "US_CA": {
+          "amount": 4000,
+          "currency": "USD",
+          "symbol": "$",
+          "display": "4 000 $"
+        },
+        "IL": {
+          "amount": 7000,
+          "currency": "ILS",
+          "symbol": "₪",
+          "display": "7 000 ₪"
+        },
+        "ASIA_AFRICA": {
+          "amount": 4000,
+          "currency": "USD",
+          "symbol": "$",
+          "display": "4 000 $"
+        }
+      },
+      "order": 0,
+      "active": true
+    },
+    {
+      "id": "succursales",
+      "slug": "pack-succursales",
+      "name": {
+        "fr": "Pack Succursales",
+        "en": "Branches Pack",
+        "he": "חבילת סניפים"
+      },
+      "description": {
+        "fr": "Lancement opérationnel de l'expansion par succursales (Analyse incluse).",
+        "en": "Operational launch of expansion through branches (Analysis included).",
+        "he": "השקה תפעולית של ההרחבה באמצעות סניפים (ניתוח כלול)."
+      },
+      "notes": {
+        "fr": "Prix couvrant l'ouverture de 3 magasins maximum.",
+        "en": "Price covering the opening of up to 3 stores maximum.",
+        "he": "מחיר המכסה פתיחה של עד 3 חנויות לכל היותר."
+      },
+      "features": {
+        "fr": [
+          "Pack Analyse inclus dans le prix",
+          "Recherche et qualification de locaux commerciaux ciblés",
+          "Négociation avec les propriétaires et centres commerciaux",
+          "Accompagnement juridique et administratif complet",
+          "Suivi jusqu'à l'ouverture opérationnelle",
+          "Revue de performance 3 mois après ouverture"
+        ],
+        "en": [
+          "Analysis Pack included in the price",
+          "Targeted commercial premises search and qualification",
+          "Negotiation with owners and shopping centers",
+          "Complete legal and administrative support",
+          "Support until operational opening",
+          "Performance review 3 months after opening"
+        ],
+        "he": [
+          "חבילת ניתוח כלולה במחיר",
+          "חיפוש וסינון של מקומות מסחריים ממוקדים",
+          "משא ומתן עם בעלים ומרכזים מסחריים",
+          "תמיכה משפטית ומנהלית מלאה",
+          "ליווי עד לפתיחה תפעולית",
+          "סקירת ביצועים 3 חודשים לאחר הפתיחה"
+        ]
+      },
+      "pricing": {
+        "EU": {
+          "amount": 15000,
+          "currency": "EUR",
+          "symbol": "€",
+          "display": "15 000 €"
+        },
+        "US_CA": {
+          "amount": 30000,
+          "currency": "USD",
+          "symbol": "$",
+          "display": "30 000 $"
+        },
+        "IL": {
+          "amount": 55000,
+          "currency": "ILS",
+          "symbol": "₪",
+          "display": "55 000 ₪"
+        },
+        "ASIA_AFRICA": {
+          "amount": 30000,
+          "currency": "USD",
+          "symbol": "$",
+          "display": "30 000 $"
+        }
+      },
+      "order": 1,
+      "active": true
+    },
+    {
+      "id": "franchise",
+      "slug": "pack-franchise",
+      "name": {
+        "fr": "Pack Franchise",
+        "en": "Franchise Pack",
+        "he": "חבילת זכיינות"
+      },
+      "description": {
+        "fr": "Lancement opérationnel de l'expansion par franchise (Analyse incluse).",
+        "en": "Operational launch of expansion through franchise (Analysis included).",
+        "he": "השקה תפעולית של ההרחבה באמצעות זכיינות (ניתוח כלול)."
+      },
+      "notes": {
+        "fr": "Prix couvrant l'ouverture de 3 magasins maximum.",
+        "en": "Price covering the opening of up to 3 stores maximum.",
+        "he": "מחיר המכסה פתיחה של עד 3 חנויות לכל היותר."
+      },
+      "features": {
+        "fr": [
+          "Pack Analyse inclus dans le prix",
+          "Analyse de la franchise et adaptation au marché israélien",
+          "Création du manuel opératoire complet",
+          "Stratégie de recrutement et sélection des franchisés",
+          "Accompagnement juridique et contractuel",
+          "Formation des franchisés et lancement des premières ouvertures"
+        ],
+        "en": [
+          "Analysis Pack included in the price",
+          "Franchise analysis and adaptation to Israeli market",
+          "Complete operations manual creation",
+          "Franchisee recruitment and selection strategy",
+          "Legal and contractual support",
+          "Franchisee training and launch of first openings"
+        ],
+        "he": [
+          "חבילת ניתוח כלולה במחיר",
+          "ניתוח הזיכיון והתאמה לשוק הישראלי",
+          "יצירת מדריך תפעולי מלא",
+          "אסטרטגיית גיוס ובחירת זכיינים",
+          "ליווי משפטי וחוזי",
+          "הדרכת זכיינים והשקה של הפתיחות הראשונות"
+        ]
+      },
+      "pricing": {
+        "EU": {
+          "amount": 15000,
+          "currency": "EUR",
+          "symbol": "€",
+          "display": "15 000 €"
+        },
+        "US_CA": {
+          "amount": 30000,
+          "currency": "USD",
+          "symbol": "$",
+          "display": "30 000 $"
+        },
+        "IL": {
+          "amount": 55000,
+          "currency": "ILS",
+          "symbol": "₪",
+          "display": "55 000 ₪"
+        },
+        "ASIA_AFRICA": {
+          "amount": 30000,
+          "currency": "USD",
+          "symbol": "$",
+          "display": "30 000 $"
+        }
+      },
+      "order": 2,
+      "active": true
+    }
+  ]
+}

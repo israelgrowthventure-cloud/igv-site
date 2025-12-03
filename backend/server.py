@@ -588,6 +588,10 @@ if not STRIPE_SECRET_KEY:
     logger.warning("STRIPE_SECRET_KEY not set in .env — Stripe will not work until configured.")
 stripe.api_key = STRIPE_SECRET_KEY
 
+# Configure Stripe with timeout to prevent slow checkout
+stripe.max_network_retries = 2
+stripe.default_http_client = stripe.http_client.RequestsClient(timeout=10)
+
 # Mapping des prix (en centimes) pour les packs
 PACK_PRICES_EUR = {
     "analyse": 300000,       # 3 000.00 EUR

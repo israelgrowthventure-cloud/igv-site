@@ -694,7 +694,28 @@ async def detect_location():
 
 # ==================== ADMIN ENDPOINTS ====================
 
-ADMIN_PASSWORD = "igv2025"
+# Identifiants admin
+ADMIN_EMAIL = "postmaster@israelgrowthventure.com"
+ADMIN_PASSWORD = "Admin@igv"
+
+class LoginRequest(BaseModel):
+    email: str
+    password: str
+
+@api_router.post("/auth/login")
+async def admin_login(login: LoginRequest):
+    """Authentification admin"""
+    if login.email == ADMIN_EMAIL and login.password == ADMIN_PASSWORD:
+        # En production, utiliser un vrai JWT
+        return {
+            "access_token": ADMIN_PASSWORD,  # Token simplifié
+            "token_type": "bearer",
+            "user": {
+                "email": ADMIN_EMAIL,
+                "role": "admin"
+            }
+        }
+    raise HTTPException(status_code=401, detail="Invalid credentials")
 
 class PackData(BaseModel):
     analyse: dict

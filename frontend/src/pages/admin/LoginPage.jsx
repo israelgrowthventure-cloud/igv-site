@@ -55,7 +55,7 @@ const LoginPage = () => {
               value={credentials.email}
               onChange={(e) => setCredentials({ ...credentials, email: e.target.value })}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0052CC] focus:border-transparent"
-              placeholder="admin@igv.co.il"
+              placeholder="postmaster@israelgrowthventure.com"
               required
               data-testid="email-input"
             />
@@ -86,8 +86,8 @@ const LoginPage = () => {
         </form>
 
         <div className="mt-6 text-center text-sm text-gray-500">
-          <p>Default credentials:</p>
-          <p className="font-mono">admin@igv.co.il / admin123</p>
+          <p>Credentials admin:</p>
+          <p className="font-mono">postmaster@israelgrowthventure.com / Admin@igv</p>
         </div>
       </div>
     </div>

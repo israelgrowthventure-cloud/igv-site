@@ -30,11 +30,13 @@ const PACKS = {
 const Checkout = () => {
   const { packId } = useParams();
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { zone, isLoading: geoLoading } = useGeo();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [pricing, setPricing] = useState(null);
+  const [pack, setPack] = useState(null);
+  const [packLoading, setPackLoading] = useState(true);
   const [selectedPlan, setSelectedPlan] = useState(PLAN_TYPES.ONE_SHOT);
   const [formData, setFormData] = useState({
     fullName: '',
@@ -44,10 +46,31 @@ const Checkout = () => {
     country: ''
   });
 
+  // Charger les informations du pack depuis l'API
+  useEffect(() => {
+    const fetchPack = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/packs/${packId}`);
+        if (!response.ok) {
+          throw new Error('Pack not found');
+        }
+        const data = await response.json();
+        setPack(data);
+        setPackLoading(false);
+      } catch (err) {
+        console.error('Error fetching pack:', err);
+        setError('Pack introuvable');
+        setPackLoading(false);
+      }
+    };
+
+    fetchPack();
+  }, [packId]);
+
   // Charger les prix pour ce pack et cette zone
   useEffect(() => {
     const fetchPricing = async () => {
-      if (!zone) return; // Attendre que la zone soit chargée
+      if (!zone || !pack) return;
       
       try {
         const response = await fetch(`${API_BASE_URL}/api/pricing?packId=${packId}&zone=${zone}`);
@@ -56,58 +79,45 @@ const Checkout = () => {
         setPricing(data);
       } catch (err) {
         console.error('Error fetching pricing:', err);
-        // En cas d'erreur, utiliser des prix par défaut pour ne pas bloquer l'utilisateur
-        setPricing({
-          zone: zone || 'IL',
-          currency: 'ils',
-          currency_symbol: '₪',
-          total_price: packId === 'analyse' ? 7000 : 55000,
-          monthly_3x: packId === 'analyse' ? 2334 : 18334,
-          monthly_12x: packId === 'analyse' ? 584 : 4584,
-          display: {
-            total: packId === 'analyse' ? '7 000 ₪' : '55 000 ₪',
-            three_times: packId === 'analyse' ? '3 x 2 334 ₪' : '3 x 18 334 ₪',
-            twelve_times: packId === 'analyse' ? '12 x 584 ₪' : '12 x 4 584 ₪'
-          }
-        });
       }
     };
 
-    if (!geoLoading) {
+    if (!geoLoading && pack) {
       fetchPricing();
     }
-  }, [zone, packId, geoLoading]);
+  }, [zone, packId, geoLoading, pack]);
 
-  // Noms des packs
-  const PACK_NAMES = {
-    analyse: t('packs.analyse.name'),
-    succursales: t('packs.succursales.name'),
-    franchise: t('packs.franchise.name'),
-  };
+  // Afficher un loader pendant le chargement
+  if (packLoading || geoLoading) {
+    return (
+      <div className="min-h-screen pt-20 flex items-center justify-center bg-gray-50">
+        <Loader className="w-8 h-8 animate-spin text-blue-600" />
+      </div>
+    );
+  }
 
-  const PACK_NOTES = {
-    analyse: t('packs.analyse.note'),
-    succursales: t('packs.succursales.note'),
-    franchise: t('packs.franchise.note'),
-  };
-
-  if (!PACK_NAMES[packId]) {
+  // Afficher une erreur si le pack n'existe pas
+  if (error || !pack) {
     return (
       <div className="min-h-screen pt-20 flex items-center justify-center bg-gray-50">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">{t('checkout.packNotFound')}</h1>
-          <p className="text-gray-600 mb-6">{t('checkout.packNotFoundDesc')}</p>
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">Pack introuvable</h1>
+          <p className="text-gray-600 mb-6">Le pack que vous demandez n'existe pas.</p>
           <Link
             to="/packs"
             className="inline-flex items-center px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            {t('checkout.backToPacks')}
+            Retour aux packs
           </Link>
         </div>
       </div>
     );
   }
+
+  // Récupérer le nom et la description du pack selon la langue
+  const packName = pack.name[i18n.language] || pack.name.fr || pack.name.en;
+  const packDescription = pack.description?.[i18n.language] || pack.description?.fr || '';
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -155,7 +165,7 @@ const Checkout = () => {
     try {
       const payload = {
         packId: packId,
-        packName: PACK_NAMES[packId],
+        packName: packName,
         priceLabel: getDisplayPrice(),
         customer: {
           fullName: formData.fullName.trim(),
@@ -431,7 +441,7 @@ const Checkout = () => {
               <div className="space-y-4">
                 <div>
                   <h4 className="text-sm font-medium text-gray-500">Pack</h4>
-                  <p className="text-lg font-bold text-gray-900">{PACK_NAMES[packId]}</p>
+                  <p className="text-lg font-bold text-gray-900">{packName}</p>
                 </div>
 
                 <div className="border-t border-gray-200 pt-4">
@@ -446,7 +456,7 @@ const Checkout = () => {
 
                 <div className="border-t border-gray-200 pt-4">
                   <h4 className="text-sm font-medium text-gray-500 mb-2">Description</h4>
-                  <p className="text-xs text-gray-600 leading-relaxed">{PACK_NOTES[packId]}</p>
+                  <p className="text-xs text-gray-600 leading-relaxed">{packDescription}</p>
                 </div>
               </div>
             </div>

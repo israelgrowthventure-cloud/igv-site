@@ -5,8 +5,9 @@ services:
     runtime: python
     plan: starter
     region: frankfurt
-    buildCommand: cd backend && pip install --upgrade pip && pip install -r requirements.txt
-    startCommand: cd backend && uvicorn server:app --host 0.0.0.0 --port $PORT --timeout-keep-alive 65
+    rootDir: backend
+    buildCommand: pip install --upgrade pip && pip install -r requirements.txt
+    startCommand: uvicorn server:app --host 0.0.0.0 --port $PORT --timeout-keep-alive 65
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.0
@@ -44,8 +45,9 @@ services:
     env: node
     plan: starter
     region: frankfurt
-    buildCommand: cd frontend && npm install && npm run build
-    startCommand: cd frontend && node server.js
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    startCommand: node server.js
     envVars:
       - key: NODE_VERSION
         value: 18.17.0

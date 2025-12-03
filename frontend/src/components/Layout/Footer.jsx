@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useLanguage } from '@/context/LanguageContext.jsx';
+import { useLanguage } from 'context/LanguageContext.jsx';
 import { Mail, Phone, MapPin } from 'lucide-react';
 
 export const Footer = () => {

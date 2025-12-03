@@ -27,7 +27,6 @@ stripe==8.0.0
 
 # Data Validation
 pydantic==2.6.1
-pydantic_core==2.16.2
 
 # File Upload
 python-multipart==0.0.9

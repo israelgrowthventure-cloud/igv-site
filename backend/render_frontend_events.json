@@ -1,0 +1,1036 @@
+[
+  {
+    "event": {
+      "details": {
+        "buildId": "bld-d4oa14vdiees738k99a0",
+        "buildStatus": "failed",
+        "reason": {
+          "buildFailed": {
+            "id": "bld-d4oa14vdiees738k99a0"
+          },
+          "failure": {
+            "evicted": false,
+            "nonZeroExit": 1
+          }
+        },
+        "status": 3
+      },
+      "id": "evt-d4oa1cp5pdvs73dl705g",
+      "serviceId": "srv-d4no5dc9c44c73d1opgg",
+      "timestamp": "2025-12-03T20:42:27.11064Z",
+      "type": "build_ended"
+    },
+    "cursor": "oQRgYdYfqKgxY3A1cGR2czczZGw3MDVn"
+  },
+  {
+    "event": {
+      "details": {
+        "deployId": "dep-d4oa14vdiees738k999g",
+        "deployStatus": "failed",
+        "reason": {
+          "buildFailed": {
+            "id": "bld-d4oa14vdiees738k99a0"
+          },
+          "failure": {
+            "evicted": false,
+            "nonZeroExit": 1
+          }
+        },
+        "status": 4
+      },
+      "id": "evt-d4oa1c95pdvs73dl700g",
+      "serviceId": "srv-d4no5dc9c44c73d1opgg",
+      "timestamp": "2025-12-03T20:42:25.999008Z",
+      "type": "deploy_ended"
+    },
+    "cursor": "oQRgYdYfqKgxYzk1cGR2czczZGw3MDBn"
+  },
+  {
+    "event": {
+      "details": {
+        "deployId": "dep-d4oa14vdiees738k999g",
+        "trigger": {
+          "clearCache": false,
+          "deployedByRender": false,
+          "envUpdated": false,
+          "firstBuild": false,
+          "manual": false,
+          "newCommit": "6d2c053aa4edcc0ff29f722ee2d11f8dad05a802",
+          "rollback": false
+        }
+      },
+      "id": "evt-d4oa15vdiees738k9a50",
+      "serviceId": "srv-d4no5dc9c44c73d1opgg",
+      "timestamp": "2025-12-03T20:41:59.129251Z",
+      "type": "deploy_started"
+    },
+    "cursor": "oQRgYdYfqKgxNXZkaWVlczczOGs5YTUw"
+  },
+  {
+    "event": {
+      "details": {
+        "buildId": "bld-d4oa14vdiees738k99a0",
+        "trigger": {
+          "clearCache": false,
+          "deployedByRender": false,
+          "envUpdated": false,
+          "firstBuild": false,
+          "manual": false,
+          "newCommit": "6d2c053aa4edcc0ff29f722ee2d11f8dad05a802",
+          "rollback": false
+        }
+      },
+      "id": "evt-d4oa15fdiees738k99o0",
+      "serviceId": "srv-d4no5dc9c44c73d1opgg",
+      "timestamp": "2025-12-03T20:41:57.295124Z",
+      "type": "build_started"
+    },
+    "cursor": "oQRgYdYfqKgxNWZkaWVlczczOGs5OW8w"
+  },
+  {
+    "event": {
+      "details": {
+        "buildId": "bld-d4o9u23e5dus73c2i57g",
+        "buildStatus": "failed",
+        "reason": {
+          "buildFailed": {
+            "id": "bld-d4o9u23e5dus73c2i57g"
+          },
+          "failure": {
+            "evicted": false,
+            "nonZeroExit": 1
+          }
+        },
+        "status": 3
+      },
+      "id": "evt-d4o9uf15pdvs73dl5o80",
+      "serviceId": "srv-d4no5dc9c44c73d1opgg",
+      "timestamp": "2025-12-03T20:36:12.256814Z",
+      "type": "build_ended"
+    },
+    "cursor": "pRTc6-0EU6l1ZjE1cGR2czczZGw1bzgw"
+  },
+  {
+    "event": {
+      "details": {
+        "deployId": "dep-d4o9u23e5dus73c2i570",
+        "deployStatus": "failed",
+        "reason": {
+          "buildFailed": {
+            "id": "bld-d4o9u23e5dus73c2i57g"
+          },
+          "failure": {
+            "evicted": false,
+            "nonZeroExit": 1
+          }
+        },
+        "status": 4
+      },
+      "id": "evt-d4o9ue95pdvs73dl5nrg",
+      "serviceId": "srv-d4no5dc9c44c73d1opgg",
+      "timestamp": "2025-12-03T20:36:09.053396Z",
+      "type": "deploy_ended"
+    },
+    "cursor": "pRTc6-0EU6l1ZTk1cGR2czczZGw1bnJn"
+  },
+  {
+    "event": {
+      "details": {
+        "deployId": "dep-d4o9u23e5dus73c2i570",
+        "trigger": {
+          "clearCache": true,
+          "deployedByRender": false,
+          "envUpdated": false,
+          "firstBuild": false,
+          "manual": false,
+          "rollback": false,
+          "user": {
+            "email": "israel.growth.venture@gmail.com",
+            "id": "usr-d4e73dk9c44c73bl1si0"
+          }
+        }
+      },
+      "id": "evt-d4o9u3be5dus73c2i71g",
+      "serviceId": "srv-d4no5dc9c44c73d1opgg",
+      "timestamp": "2025-12-03T20:35:25.435254Z",
+      "type": "deploy_started"
+    },
+    "cursor": "pRTc6-0EU6l1M2JlNWR1czczYzJpNzFn"
+  },
+  {
+    "event": {
+      "details": {
+        "buildId": "bld-d4o9u23e5dus73c2i57g",
+        "trigger": {
+          "clearCache": true,
+          "deployedByRender": false,
+          "envUpdated": false,
+          "firstBuild": false,
+          "manual": false,
+          "rollback": false,
+          "user": {
+            "email": "israel.growth.venture@gmail.com",
+            "id": "usr-d4e73dk9c44c73bl1si0"
+          }
+        }
+      },
+      "id": "evt-d4o9u2je5dus73c2i5ig",
+      "serviceId": "srv-d4no5dc9c44c73d1opgg",
+      "timestamp": "2025-12-03T20:35:22.458022Z",
+      "type": "build_started"
+    },
+    "cursor": "pRTc6-0EU6l1MmplNWR1czczYzJpNWln"
+  },
+  {
+    "event": {
+      "details": {
+        "buildId": "bld-d4o7dcili9vc73bpvnag",
+        "buildStatus": "failed",
+        "reason": {
+          "buildFailed": {
+            "id": "bld-d4o7dcili9vc73bpvnag"
+          },
+          "failure": {
+            "evicted": false,
+            "nonZeroExit": 1
+          }
+        },
+        "status": 3
+      },
+      "id": "evt-d4o7dkbe5dus73e2uq5g",
+      "serviceId": "srv-d4no5dc9c44c73d1opgg",
+      "timestamp": "2025-12-03T17:43:45.666221Z",
+      "type": "build_ended"
+    },
+    "cursor": "eCu717RHdohka2JlNWR1czczZTJ1cTVn"
+  },
+  {
+    "event": {
+      "details": {
+        "deployId": "dep-d4o7dcili9vc73bpvna0",
+        "deployStatus": "failed",
+        "reason": {
+          "buildFailed": {
+            "id": "bld-d4o7dcili9vc73bpvnag"
+          },
+          "failure": {
+            "evicted": false,
+            "nonZeroExit": 1
+          }
+        },
+        "status": 4
+      },
+      "id": "evt-d4o7djre5dus73e2upvg",
+      "serviceId": "srv-d4no5dc9c44c73d1opgg",
+      "timestamp": "2025-12-03T17:43:43.934085Z",
+      "type": "deploy_ended"
+    },
+    "cursor": "eCu717RHdohkanJlNWR1czczZTJ1cHZn"
+  },
+  {
+    "event": {
+      "details": {
+        "deployId": "dep-d4o7dcili9vc73bpvna0",
+        "trigger": {
+          "clearCache": false,
+          "deployedByRender": false,
+          "envUpdated": false,
+          "firstBuild": false,
+          "manual": false,
+          "newCommit": "5599d8346e4ef6d3fafd8fd7223bdeb8f09c20a1",
+          "rollback": false
+        }
+      },
+      "id": "evt-d4o7ddqli9vc73bpvnlg",
+      "serviceId": "srv-d4no5dc9c44c73d1opgg",
+      "timestamp": "2025-12-03T17:43:19.767035Z",
+      "type": "deploy_started"
+    },
+    "cursor": "eCu717RHdohkZHFsaTl2YzczYnB2bmxn"
+  },
+  {
+    "event": {
+      "details": {
+        "buildId": "bld-d4o7dcili9vc73bpvnag",
+        "trigger": {
+          "clearCache": false,
+          "deployedByRender": false,
+          "envUpdated": false,
+          "firstBuild": false,
+          "manual": false,
+          "newCommit": "5599d8346e4ef6d3fafd8fd7223bdeb8f09c20a1",
+          "rollback": false
+        }
+      },
+      "id": "evt-d4o7dd2li9vc73bpvnf0",
+      "serviceId": "srv-d4no5dc9c44c73d1opgg",
+      "timestamp": "2025-12-03T17:43:16.22137Z",
+      "type": "build_started"
+    },
+    "cursor": "eCu717RHdohkZDJsaTl2YzczYnB2bmYw"
+  },
+  {
+    "event": {
+      "details": {
+        "buildId": "bld-d4o6o715pdvs73d0m18g",
+        "buildStatus": "failed",
+        "reason": {
+          "buildFailed": {
+            "id": "bld-d4o6o715pdvs73d0m18g"
+          },
+          "failure": {
+            "evicted": false,
+            "nonZeroExit": 1
+          }
+        },
+        "status": 3
+      },
+      "id": "evt-d4o6og3e5dus73e2jnkg",
+      "serviceId": "srv-d4no5dc9c44c73d1opgg",
+      "timestamp": "2025-12-03T16:58:40.625032Z",
+      "type": "build_ended"
+    },
+    "cursor": "RBRdZ3wWgN1vZzNlNWR1czczZTJqbmtn"
+  },
+  {
+    "event": {
+      "details": {
+        "deployId": "dep-d4o6o715pdvs73d0m180",
+        "deployStatus": "failed",
+        "reason": {
+          "buildFailed": {
+            "id": "bld-d4o6o715pdvs73d0m18g"
+          },
+          "failure": {
+            "evicted": false,
+            "nonZeroExit": 1
+          }
+        },
+        "status": 4
+      },
+      "id": "evt-d4o6ofre5dus73e2jngg",
+      "serviceId": "srv-d4no5dc9c44c73d1opgg",
+      "timestamp": "2025-12-03T16:58:39.203958Z",
+      "type": "deploy_ended"
+    },
+    "cursor": "RBRdZ3wWgN1vZnJlNWR1czczZTJqbmdn"
+  },
+  {
+    "event": {
+      "details": {
+        "deployId": "dep-d4o6o715pdvs73d0m180",
+        "trigger": {
+          "clearCache": false,
+          "deployedByRender": false,
+          "envUpdated": false,
+          "firstBuild": false,
+          "manual": false,
+          "newCommit": "1372336c2c807d774e5f9256f7c5d7452d2e4a8c",
+          "rollback": false
+        }
+      },
+      "id": "evt-d4o6o8h5pdvs73d0m1b0",
+      "serviceId": "srv-d4no5dc9c44c73d1opgg",
+      "timestamp": "2025-12-03T16:58:10.149784Z",
+      "type": "deploy_started"
+    },
+    "cursor": "RBRdZ3wWgN1vOGg1cGR2czczZDBtMWIw"
+  },
+  {
+    "event": {
+      "details": {
+        "buildId": "bld-d4o6o715pdvs73d0m18g",
+        "trigger": {
+          "clearCache": false,
+          "deployedByRender": false,
+          "envUpdated": false,
+          "firstBuild": false,
+          "manual": false,
+          "newCommit": "1372336c2c807d774e5f9256f7c5d7452d2e4a8c",
+          "rollback": false
+        }
+      },
+      "id": "evt-d4o6o7h5pdvs73d0m19g",
+      "serviceId": "srv-d4no5dc9c44c73d1opgg",
+      "timestamp": "2025-12-03T16:58:06.634466Z",
+      "type": "build_started"
+    },
+    "cursor": "RBRdZ3wWgN1vN2g1cGR2czczZDBtMTln"
+  },
+  {
+    "event": {
+      "details": {
+        "buildId": "bld-d4o6cs49c44c73f5k2rg",
+        "buildStatus": "failed",
+        "reason": {
+          "buildFailed": {
+            "id": "bld-d4o6cs49c44c73f5k2rg"
+          },
+          "failure": {
+            "evicted": false,
+            "nonZeroExit": 1
+          }
+        },
+        "status": 3
+      },
+      "id": "evt-d4o6d4be5dus73e2e1h0",
+      "serviceId": "srv-d4no5dc9c44c73d1opgg",
+      "timestamp": "2025-12-03T16:34:25.019967Z",
+      "type": "build_ended"
+    },
+    "cursor": "RBRdZ3wWgN1kNGJlNWR1czczZTJlMWgw"
+  },
+  {
+    "event": {
+      "details": {
+        "deployId": "dep-d4o6cs49c44c73f5k2r0",
+        "deployStatus": "failed",
+        "reason": {
+          "buildFailed": {
+            "id": "bld-d4o6cs49c44c73f5k2rg"
+          },
+          "failure": {
+            "evicted": false,
+            "nonZeroExit": 1
+          }
+        },
+        "status": 4
+      },
+      "id": "evt-d4o6d3je5dus73e2e11g",
+      "serviceId": "srv-d4no5dc9c44c73d1opgg",
+      "timestamp": "2025-12-03T16:34:22.197605Z",
+      "type": "deploy_ended"
+    },
+    "cursor": "RBRdZ3wWgN1kM2plNWR1czczZTJlMTFn"
+  },
+  {
+    "event": {
+      "details": {
+        "deployId": "dep-d4o6cs49c44c73f5k2r0",
+        "trigger": {
+          "clearCache": false,
+          "deployedByRender": false,
+          "envUpdated": false,
+          "firstBuild": false,
+          "manual": false,
+          "newCommit": "05125dd6ae24330ec579801179d6eb6eeb4b798d",
+          "rollback": false
+        }
+      },
+      "id": "evt-d4o6ct49c44c73f5k3j0",
+      "serviceId": "srv-d4no5dc9c44c73d1opgg",
+      "timestamp": "2025-12-03T16:33:56.627972Z",
+      "type": "deploy_started"
+    },
+    "cursor": "RBRdZ3wWgN1jdDQ5YzQ0YzczZjVrM2ow"
+  },
+  {
+    "event": {
+      "details": {
+        "buildId": "bld-d4o6cs49c44c73f5k2rg",
+        "trigger": {
+          "clearCache": false,
+          "deployedByRender": false,
+          "envUpdated": false,
+          "firstBuild": false,
+          "manual": false,
+          "newCommit": "05125dd6ae24330ec579801179d6eb6eeb4b798d",
+          "rollback": false
+        }
+      },
+      "id": "evt-d4o6csk9c44c73f5k310",
+      "serviceId": "srv-d4no5dc9c44c73d1opgg",
+      "timestamp": "2025-12-03T16:33:54.462372Z",
+      "type": "build_started"
+    },
+    "cursor": "RBRdZ3wWgN1jc2s5YzQ0YzczZjVrMzEw"
+  },
+  {
+    "event": {
+      "details": {
+        "buildId": "bld-d4o3mck9c44c73f4lobg",
+        "buildStatus": "failed",
+        "reason": {
+          "buildFailed": {
+            "id": "bld-d4o3mck9c44c73f4lobg"
+          },
+          "failure": {
+            "evicted": false,
+            "nonZeroExit": 1
+          }
+        },
+        "status": 3
+      },
+      "id": "evt-d4o3mk3e5dus73e0s8n0",
+      "serviceId": "srv-d4no5dc9c44c73d1opgg",
+      "timestamp": "2025-12-03T13:29:52.23533Z",
+      "type": "build_ended"
+    },
+    "cursor": "d6veYRIm_cxtazNlNWR1czczZTBzOG4w"
+  },
+  {
+    "event": {
+      "details": {
+        "deployId": "dep-d4o3mck9c44c73f4lob0",
+        "deployStatus": "failed",
+        "reason": {
+          "buildFailed": {
+            "id": "bld-d4o3mck9c44c73f4lobg"
+          },
+          "failure": {
+            "evicted": false,
+            "nonZeroExit": 1
+          }
+        },
+        "status": 4
+      },
+      "id": "evt-d4o3mjre5dus73e0s8m0",
+      "serviceId": "srv-d4no5dc9c44c73d1opgg",
+      "timestamp": "2025-12-03T13:29:51.487432Z",
+      "type": "deploy_ended"
+    },
+    "cursor": "d6veYRIm_cxtanJlNWR1czczZTBzOG0w"
+  },
+  {
+    "event": {
+      "details": {
+        "deployId": "dep-d4o3mck9c44c73f4lob0",
+        "trigger": {
+          "clearCache": false,
+          "deployedByRender": false,
+          "envUpdated": false,
+          "firstBuild": false,
+          "manual": false,
+          "newCommit": "b7afc761bdbae44c5d02deaf7a0ee665d54bebda",
+          "rollback": false
+        }
+      },
+      "id": "evt-d4o3mdk9c44c73f4lovg",
+      "serviceId": "srv-d4no5dc9c44c73d1opgg",
+      "timestamp": "2025-12-03T13:29:26.610028Z",
+      "type": "deploy_started"
+    },
+    "cursor": "d6veYRIm_cxtZGs5YzQ0YzczZjRsb3Zn"
+  },
+  {
+    "event": {
+      "details": {
+        "buildId": "bld-d4o3mck9c44c73f4lobg",
+        "trigger": {
+          "clearCache": false,
+          "deployedByRender": false,
+          "envUpdated": false,
+          "firstBuild": false,
+          "manual": false,
+          "newCommit": "b7afc761bdbae44c5d02deaf7a0ee665d54bebda",
+          "rollback": false
+        }
+      },
+      "id": "evt-d4o3md49c44c73f4lop0",
+      "serviceId": "srv-d4no5dc9c44c73d1opgg",
+      "timestamp": "2025-12-03T13:29:24.393867Z",
+      "type": "build_started"
+    },
+    "cursor": "d6veYRIm_cxtZDQ5YzQ0YzczZjRsb3Aw"
+  },
+  {
+    "event": {
+      "details": {
+        "deployId": "dep-d4o3ash5pdvs73cvdaeg",
+        "deployStatus": "succeeded",
+        "reason": {},
+        "status": 2
+      },
+      "id": "evt-d4o3c7re5dus73e0mk80",
+      "serviceId": "srv-d4no5dc9c44c73d1opgg",
+      "timestamp": "2025-12-03T13:07:43.349891Z",
+      "type": "deploy_ended"
+    },
+    "cursor": "d6veYRIm_cxjN3JlNWR1czczZTBtazgw"
+  },
+  {
+    "event": {
+      "details": {
+        "buildId": "bld-d4o3ash5pdvs73cvdaf0",
+        "buildStatus": "succeeded",
+        "reason": {},
+        "status": 2
+      },
+      "id": "evt-d4o3bsre5dus73e0mecg",
+      "serviceId": "srv-d4no5dc9c44c73d1opgg",
+      "timestamp": "2025-12-03T13:06:59.582573Z",
+      "type": "build_ended"
+    },
+    "cursor": "d6veYRIm_cxic3JlNWR1czczZTBtZWNn"
+  },
+  {
+    "event": {
+      "details": {
+        "deployId": "dep-d4o3ash5pdvs73cvdaeg",
+        "trigger": {
+          "clearCache": false,
+          "deployedByRender": false,
+          "envUpdated": false,
+          "firstBuild": false,
+          "manual": false,
+          "newCommit": "d33694f8b716cd26f8b0e28c003749abadca66cb",
+          "rollback": false
+        }
+      },
+      "id": "evt-d4o3ath5pdvs73cvdak0",
+      "serviceId": "srv-d4no5dc9c44c73d1opgg",
+      "timestamp": "2025-12-03T13:04:54.255148Z",
+      "type": "deploy_started"
+    },
+    "cursor": "d6veYRIm_cxhdGg1cGR2czczY3ZkYWsw"
+  },
+  {
+    "event": {
+      "details": {
+        "buildId": "bld-d4o3ash5pdvs73cvdaf0",
+        "trigger": {
+          "clearCache": false,
+          "deployedByRender": false,
+          "envUpdated": false,
+          "firstBuild": false,
+          "manual": false,
+          "newCommit": "d33694f8b716cd26f8b0e28c003749abadca66cb",
+          "rollback": false
+        }
+      },
+      "id": "evt-d4o3asp5pdvs73cvdaig",
+      "serviceId": "srv-d4no5dc9c44c73d1opgg",
+      "timestamp": "2025-12-03T13:04:51.74369Z",
+      "type": "build_started"
+    },
+    "cursor": "d6veYRIm_cxhc3A1cGR2czczY3ZkYWln"
+  },
+  {
+    "event": {
+      "details": {
+        "buildId": "bld-d4o39d7fte5s738l02i0",
+        "buildStatus": "failed",
+        "reason": {
+          "buildFailed": {
+            "id": "bld-d4o39d7fte5s738l02i0"
+          },
+          "failure": {
+            "evicted": false,
+            "nonZeroExit": 1
+          }
+        },
+        "status": 3
+      },
+      "id": "evt-d4o39u3e5dus73e0klqg",
+      "serviceId": "srv-d4no5dc9c44c73d1opgg",
+      "timestamp": "2025-12-03T13:02:48.276305Z",
+      "type": "build_ended"
+    },
+    "cursor": "d6veYRIm_cw5dTNlNWR1czczZTBrbHFn"
+  },
+  {
+    "event": {
+      "details": {
+        "deployId": "dep-d4o39d7fte5s738l02hg",
+        "deployStatus": "failed",
+        "reason": {
+          "buildFailed": {
+            "id": "bld-d4o39d7fte5s738l02i0"
+          },
+          "failure": {
+            "evicted": false,
+            "nonZeroExit": 1
+          }
+        },
+        "status": 4
+      },
+      "id": "evt-d4o39tje5dus73e0klhg",
+      "serviceId": "srv-d4no5dc9c44c73d1opgg",
+      "timestamp": "2025-12-03T13:02:46.122558Z",
+      "type": "deploy_ended"
+    },
+    "cursor": "d6veYRIm_cw5dGplNWR1czczZTBrbGhn"
+  },
+  {
+    "event": {
+      "details": {
+        "deployId": "dep-d4o39d7fte5s738l02hg",
+        "trigger": {
+          "clearCache": false,
+          "deployedByRender": false,
+          "envUpdated": false,
+          "firstBuild": false,
+          "manual": false,
+          "newCommit": "993624628faba0ed6e44ec22bf082352404e47dd",
+          "rollback": false
+        }
+      },
+      "id": "evt-d4o39e7fte5s738l02r0",
+      "serviceId": "srv-d4no5dc9c44c73d1opgg",
+      "timestamp": "2025-12-03T13:01:44.928812Z",
+      "type": "deploy_started"
+    },
+    "cursor": "d6veYRIm_cw5ZTdmdGU1czczOGwwMnIw"
+  },
+  {
+    "event": {
+      "details": {
+        "buildId": "bld-d4o39d7fte5s738l02i0",
+        "trigger": {
+          "clearCache": false,
+          "deployedByRender": false,
+          "envUpdated": false,
+          "firstBuild": false,
+          "manual": false,
+          "newCommit": "993624628faba0ed6e44ec22bf082352404e47dd",
+          "rollback": false
+        }
+      },
+      "id": "evt-d4o39dnfte5s738l02k0",
+      "serviceId": "srv-d4no5dc9c44c73d1opgg",
+      "timestamp": "2025-12-03T13:01:42.545104Z",
+      "type": "build_started"
+    },
+    "cursor": "d6veYRIm_cw5ZG5mdGU1czczOGwwMmsw"
+  },
+  {
+    "event": {
+      "details": {
+        "buildId": "bld-d4o2s5p5pdvs73cv8cag",
+        "buildStatus": "failed",
+        "reason": {
+          "buildFailed": {
+            "id": "bld-d4o2s5p5pdvs73cv8cag"
+          },
+          "failure": {
+            "evicted": false,
+            "nonZeroExit": 1
+          }
+        },
+        "status": 3
+      },
+      "id": "evt-d4o2sore5dus73e0d8l0",
+      "serviceId": "srv-d4no5dc9c44c73d1opgg",
+      "timestamp": "2025-12-03T12:34:43.980475Z",
+      "type": "build_ended"
+    },
+    "cursor": "0mf4mU9fgWRzb3JlNWR1czczZTBkOGww"
+  },
+  {
+    "event": {
+      "details": {
+        "deployId": "dep-d4o2s5p5pdvs73cv8ca0",
+        "deployStatus": "failed",
+        "reason": {
+          "buildFailed": {
+            "id": "bld-d4o2s5p5pdvs73cv8cag"
+          },
+          "failure": {
+            "evicted": false,
+            "nonZeroExit": 1
+          }
+        },
+        "status": 4
+      },
+      "id": "evt-d4o2soje5dus73e0d8fg",
+      "serviceId": "srv-d4no5dc9c44c73d1opgg",
+      "timestamp": "2025-12-03T12:34:42.657483Z",
+      "type": "deploy_ended"
+    },
+    "cursor": "0mf4mU9fgWRzb2plNWR1czczZTBkOGZn"
+  },
+  {
+    "event": {
+      "details": {
+        "deployId": "dep-d4o2s5p5pdvs73cv8ca0",
+        "trigger": {
+          "clearCache": false,
+          "deployedByRender": false,
+          "envUpdated": false,
+          "firstBuild": false,
+          "manual": false,
+          "newCommit": "86444011c948fb29243de996e259c1a43772aa80",
+          "rollback": false
+        }
+      },
+      "id": "evt-d4o2s715pdvs73cv8cm0",
+      "serviceId": "srv-d4no5dc9c44c73d1opgg",
+      "timestamp": "2025-12-03T12:33:32.428128Z",
+      "type": "deploy_started"
+    },
+    "cursor": "0mf4mU9fgWRzNzE1cGR2czczY3Y4Y20w"
+  },
+  {
+    "event": {
+      "details": {
+        "buildId": "bld-d4o2s5p5pdvs73cv8cag",
+        "trigger": {
+          "clearCache": false,
+          "deployedByRender": false,
+          "envUpdated": false,
+          "firstBuild": false,
+          "manual": false,
+          "newCommit": "86444011c948fb29243de996e259c1a43772aa80",
+          "rollback": false
+        }
+      },
+      "id": "evt-d4o2s695pdvs73cv8ck0",
+      "serviceId": "srv-d4no5dc9c44c73d1opgg",
+      "timestamp": "2025-12-03T12:33:29.274266Z",
+      "type": "build_started"
+    },
+    "cursor": "0mf4mU9fgWRzNjk1cGR2czczY3Y4Y2sw"
+  },
+  {
+    "event": {
+      "details": {
+        "deployId": "dep-d4o2ht7pm1nc73fq0e3g",
+        "deployStatus": "succeeded",
+        "reason": {},
+        "status": 2
+      },
+      "id": "evt-d4o2inre5dus73e06uq0",
+      "serviceId": "srv-d4no5dc9c44c73d1opgg",
+      "timestamp": "2025-12-03T12:13:19.964611Z",
+      "type": "deploy_ended"
+    },
+    "cursor": "0mf4mU9fgWRpbnJlNWR1czczZTA2dXEw"
+  },
+  {
+    "event": {
+      "details": {
+        "buildId": "bld-d4o2ht7pm1nc73fq0e40",
+        "buildStatus": "succeeded",
+        "reason": {},
+        "status": 2
+      },
+      "id": "evt-d4o2igbe5dus73e06r6g",
+      "serviceId": "srv-d4no5dc9c44c73d1opgg",
+      "timestamp": "2025-12-03T12:12:49.953895Z",
+      "type": "build_ended"
+    },
+    "cursor": "0mf4mU9fgWRpZ2JlNWR1czczZTA2cjZn"
+  },
+  {
+    "event": {
+      "details": {
+        "deployId": "dep-d4o2ht7pm1nc73fq0e3g",
+        "trigger": {
+          "clearCache": false,
+          "deployedByRender": false,
+          "envUpdated": false,
+          "firstBuild": false,
+          "manual": false,
+          "rollback": false,
+          "user": {
+            "email": "israel.growth.venture@gmail.com",
+            "id": "usr-d4e73dk9c44c73bl1si0"
+          }
+        }
+      },
+      "id": "evt-d4o2hunpm1nc73fq0fp0",
+      "serviceId": "srv-d4no5dc9c44c73d1opgg",
+      "timestamp": "2025-12-03T12:11:38.037942Z",
+      "type": "deploy_started"
+    },
+    "cursor": "0mf4mU9fgWRodW5wbTFuYzczZnEwZnAw"
+  },
+  {
+    "event": {
+      "details": {
+        "buildId": "bld-d4o2ht7pm1nc73fq0e40",
+        "trigger": {
+          "clearCache": false,
+          "deployedByRender": false,
+          "envUpdated": false,
+          "firstBuild": false,
+          "manual": false,
+          "rollback": false,
+          "user": {
+            "email": "israel.growth.venture@gmail.com",
+            "id": "usr-d4e73dk9c44c73bl1si0"
+          }
+        }
+      },
+      "id": "evt-d4o2htvpm1nc73fq0eug",
+      "serviceId": "srv-d4no5dc9c44c73d1opgg",
+      "timestamp": "2025-12-03T12:11:35.485238Z",
+      "type": "build_started"
+    },
+    "cursor": "0mf4mU9fgWRodHZwbTFuYzczZnEwZXVn"
+  },
+  {
+    "event": {
+      "details": {
+        "deployId": "dep-d4nqksre5dus73cnppsg",
+        "deployStatus": "succeeded",
+        "reason": {},
+        "status": 2
+      },
+      "id": "evt-d4nqlq3e5dus73drq710",
+      "serviceId": "srv-d4no5dc9c44c73d1opgg",
+      "timestamp": "2025-12-03T03:13:44.889894Z",
+      "type": "deploy_ended"
+    },
+    "cursor": "hfSOwZiofuxscTNlNWR1czczZHJxNzEw"
+  },
+  {
+    "event": {
+      "details": {
+        "buildId": "bld-d4nqksre5dus73cnppt0",
+        "buildStatus": "succeeded",
+        "reason": {},
+        "status": 2
+      },
+      "id": "evt-d4nqlk3e5dus73drq5kg",
+      "serviceId": "srv-d4no5dc9c44c73d1opgg",
+      "timestamp": "2025-12-03T03:13:20.193553Z",
+      "type": "build_ended"
+    },
+    "cursor": "hfSOwZiofuxsazNlNWR1czczZHJxNWtn"
+  },
+  {
+    "event": {
+      "details": {
+        "deployId": "dep-d4nqksre5dus73cnppsg",
+        "trigger": {
+          "clearCache": false,
+          "deployedByRender": false,
+          "envUpdated": false,
+          "firstBuild": false,
+          "manual": false,
+          "newCommit": "1f0d70c6649c0c317309d924a2ae70030e390026",
+          "rollback": false
+        }
+      },
+      "id": "evt-d4nqktre5dus73cnpq10",
+      "serviceId": "srv-d4no5dc9c44c73d1opgg",
+      "timestamp": "2025-12-03T03:11:51.890645Z",
+      "type": "deploy_started"
+    },
+    "cursor": "hfSOwZiofuxrdHJlNWR1czczY25wcTEw"
+  },
+  {
+    "event": {
+      "details": {
+        "buildId": "bld-d4nqksre5dus73cnppt0",
+        "trigger": {
+          "clearCache": false,
+          "deployedByRender": false,
+          "envUpdated": false,
+          "firstBuild": false,
+          "manual": false,
+          "newCommit": "1f0d70c6649c0c317309d924a2ae70030e390026",
+          "rollback": false
+        }
+      },
+      "id": "evt-d4nqktbe5dus73cnpq00",
+      "serviceId": "srv-d4no5dc9c44c73d1opgg",
+      "timestamp": "2025-12-03T03:11:49.694541Z",
+      "type": "build_started"
+    },
+    "cursor": "hfSOwZiofuxrdGJlNWR1czczY25wcTAw"
+  },
+  {
+    "event": {
+      "details": {
+        "deployId": "dep-d4nog0vpm1nc738u1he0",
+        "deployStatus": "succeeded",
+        "reason": {},
+        "status": 2
+      },
+      "id": "evt-d4nogure5dus73dqqtb0",
+      "serviceId": "srv-d4no5dc9c44c73d1opgg",
+      "timestamp": "2025-12-03T00:46:51.119145Z",
+      "type": "deploy_ended"
+    },
+    "cursor": "6ODPFQ8Gpn5ndXJlNWR1czczZHFxdGIw"
+  },
+  {
+    "event": {
+      "details": {
+        "buildId": "bld-d4nog0vpm1nc738u1heg",
+        "buildStatus": "succeeded",
+        "reason": {},
+        "status": 2
+      },
+      "id": "evt-d4nogobe5dus73dqqrog",
+      "serviceId": "srv-d4no5dc9c44c73d1opgg",
+      "timestamp": "2025-12-03T00:46:25.871628Z",
+      "type": "build_ended"
+    },
+    "cursor": "6ODPFQ8Gpn5nb2JlNWR1czczZHFxcm9n"
+  },
+  {
+    "event": {
+      "details": {
+        "deployId": "dep-d4nog0vpm1nc738u1he0",
+        "trigger": {
+          "clearCache": false,
+          "deployedByRender": false,
+          "envUpdated": false,
+          "firstBuild": false,
+          "manual": false,
+          "newCommit": "b2a1b20382fc122d4d9a431e4d439ff2bd3681dc",
+          "rollback": false
+        }
+      },
+      "id": "evt-d4nog1npm1nc738u1hmg",
+      "serviceId": "srv-d4no5dc9c44c73d1opgg",
+      "timestamp": "2025-12-03T00:44:54.728055Z",
+      "type": "deploy_started"
+    },
+    "cursor": "6ODPFQ8Gpn5nMW5wbTFuYzczOHUxaG1n"
+  },
+  {
+    "event": {
+      "details": {
+        "buildId": "bld-d4nog0vpm1nc738u1heg",
+        "trigger": {
+          "clearCache": false,
+          "deployedByRender": false,
+          "envUpdated": false,
+          "firstBuild": false,
+          "manual": false,
+          "newCommit": "b2a1b20382fc122d4d9a431e4d439ff2bd3681dc",
+          "rollback": false
+        }
+      },
+      "id": "evt-d4nog1fpm1nc738u1hhg",
+      "serviceId": "srv-d4no5dc9c44c73d1opgg",
+      "timestamp": "2025-12-03T00:44:53.050695Z",
+      "type": "build_started"
+    },
+    "cursor": "6ODPFQ8Gpn5nMWZwbTFuYzczOHUxaGhn"
+  },
+  {
+    "event": {
+      "details": {
+        "deployId": "dep-d4nodg3e5dus73cn9h40",
+        "deployStatus": "succeeded",
+        "reason": {},
+        "status": 2
+      },
+      "id": "evt-d4noebre5dus73dqprt0",
+      "serviceId": "srv-d4no5dc9c44c73d1opgg",
+      "timestamp": "2025-12-03T00:41:19.754964Z",
+      "type": "deploy_ended"
+    },
+    "cursor": "6ODPFQ8Gpn5lYnJlNWR1czczZHFwcnQw"
+  },
+  {
+    "event": {
+      "details": {
+        "buildId": "bld-d4nodg3e5dus73cn9h4g",
+        "buildStatus": "succeeded",
+        "reason": {},
+        "status": 2
+      },
+      "id": "evt-d4noe2re5dus73dqpnj0",
+      "serviceId": "srv-d4no5dc9c44c73d1opgg",
+      "timestamp": "2025-12-03T00:40:43.037545Z",
+      "type": "build_ended"
+    },
+    "cursor": "6ODPFQ8Gpn5lMnJlNWR1czczZHFwbmow"
+  }
+]

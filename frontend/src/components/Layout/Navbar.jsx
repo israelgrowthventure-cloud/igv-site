@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useLanguage } from '@/context/LanguageContext.jsx';
+import { useLanguage } from 'context/LanguageContext.jsx';
 import { Menu, X, Globe } from 'lucide-react';
 
 export const Navbar = () => {

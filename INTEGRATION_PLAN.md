@@ -1,8 +1,65 @@
 # INTEGRATION_PLAN.md - État Final Production IGV Site
 
-**Date:** 3 décembre 2025  
-**Statut:** ✅ **PRODUCTION OPÉRATIONNELLE - MISSION ACCOMPLIE**  
-**URL Production:** https://israelgrowthventure.com
+**Date:** 3 décembre 2025 23:15  
+**Statut:** 🔧 **EN CORRECTION - Diagnostics Render Builds Échoués**  
+**URL Production:** https://israelgrowthventure.com (INDISPONIBLE)
+
+---
+
+## 🚨 DIAGNOSTICS RENDER – Déploiements échoués (2025-12-03 23:00)
+
+### Analyse des Logs Locaux
+- **Fichiers analysés:**
+  - `backend/render_backend_events.json` ✅
+  - `backend/render_frontend_events.json` ✅
+
+### Backend - Statut Build
+- **Dernier build réussi:** 2025-12-03 17:52:22
+- **Tous les builds depuis 19:44:** FAILED (nonZeroExit: 1)
+- **Commits testés:** ce2f771, 6d2c053, 340597c
+- **Diagnostic local:** 
+  - `server.py` s'importe correctement ✅
+  - `requirements.txt` contient `pydantic==2.6.1` sans `pydantic_core` explicite
+  - Installation locale Windows échoue (Rust requis) mais Render Linux devrait fonctionner
+
+### Frontend - Statut Build
+- **Dernier build réussi:** 2025-12-03 13:06:59
+- **Tous les builds depuis 16:34:** FAILED (nonZeroExit: 1)
+- **Erreur identifiée:** Module `'../utils/api'` non résolu dans `pages/admin/`
+- **Cause racine:** Imports relatifs incorrects dans 6 fichiers admin
+- **Solution appliquée:** Conversion vers imports absolus depuis `src/` + `jsconfig.json`
+
+### Corrections Appliquées
+
+#### 1. Frontend - Imports absolus (✅ BUILD LOCAL RÉUSSI)
+**Fichiers modifiés:**
+- `frontend/src/pages/admin/LoginPage.jsx`
+- `frontend/src/pages/admin/Dashboard.jsx`
+- `frontend/src/pages/admin/PageEditor.jsx`
+- `frontend/src/pages/admin/PacksAdmin.jsx`
+- `frontend/src/pages/admin/PricingAdmin.jsx`
+- `frontend/src/pages/admin/TranslationsAdmin.jsx`
+- `frontend/src/components/Layout/Navbar.jsx`
+- `frontend/src/components/Layout/Footer.jsx`
+
+**Changement:** `from '../utils/api'` → `from 'utils/api'`
+
+**Fichiers ajoutés:**
+- `frontend/jsconfig.json` (baseUrl: "src", paths: {"*": ["*"], "@/*": ["*"]})
+
+**Validation:**
+```bash
+npm run build
+# ✅ Compiled successfully
+# File: build/static/js/main.cad037b0.js (429.62 kB gzipped)
+```
+
+#### 2. Backend - Requirements.txt simplifié
+**Fichier modifié:** `backend/requirements.txt`
+
+**Changement:** Supprimé `pydantic_core==2.16.2` (dépendance automatique)
+
+**Raison:** Éviter problèmes compilation Rust sur certaines plateformes
 
 ---
 

@@ -15,6 +15,7 @@ EXÉCUTION:
 import asyncio
 import bcrypt
 import os
+import uuid
 from motor.motor_asyncio import AsyncIOMotorClient
 from datetime import datetime
 
@@ -79,6 +80,7 @@ async def main():
         
         packs_data = [
             {
+                "id": str(uuid.uuid4()),
                 "name": "Analyse Marché",
                 "description": "Étude de marché complète pour votre expansion en Israël",
                 "base_price": 5000,
@@ -91,6 +93,7 @@ async def main():
                 "created_at": datetime.utcnow().isoformat()
             },
             {
+                "id": str(uuid.uuid4()),
                 "name": "Création Succursales",
                 "description": "Accompagnement juridique et administratif pour l'ouverture",
                 "base_price": 15000,
@@ -103,6 +106,7 @@ async def main():
                 "created_at": datetime.utcnow().isoformat()
             },
             {
+                "id": str(uuid.uuid4()),
                 "name": "Contrat Franchise",
                 "description": "Développement et gestion de votre réseau de franchise",
                 "base_price": 25000,

@@ -1,15 +1,26 @@
 """
 Script de vérification des endpoints en production
 Teste uniquement les routes publiques non-destructives sur https://israelgrowthventure.com
+et https://igv-cms-backend.onrender.com
+
+IMPORTANT:
+- Les credentials admin sont lus depuis les variables d'environnement
+- Les routes destructrices (POST/PUT/DELETE) doivent être testées MANUELLEMENT
+- Ne jamais lancer ce script en boucle automatique sur la production
 """
 import requests
 import sys
+import os
 from datetime import datetime
 
 # Configuration
 BASE_URL = "https://israelgrowthventure.com"
-BACKEND_URL = "https://igv-cms-backend.onrender.com"  # Backend direct si nécessaire
+BACKEND_URL = "https://igv-cms-backend.onrender.com"
 TIMEOUT = 15
+
+# Credentials admin (lus depuis les variables d'environnement)
+ADMIN_EMAIL = os.getenv("ADMIN_EMAIL", "postmaster@israelgrowthventure.com")
+ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "Admin@igv")
 
 # Couleurs pour le terminal
 GREEN = '\033[92m'
@@ -132,12 +143,12 @@ def main():
     
     # Test 6: Auth Login (compte admin réel - non destructif)
     log_info("\n=== Test 6: Auth Login ===")
-    log_warning("Test avec compte admin réel (postmaster@israelgrowthventure.com)")
+    log_warning(f"Test avec compte admin: {ADMIN_EMAIL}")
     results.append(("POST /api/auth/login", check_post(
         "/api/auth/login",
         {
-            "email": "postmaster@israelgrowthventure.com",
-            "password": "Admin@igv"
+            "email": ADMIN_EMAIL,
+            "password": ADMIN_PASSWORD
         },
         use_backend_direct=True
     )))

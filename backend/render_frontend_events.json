@@ -2,6 +2,312 @@
   {
     "event": {
       "details": {
+        "deployId": "dep-d4ob6hs9c44c73fblq7g",
+        "deployStatus": "succeeded",
+        "reason": {},
+        "status": 2
+      },
+      "id": "evt-d4ob7kp5pdvs73dlosr0",
+      "serviceId": "srv-d4no5dc9c44c73d1opgg",
+      "timestamp": "2025-12-03T22:04:03.012499Z",
+      "type": "deploy_ended"
+    },
+    "cursor": "9nzQSVPVAA43a3A1cGR2czczZGxvc3Iw"
+  },
+  {
+    "event": {
+      "details": {
+        "buildId": "bld-d4ob6hs9c44c73fblq80",
+        "buildStatus": "succeeded",
+        "reason": {},
+        "status": 2
+      },
+      "id": "evt-d4ob7eh5pdvs73dloq5g",
+      "serviceId": "srv-d4no5dc9c44c73d1opgg",
+      "timestamp": "2025-12-03T22:03:38.309684Z",
+      "type": "build_ended"
+    },
+    "cursor": "9nzQSVPVAA43ZWg1cGR2czczZGxvcTVn"
+  },
+  {
+    "event": {
+      "details": {
+        "deployId": "dep-d4ob6hs9c44c73fblq7g",
+        "trigger": {
+          "clearCache": false,
+          "deployedByRender": false,
+          "envUpdated": false,
+          "firstBuild": false,
+          "manual": false,
+          "rollback": false,
+          "user": {
+            "email": "israel.growth.venture@gmail.com",
+            "id": "usr-d4e73dk9c44c73bl1si0"
+          }
+        }
+      },
+      "id": "evt-d4ob6is9c44c73fblr5g",
+      "serviceId": "srv-d4no5dc9c44c73d1opgg",
+      "timestamp": "2025-12-03T22:01:47.821952Z",
+      "type": "deploy_started"
+    },
+    "cursor": "9nzQSVPVAA42aXM5YzQ0YzczZmJscjVn"
+  },
+  {
+    "event": {
+      "details": {
+        "buildId": "bld-d4ob6hs9c44c73fblq80",
+        "trigger": {
+          "clearCache": false,
+          "deployedByRender": false,
+          "envUpdated": false,
+          "firstBuild": false,
+          "manual": false,
+          "rollback": false,
+          "user": {
+            "email": "israel.growth.venture@gmail.com",
+            "id": "usr-d4e73dk9c44c73bl1si0"
+          }
+        }
+      },
+      "id": "evt-d4ob6ic9c44c73fblql0",
+      "serviceId": "srv-d4no5dc9c44c73d1opgg",
+      "timestamp": "2025-12-03T22:01:45.408914Z",
+      "type": "build_started"
+    },
+    "cursor": "9nzQSVPVAA42aWM5YzQ0YzczZmJscWww"
+  },
+  {
+    "event": {
+      "details": {
+        "deployId": "dep-d4oatv7pm1nc73e2rii0",
+        "deployStatus": "succeeded",
+        "reason": {},
+        "status": 2
+      },
+      "id": "evt-d4oav6p5pdvs73dlkuv0",
+      "serviceId": "srv-d4no5dc9c44c73d1opgg",
+      "timestamp": "2025-12-03T21:46:03.104841Z",
+      "type": "deploy_ended"
+    },
+    "cursor": "oQRgYdYfqKh2NnA1cGR2czczZGxrdXYw"
+  },
+  {
+    "event": {
+      "details": {
+        "buildId": "bld-d4oatv7pm1nc73e2riig",
+        "buildStatus": "succeeded",
+        "reason": {},
+        "status": 2
+      },
+      "id": "evt-d4oauo15pdvs73dlkkng",
+      "serviceId": "srv-d4no5dc9c44c73d1opgg",
+      "timestamp": "2025-12-03T21:45:04.127244Z",
+      "type": "build_ended"
+    },
+    "cursor": "oQRgYdYfqKh1bzE1cGR2czczZGxra25n"
+  },
+  {
+    "event": {
+      "details": {
+        "deployId": "dep-d4oatv7pm1nc73e2rii0",
+        "trigger": {
+          "clearCache": false,
+          "deployedByRender": false,
+          "envUpdated": false,
+          "firstBuild": false,
+          "manual": false,
+          "rollback": false,
+          "user": {
+            "email": "israel.growth.venture@gmail.com",
+            "id": "usr-d4e73dk9c44c73bl1si0"
+          }
+        }
+      },
+      "id": "evt-d4oau07pm1nc73e2rj60",
+      "serviceId": "srv-d4no5dc9c44c73d1opgg",
+      "timestamp": "2025-12-03T21:43:28.442612Z",
+      "type": "deploy_started"
+    },
+    "cursor": "oQRgYdYfqKh1MDdwbTFuYzczZTJyajYw"
+  },
+  {
+    "event": {
+      "details": {
+        "buildId": "bld-d4oatv7pm1nc73e2riig",
+        "trigger": {
+          "clearCache": false,
+          "deployedByRender": false,
+          "envUpdated": false,
+          "firstBuild": false,
+          "manual": false,
+          "rollback": false,
+          "user": {
+            "email": "israel.growth.venture@gmail.com",
+            "id": "usr-d4e73dk9c44c73bl1si0"
+          }
+        }
+      },
+      "id": "evt-d4oatvnpm1nc73e2rio0",
+      "serviceId": "srv-d4no5dc9c44c73d1opgg",
+      "timestamp": "2025-12-03T21:43:26.096155Z",
+      "type": "build_started"
+    },
+    "cursor": "oQRgYdYfqKh0dm5wbTFuYzczZTJyaW8w"
+  },
+  {
+    "event": {
+      "details": {
+        "deployId": "dep-d4oasjogjchc73eljji0",
+        "deployStatus": "succeeded",
+        "reason": {},
+        "status": 2
+      },
+      "id": "evt-d4oateh5pdvs73dlk5j0",
+      "serviceId": "srv-d4no5dc9c44c73d1opgg",
+      "timestamp": "2025-12-03T21:42:18.896032Z",
+      "type": "deploy_ended"
+    },
+    "cursor": "oQRgYdYfqKh0ZWg1cGR2czczZGxrNWow"
+  },
+  {
+    "event": {
+      "details": {
+        "buildId": "bld-d4oasjogjchc73eljjig",
+        "buildStatus": "succeeded",
+        "reason": {},
+        "status": 2
+      },
+      "id": "evt-d4oat895pdvs73dlk2ag",
+      "serviceId": "srv-d4no5dc9c44c73d1opgg",
+      "timestamp": "2025-12-03T21:41:53.257693Z",
+      "type": "build_ended"
+    },
+    "cursor": "oQRgYdYfqKh0ODk1cGR2czczZGxrMmFn"
+  },
+  {
+    "event": {
+      "details": {
+        "deployId": "dep-d4oasjogjchc73eljji0",
+        "trigger": {
+          "clearCache": false,
+          "deployedByRender": false,
+          "envUpdated": false,
+          "firstBuild": false,
+          "manual": false,
+          "rollback": false,
+          "user": {
+            "email": "israel.growth.venture@gmail.com",
+            "id": "usr-d4e73dk9c44c73bl1si0"
+          }
+        }
+      },
+      "id": "evt-d4oaskogjchc73eljjug",
+      "serviceId": "srv-d4no5dc9c44c73d1opgg",
+      "timestamp": "2025-12-03T21:40:35.170421Z",
+      "type": "deploy_started"
+    },
+    "cursor": "oQRgYdYfqKhza29namNoYzczZWxqanVn"
+  },
+  {
+    "event": {
+      "details": {
+        "buildId": "bld-d4oasjogjchc73eljjig",
+        "trigger": {
+          "clearCache": false,
+          "deployedByRender": false,
+          "envUpdated": false,
+          "firstBuild": false,
+          "manual": false,
+          "rollback": false,
+          "user": {
+            "email": "israel.growth.venture@gmail.com",
+            "id": "usr-d4e73dk9c44c73bl1si0"
+          }
+        }
+      },
+      "id": "evt-d4oask8gjchc73eljjn0",
+      "serviceId": "srv-d4no5dc9c44c73d1opgg",
+      "timestamp": "2025-12-03T21:40:33.163244Z",
+      "type": "build_started"
+    },
+    "cursor": "oQRgYdYfqKhzazhnamNoYzczZWxqam4w"
+  },
+  {
+    "event": {
+      "details": {
+        "deployId": "dep-d4oajvqli9vc73cing3g",
+        "deployStatus": "succeeded",
+        "reason": {},
+        "status": 2
+      },
+      "id": "evt-d4oal995pdvs73dlg7hg",
+      "serviceId": "srv-d4no5dc9c44c73d1opgg",
+      "timestamp": "2025-12-03T21:24:53.160989Z",
+      "type": "deploy_ended"
+    },
+    "cursor": "oQRgYdYfqKhsOTk1cGR2czczZGxnN2hn"
+  },
+  {
+    "event": {
+      "details": {
+        "buildId": "bld-d4oajvqli9vc73cing40",
+        "buildStatus": "succeeded",
+        "reason": {},
+        "status": 2
+      },
+      "id": "evt-d4oakup5pdvs73dlg36g",
+      "serviceId": "srv-d4no5dc9c44c73d1opgg",
+      "timestamp": "2025-12-03T21:24:11.967797Z",
+      "type": "build_ended"
+    },
+    "cursor": "oQRgYdYfqKhrdXA1cGR2czczZGxnMzZn"
+  },
+  {
+    "event": {
+      "details": {
+        "deployId": "dep-d4oajvqli9vc73cing3g",
+        "trigger": {
+          "clearCache": false,
+          "deployedByRender": false,
+          "envUpdated": false,
+          "firstBuild": false,
+          "manual": false,
+          "newCommit": "c62fcc6fb061124f84ae4363f333dc8242380403",
+          "rollback": false
+        }
+      },
+      "id": "evt-d4oak0qli9vc73cing8g",
+      "serviceId": "srv-d4no5dc9c44c73d1opgg",
+      "timestamp": "2025-12-03T21:22:11.442797Z",
+      "type": "deploy_started"
+    },
+    "cursor": "oQRgYdYfqKhrMHFsaTl2YzczY2luZzhn"
+  },
+  {
+    "event": {
+      "details": {
+        "buildId": "bld-d4oajvqli9vc73cing40",
+        "trigger": {
+          "clearCache": false,
+          "deployedByRender": false,
+          "envUpdated": false,
+          "firstBuild": false,
+          "manual": false,
+          "newCommit": "c62fcc6fb061124f84ae4363f333dc8242380403",
+          "rollback": false
+        }
+      },
+      "id": "evt-d4oak0ali9vc73cing80",
+      "serviceId": "srv-d4no5dc9c44c73d1opgg",
+      "timestamp": "2025-12-03T21:22:09.656029Z",
+      "type": "build_started"
+    },
+    "cursor": "oQRgYdYfqKhrMGFsaTl2YzczY2luZzgw"
+  },
+  {
+    "event": {
+      "details": {
         "buildId": "bld-d4oa14vdiees738k99a0",
         "buildStatus": "failed",
         "reason": {
@@ -738,299 +1044,5 @@
       "type": "deploy_ended"
     },
     "cursor": "0mf4mU9fgWRzb2plNWR1czczZTBkOGZn"
-  },
-  {
-    "event": {
-      "details": {
-        "deployId": "dep-d4o2s5p5pdvs73cv8ca0",
-        "trigger": {
-          "clearCache": false,
-          "deployedByRender": false,
-          "envUpdated": false,
-          "firstBuild": false,
-          "manual": false,
-          "newCommit": "86444011c948fb29243de996e259c1a43772aa80",
-          "rollback": false
-        }
-      },
-      "id": "evt-d4o2s715pdvs73cv8cm0",
-      "serviceId": "srv-d4no5dc9c44c73d1opgg",
-      "timestamp": "2025-12-03T12:33:32.428128Z",
-      "type": "deploy_started"
-    },
-    "cursor": "0mf4mU9fgWRzNzE1cGR2czczY3Y4Y20w"
-  },
-  {
-    "event": {
-      "details": {
-        "buildId": "bld-d4o2s5p5pdvs73cv8cag",
-        "trigger": {
-          "clearCache": false,
-          "deployedByRender": false,
-          "envUpdated": false,
-          "firstBuild": false,
-          "manual": false,
-          "newCommit": "86444011c948fb29243de996e259c1a43772aa80",
-          "rollback": false
-        }
-      },
-      "id": "evt-d4o2s695pdvs73cv8ck0",
-      "serviceId": "srv-d4no5dc9c44c73d1opgg",
-      "timestamp": "2025-12-03T12:33:29.274266Z",
-      "type": "build_started"
-    },
-    "cursor": "0mf4mU9fgWRzNjk1cGR2czczY3Y4Y2sw"
-  },
-  {
-    "event": {
-      "details": {
-        "deployId": "dep-d4o2ht7pm1nc73fq0e3g",
-        "deployStatus": "succeeded",
-        "reason": {},
-        "status": 2
-      },
-      "id": "evt-d4o2inre5dus73e06uq0",
-      "serviceId": "srv-d4no5dc9c44c73d1opgg",
-      "timestamp": "2025-12-03T12:13:19.964611Z",
-      "type": "deploy_ended"
-    },
-    "cursor": "0mf4mU9fgWRpbnJlNWR1czczZTA2dXEw"
-  },
-  {
-    "event": {
-      "details": {
-        "buildId": "bld-d4o2ht7pm1nc73fq0e40",
-        "buildStatus": "succeeded",
-        "reason": {},
-        "status": 2
-      },
-      "id": "evt-d4o2igbe5dus73e06r6g",
-      "serviceId": "srv-d4no5dc9c44c73d1opgg",
-      "timestamp": "2025-12-03T12:12:49.953895Z",
-      "type": "build_ended"
-    },
-    "cursor": "0mf4mU9fgWRpZ2JlNWR1czczZTA2cjZn"
-  },
-  {
-    "event": {
-      "details": {
-        "deployId": "dep-d4o2ht7pm1nc73fq0e3g",
-        "trigger": {
-          "clearCache": false,
-          "deployedByRender": false,
-          "envUpdated": false,
-          "firstBuild": false,
-          "manual": false,
-          "rollback": false,
-          "user": {
-            "email": "israel.growth.venture@gmail.com",
-            "id": "usr-d4e73dk9c44c73bl1si0"
-          }
-        }
-      },
-      "id": "evt-d4o2hunpm1nc73fq0fp0",
-      "serviceId": "srv-d4no5dc9c44c73d1opgg",
-      "timestamp": "2025-12-03T12:11:38.037942Z",
-      "type": "deploy_started"
-    },
-    "cursor": "0mf4mU9fgWRodW5wbTFuYzczZnEwZnAw"
-  },
-  {
-    "event": {
-      "details": {
-        "buildId": "bld-d4o2ht7pm1nc73fq0e40",
-        "trigger": {
-          "clearCache": false,
-          "deployedByRender": false,
-          "envUpdated": false,
-          "firstBuild": false,
-          "manual": false,
-          "rollback": false,
-          "user": {
-            "email": "israel.growth.venture@gmail.com",
-            "id": "usr-d4e73dk9c44c73bl1si0"
-          }
-        }
-      },
-      "id": "evt-d4o2htvpm1nc73fq0eug",
-      "serviceId": "srv-d4no5dc9c44c73d1opgg",
-      "timestamp": "2025-12-03T12:11:35.485238Z",
-      "type": "build_started"
-    },
-    "cursor": "0mf4mU9fgWRodHZwbTFuYzczZnEwZXVn"
-  },
-  {
-    "event": {
-      "details": {
-        "deployId": "dep-d4nqksre5dus73cnppsg",
-        "deployStatus": "succeeded",
-        "reason": {},
-        "status": 2
-      },
-      "id": "evt-d4nqlq3e5dus73drq710",
-      "serviceId": "srv-d4no5dc9c44c73d1opgg",
-      "timestamp": "2025-12-03T03:13:44.889894Z",
-      "type": "deploy_ended"
-    },
-    "cursor": "hfSOwZiofuxscTNlNWR1czczZHJxNzEw"
-  },
-  {
-    "event": {
-      "details": {
-        "buildId": "bld-d4nqksre5dus73cnppt0",
-        "buildStatus": "succeeded",
-        "reason": {},
-        "status": 2
-      },
-      "id": "evt-d4nqlk3e5dus73drq5kg",
-      "serviceId": "srv-d4no5dc9c44c73d1opgg",
-      "timestamp": "2025-12-03T03:13:20.193553Z",
-      "type": "build_ended"
-    },
-    "cursor": "hfSOwZiofuxsazNlNWR1czczZHJxNWtn"
-  },
-  {
-    "event": {
-      "details": {
-        "deployId": "dep-d4nqksre5dus73cnppsg",
-        "trigger": {
-          "clearCache": false,
-          "deployedByRender": false,
-          "envUpdated": false,
-          "firstBuild": false,
-          "manual": false,
-          "newCommit": "1f0d70c6649c0c317309d924a2ae70030e390026",
-          "rollback": false
-        }
-      },
-      "id": "evt-d4nqktre5dus73cnpq10",
-      "serviceId": "srv-d4no5dc9c44c73d1opgg",
-      "timestamp": "2025-12-03T03:11:51.890645Z",
-      "type": "deploy_started"
-    },
-    "cursor": "hfSOwZiofuxrdHJlNWR1czczY25wcTEw"
-  },
-  {
-    "event": {
-      "details": {
-        "buildId": "bld-d4nqksre5dus73cnppt0",
-        "trigger": {
-          "clearCache": false,
-          "deployedByRender": false,
-          "envUpdated": false,
-          "firstBuild": false,
-          "manual": false,
-          "newCommit": "1f0d70c6649c0c317309d924a2ae70030e390026",
-          "rollback": false
-        }
-      },
-      "id": "evt-d4nqktbe5dus73cnpq00",
-      "serviceId": "srv-d4no5dc9c44c73d1opgg",
-      "timestamp": "2025-12-03T03:11:49.694541Z",
-      "type": "build_started"
-    },
-    "cursor": "hfSOwZiofuxrdGJlNWR1czczY25wcTAw"
-  },
-  {
-    "event": {
-      "details": {
-        "deployId": "dep-d4nog0vpm1nc738u1he0",
-        "deployStatus": "succeeded",
-        "reason": {},
-        "status": 2
-      },
-      "id": "evt-d4nogure5dus73dqqtb0",
-      "serviceId": "srv-d4no5dc9c44c73d1opgg",
-      "timestamp": "2025-12-03T00:46:51.119145Z",
-      "type": "deploy_ended"
-    },
-    "cursor": "6ODPFQ8Gpn5ndXJlNWR1czczZHFxdGIw"
-  },
-  {
-    "event": {
-      "details": {
-        "buildId": "bld-d4nog0vpm1nc738u1heg",
-        "buildStatus": "succeeded",
-        "reason": {},
-        "status": 2
-      },
-      "id": "evt-d4nogobe5dus73dqqrog",
-      "serviceId": "srv-d4no5dc9c44c73d1opgg",
-      "timestamp": "2025-12-03T00:46:25.871628Z",
-      "type": "build_ended"
-    },
-    "cursor": "6ODPFQ8Gpn5nb2JlNWR1czczZHFxcm9n"
-  },
-  {
-    "event": {
-      "details": {
-        "deployId": "dep-d4nog0vpm1nc738u1he0",
-        "trigger": {
-          "clearCache": false,
-          "deployedByRender": false,
-          "envUpdated": false,
-          "firstBuild": false,
-          "manual": false,
-          "newCommit": "b2a1b20382fc122d4d9a431e4d439ff2bd3681dc",
-          "rollback": false
-        }
-      },
-      "id": "evt-d4nog1npm1nc738u1hmg",
-      "serviceId": "srv-d4no5dc9c44c73d1opgg",
-      "timestamp": "2025-12-03T00:44:54.728055Z",
-      "type": "deploy_started"
-    },
-    "cursor": "6ODPFQ8Gpn5nMW5wbTFuYzczOHUxaG1n"
-  },
-  {
-    "event": {
-      "details": {
-        "buildId": "bld-d4nog0vpm1nc738u1heg",
-        "trigger": {
-          "clearCache": false,
-          "deployedByRender": false,
-          "envUpdated": false,
-          "firstBuild": false,
-          "manual": false,
-          "newCommit": "b2a1b20382fc122d4d9a431e4d439ff2bd3681dc",
-          "rollback": false
-        }
-      },
-      "id": "evt-d4nog1fpm1nc738u1hhg",
-      "serviceId": "srv-d4no5dc9c44c73d1opgg",
-      "timestamp": "2025-12-03T00:44:53.050695Z",
-      "type": "build_started"
-    },
-    "cursor": "6ODPFQ8Gpn5nMWZwbTFuYzczOHUxaGhn"
-  },
-  {
-    "event": {
-      "details": {
-        "deployId": "dep-d4nodg3e5dus73cn9h40",
-        "deployStatus": "succeeded",
-        "reason": {},
-        "status": 2
-      },
-      "id": "evt-d4noebre5dus73dqprt0",
-      "serviceId": "srv-d4no5dc9c44c73d1opgg",
-      "timestamp": "2025-12-03T00:41:19.754964Z",
-      "type": "deploy_ended"
-    },
-    "cursor": "6ODPFQ8Gpn5lYnJlNWR1czczZHFwcnQw"
-  },
-  {
-    "event": {
-      "details": {
-        "buildId": "bld-d4nodg3e5dus73cn9h4g",
-        "buildStatus": "succeeded",
-        "reason": {},
-        "status": 2
-      },
-      "id": "evt-d4noe2re5dus73dqpnj0",
-      "serviceId": "srv-d4no5dc9c44c73d1opgg",
-      "timestamp": "2025-12-03T00:40:43.037545Z",
-      "type": "build_ended"
-    },
-    "cursor": "6ODPFQ8Gpn5lMnJlNWR1czczZHFwbmow"
   }
 ]

@@ -1,55 +1,84 @@
 #!/usr/bin/env python3
 """
-Test de l'API pricing avec les packs officiels créés
+Test de validation de la price-list officielle
+===============================================
+Vérifie que les prix retournés par l'API correspondent exactement
+à PRICELIST_OFFICIELLE.json pour toutes les zones et tous les packs.
 """
 import requests
+import json
+import os
 
 BASE_URL = "https://igv-cms-backend.onrender.com/api"
 
+# Charger la price-list officielle
+script_dir = os.path.dirname(os.path.abspath(__file__))
+pricelist_path = os.path.join(script_dir, "PRICELIST_OFFICIELLE.json")
+
+with open(pricelist_path, 'r', encoding='utf-8') as f:
+    OFFICIAL_PRICES = json.load(f)
+
+# Mapping zones API -> zones JSON
+ZONE_MAPPING = {
+    "EU": "EU",
+    "US_CA": "US",
+    "IL": "IL",
+    "ASIA_AFRICA": "ASIA"
+}
+
 print("=" * 80)
-print("TEST PRICING AVEC PACKS OFFICIELS")
+print("TEST PRICING OFFICIEL - VALIDATION COMPLÈTE")
 print("=" * 80)
 
-# 1. Récupérer tous les packs
-print("\n1. Récupération des packs disponibles...")
-r = requests.get(f"{BASE_URL}/packs")
-packs = r.json()
-print(f"✓ {len(packs)} packs trouvés\n")
+errors = []
+success_count = 0
+total_tests = 0
 
-for pack in packs:
-    name = pack.get('name', {})
-    if isinstance(name, dict):
-        name_fr = name.get('fr', 'N/A')
-    else:
-        name_fr = str(name)
-    print(f"  - {name_fr}")
-    print(f"    ID: {pack.get('_id', 'N/A')}")
-    print(f"    Prix base: {pack.get('base_price', 'N/A')} {pack.get('base_currency', '')}")
-    print()
-
-# 2. Tester pricing avec les 3 packs officiels et toutes les zones
-packs_officiels = ['analyse', 'succursales', 'franchise']
-zones = ['EU', 'US_CA', 'IL', 'ASIA_AFRICA']
-
-print("\n2. Test API pricing pour chaque pack et zone...")
-print("-" * 80)
-
-for pack in packs_officiels:
-    print(f"\n📦 Pack {pack.upper()}")
-    for zone in zones:
+for pack_data in OFFICIAL_PRICES["packs"]:
+    pack_id = pack_data["id"]
+    print(f"\n📦 Pack {pack_id.upper()}")
+    
+    for api_zone, json_zone in ZONE_MAPPING.items():
+        total_tests += 1
+        expected_price = pack_data["zones"][json_zone]
+        
         try:
-            r = requests.get(
+            response = requests.get(
                 f"{BASE_URL}/pricing",
-                params={"packId": pack, "zone": zone}
+                params={"packId": pack_id, "zone": api_zone},
+                timeout=15
             )
-            if r.status_code == 200:
-                data = r.json()
-                print(f"  ✓ {zone:12} → {data['total_price']:>8} {data['currency']}")
+            
+            if response.status_code != 200:
+                error_msg = f"❌ {pack_id} ({api_zone}): HTTP {response.status_code}"
+                print(f"  {error_msg}")
+                errors.append(error_msg)
+                continue
+            
+            data = response.json()
+            actual_price = data["total_price"]
+            
+            if actual_price == expected_price:
+                print(f"  ✅ {api_zone:12} → {actual_price:>8} {data['currency_symbol']:3} (OK)")
+                success_count += 1
             else:
-                print(f"  ✗ {zone:12} → Erreur {r.status_code}: {r.text[:100]}")
+                error_msg = f"❌ {pack_id} ({api_zone}): Expected {expected_price}, Got {actual_price}"
+                print(f"  {error_msg}")
+                errors.append(error_msg)
+                
         except Exception as e:
-            print(f"  ✗ {zone:12} → Exception: {e}")
+            error_msg = f"❌ {pack_id} ({api_zone}): Exception - {str(e)}"
+            print(f"  {error_msg}")
+            errors.append(error_msg)
 
 print("\n" + "=" * 80)
-print("TEST TERMINÉ")
-print("=" * 80)
+print(f"RÉSULTATS: {success_count}/{total_tests} tests réussis")
+
+if errors:
+    print(f"\n❌ {len(errors)} ERREURS DÉTECTÉES:")
+    for error in errors:
+        print(f"  {error}")
+    exit(1)
+else:
+    print("\n✅ TOUS LES PRIX CORRESPONDENT À LA PRICE-LIST OFFICIELLE")
+    exit(0)

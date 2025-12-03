@@ -112,7 +112,8 @@ export const pricingAPI = {
     return response;
   },
   calculatePrice: async (packId, zone) => {
-    const response = await axios.post(`${API}/pricing-rules/calculate`, { pack_id: packId, zone });
+    // Utiliser la route /api/pricing qui existe réellement dans le backend
+    const response = await axios.get(`${API}/pricing`, { params: { packId, zone } });
     return response;
   },
 };

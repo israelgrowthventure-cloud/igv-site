@@ -125,14 +125,19 @@ const Packs = () => {
                   key={pack.id}
                   className={`relative rounded-2xl p-8 ${
                     isHighlighted
-                      ? 'bg-gradient-to-br from-blue-600 to-blue-700 text-white shadow-2xl scale-105'
+                      ? 'text-white shadow-2xl scale-105'
                       : 'bg-white border-2 border-gray-200 hover:border-blue-600 transition-colors shadow-lg'
                   }`}
+                  style={isHighlighted ? {
+                    background: 'linear-gradient(135deg, #1e5cf5 0%, #1548c7 100%)'
+                  } : {}}
                   data-testid={`pack-${pack.id}`}
                 >
                   {isHighlighted && (
                     <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                      <span className="inline-block px-4 py-1 bg-yellow-400 text-gray-900 text-xs font-bold rounded-full">
+                      <span className="inline-block px-6 py-2 bg-white text-gray-900 text-sm font-bold rounded-lg shadow-lg" style={{
+                        border: '2px solid #f0f0f0'
+                      }}>
                         POPULAIRE
                       </span>
                     </div>

@@ -1,10 +1,11 @@
-from fastapi import FastAPI, APIRouter, HTTPException, Request
+from fastapi import FastAPI, APIRouter, HTTPException, Request, Depends
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 from pathlib import Path
 from pydantic import BaseModel, Field, ConfigDict, EmailStr
-from typing import List, Optional
-from datetime import datetime, timezone
+from typing import List, Optional, Dict
+from datetime import datetime, timezone, timedelta
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import os
@@ -17,6 +18,8 @@ import aiosmtplib
 import stripe
 from dotenv import load_dotenv
 from fastapi.responses import PlainTextResponse
+import jwt
+from passlib.context import CryptContext
 
 # Import de la configuration pricing
 from pricing_config import (
@@ -75,8 +78,133 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+# JWT Configuration
+JWT_SECRET = os.environ.get('JWT_SECRET', 'your-secret-key-change-in-production')
+JWT_ALGORITHM = 'HS256'
+JWT_EXPIRATION_HOURS = 24
+
+# Password hashing
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+security = HTTPBearer()
+
 # ==================== Modèles Pydantic ====================
 
+# --- Auth Models ---
+class User(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    email: str
+    role: str = "editor"  # admin, editor
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class UserCreate(BaseModel):
+    email: str
+    password: str
+    role: str = "editor"
+
+class UserLogin(BaseModel):
+    email: str
+    password: str
+
+# --- Page Models ---
+class Page(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    slug: str
+    title: Dict[str, str]  # {"fr": "...", "en": "...", "he": "..."}
+    content_json: str  # GrapesJS JSON
+    content_html: str = ""  # GrapesJS HTML
+    content_css: str = ""  # GrapesJS CSS
+    published: bool = False
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class PageCreate(BaseModel):
+    slug: str
+    title: Dict[str, str]
+    content_json: str = "{}"
+    content_html: str = ""
+    content_css: str = ""
+    published: bool = False
+
+class PageUpdate(BaseModel):
+    title: Optional[Dict[str, str]] = None
+    content_json: Optional[str] = None
+    content_html: Optional[str] = None
+    content_css: Optional[str] = None
+    published: Optional[bool] = None
+
+# --- Pack Models ---
+class Pack(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: Dict[str, str]
+    description: Dict[str, str]
+    features: Dict[str, List[str]]
+    base_price: float
+    currency: str = "EUR"
+    order: int = 0
+    active: bool = True
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class PackCreate(BaseModel):
+    name: Dict[str, str]
+    description: Dict[str, str]
+    features: Dict[str, List[str]]
+    base_price: float
+    currency: str = "EUR"
+    order: int = 0
+    active: bool = True
+
+# --- Pricing Models ---
+class PricingRule(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    zone_name: str
+    country_codes: List[str]
+    price: float
+    currency: str = "EUR"
+    active: bool = True
+
+class PricingRuleCreate(BaseModel):
+    zone_name: str
+    country_codes: List[str]
+    price: float
+    currency: str = "EUR"
+    active: bool = True
+
+# --- Order Models ---
+class Order(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    customer_email: str
+    customer_name: str
+    pack_id: str
+    amount: float
+    currency: str
+    stripe_payment_intent_id: Optional[str] = None
+    status: str = "pending"  # pending, completed, failed
+    country_code: Optional[str] = None
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class OrderCreate(BaseModel):
+    customer_email: str
+    customer_name: str
+    pack_id: str
+    country_code: Optional[str] = None
+
+# --- Translation Models ---
+class Translation(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    key: str
+    translations: Dict[str, str]  # {"fr": "...", "en": "...", "he": "..."}
+
+class TranslationCreate(BaseModel):
+    key: str
+    translations: Dict[str, str]
+
+# --- Existing Models (Contact, Cart) ---
 class ContactForm(BaseModel):
     name: str
     email: EmailStr
@@ -164,6 +292,46 @@ class PricingResponse(BaseModel):
     monthly_12x: int
     display: dict
     message: str
+
+# ==================== JWT AUTH HELPERS ====================
+
+def create_access_token(data: dict):
+    """Create JWT access token"""
+    to_encode = data.copy()
+    expire = datetime.now(timezone.utc) + timedelta(hours=JWT_EXPIRATION_HOURS)
+    to_encode.update({"exp": expire})
+    encoded_jwt = jwt.encode(to_encode, JWT_SECRET, algorithm=JWT_ALGORITHM)
+    return encoded_jwt
+
+def verify_token(token: str):
+    """Verify JWT token"""
+    try:
+        payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+        return payload
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Token expired")
+    except jwt.JWTError:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
+async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    """Get current authenticated user"""
+    token = credentials.credentials
+    payload = verify_token(token)
+    user_email = payload.get("sub")
+    if not user_email:
+        raise HTTPException(status_code=401, detail="Invalid token")
+    
+    user = await db.users.find_one({"email": user_email}, {"_id": 0})
+    if not user:
+        raise HTTPException(status_code=401, detail="User not found")
+    
+    return User(**{k: v for k, v in user.items() if k != "password_hash"})
+
+async def get_admin_user(current_user: User = Depends(get_current_user)):
+    """Verify user is admin"""
+    if current_user.role != "admin":
+        raise HTTPException(status_code=403, detail="Admin access required")
+    return current_user
 
 # ==================== Helper Functions ====================
 
@@ -723,20 +891,328 @@ class LoginRequest(BaseModel):
     email: str
     password: str
 
+# ==================== AUTH ROUTES ====================
+
+@api_router.post("/auth/register")
+async def register(user_create: UserCreate):
+    """Register a new user"""
+    # Check if user exists
+    existing = await db.users.find_one({"email": user_create.email})
+    if existing:
+        raise HTTPException(status_code=400, detail="Email already registered")
+    
+    # Hash password
+    hashed_password = pwd_context.hash(user_create.password)
+    
+    # Create user
+    user = User(email=user_create.email, role=user_create.role)
+    user_doc = user.model_dump()
+    user_doc["password_hash"] = hashed_password
+    user_doc["created_at"] = user_doc["created_at"].isoformat()
+    
+    await db.users.insert_one(user_doc)
+    
+    # Create token
+    access_token = create_access_token({"sub": user.email, "role": user.role})
+    
+    return {"access_token": access_token, "token_type": "bearer", "user": user}
+
 @api_router.post("/auth/login")
-async def admin_login(login: LoginRequest):
-    """Authentification admin"""
-    if login.email == ADMIN_EMAIL and login.password == ADMIN_PASSWORD:
-        # En production, utiliser un vrai JWT
-        return {
-            "access_token": ADMIN_PASSWORD,  # Token simplifié
-            "token_type": "bearer",
-            "user": {
+async def login(user_login: UserLogin):
+    """Login with JWT"""
+    # Find user in database
+    user_doc = await db.users.find_one({"email": user_login.email})
+    
+    # If not found, check if it's the hardcoded admin
+    if not user_doc:
+        if user_login.email == ADMIN_EMAIL and user_login.password == ADMIN_PASSWORD:
+            # Create admin user if doesn't exist
+            hashed_password = pwd_context.hash(ADMIN_PASSWORD)
+            admin_user = {
+                "id": str(uuid.uuid4()),
                 "email": ADMIN_EMAIL,
-                "role": "admin"
+                "password_hash": hashed_password,
+                "role": "admin",
+                "created_at": datetime.now(timezone.utc).isoformat()
             }
+            await db.users.insert_one(admin_user)
+            user_doc = admin_user
+        else:
+            raise HTTPException(status_code=401, detail="Invalid credentials")
+    
+    # Verify password
+    if not pwd_context.verify(user_login.password, user_doc["password_hash"]):
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+    
+    # Create token
+    access_token = create_access_token({"sub": user_doc["email"], "role": user_doc["role"]})
+    
+    user = User(**{k: v for k, v in user_doc.items() if k != "password_hash" and k != "_id"})
+    
+    return {"access_token": access_token, "token_type": "bearer", "user": user}
+
+@api_router.get("/auth/me")
+async def get_me(current_user: User = Depends(get_current_user)):
+    """Get current user info"""
+    return current_user
+
+# ==================== PAGE ROUTES ====================
+
+@api_router.get("/pages", response_model=List[Page])
+async def get_pages(published_only: bool = False, skip: int = 0, limit: int = 100):
+    """Get all pages"""
+    query = {"published": True} if published_only else {}
+    pages = await db.pages.find(query, {"_id": 0}).skip(skip).limit(min(limit, 100)).to_list(limit)
+    for page in pages:
+        if isinstance(page.get('created_at'), str):
+            page['created_at'] = datetime.fromisoformat(page['created_at'])
+        if isinstance(page.get('updated_at'), str):
+            page['updated_at'] = datetime.fromisoformat(page['updated_at'])
+    return pages
+
+@api_router.get("/pages/{slug}", response_model=Page)
+async def get_page(slug: str):
+    """Get page by slug"""
+    page = await db.pages.find_one({"slug": slug}, {"_id": 0})
+    if not page:
+        raise HTTPException(status_code=404, detail="Page not found")
+    if isinstance(page.get('created_at'), str):
+        page['created_at'] = datetime.fromisoformat(page['created_at'])
+    if isinstance(page.get('updated_at'), str):
+        page['updated_at'] = datetime.fromisoformat(page['updated_at'])
+    return page
+
+@api_router.post("/pages", response_model=Page)
+async def create_page(page_create: PageCreate, current_user: User = Depends(get_current_user)):
+    """Create a new page"""
+    # Check if slug exists
+    existing = await db.pages.find_one({"slug": page_create.slug})
+    if existing:
+        raise HTTPException(status_code=400, detail="Page with this slug already exists")
+    
+    page = Page(**page_create.model_dump())
+    page_doc = page.model_dump()
+    page_doc['created_at'] = page_doc['created_at'].isoformat()
+    page_doc['updated_at'] = page_doc['updated_at'].isoformat()
+    
+    await db.pages.insert_one(page_doc)
+    return page
+
+@api_router.put("/pages/{slug}", response_model=Page)
+async def update_page(slug: str, page_update: PageUpdate, current_user: User = Depends(get_current_user)):
+    """Update a page"""
+    page = await db.pages.find_one({"slug": slug}, {"_id": 0})
+    if not page:
+        raise HTTPException(status_code=404, detail="Page not found")
+    
+    update_data = {k: v for k, v in page_update.model_dump().items() if v is not None}
+    update_data["updated_at"] = datetime.now(timezone.utc).isoformat()
+    
+    await db.pages.update_one({"slug": slug}, {"$set": update_data})
+    
+    updated_page = await db.pages.find_one({"slug": slug}, {"_id": 0})
+    if isinstance(updated_page.get('created_at'), str):
+        updated_page['created_at'] = datetime.fromisoformat(updated_page['created_at'])
+    if isinstance(updated_page.get('updated_at'), str):
+        updated_page['updated_at'] = datetime.fromisoformat(updated_page['updated_at'])
+    return updated_page
+
+@api_router.delete("/pages/{slug}")
+async def delete_page(slug: str, current_user: User = Depends(get_admin_user)):
+    """Delete a page (admin only)"""
+    result = await db.pages.delete_one({"slug": slug})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Page not found")
+    return {"message": "Page deleted successfully"}
+
+# ==================== PACK ROUTES (CRUD) ====================
+
+@api_router.post("/packs", response_model=Pack)
+async def create_pack(pack_create: PackCreate, current_user: User = Depends(get_current_user)):
+    """Create a new pack"""
+    pack = Pack(**pack_create.model_dump())
+    pack_doc = pack.model_dump()
+    pack_doc['created_at'] = pack_doc['created_at'].isoformat()
+    await db.packs.insert_one(pack_doc)
+    return pack
+
+@api_router.put("/packs/{pack_id}", response_model=Pack)
+async def update_pack(pack_id: str, pack_update: PackCreate, current_user: User = Depends(get_current_user)):
+    """Update a pack"""
+    pack = await db.packs.find_one({"id": pack_id}, {"_id": 0})
+    if not pack:
+        raise HTTPException(status_code=404, detail="Pack not found")
+    
+    update_data = pack_update.model_dump()
+    await db.packs.update_one({"id": pack_id}, {"$set": update_data})
+    
+    updated_pack = await db.packs.find_one({"id": pack_id}, {"_id": 0})
+    if isinstance(updated_pack.get('created_at'), str):
+        updated_pack['created_at'] = datetime.fromisoformat(updated_pack['created_at'])
+    return updated_pack
+
+@api_router.delete("/packs/{pack_id}")
+async def delete_pack(pack_id: str, current_user: User = Depends(get_admin_user)):
+    """Delete a pack (admin only)"""
+    result = await db.packs.delete_one({"id": pack_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Pack not found")
+    return {"message": "Pack deleted successfully"}
+
+# ==================== PRICING RULES ROUTES ====================
+
+@api_router.get("/pricing-rules", response_model=List[PricingRule])
+async def get_pricing_rules(skip: int = 0, limit: int = 50):
+    """Get all pricing rules"""
+    rules = await db.pricing_rules.find({}, {"_id": 0}).skip(skip).limit(min(limit, 50)).to_list(limit)
+    return rules
+
+@api_router.post("/pricing-rules", response_model=PricingRule)
+async def create_pricing_rule(rule_create: PricingRuleCreate, current_user: User = Depends(get_current_user)):
+    """Create a new pricing rule"""
+    rule = PricingRule(**rule_create.model_dump())
+    await db.pricing_rules.insert_one(rule.model_dump())
+    return rule
+
+@api_router.put("/pricing-rules/{rule_id}", response_model=PricingRule)
+async def update_pricing_rule(rule_id: str, rule_update: PricingRuleCreate, current_user: User = Depends(get_current_user)):
+    """Update a pricing rule"""
+    result = await db.pricing_rules.update_one({"id": rule_id}, {"$set": rule_update.model_dump()})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Pricing rule not found")
+    updated_rule = await db.pricing_rules.find_one({"id": rule_id}, {"_id": 0})
+    return updated_rule
+
+@api_router.delete("/pricing-rules/{rule_id}")
+async def delete_pricing_rule(rule_id: str, current_user: User = Depends(get_admin_user)):
+    """Delete a pricing rule (admin only)"""
+    result = await db.pricing_rules.delete_one({"id": rule_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Pricing rule not found")
+    return {"message": "Pricing rule deleted successfully"}
+
+@api_router.get("/pricing/country/{country_code}")
+async def get_price_for_country(country_code: str):
+    """Get pricing for a specific country"""
+    rule = await db.pricing_rules.find_one(
+        {"country_codes": country_code.upper(), "active": True},
+        {"_id": 0}
+    )
+    if rule:
+        return {"price": rule["price"], "currency": rule["currency"], "zone": rule["zone_name"]}
+    
+    # Default pricing if no rule found
+    default_rule = await db.pricing_rules.find_one({"zone_name": "DEFAULT"}, {"_id": 0})
+    if default_rule:
+        return {"price": default_rule["price"], "currency": default_rule["currency"], "zone": "DEFAULT"}
+    
+    return {"price": 3000, "currency": "EUR", "zone": "default"}
+
+# ==================== TRANSLATION ROUTES ====================
+
+@api_router.get("/translations", response_model=List[Translation])
+async def get_translations(skip: int = 0, limit: int = 100):
+    """Get all translations"""
+    translations = await db.translations.find({}, {"_id": 0}).skip(skip).limit(min(limit, 100)).to_list(limit)
+    return translations
+
+@api_router.post("/translations", response_model=Translation)
+async def create_translation(translation_create: TranslationCreate, current_user: User = Depends(get_current_user)):
+    """Create a new translation"""
+    existing = await db.translations.find_one({"key": translation_create.key})
+    if existing:
+        raise HTTPException(status_code=400, detail="Translation key already exists")
+    
+    translation = Translation(**translation_create.model_dump())
+    await db.translations.insert_one(translation.model_dump())
+    return translation
+
+@api_router.put("/translations/{key}", response_model=Translation)
+async def update_translation(key: str, translation_update: TranslationCreate, current_user: User = Depends(get_current_user)):
+    """Update a translation"""
+    result = await db.translations.update_one(
+        {"key": key},
+        {"$set": {"translations": translation_update.translations}}
+    )
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Translation not found")
+    updated = await db.translations.find_one({"key": key}, {"_id": 0})
+    return updated
+
+# ==================== ORDER ROUTES ====================
+
+@api_router.post("/orders/create-payment-intent")
+async def create_payment_intent(order_create: OrderCreate):
+    """Create Stripe payment intent"""
+    # Get pack
+    pack = await db.packs.find_one({"id": order_create.pack_id}, {"_id": 0})
+    if not pack:
+        raise HTTPException(status_code=404, detail="Pack not found")
+    
+    # Get pricing for country
+    country_code = order_create.country_code or "FR"
+    pricing_response = await get_price_for_country(country_code)
+    amount = int(pricing_response["price"] * 100)  # Stripe uses cents
+    
+    try:
+        # Create Stripe payment intent
+        intent = stripe.PaymentIntent.create(
+            amount=amount,
+            currency=pricing_response["currency"].lower(),
+            metadata={
+                "pack_id": order_create.pack_id,
+                "customer_email": order_create.customer_email,
+                "customer_name": order_create.customer_name
+            }
+        )
+        
+        # Create order
+        order = Order(
+            customer_email=order_create.customer_email,
+            customer_name=order_create.customer_name,
+            pack_id=order_create.pack_id,
+            amount=pricing_response["price"],
+            currency=pricing_response["currency"],
+            stripe_payment_intent_id=intent.id,
+            status="pending",
+            country_code=country_code
+        )
+        order_doc = order.model_dump()
+        order_doc['created_at'] = order_doc['created_at'].isoformat()
+        await db.orders.insert_one(order_doc)
+        
+        return {
+            "client_secret": intent.client_secret,
+            "order_id": order.id,
+            "amount": pricing_response["price"],
+            "currency": pricing_response["currency"]
         }
-    raise HTTPException(status_code=401, detail="Invalid credentials")
+    except Exception as e:
+        logger.error(f"Stripe error: {e}")
+        raise HTTPException(status_code=400, detail=str(e))
+
+@api_router.post("/orders/{order_id}/confirm")
+async def confirm_order(order_id: str):
+    """Confirm order payment"""
+    order = await db.orders.find_one({"id": order_id}, {"_id": 0})
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+    
+    # Update order status
+    await db.orders.update_one({"id": order_id}, {"$set": {"status": "completed"}})
+    
+    return {"message": "Order confirmed", "order_id": order_id}
+
+@api_router.get("/orders", response_model=List[Order])
+async def get_orders(current_user: User = Depends(get_current_user), skip: int = 0, limit: int = 100):
+    """Get all orders (admin/editor only)"""
+    orders = await db.orders.find({}, {"_id": 0}).sort("created_at", -1).skip(skip).limit(min(limit, 100)).to_list(limit)
+    for order in orders:
+        if isinstance(order.get('created_at'), str):
+            order['created_at'] = datetime.fromisoformat(order['created_at'])
+    return orders
+
+# ==================== LEGACY ADMIN ROUTES ====================
 
 class PackData(BaseModel):
     analyse: dict

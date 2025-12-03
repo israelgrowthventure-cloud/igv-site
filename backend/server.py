@@ -1024,8 +1024,9 @@ async def login(user_login: UserLogin):
         else:
             raise HTTPException(status_code=401, detail="Invalid credentials")
     
-    # Verify password
-    if not pwd_context.verify(user_login.password, user_doc["password_hash"]):
+    # Verify password (support both 'password' and 'password_hash' fields)
+    password_hash = user_doc.get("password_hash") or user_doc.get("password")
+    if not password_hash or not pwd_context.verify(user_login.password, password_hash):
         raise HTTPException(status_code=401, detail="Invalid credentials")
     
     # Create token

@@ -15,6 +15,12 @@ services:
         sync: false
       - key: DB_NAME
         value: igv_cms_db
+      - key: JWT_SECRET
+        sync: false
+      - key: ADMIN_EMAIL
+        value: postmaster@israelgrowthventure.com
+      - key: ADMIN_PASSWORD
+        sync: false
       - key: STRIPE_SECRET_KEY
         sync: false
       - key: STRIPE_WEBHOOK_SECRET

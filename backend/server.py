@@ -78,11 +78,23 @@ from cms_routes import cms_router
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
-# MongoDB connection
+# MongoDB connection with timeout and error handling
 mongo_url = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
 db_name = os.environ.get('DB_NAME', 'igv_db')
-client = AsyncIOMotorClient(mongo_url)
-db = client[db_name]
+
+# Configure MongoDB client with connection timeout
+try:
+    client = AsyncIOMotorClient(
+        mongo_url,
+        serverSelectionTimeoutMS=5000,  # 5 secondes max pour sélection serveur
+        connectTimeoutMS=5000,  # 5 secondes max pour connexion
+        socketTimeoutMS=5000  # 5 secondes max pour opérations socket
+    )
+    db = client[db_name]
+    logger.info(f"MongoDB client configured for database: {db_name}")
+except Exception as e:
+    logger.error(f"Failed to configure MongoDB client: {e}")
+    db = None
 
 # ==================== CREATE APP ====================
 app = FastAPI(title="IGV Backend", version="1.0.0")
@@ -588,7 +600,24 @@ PACK_PRICES_EUR = {
 @app.get("/api/health")
 async def health_check():
     """Endpoint simple pour vérifier que le backend est opérationnel."""
-    return {"status": "ok", "message": "Backend IGV est opérationnel"}
+    health_status = {
+        "status": "ok",
+        "message": "Backend IGV est opérationnel",
+        "mongodb": "disconnected"
+    }
+    
+    # Vérifier la connexion MongoDB
+    if db is not None:
+        try:
+            # Ping MongoDB avec timeout court
+            await db.command('ping', maxTimeMS=2000)
+            health_status["mongodb"] = "connected"
+        except Exception as e:
+            logger.warning(f"MongoDB ping failed: {e}")
+            health_status["mongodb"] = "error"
+            health_status["mongodb_error"] = str(e)[:100]
+    
+    return health_status
 
 # ==================== E-commerce Routes ====================
 
@@ -863,9 +892,26 @@ async def get_cart():
 async def get_packs(active_only: bool = False):
     """Get all packs from MongoDB"""
     logger.info(f"Fetching packs (active_only={active_only})")
-    query = {"active": True} if active_only else {}
-    packs = await db.packs.find(query, {"_id": 0}).to_list(1000)
-    return packs
+    
+    # Vérifier si MongoDB est disponible
+    if db is None:
+        logger.error("MongoDB not configured - MONGO_URL environment variable missing")
+        raise HTTPException(
+            status_code=503,
+            detail="Database not configured. Please set MONGO_URL environment variable."
+        )
+    
+    try:
+        query = {"active": True} if active_only else {}
+        packs = await db.packs.find(query, {"_id": 0}).to_list(1000)
+        logger.info(f"Found {len(packs)} packs")
+        return packs
+    except Exception as e:
+        logger.error(f"Failed to fetch packs from MongoDB: {e}")
+        raise HTTPException(
+            status_code=503,
+            detail=f"Database error: {str(e)[:100]}"
+        )
 
 
 @api_router.get("/packs/{pack_id}")
@@ -921,9 +967,9 @@ async def detect_location():
 
 # ==================== ADMIN ENDPOINTS ====================
 
-# Identifiants admin
-ADMIN_EMAIL = "postmaster@israelgrowthventure.com"
-ADMIN_PASSWORD = "Admin@igv"
+# Identifiants admin (depuis variables d'environnement)
+ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL', 'postmaster@israelgrowthventure.com')
+ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'Admin@igv')
 
 class LoginRequest(BaseModel):
     email: str

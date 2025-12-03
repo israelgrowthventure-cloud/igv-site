@@ -10,6 +10,14 @@ services:
         value: 3.11.0
       - key: MONGO_URL
         sync: false
+      - key: DB_NAME
+        value: igv_cms_db
+      - key: JWT_SECRET
+        sync: false
+      - key: ADMIN_EMAIL
+        value: postmaster@israelgrowthventure.com
+      - key: ADMIN_PASSWORD
+        sync: false
       - key: STRIPE_SECRET_KEY
         sync: false
       - key: STRIPE_WEBHOOK_SECRET
@@ -38,11 +46,11 @@ services:
       - key: NODE_VERSION
         value: 18.17.0
       - key: REACT_APP_API_BASE_URL
-        value: https://igv-backend.onrender.com
+        value: https://igv-cms-backend.onrender.com
       - key: VITE_BACKEND_URL
-        value: https://igv-backend.onrender.com
+        value: https://igv-cms-backend.onrender.com
       - key: REACT_APP_CMS_API_URL
-        value: https://igv-backend.onrender.com/api
+        value: https://igv-cms-backend.onrender.com/api
       - key: REACT_APP_CALENDAR_EMAIL
         value: israel.growth.venture@gmail.com
     healthCheckPath: /api/health

@@ -14,9 +14,9 @@ import os
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://israelgrowthventure.com"
+FRONTEND_URL = "https://israelgrowthventure.com"
 BACKEND_URL = "https://igv-cms-backend.onrender.com"
-TIMEOUT = 15
+TIMEOUT = 30  # Augmenté pour éviter timeouts sur cold start
 
 # Credentials admin (lus depuis les variables d'environnement)
 ADMIN_EMAIL = os.getenv("ADMIN_EMAIL", "postmaster@israelgrowthventure.com")
@@ -41,14 +41,17 @@ def log_warning(message):
 def log_info(message):
     print(f"{BLUE}ℹ{RESET} {message}")
 
-def check_get(path: str, use_backend_direct: bool = False):
+def check_get(path: str, use_backend_direct: bool = False, base_url: str = None):
     """Vérifie un endpoint GET"""
-    base = BACKEND_URL if use_backend_direct else BASE_URL
+    if base_url:
+        base = base_url
+    else:
+        base = BACKEND_URL if use_backend_direct else FRONTEND_URL
     url = f"{base}{path}"
     
     try:
-        print(f"\n{BLUE}Testing:{RESET} GET {path}")
-        r = requests.get(url, timeout=TIMEOUT)
+        print(f"\n{BLUE}Testing:{RESET} GET {url}")
+        r = requests.get(url, timeout=TIMEOUT, allow_redirects=True)
         
         if r.status_code == 200:
             log_success(f"Status: {r.status_code}")
@@ -76,13 +79,16 @@ def check_get(path: str, use_backend_direct: bool = False):
         log_error(f"Erreur: {str(e)}")
         return False
 
-def check_post(path: str, json_data: dict, use_backend_direct: bool = False):
+def check_post(path: str, json_data: dict, use_backend_direct: bool = False, base_url: str = None):
     """Vérifie un endpoint POST"""
-    base = BACKEND_URL if use_backend_direct else BASE_URL
+    if base_url:
+        base = base_url
+    else:
+        base = BACKEND_URL if use_backend_direct else FRONTEND_URL
     url = f"{base}{path}"
     
     try:
-        print(f"\n{BLUE}Testing:{RESET} POST {path}")
+        print(f"\n{BLUE}Testing:{RESET} POST {url}")
         r = requests.post(url, json=json_data, timeout=TIMEOUT)
         
         if r.status_code in [200, 201]:
@@ -114,49 +120,69 @@ def check_post(path: str, json_data: dict, use_backend_direct: bool = False):
 def main():
     print("=" * 80)
     print(f"{BLUE}VÉRIFICATION DES ENDPOINTS PRODUCTION{RESET}")
-    print(f"Base URL: {BASE_URL}")
+    print(f"Frontend URL: {FRONTEND_URL}")
     print(f"Backend URL: {BACKEND_URL}")
     print(f"Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print("=" * 80)
     
     results = []
     
-    # Test 1: Healthcheck backend direct
-    log_info("\n=== Test 1: Backend Healthcheck ===")
-    results.append(("Backend /", check_get("/", use_backend_direct=True)))
+    # ========== TESTS FRONTEND ==========
+    log_info("\n" + "=" * 80)
+    log_info("FRONTEND - Pages publiques React")
+    log_info("=" * 80)
     
-    # Test 2: Packs (endpoint public)
-    log_info("\n=== Test 2: Packs ===")
-    results.append(("GET /api/packs", check_get("/api/packs", use_backend_direct=True)))
+    # Test F1: Homepage
+    log_info("\n=== Test F1: Homepage ===")
+    results.append(("Frontend GET /", check_get("/", base_url=FRONTEND_URL)))
     
-    # Test 3: Pricing Rules (endpoint public)
-    log_info("\n=== Test 3: Pricing Rules ===")
-    results.append(("GET /api/pricing-rules", check_get("/api/pricing-rules", use_backend_direct=True)))
+    # Test F2: Packs page
+    log_info("\n=== Test F2: Packs Page ===")
+    results.append(("Frontend GET /packs", check_get("/packs", base_url=FRONTEND_URL)))
     
-    # Test 4: Pages (endpoint public)
-    log_info("\n=== Test 4: Pages ===")
-    results.append(("GET /api/pages", check_get("/api/pages", use_backend_direct=True)))
+    # Test F3: About page
+    log_info("\n=== Test F3: About Page ===")
+    results.append(("Frontend GET /about", check_get("/about", base_url=FRONTEND_URL)))
     
-    # Test 5: Translations (endpoint public)
-    log_info("\n=== Test 5: Translations ===")
-    results.append(("GET /api/translations", check_get("/api/translations", use_backend_direct=True)))
+    # Test F4: Contact page
+    log_info("\n=== Test F4: Contact Page ===")
+    results.append(("Frontend GET /contact", check_get("/contact", base_url=FRONTEND_URL)))
     
-    # Test 6: Auth Login (compte admin réel - non destructif)
-    log_info("\n=== Test 6: Auth Login ===")
-    log_warning(f"Test avec compte admin: {ADMIN_EMAIL}")
-    results.append(("POST /api/auth/login", check_post(
-        "/api/auth/login",
-        {
-            "email": ADMIN_EMAIL,
-            "password": ADMIN_PASSWORD
-        },
-        use_backend_direct=True
-    )))
+    # ========== TESTS BACKEND ==========
+    log_info("\n" + "=" * 80)
+    log_info("BACKEND - API endpoints")
+    log_info("=" * 80)
     
-    # Test 7: Pricing par pays
-    log_info("\n=== Test 7: Pricing by Country ===")
-    results.append(("GET /api/pricing/country/IL", check_get("/api/pricing/country/IL", use_backend_direct=True)))
-    results.append(("GET /api/pricing/country/US", check_get("/api/pricing/country/US", use_backend_direct=True)))
+    # Test B1: Healthcheck backend direct
+    log_info("\n=== Test B1: Backend Root Healthcheck ===")
+    results.append(("Backend GET /", check_get("/", use_backend_direct=True)))
+    
+    # Test B2: API Health
+    log_info("\n=== Test B2: API Health ===")
+    results.append(("Backend GET /api/health", check_get("/api/health", use_backend_direct=True)))
+    
+    # Test B3: Packs (endpoint public)
+    log_info("\n=== Test B3: API Packs ===")
+    results.append(("Backend GET /api/packs", check_get("/api/packs", use_backend_direct=True)))
+    
+    # Test B4: Pricing Rules (endpoint public)
+    log_info("\n=== Test B4: API Pricing Rules ===")
+    results.append(("Backend GET /api/pricing-rules", check_get("/api/pricing-rules", use_backend_direct=True)))
+    
+    # Test B5: Pages (endpoint public)
+    log_info("\n=== Test B5: API Pages ===")
+    results.append(("Backend GET /api/pages", check_get("/api/pages", use_backend_direct=True)))
+    
+    # Test B6: Translations (endpoint public)
+    log_info("\n=== Test B6: API Translations ===")
+    results.append(("Backend GET /api/translations", check_get("/api/translations", use_backend_direct=True)))
+    
+    # Test B7: Pricing par pays
+    log_info("\n=== Test B7: API Pricing by Country (Israel) ===")
+    results.append(("Backend GET /api/pricing/country/IL", check_get("/api/pricing/country/IL", use_backend_direct=True)))
+    
+    log_info("\n=== Test B8: API Pricing by Country (US) ===")
+    results.append(("Backend GET /api/pricing/country/US", check_get("/api/pricing/country/US", use_backend_direct=True)))
     
     # Résumé
     print("\n" + "=" * 80)

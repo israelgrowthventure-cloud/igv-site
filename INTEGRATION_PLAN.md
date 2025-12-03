@@ -1,9 +1,31 @@
 # 📋 PLAN D'INTÉGRATION IGV-SITE - ÉTAT ACTUEL
 
 **Date de création**: 2025-12-03  
-**Dernière mise à jour**: 2025-12-03 18:30 UTC  
-**Statut global**: ⚠️ Backend déployé avec corrections timeout, en attente configuration MongoDB  
+**Dernière mise à jour**: 2025-12-03 19:25 UTC  
+**Statut global**: ⚠️ Backend déployé, MongoDB URL disponible, configuration en cours  
 **Repo actif**: `igv-website-complete/`
+
+---
+
+## 🔑 INFORMATIONS CRITIQUES
+
+### MongoDB Atlas
+**URL de connexion**: `mongodb+srv://igv_user:Juk5QisC96uxV8jR@cluster0.p8ocuik.mongodb.net/IGV-Cluster?appName=Cluster0`  
+**Database**: `igv_cms_db`  
+**Statut**: ✅ Cluster actif et accessible
+
+### Services Render
+**Backend**: https://igv-cms-backend.onrender.com (Service ID: `srv-d4ka5q63jp1c738n6b2g`)  
+**Frontend**: https://israelgrowthventure.com (à configurer)
+
+### Credentials Admin (à générer)
+- **ADMIN_EMAIL**: `postmaster@israelgrowthventure.com`
+- **ADMIN_PASSWORD**: _(à générer lors config Render)_
+- **JWT_SECRET**: _(à générer lors config Render, 32+ caractères)_
+
+### Scripts disponibles
+- `backend/setup_env_simple.ps1` - Configuration automatique variables Render via API
+- `backend/check_prod_endpoints.py` - Tests endpoints production
 
 ---
 
@@ -342,72 +364,72 @@ python init_db_production.py
 
 ## 🎯 PROCHAINES ÉTAPES CONCRÈTES
 
-### 1. ⚠️ Configuration Render Backend (BLOQUANT CRITIQUE)
-**Statut**: Non fait - REQUIS pour fonctionnement  
-**Action**: Ajouter les variables d'environnement sur Render Dashboard  
-**URL**: https://dashboard.render.com/web/srv-d4ka5q63jp1c738n6b2g → Environment
+### 1. ⚠️ Configuration Render Backend - EN COURS
+**Statut**: MongoDB URL disponible, script de config prêt  
+**Action**: Configurer automatiquement les variables d'environnement
 
-**Variables CRITIQUES à ajouter**:
-```bash
-# Database (CRITIQUE - bloque tous les endpoints MongoDB)
-MONGO_URL=mongodb+srv://<user>:<password>@cluster0.xxxxx.mongodb.net/?retryWrites=true&w=majority
-DB_NAME=igv_cms_db
+**Option A - Script automatique (RECOMMANDÉ)**:
+```powershell
+cd backend
+.\setup_env_simple.ps1
+```
+Le script va :
+- Demander une clé API Render (obtenue sur https://dashboard.render.com/account/api-keys)
+- Générer automatiquement JWT_SECRET et ADMIN_PASSWORD
+- Configurer toutes les variables via l'API Render
+- Sauvegarder les credentials dans un fichier local
 
-# Authentication (CRITIQUE - bloque login admin)
-JWT_SECRET=<générer 32+ caractères aléatoires>
-ADMIN_PASSWORD=<mot de passe sécurisé>
+**Option B - Configuration manuelle Dashboard**:
+1. Ouvrir https://dashboard.render.com/web/srv-d4ka5q63jp1c738n6b2g
+2. Onglet "Environment"
+3. Ajouter les variables :
+   - `MONGO_URL` = `mongodb+srv://igv_user:Juk5QisC96uxV8jR@cluster0.p8ocuik.mongodb.net/IGV-Cluster?appName=Cluster0`
+   - `DB_NAME` = `igv_cms_db`
+   - `JWT_SECRET` = _(générer 48 caractères aléatoires)_
+   - `ADMIN_PASSWORD` = _(générer 24 caractères aléatoires)_
+   - `ADMIN_EMAIL` = `postmaster@israelgrowthventure.com`
 
-# Stripe (si paiements requis)
-STRIPE_SECRET_KEY=sk_test_... ou sk_live_...
+### 2. ✅ Attendre redéploiement automatique
+**Durée**: 2-3 minutes après ajout des variables  
+**Vérification**: Logs Render → plus de "Connection refused" MongoDB
 
-# Email (si notifications requises)
-SMTP_USER=israel.growth.venture@gmail.com
-SMTP_PASSWORD=<app password Gmail 16 chars>
+### 3. 🧪 Test production complet
+**Action**: Exécuter les tests automatiques
+```powershell
+cd backend
+python check_prod_endpoints.py
 ```
 
-**Aide**: Script `backend/add_env_vars_render.ps1` liste toutes les variables  
-**Délai estimé**: 10 minutes
+**Résultat attendu après config**:
+- ✅ Backend GET / → 200 OK
+- ✅ Backend GET /api/health → 200 OK avec `"mongodb": "connected"`
+- ✅ Backend GET /api/packs → 200 OK avec liste packs (ou tableau vide si DB vide)
+- ✅ Backend GET /api/pricing-rules → 200 OK
+- ✅ Backend GET /api/pages → 200 OK
+- ✅ Frontend GET / → 200 OK (si service frontend déployé)
 
-### 2. ✅ Vérification déploiement automatique Render
-**Statut**: En cours - Auto-deploy activé sur push main  
-**Action**: Attendre 3-5 minutes que Render redéploie avec le commit `1f0d70c`  
-**Vérification**: 
-- Ouvrir https://dashboard.render.com/web/srv-d4ka5q63jp1c738n6b2g
-- Vérifier "Events" → dernier deploy réussi
-- Vérifier "Logs" → pas d'erreurs critiques
-
-### 3. 🧪 Test production après corrections (avant config MongoDB)
-**Action**: Exécuter `python backend/check_prod_endpoints.py`  
-**Résultat attendu**:
-- ✅ Backend GET / → 200 OK (< 1s)
-- ✅ Backend GET /api/health → 200 OK avec `"mongodb": "disconnected"` (< 1s)
-- ❌ Backend GET /api/packs → 503 Service Unavailable (< 1s, message explicite)
-- Frontend: Dépend si service igv-site-web déployé
-
-### 4. 🧪 Test production après configuration MongoDB
-**Action**: Une fois `MONGO_URL` et autres variables ajoutées, relancer les tests  
-**Résultat attendu**: Tous les tests passants (200/201)
-
-### 5. Initialisation base de données
+### 4. Initialisation base de données
 **Prérequis**: Backend opérationnel avec MongoDB connecté  
-**Action**: Exécuter `python init_db_production.py`  
-**Résultat**: Admin + 3 packs + 5 pricing rules créés  
-**Vérification**: Se connecter au CMS /admin/login
+**Action**: Exécuter le script d'initialisation
+```powershell
+cd backend
+python init_db_production.py
+```
+**Résultat**: Admin user + 3 packs + 5 pricing rules créés  
+**Vérification**: Login CMS https://israelgrowthventure.com/admin/login
 
-### 6. Tests manuels CMS Emergent
+### 5. Tests manuels CMS Emergent
+**Prérequis**: Base de données initialisée  
 **Actions**:
-- [ ] Login https://israelgrowthventure.com/admin/login (postmaster@israelgrowthventure.com)
+- [ ] Login https://israelgrowthventure.com/admin/login
 - [ ] Créer une page dans /admin/pages
 - [ ] Modifier un pack dans /admin/packs
-- [ ] Ajuster une règle de pricing dans /admin/pricing
+- [ ] Ajuster une règle pricing dans /admin/pricing
 - [ ] Tester traductions dans /admin/translations
 
-### 7. Nettoyage frontend (optionnel)
-**Actions**:
-- [ ] Grep recherche de "plasmic" dans frontend/src/
-- [ ] Grep recherche de "@plasmicapp" dans frontend/package.json
-- [ ] Supprimer imports morts et dépendances Plasmic
-- [ ] Vérifier routing App.js (pas de catch-all vers CmsPage)
+### 6. Documentation finale
+**Action**: Mettre à jour INTEGRATION_PLAN.md avec statut "Production opérationnelle"  
+**Inclure**: Credentials admin, URLs finales, checklist validation complète
 
 ---
 

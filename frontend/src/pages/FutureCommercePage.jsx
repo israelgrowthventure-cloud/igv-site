@@ -217,7 +217,7 @@ const FutureCommercePage = () => {
   const currentContent = content[language] || content.fr;
 
   return (
-    <Layout>
+    <div className="future-commerce-page">
       {/* Hero Section - Bold Statement */}
       <section className="relative py-20 lg:py-32 bg-black text-white overflow-hidden" data-testid="future-commerce-hero">
         <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-[#0052CC] opacity-90"></div>
@@ -401,7 +401,7 @@ const FutureCommercePage = () => {
           </div>
         </div>
       </section>
-    </Layout>
+    </div>
   );
 };
 

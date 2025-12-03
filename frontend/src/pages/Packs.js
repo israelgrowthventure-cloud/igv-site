@@ -74,8 +74,20 @@ const Packs = () => {
     fetchPacksAndPricing();
   }, [zone, geoLoading, t]);
 
-  const handleOrderPack = (packId) => {
-    navigate(`/checkout/${packId}`);
+  // Mapping UUID des packs vers leurs slugs pour le checkout
+  const getPackSlug = (pack) => {
+    const nameSlugMap = {
+      'Pack Analyse': 'analyse',
+      'Pack Succursales': 'succursales',
+      'Pack Franchise': 'franchise'
+    };
+    const frenchName = pack.name?.fr || '';
+    return nameSlugMap[frenchName] || pack.slug || pack.id;
+  };
+
+  const handleOrderPack = (pack) => {
+    const slug = getPackSlug(pack);
+    navigate(`/checkout/${slug}`);
   };
 
   return (
@@ -180,7 +192,7 @@ const Packs = () => {
 
                   {/* CTA */}
                   <button
-                    onClick={() => handleOrderPack(pack.id)}
+                    onClick={() => handleOrderPack(pack)}
                     className={`w-full py-3 px-4 rounded-lg font-semibold transition-colors ${
                       isHighlighted
                         ? 'bg-white text-blue-600 hover:bg-gray-100'

@@ -50,12 +50,40 @@ const Checkout = () => {
   useEffect(() => {
     const fetchPack = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/api/packs/${packId}`);
-        if (!response.ok) {
-          throw new Error('Pack not found');
+        // Si packId est un slug (analyse, succursales, franchise), chercher le pack correspondant
+        const isSlug = ['analyse', 'succursales', 'franchise'].includes(packId);
+        
+        if (isSlug) {
+          // Charger tous les packs et trouver celui qui correspond au slug
+          const response = await fetch(`${API_BASE_URL}/api/packs`);
+          if (!response.ok) throw new Error('Failed to fetch packs');
+          const packs = await response.json();
+          
+          // Mapper slug vers nom français pour la recherche
+          const slugToNameMap = {
+            'analyse': 'Pack Analyse',
+            'succursales': 'Pack Succursales',
+            'franchise': 'Pack Franchise'
+          };
+          
+          const targetName = slugToNameMap[packId];
+          const foundPack = packs.find(p => p.name?.fr === targetName);
+          
+          if (!foundPack) {
+            throw new Error('Pack not found');
+          }
+          
+          setPack(foundPack);
+        } else {
+          // Charger par UUID (ancien comportement)
+          const response = await fetch(`${API_BASE_URL}/api/packs/${packId}`);
+          if (!response.ok) {
+            throw new Error('Pack not found');
+          }
+          const data = await response.json();
+          setPack(data);
         }
-        const data = await response.json();
-        setPack(data);
+        
         setPackLoading(false);
       } catch (err) {
         console.error('Error fetching pack:', err);

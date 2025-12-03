@@ -28,10 +28,9 @@ services:
         value: https://israelgrowthventure.com
     healthCheckPath: /api/health
 
-services:
-  # Frontend React with Express Server (Node.js)
+  # Frontend React with Express Server (Node.js Web Service)
   - type: web
-    name: igv-site
+    name: igv-site-web
     env: node
     buildCommand: cd frontend && npm install && npm run build
     startCommand: cd frontend && npm start
@@ -46,4 +45,4 @@ services:
         value: https://igv-backend.onrender.com/api
       - key: REACT_APP_CALENDAR_EMAIL
         value: israel.growth.venture@gmail.com
-    healthCheckPath: /
+    healthCheckPath: /api/health

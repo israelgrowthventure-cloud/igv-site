@@ -1,8 +1,8 @@
 # 📋 PLAN D'INTÉGRATION IGV-SITE - ÉTAT ACTUEL
 
 **Date de création**: 2025-12-03  
-**Dernière mise à jour**: 2025-12-03  
-**Statut global**: ⚠️ Backend déployé, en attente de configuration complète  
+**Dernière mise à jour**: 2025-12-03 18:30 UTC  
+**Statut global**: ⚠️ Backend déployé avec corrections timeout, en attente configuration MongoDB  
 **Repo actif**: `igv-website-complete/`
 
 ---
@@ -11,10 +11,59 @@
 
 Stabiliser le projet IGV-site avec:
 - Backend FastAPI 100% fonctionnel sur https://igv-cms-backend.onrender.com
-- Frontend React intégrant le CMS Emergent
+- Frontend React intégrant le CMS Emergent sur https://israelgrowthventure.com
 - Ancien CMS (Plasmic, JSON Editor) complètement désactivé
 - Variables d'environnement complètes et sécurisées
 - Documentation à jour et scripts opérationnels
+
+---
+
+## 📝 HISTORIQUE DES CORRECTIONS
+
+### [2025-12-03 18:30] Correction timeout /api/packs en production
+
+**Problème identifié**:
+- Tous les endpoints MongoDB (notamment `/api/packs`) retournaient timeout après 30s
+- Cause: Connexion MongoDB sans timeout essayant de se connecter à `localhost:27017` quand `MONGO_URL` non configuré
+
+**Corrections appliquées**:
+
+1. **Backend - Connexion MongoDB** (`backend/server.py`):
+   - Ajout de timeouts explicites (5s) au `AsyncIOMotorClient`
+   - `serverSelectionTimeoutMS=5000`, `connectTimeoutMS=5000`, `socketTimeoutMS=5000`
+   - Gestion d'erreur explicite si connexion échoue
+
+2. **Backend - Endpoint /api/health**:
+   - Ajout détection état MongoDB avec `db.command('ping', maxTimeMS=2000)`
+   - Retourne maintenant: `{"status": "ok", "mongodb": "connected|disconnected|error"}`
+
+3. **Backend - Endpoint /api/packs**:
+   - Vérification si MongoDB disponible avant requête
+   - Retour immédiat HTTP 503 avec message explicite si DB non configurée
+   - Log détaillé des erreurs pour debugging
+
+4. **Backend - Credentials admin**:
+   - Déplacement de `ADMIN_EMAIL`, `ADMIN_PASSWORD` vers variables d'environnement
+   - Plus de credentials hardcodés dans le code
+
+5. **Configuration Render** (`render.yaml`):
+   - Ajout variables manquantes: `JWT_SECRET`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`, `DB_NAME`
+   - Correction URL backend: `https://igv-backend.onrender.com` → `https://igv-cms-backend.onrender.com`
+
+6. **Frontend - API Config** (`frontend/src/config/apiConfig.js`):
+   - Correction URL par défaut: `https://igv-cms-backend.onrender.com`
+
+7. **Script de test** (`backend/check_prod_endpoints.py`):
+   - Augmentation timeout: 15s → 30s (cold start Render)
+   - Ajout tests frontend: `/`, `/packs`, `/about`, `/contact`
+   - Séparation claire tests frontend vs backend
+
+**Commit**: `1f0d70c` - Poussé sur `main`
+
+**Résultat attendu**:
+- Endpoints `/api/health` retourne maintenant rapidement (< 1s) avec statut MongoDB
+- Endpoints `/api/packs` retourne HTTP 503 immédiatement au lieu de timeout 30s
+- Prêt pour configuration des variables d'environnement sur Render Dashboard
 
 ---
 
@@ -293,31 +342,67 @@ python init_db_production.py
 
 ## 🎯 PROCHAINES ÉTAPES CONCRÈTES
 
-### 1. Configuration Render (PRIORITÉ CRITIQUE)
-**Action**: Ajouter toutes les variables d'environnement manquantes  
-**Où**: https://dashboard.render.com/web/srv-d4ka5q63jp1c738n6b2g → Environment  
-**Aide**: Utiliser `backend/add_env_vars_render.ps1`  
+### 1. ⚠️ Configuration Render Backend (BLOQUANT CRITIQUE)
+**Statut**: Non fait - REQUIS pour fonctionnement  
+**Action**: Ajouter les variables d'environnement sur Render Dashboard  
+**URL**: https://dashboard.render.com/web/srv-d4ka5q63jp1c738n6b2g → Environment
+
+**Variables CRITIQUES à ajouter**:
+```bash
+# Database (CRITIQUE - bloque tous les endpoints MongoDB)
+MONGO_URL=mongodb+srv://<user>:<password>@cluster0.xxxxx.mongodb.net/?retryWrites=true&w=majority
+DB_NAME=igv_cms_db
+
+# Authentication (CRITIQUE - bloque login admin)
+JWT_SECRET=<générer 32+ caractères aléatoires>
+ADMIN_PASSWORD=<mot de passe sécurisé>
+
+# Stripe (si paiements requis)
+STRIPE_SECRET_KEY=sk_test_... ou sk_live_...
+
+# Email (si notifications requises)
+SMTP_USER=israel.growth.venture@gmail.com
+SMTP_PASSWORD=<app password Gmail 16 chars>
+```
+
+**Aide**: Script `backend/add_env_vars_render.ps1` liste toutes les variables  
 **Délai estimé**: 10 minutes
 
-### 2. Vérification backend opérationnel
-**Action**: Exécuter `python check_prod_endpoints.py`  
-**Résultat attendu**: 8/8 tests passants  
-**Si échec**: Vérifier logs Render
+### 2. ✅ Vérification déploiement automatique Render
+**Statut**: En cours - Auto-deploy activé sur push main  
+**Action**: Attendre 3-5 minutes que Render redéploie avec le commit `1f0d70c`  
+**Vérification**: 
+- Ouvrir https://dashboard.render.com/web/srv-d4ka5q63jp1c738n6b2g
+- Vérifier "Events" → dernier deploy réussi
+- Vérifier "Logs" → pas d'erreurs critiques
 
-### 3. Initialisation base de données
+### 3. 🧪 Test production après corrections (avant config MongoDB)
+**Action**: Exécuter `python backend/check_prod_endpoints.py`  
+**Résultat attendu**:
+- ✅ Backend GET / → 200 OK (< 1s)
+- ✅ Backend GET /api/health → 200 OK avec `"mongodb": "disconnected"` (< 1s)
+- ❌ Backend GET /api/packs → 503 Service Unavailable (< 1s, message explicite)
+- Frontend: Dépend si service igv-site-web déployé
+
+### 4. 🧪 Test production après configuration MongoDB
+**Action**: Une fois `MONGO_URL` et autres variables ajoutées, relancer les tests  
+**Résultat attendu**: Tous les tests passants (200/201)
+
+### 5. Initialisation base de données
+**Prérequis**: Backend opérationnel avec MongoDB connecté  
 **Action**: Exécuter `python init_db_production.py`  
-**Résultat**: Admin + packs + pricing rules créés  
+**Résultat**: Admin + 3 packs + 5 pricing rules créés  
 **Vérification**: Se connecter au CMS /admin/login
 
-### 4. Tests manuels CMS Emergent
+### 6. Tests manuels CMS Emergent
 **Actions**:
-- [ ] Login /admin/login (postmaster@israelgrowthventure.com)
+- [ ] Login https://israelgrowthventure.com/admin/login (postmaster@israelgrowthventure.com)
 - [ ] Créer une page dans /admin/pages
 - [ ] Modifier un pack dans /admin/packs
 - [ ] Ajuster une règle de pricing dans /admin/pricing
 - [ ] Tester traductions dans /admin/translations
 
-### 5. Nettoyage frontend
+### 7. Nettoyage frontend (optionnel)
 **Actions**:
 - [ ] Grep recherche de "plasmic" dans frontend/src/
 - [ ] Grep recherche de "@plasmicapp" dans frontend/package.json

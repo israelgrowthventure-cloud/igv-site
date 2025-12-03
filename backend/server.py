@@ -609,6 +609,8 @@ async def health_check():
     health_status = {
         "status": "ok",
         "message": "Backend IGV est opérationnel",
+        "version": "2.0.1",
+        "timestamp": datetime.now(timezone.utc).isoformat(),
         "mongodb": "disconnected"
     }
     

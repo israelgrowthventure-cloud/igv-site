@@ -40,7 +40,7 @@ console.log(`📁 Static files served from: ${buildPath}`);
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'ok',
-    version: '2.0.0-spa-fix',
+    version: '2.0.1',
     timestamp: new Date().toISOString(),
     buildPath: buildPath,
     indexExists: fs.existsSync(indexPath)

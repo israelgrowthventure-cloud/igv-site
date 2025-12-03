@@ -1192,6 +1192,64 @@ async def get_price_for_country(country_code: str):
     
     return {"price": 3000, "currency": "EUR", "zone": "default"}
 
+@api_router.post("/pricing-rules/calculate")
+async def calculate_pack_price(request: dict):
+    """Calculate pack price based on zone with detailed display formats"""
+    pack_id = request.get("pack_id")
+    zone = request.get("zone", "DEFAULT")
+    
+    if not pack_id:
+        raise HTTPException(status_code=400, detail="pack_id is required")
+    
+    # Get the pack
+    pack = await db.packs.find_one({"id": pack_id}, {"_id": 0})
+    if not pack:
+        raise HTTPException(status_code=404, detail="Pack not found")
+    
+    base_price = pack.get("base_price", 0)
+    
+    # Get pricing rule for zone
+    pricing_rule = await db.pricing_rules.find_one({"zone_name": zone.upper(), "active": True}, {"_id": 0})
+    if not pricing_rule:
+        # Fallback to DEFAULT zone
+        pricing_rule = await db.pricing_rules.find_one({"zone_name": "DEFAULT", "active": True}, {"_id": 0})
+    
+    if not pricing_rule:
+        raise HTTPException(status_code=500, detail="No pricing rule available")
+    
+    multiplier = pricing_rule.get("price", 1.0)
+    currency = pricing_rule.get("currency", "EUR")
+    
+    # Calculate final price
+    final_price = base_price * multiplier
+    
+    # Currency symbols
+    currency_symbols = {
+        "EUR": "€",
+        "USD": "$",
+        "ILS": "₪",
+        "GBP": "£"
+    }
+    symbol = currency_symbols.get(currency, currency)
+    
+    # Format display prices
+    def format_price(amount):
+        """Format price with proper thousands separator"""
+        return f"{int(amount):,}".replace(",", " ")
+    
+    return {
+        "zone": zone,
+        "currency": currency,
+        "multiplier": multiplier,
+        "base_price": base_price,
+        "final_price": final_price,
+        "display": {
+            "total": f"{format_price(final_price)} {symbol}",
+            "three_times": f"3 x {format_price(final_price / 3)} {symbol}",
+            "twelve_times": f"12 x {format_price(final_price / 12)} {symbol}"
+        }
+    }
+
 # ==================== TRANSLATION ROUTES ====================
 
 @api_router.get("/translations", response_model=List[Translation])

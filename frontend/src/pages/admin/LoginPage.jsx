@@ -1,17 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { authAPI } from '../utils/api';
 import { toast } from 'sonner';
 import { LogIn } from 'lucide-react';
-import axios from 'axios';
-import { API_BASE_URL } from '../../config/apiConfig';
-
-const api = axios.create({
-  baseURL: `${API_BASE_URL}/api`,
-});
-
-const authAPI = {
-  login: (data) => api.post('/auth/login', data),
-};
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -54,10 +45,10 @@ const LoginPage = () => {
               type="email"
               value={credentials.email}
               onChange={(e) => setCredentials({ ...credentials, email: e.target.value })}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0052CC] focus:border-transparent"
-              placeholder="postmaster@israelgrowthventure.com"
               required
-              data-testid="email-input"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0052CC] focus:border-transparent"
+              data-testid="login-email-input"
+              placeholder="admin@igv.co.il"
             />
           </div>
 
@@ -67,27 +58,33 @@ const LoginPage = () => {
               type="password"
               value={credentials.password}
               onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0052CC] focus:border-transparent"
-              placeholder="••••••••"
               required
-              data-testid="password-input"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0052CC] focus:border-transparent"
+              data-testid="login-password-input"
+              placeholder="••••••••"
             />
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full flex items-center justify-center space-x-2 px-6 py-3 bg-[#0052CC] text-white rounded-lg font-semibold hover:bg-[#003D99] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            data-testid="login-button"
+            className="w-full flex items-center justify-center px-6 py-3 bg-[#0052CC] text-white rounded-lg font-semibold hover:bg-[#003D99] transition-all duration-300 disabled:opacity-50"
+            data-testid="login-submit-button"
           >
-            <LogIn size={20} />
-            <span>{loading ? 'Signing in...' : 'Sign In'}</span>
+            {loading ? (
+              <div className="spinner"></div>
+            ) : (
+              <>
+                <LogIn className="mr-2" size={20} />
+                Sign In
+              </>
+            )}
           </button>
         </form>
 
-        <div className="mt-6 text-center text-sm text-gray-500">
-          <p>Credentials admin:</p>
-          <p className="font-mono">postmaster@israelgrowthventure.com / Admin@igv</p>
+        <div className="mt-6 text-center text-sm text-gray-600">
+          <p>Default credentials for demo:</p>
+          <p className="font-mono text-xs mt-2">admin@igv.co.il / admin123</p>
         </div>
       </div>
     </div>
@@ -95,3 +92,4 @@ const LoginPage = () => {
 };
 
 export default LoginPage;
+

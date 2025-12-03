@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import { Toaster } from 'sonner';
 import { GeoProvider } from './context/GeoContext';
+import { LanguageProvider } from './context/LanguageContext';
 import './i18n/config';
 import './App.css';
 
@@ -40,7 +41,7 @@ import Footer from './components/Footer';
 // Public pages
 import Home from './pages/Home';
 import About from './pages/About';
-import Packs from './pages/Packs';
+import PacksPage from './pages/PacksPage';
 import Contact from './pages/Contact';
 import FutureCommercePage from './pages/FutureCommercePage';
 import DynamicPage from './pages/DynamicPage';
@@ -81,7 +82,7 @@ function AppLayout() {
           {/* Public Routes */}
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
-          <Route path="/packs" element={<Packs />} />
+          <Route path="/packs" element={<PacksPage />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/le-commerce-de-demain" element={<FutureCommercePage />} />
           <Route path="/future-commerce" element={<FutureCommercePage />} />
@@ -110,13 +111,15 @@ function AppLayout() {
 function App() {
   return (
     <HelmetProvider>
-      <GeoProvider>
-        <Suspense fallback={<Loading />}>
-          <BrowserRouter>
-            <AppLayout />
-          </BrowserRouter>
-        </Suspense>
-      </GeoProvider>
+      <LanguageProvider>
+        <GeoProvider>
+          <Suspense fallback={<Loading />}>
+            <BrowserRouter>
+              <AppLayout />
+            </BrowserRouter>
+          </Suspense>
+        </GeoProvider>
+      </LanguageProvider>
     </HelmetProvider>
   );
 }

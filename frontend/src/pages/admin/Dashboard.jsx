@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { toast } from 'sonner';
+import { pagesAPI, packsAPI, ordersAPI } from '../utils/api';
 import { FileText, Package, DollarSign, Settings, LogOut } from 'lucide-react';
-import { pagesAPI, packsAPI } from '../../utils/api';
+import { toast } from 'sonner';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -27,14 +27,15 @@ const AdminDashboard = () => {
 
   const loadStats = async () => {
     try {
-      const [pagesRes, packsRes] = await Promise.all([
+      const [pagesRes, packsRes, ordersRes] = await Promise.all([
         pagesAPI.getAll(),
         packsAPI.getAll(),
+        ordersAPI.getAll(),
       ]);
       setStats({
         pages: pagesRes.data.length,
         packs: packsRes.data.length,
-        orders: 0,
+        orders: ordersRes.data.length,
       });
     } catch (error) {
       console.error('Error loading stats:', error);
@@ -98,25 +99,22 @@ const AdminDashboard = () => {
           <p className="text-gray-600">Manage your website content and settings</p>
         </div>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {menuItems.map((item, index) => (
             <Link
               key={index}
               to={item.link}
-              className="bg-white rounded-xl shadow-md p-6 hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-[#0052CC]"
+              className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 p-6 border border-gray-100 hover:border-[#0052CC]"
               data-testid={`menu-item-${index}`}
             >
-              <div className="flex items-center justify-between mb-4">
-                <div className="p-3 bg-blue-50 rounded-lg text-[#0052CC]">
-                  {item.icon}
-                </div>
-                {item.count !== undefined && (
-                  <span className="text-2xl font-bold text-gray-900">{item.count}</span>
-                )}
+              <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center text-[#0052CC] mb-4">
+                {item.icon}
               </div>
               <h3 className="text-lg font-semibold text-gray-900 mb-1">{item.title}</h3>
-              <p className="text-sm text-gray-500">{item.description}</p>
+              <p className="text-sm text-gray-600 mb-3">{item.description}</p>
+              {item.count !== undefined && (
+                <div className="text-2xl font-bold text-[#0052CC]">{item.count}</div>
+              )}
             </Link>
           ))}
         </div>
@@ -155,3 +153,4 @@ const AdminDashboard = () => {
 };
 
 export default AdminDashboard;
+

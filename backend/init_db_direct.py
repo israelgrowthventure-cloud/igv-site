@@ -23,9 +23,9 @@ from datetime import datetime
 MONGO_URL = "mongodb+srv://igv_user:Juk5QisC96uxV8jR@cluster0.p8ocuik.mongodb.net/IGV-Cluster?appName=Cluster0"
 DB_NAME = "igv_cms_db"
 
-# Credentials admin
-ADMIN_EMAIL = "postmaster@israelgrowthventure.com"
-ADMIN_PASSWORD = "Admin@igv"
+# Credentials admin (V2 CMS)
+ADMIN_EMAIL = "admin@igv.co.il"
+ADMIN_PASSWORD = "admin123"
 
 async def main():
     print("=" * 70)

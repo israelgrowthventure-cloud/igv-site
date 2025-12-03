@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { pricingAPI } from '../utils/api';
 import { toast } from 'sonner';
-import { ArrowLeft, Plus, Edit, Trash2, Save, X } from 'lucide-react';
-import { pricingAPI } from '../../utils/api';
+import { ArrowLeft, Plus, Edit2, Trash2, Save, X } from 'lucide-react';
 
 const PricingAdmin = () => {
   const navigate = useNavigate();
   const [rules, setRules] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [editingRule, setEditingRule] = useState(null);
+  const [editingId, setEditingId] = useState(null);
+  const [editForm, setEditForm] = useState(null);
+  const [showAddForm, setShowAddForm] = useState(false);
 
   useEffect(() => {
     loadRules();
@@ -27,23 +29,22 @@ const PricingAdmin = () => {
   };
 
   const handleEdit = (rule) => {
-    setEditingRule({ ...rule });
-  };
-
-  const handleCancel = () => {
-    setEditingRule(null);
+    setEditingId(rule.id);
+    setEditForm({ ...rule });
   };
 
   const handleSave = async () => {
     try {
-      if (editingRule.id) {
-        await pricingAPI.updateRule(editingRule.id, editingRule);
-        toast.success('Pricing rule updated successfully!');
+      if (editingId) {
+        await pricingAPI.updateRule(editingId, editForm);
+        toast.success('Pricing rule updated!');
       } else {
-        await pricingAPI.createRule(editingRule);
-        toast.success('Pricing rule created successfully!');
+        await pricingAPI.createRule(editForm);
+        toast.success('Pricing rule created!');
       }
-      setEditingRule(null);
+      setEditingId(null);
+      setEditForm(null);
+      setShowAddForm(false);
       loadRules();
     } catch (error) {
       console.error('Error saving pricing rule:', error);
@@ -51,11 +52,12 @@ const PricingAdmin = () => {
     }
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (ruleId) => {
     if (!window.confirm('Are you sure you want to delete this pricing rule?')) return;
+
     try {
-      await pricingAPI.deleteRule(id);
-      toast.success('Pricing rule deleted successfully!');
+      await pricingAPI.deleteRule(ruleId);
+      toast.success('Pricing rule deleted!');
       loadRules();
     } catch (error) {
       console.error('Error deleting pricing rule:', error);
@@ -63,24 +65,21 @@ const PricingAdmin = () => {
     }
   };
 
-  const handleNewRule = () => {
-    setEditingRule({
-      zone_code: '',
+  const handleCancel = () => {
+    setEditingId(null);
+    setEditForm(null);
+    setShowAddForm(false);
+  };
+
+  const handleAdd = () => {
+    setEditForm({
       zone_name: '',
       country_codes: [],
-      multiplier: 1.0,
+      price: 1000,
       currency: 'USD',
       active: true,
     });
-  };
-
-  const updateRuleField = (field, value) => {
-    setEditingRule({ ...editingRule, [field]: value });
-  };
-
-  const updateCountryCodes = (value) => {
-    const codes = value.split(',').map((code) => code.trim().toUpperCase());
-    setEditingRule({ ...editingRule, country_codes: codes });
+    setShowAddForm(true);
   };
 
   if (loading) {
@@ -95,7 +94,7 @@ const PricingAdmin = () => {
     <div className="min-h-screen bg-gray-50" data-testid="pricing-admin">
       {/* Header */}
       <header className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
           <div className="flex items-center space-x-4">
             <button
               onClick={() => navigate('/admin')}
@@ -104,213 +103,210 @@ const PricingAdmin = () => {
             >
               <ArrowLeft size={20} />
             </button>
-            <h1 className="text-2xl font-bold text-gray-900">Pricing Rules Management</h1>
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">Pricing Rules</h1>
+              <p className="text-sm text-gray-500">Manage pricing by geographic zone</p>
+            </div>
           </div>
           <button
-            onClick={handleNewRule}
-            className="flex items-center space-x-2 px-4 py-2 bg-[#0052CC] text-white rounded-lg font-medium hover:bg-[#003D99] transition-colors"
-            data-testid="new-rule-button"
+            onClick={handleAdd}
+            className="flex items-center space-x-2 px-4 py-2 bg-[#0052CC] text-white rounded-lg hover:bg-[#003D99] transition-colors"
+            data-testid="add-rule-button"
           >
             <Plus size={18} />
-            <span>New Rule</span>
+            <span>Add Rule</span>
           </button>
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* Editing Modal */}
-        {editingRule && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full">
-              <div className="bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center rounded-t-lg">
-                <h2 className="text-xl font-bold text-gray-900">
-                  {editingRule.id ? 'Edit Pricing Rule' : 'New Pricing Rule'}
-                </h2>
-                <button onClick={handleCancel} className="text-gray-500 hover:text-gray-700">
-                  <X size={24} />
-                </button>
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Add Form */}
+        {showAddForm && (
+          <div className="bg-white rounded-xl shadow-md p-6 mb-6 border border-gray-100">
+            <h3 className="text-lg font-semibold mb-4">New Pricing Rule</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Zone Name
+                </label>
+                <input
+                  type="text"
+                  value={editForm.zone_name}
+                  onChange={(e) => setEditForm({ ...editForm, zone_name: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0052CC] focus:border-transparent"
+                  placeholder="EU, US_CA, etc."
+                  data-testid="zone-name-input"
+                />
               </div>
-
-              <div className="p-6 space-y-4">
-                {/* Zone Code */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Zone Code</label>
-                  <input
-                    type="text"
-                    value={editingRule.zone_code || ''}
-                    onChange={(e) => updateRuleField('zone_code', e.target.value.toUpperCase())}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0052CC] focus:border-transparent"
-                    placeholder="EU, US, ASIA, etc."
-                  />
-                </div>
-
-                {/* Zone Name */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Zone Name</label>
-                  <input
-                    type="text"
-                    value={editingRule.zone_name || ''}
-                    onChange={(e) => updateRuleField('zone_name', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0052CC] focus:border-transparent"
-                    placeholder="Europe, United States, Asia, etc."
-                  />
-                </div>
-
-                {/* Country Codes */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Country Codes (comma separated)
-                  </label>
-                  <input
-                    type="text"
-                    value={(editingRule.country_codes || []).join(', ')}
-                    onChange={(e) => updateCountryCodes(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0052CC] focus:border-transparent"
-                    placeholder="FR, DE, IT, ES, etc."
-                  />
-                  <p className="text-xs text-gray-500 mt-1">
-                    Use ISO 3166-1 alpha-2 country codes (e.g., US, GB, FR)
-                  </p>
-                </div>
-
-                {/* Multiplier & Currency */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Price Multiplier</label>
-                    <input
-                      type="number"
-                      step="0.01"
-                      value={editingRule.multiplier || 1.0}
-                      onChange={(e) => updateRuleField('multiplier', parseFloat(e.target.value))}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0052CC] focus:border-transparent"
-                    />
-                    <p className="text-xs text-gray-500 mt-1">1.0 = base price, 1.2 = +20%, 0.8 = -20%</p>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Currency</label>
-                    <select
-                      value={editingRule.currency || 'USD'}
-                      onChange={(e) => updateRuleField('currency', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0052CC] focus:border-transparent"
-                    >
-                      <option value="USD">USD ($)</option>
-                      <option value="EUR">EUR (€)</option>
-                      <option value="GBP">GBP (£)</option>
-                      <option value="ILS">ILS (₪)</option>
-                      <option value="CAD">CAD ($)</option>
-                      <option value="AUD">AUD ($)</option>
-                    </select>
-                  </div>
-                </div>
-
-                {/* Active */}
-                <div className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    checked={editingRule.active || false}
-                    onChange={(e) => updateRuleField('active', e.target.checked)}
-                    className="w-4 h-4 text-[#0052CC] border-gray-300 rounded focus:ring-[#0052CC]"
-                  />
-                  <label className="text-sm font-medium text-gray-700">Active</label>
-                </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Country Codes (comma-separated)
+                </label>
+                <input
+                  type="text"
+                  value={editForm.country_codes.join(', ')}
+                  onChange={(e) =>
+                    setEditForm({
+                      ...editForm,
+                      country_codes: e.target.value.split(',').map((c) => c.trim()),
+                    })
+                  }
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0052CC] focus:border-transparent"
+                  placeholder="FR, DE, IT"
+                  data-testid="country-codes-input"
+                />
               </div>
-
-              <div className="bg-gray-50 px-6 py-4 flex justify-end space-x-3 border-t border-gray-200 rounded-b-lg">
-                <button
-                  onClick={handleCancel}
-                  className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors"
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Price</label>
+                <input
+                  type="number"
+                  value={editForm.price}
+                  onChange={(e) => setEditForm({ ...editForm, price: parseFloat(e.target.value) })}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0052CC] focus:border-transparent"
+                  data-testid="price-input"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Currency</label>
+                <select
+                  value={editForm.currency}
+                  onChange={(e) => setEditForm({ ...editForm, currency: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0052CC] focus:border-transparent"
+                  data-testid="currency-select"
                 >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleSave}
-                  className="flex items-center space-x-2 px-4 py-2 bg-[#0052CC] text-white rounded-lg font-medium hover:bg-[#003D99] transition-colors"
-                >
-                  <Save size={18} />
-                  <span>Save Rule</span>
-                </button>
+                  <option value="USD">USD</option>
+                  <option value="EUR">EUR</option>
+                  <option value="ILS">ILS</option>
+                </select>
               </div>
+            </div>
+            <div className="flex justify-end space-x-3 mt-4">
+              <button
+                onClick={handleCancel}
+                className="flex items-center space-x-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                data-testid="cancel-button"
+              >
+                <X size={18} />
+                <span>Cancel</span>
+              </button>
+              <button
+                onClick={handleSave}
+                className="flex items-center space-x-2 px-4 py-2 bg-[#0052CC] text-white rounded-lg hover:bg-[#003D99] transition-colors"
+                data-testid="save-button"
+              >
+                <Save size={18} />
+                <span>Save</span>
+              </button>
             </div>
           </div>
         )}
 
-        {/* Rules Table */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Zone
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Countries
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Multiplier
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Currency
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {rules.map((rule) => (
-                <tr key={rule.id}>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-gray-900">{rule.zone_code}</div>
-                    <div className="text-sm text-gray-500">{rule.zone_name}</div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="text-sm text-gray-900">
-                      {(rule.country_codes || []).slice(0, 5).join(', ')}
-                      {(rule.country_codes || []).length > 5 && '...'}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">×{rule.multiplier}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{rule.currency}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span
-                      className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                        rule.active
-                          ? 'bg-green-100 text-green-800'
-                          : 'bg-gray-100 text-gray-800'
-                      }`}
+        {/* Rules List */}
+        <div className="space-y-4">
+          {rules.map((rule) => (
+            <div
+              key={rule.id}
+              className="bg-white rounded-xl shadow-md p-6 border border-gray-100"
+              data-testid={`rule-card-${rule.id}`}
+            >
+              {editingId === rule.id ? (
+                // Edit Mode (similar to add form)
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Zone Name
+                    </label>
+                    <input
+                      type="text"
+                      value={editForm.zone_name}
+                      onChange={(e) => setEditForm({ ...editForm, zone_name: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0052CC] focus:border-transparent"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Price</label>
+                    <input
+                      type="number"
+                      value={editForm.price}
+                      onChange={(e) =>
+                        setEditForm({ ...editForm, price: parseFloat(e.target.value) })
+                      }
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0052CC] focus:border-transparent"
+                    />
+                  </div>
+                  <div className="md:col-span-2 flex justify-end space-x-3">
+                    <button
+                      onClick={handleCancel}
+                      className="flex items-center space-x-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
                     >
-                      {rule.active ? 'Active' : 'Inactive'}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      <X size={18} />
+                      <span>Cancel</span>
+                    </button>
+                    <button
+                      onClick={handleSave}
+                      className="flex items-center space-x-2 px-4 py-2 bg-[#0052CC] text-white rounded-lg hover:bg-[#003D99] transition-colors"
+                    >
+                      <Save size={18} />
+                      <span>Save</span>
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                // View Mode
+                <div className="flex justify-between items-start">
+                  <div className="flex-1">
+                    <div className="flex items-center space-x-3 mb-2">
+                      <h3 className="text-xl font-bold text-gray-900">{rule.zone_name}</h3>
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-medium ${
+                          rule.active
+                            ? 'bg-green-100 text-green-700'
+                            : 'bg-gray-100 text-gray-600'
+                        }`}
+                      >
+                        {rule.active ? 'Active' : 'Inactive'}
+                      </span>
+                    </div>
+                    <div className="text-2xl font-bold text-[#0052CC] mb-3">
+                      {rule.price} {rule.currency}
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {rule.country_codes.map((code) => (
+                        <span
+                          key={code}
+                          className="px-3 py-1 bg-blue-50 text-blue-700 rounded-lg text-sm font-medium"
+                        >
+                          {code}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-2">
                     <button
                       onClick={() => handleEdit(rule)}
-                      className="text-[#0052CC] hover:text-[#003D99] mr-4"
+                      className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                      data-testid={`edit-button-${rule.id}`}
                     >
-                      <Edit size={18} />
+                      <Edit2 size={18} />
                     </button>
                     <button
                       onClick={() => handleDelete(rule.id)}
-                      className="text-red-600 hover:text-red-900"
+                      className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                      data-testid={`delete-button-${rule.id}`}
                     >
                       <Trash2 size={18} />
                     </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                  </div>
+                </div>
+              )}
+            </div>
+          ))}
         </div>
-      </div>
+      </main>
     </div>
   );
 };
 
 export default PricingAdmin;
+

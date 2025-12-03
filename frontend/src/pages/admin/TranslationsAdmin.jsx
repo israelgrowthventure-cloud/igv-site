@@ -1,16 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { translationsAPI } from '../utils/api';
 import { toast } from 'sonner';
-import { ArrowLeft, Save, Search } from 'lucide-react';
-import { translationsAPI } from '../../utils/api';
+import { ArrowLeft, Plus, Save } from 'lucide-react';
 
 const TranslationsAdmin = () => {
   const navigate = useNavigate();
-  const [translations, setTranslations] = useState({});
+  const [translations, setTranslations] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [currentLang, setCurrentLang] = useState('fr');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [editingTranslations, setEditingTranslations] = useState({});
 
   useEffect(() => {
     loadTranslations();
@@ -20,6 +18,12 @@ const TranslationsAdmin = () => {
     try {
       const response = await translationsAPI.getAll();
       setTranslations(response.data);
+      // Initialize editing state
+      const initialState = {};
+      response.data.forEach((t) => {
+        initialState[t.key] = { ...t.translations };
+      });
+      setEditingTranslations(initialState);
     } catch (error) {
       console.error('Error loading translations:', error);
       toast.error('Error loading translations');
@@ -28,35 +32,39 @@ const TranslationsAdmin = () => {
     }
   };
 
-  const handleSave = async () => {
-    setSaving(true);
-    try {
-      await translationsAPI.update(translations);
-      toast.success('Translations saved successfully!');
-    } catch (error) {
-      console.error('Error saving translations:', error);
-      toast.error('Error saving translations');
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const updateTranslation = (key, lang, value) => {
-    setTranslations({
-      ...translations,
+  const handleUpdate = (key, lang, value) => {
+    setEditingTranslations({
+      ...editingTranslations,
       [key]: {
-        ...translations[key],
+        ...editingTranslations[key],
         [lang]: value,
       },
     });
   };
 
-  const filteredKeys = Object.keys(translations).filter((key) =>
-    key.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    Object.values(translations[key] || {}).some((value) =>
-      String(value).toLowerCase().includes(searchQuery.toLowerCase())
-    )
-  );
+  const handleSave = async (key) => {
+    try {
+      await translationsAPI.update(key, { translations: editingTranslations[key] });
+      toast.success('Translation updated!');
+      loadTranslations();
+    } catch (error) {
+      console.error('Error updating translation:', error);
+      toast.error('Error updating translation');
+    }
+  };
+
+  const handleSaveAll = async () => {
+    try {
+      for (const key of Object.keys(editingTranslations)) {
+        await translationsAPI.update(key, { translations: editingTranslations[key] });
+      }
+      toast.success('All translations updated!');
+      loadTranslations();
+    } catch (error) {
+      console.error('Error updating translations:', error);
+      toast.error('Error updating translations');
+    }
+  };
 
   if (loading) {
     return (
@@ -69,8 +77,8 @@ const TranslationsAdmin = () => {
   return (
     <div className="min-h-screen bg-gray-50" data-testid="translations-admin">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+      <header className="bg-white shadow-sm border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
           <div className="flex items-center space-x-4">
             <button
               onClick={() => navigate('/admin')}
@@ -79,108 +87,78 @@ const TranslationsAdmin = () => {
             >
               <ArrowLeft size={20} />
             </button>
-            <h1 className="text-2xl font-bold text-gray-900">Translations Management</h1>
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">Translations</h1>
+              <p className="text-sm text-gray-500">Manage multi-language content</p>
+            </div>
           </div>
           <button
-            onClick={handleSave}
-            disabled={saving}
-            className="flex items-center space-x-2 px-4 py-2 bg-[#0052CC] text-white rounded-lg font-medium hover:bg-[#003D99] transition-colors disabled:opacity-50"
-            data-testid="save-button"
+            onClick={handleSaveAll}
+            className="flex items-center space-x-2 px-4 py-2 bg-[#0052CC] text-white rounded-lg hover:bg-[#003D99] transition-colors"
+            data-testid="save-all-button"
           >
             <Save size={18} />
-            <span>{saving ? 'Saving...' : 'Save All'}</span>
+            <span>Save All</span>
           </button>
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* Controls */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
-            {/* Search */}
-            <div className="flex-1 max-w-md">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search translations..."
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0052CC] focus:border-transparent"
-                  data-testid="search-input"
-                />
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="bg-white rounded-xl shadow-md p-6">
+          <div className="space-y-6">
+            {translations.length === 0 ? (
+              <div className="text-center py-12 text-gray-500">
+                <p>No translations yet. Translations will appear here once created.</p>
               </div>
-            </div>
-
-            {/* Language Selector */}
-            <div className="flex items-center space-x-2">
-              <span className="text-sm font-medium text-gray-700">Editing:</span>
-              <div className="flex space-x-1 border border-gray-300 rounded-lg overflow-hidden">
-                {['fr', 'en', 'he'].map((lang) => (
-                  <button
-                    key={lang}
-                    onClick={() => setCurrentLang(lang)}
-                    className={`px-4 py-2 text-sm font-medium transition-colors ${
-                      currentLang === lang
-                        ? 'bg-[#0052CC] text-white'
-                        : 'bg-white text-gray-700 hover:bg-gray-50'
-                    }`}
-                    data-testid={`lang-button-${lang}`}
-                  >
-                    {lang.toUpperCase()}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-4 text-sm text-gray-500">
-            Showing {filteredKeys.length} of {Object.keys(translations).length} translations
-          </div>
-        </div>
-
-        {/* Translations Grid */}
-        <div className="space-y-4">
-          {filteredKeys.map((key) => (
-            <div key={key} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-              <div className="mb-3">
-                <span className="text-sm font-mono text-gray-500 bg-gray-100 px-2 py-1 rounded">
-                  {key}
-                </span>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {['fr', 'en', 'he'].map((lang) => (
-                  <div key={lang}>
-                    <label className="block text-xs font-medium text-gray-700 mb-1 uppercase">
-                      {lang}
-                    </label>
-                    <textarea
-                      value={translations[key]?.[lang] || ''}
-                      onChange={(e) => updateTranslation(key, lang, e.target.value)}
-                      rows={3}
-                      className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-[#0052CC] focus:border-transparent ${
-                        currentLang === lang
-                          ? 'border-[#0052CC] bg-blue-50'
-                          : 'border-gray-300'
-                      }`}
-                      dir={lang === 'he' ? 'rtl' : 'ltr'}
-                    />
+            ) : (
+              translations.map((translation) => (
+                <div
+                  key={translation.key}
+                  className="border-b border-gray-200 pb-6 last:border-b-0"
+                  data-testid={`translation-${translation.key}`}
+                >
+                  <div className="flex justify-between items-start mb-4">
+                    <div>
+                      <h3 className="font-semibold text-gray-900 mb-1">{translation.key}</h3>
+                      <p className="text-sm text-gray-500">Translation key</p>
+                    </div>
+                    <button
+                      onClick={() => handleSave(translation.key)}
+                      className="flex items-center space-x-2 px-3 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors text-sm"
+                      data-testid={`save-button-${translation.key}`}
+                    >
+                      <Save size={16} />
+                      <span>Save</span>
+                    </button>
                   </div>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {filteredKeys.length === 0 && (
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
-            <p className="text-gray-500">No translations found matching "{searchQuery}"</p>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {['fr', 'en', 'he'].map((lang) => (
+                      <div key={lang}>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          {lang.toUpperCase()}
+                        </label>
+                        <textarea
+                          value={editingTranslations[translation.key]?.[lang] || ''}
+                          onChange={(e) =>
+                            handleUpdate(translation.key, lang, e.target.value)
+                          }
+                          rows={3}
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0052CC] focus:border-transparent"
+                          data-testid={`translation-input-${translation.key}-${lang}`}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))
+            )}
           </div>
-        )}
-      </div>
+        </div>
+      </main>
     </div>
   );
 };
 
 export default TranslationsAdmin;
+

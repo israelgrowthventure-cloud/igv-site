@@ -651,6 +651,27 @@ async def get_cart():
     return items
 
 
+# ==================== PACKS ROUTES ====================
+
+@api_router.get("/packs")
+async def get_packs(active_only: bool = False):
+    """Get all packs from MongoDB"""
+    logger.info(f"Fetching packs (active_only={active_only})")
+    query = {"active": True} if active_only else {}
+    packs = await db.packs.find(query, {"_id": 0}).to_list(1000)
+    return packs
+
+
+@api_router.get("/packs/{pack_id}")
+async def get_pack_by_id(pack_id: str):
+    """Get a single pack by its UUID"""
+    logger.info(f"Fetching pack: {pack_id}")
+    pack = await db.packs.find_one({"id": pack_id}, {"_id": 0})
+    if not pack:
+        raise HTTPException(status_code=404, detail=f"Pack with ID {pack_id} not found")
+    return pack
+
+
 @api_router.get("/detect-location")
 async def detect_location():
     """Detect user location based on IP using ipapi.co"""

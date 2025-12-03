@@ -43,7 +43,7 @@ const DynamicPage = () => {
   }
 
   return (
-    <div className="dynamic-page"
+    <div className="dynamic-page">
       <div className="py-20" data-testid="dynamic-page">
         <style dangerouslySetInnerHTML={{ __html: page.content_css }} />
         <div dangerouslySetInnerHTML={{ __html: page.content_html }} />

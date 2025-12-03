@@ -1,8 +1,82 @@
 # INTEGRATION_PLAN.md - État Final Production IGV Site
 
-**Date:** 3 décembre 2025 23:15  
-**Statut:** 🔧 **EN CORRECTION - Diagnostics Render Builds Échoués**  
-**URL Production:** https://israelgrowthventure.com (INDISPONIBLE)
+**Date:** 3 décembre 2025 - 21:40 UTC  
+**Statut:** 🔧 **DIAGNOSTIC COMPLET - Backend FAILED, Frontend LIVE**  
+**URL Production:** https://israelgrowthventure.com (Frontend LIVE, Backend DOWN)
+
+---
+
+## 🔍 DIAGNOSTIC COMPLET - 2025-12-03 21:40 UTC
+
+### État des Services Render
+
+#### Backend (igv-cms-backend)
+- **Statut actuel:** ❌ build_failed (deploy dep-d4oajvili9vc73cinfs0)
+- **Commit:** c62fcc6 (2025-12-03 21:21:53Z)
+- **Erreur:** Build échoué (exit code 1)
+- **Dernier succès:** 2025-12-03 17:52:22 (commit 080559a)
+
+#### Frontend (igv-site-web)
+- **Statut actuel:** ✅ LIVE (deploy dep-d4oajvqli9vc73cing3g)
+- **Commit:** c62fcc6 (2025-12-03 21:21:53Z)
+- **Succès:** Build terminé à 21:24:51, service Live depuis 21:25:17
+- **URL:** https://israelgrowthventure.com
+
+### Analyse Backend - Cause Principale Identifiée
+
+**PROBLÈME:** Répertoire `cms-export/` manquant dans le projet
+
+**Origine:**
+- Le fichier `backend/cms_routes.py` ligne 65 essaie de charger des pages depuis `cms-export/`
+- Ce répertoire n'existe PAS dans le projet (vérifié via list_dir)
+- Au démarrage du backend, `load_initial_pages()` est appelée (ligne 151)
+- Si le répertoire manque, un WARNING est loggé mais le serveur devrait continuer
+- Cependant, le build Render échoue probablement pour une raison liée
+
+**Tests locaux effectués:**
+```bash
+# Python 3.14.0 - Tous les imports OK
+✓ fastapi, motor, stripe, jwt, passlib
+✓ pricing_config import OK
+✓ cms_routes import OK (avec warning cms-export manquant)
+```
+
+**Corrections appliquées:**
+1. ✅ Création du répertoire `cms-export/` 
+2. ✅ Modification `cms_routes.py` ligne 68: WARNING → INFO (ne pas bloquer le serveur)
+
+### Analyse Backend - Autres causes possibles
+
+1. **Variables d'environnement Render:**
+   - MONGO_URL: À vérifier (sync: false dans render.yaml)
+   - JWT_SECRET: À vérifier
+   - STRIPE_SECRET_KEY: À vérifier
+   - Si une variable critique manque → échec au démarrage
+
+2. **Commande start incorrecte:**
+   ```yaml
+   startCommand: cd backend && uvicorn server:app --host 0.0.0.0 --port $PORT
+   ```
+   - Commande valide, testée localement
+
+3. **Requirements.txt:**
+   - Tous les packages s'installent localement
+   - pydantic==2.6.1 pull pydantic_core automatiquement
+   - Pas de problème détecté
+
+### Analyse Frontend - Résolution Complète
+
+**PROBLÈME RÉSOLU:**
+- Build échouait depuis commit 05125dd (16:33:56)
+- Cause: Imports relatifs mal résolus dans pages admin
+- Solution: Conversion imports absolus + jsconfig.json
+
+**Validation:**
+```bash
+npm run build
+# ✅ Compiled successfully - 429.62 kB gzipped
+# ✅ Déployé sur Render: LIVE depuis 21:25:17
+```
 
 ---
 

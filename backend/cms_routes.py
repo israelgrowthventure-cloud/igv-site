@@ -65,7 +65,7 @@ def load_initial_pages():
     export_dir = Path(__file__).parent.parent / "cms-export"
     
     if not export_dir.exists():
-        logger.warning(f"cms-export directory not found: {export_dir}")
+        logger.info(f"cms-export directory not found: {export_dir} - CMS will start empty")
         return
     
     # Slugs des pages à charger

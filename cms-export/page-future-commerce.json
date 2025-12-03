@@ -1,0 +1,20 @@
+{
+  "slug": "future-commerce",
+  "title": "Commerce du Futur",
+  "status": "published",
+  "metadata": {
+    "description": "Le commerce du futur avec Israel Growth Venture",
+    "language": "fr"
+  },
+  "blocks": [
+    {
+      "id": "future-header",
+      "type": "header",
+      "props": {
+        "title": "Le Commerce du Futur",
+        "subtitle": "Innovation et technologie au service du retail"
+      },
+      "children": []
+    }
+  ]
+}

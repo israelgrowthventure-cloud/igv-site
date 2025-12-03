@@ -1,0 +1,22 @@
+{
+  "slug": "home",
+  "title": "Accueil",
+  "status": "published",
+  "metadata": {
+    "description": "Page d'accueil Israel Growth Venture",
+    "language": "fr"
+  },
+  "blocks": [
+    {
+      "id": "hero-1",
+      "type": "hero",
+      "props": {
+        "title": "Israel Growth Venture",
+        "subtitle": "Votre partenaire pour l'expansion commerciale en Israël",
+        "cta": "Découvrir nos services",
+        "image": "/images/hero-igv.jpg"
+      },
+      "children": []
+    }
+  ]
+}

@@ -3,7 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Check, Mail } from 'lucide-react';
 import { useGeo } from '../context/GeoContext';
-import { packsAPI, pricingAPI, pagesAPI } from '../utils/api';
+import { packsAPI, pricingAPI } from '../utils/api';
+import { pagesAPI } from '../utils/api';
 import { toast } from 'sonner';
 
 const Packs = () => {

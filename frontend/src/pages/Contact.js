@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Mail, MapPin, Send } from 'lucide-react';
-import { api, pagesAPI } from '../utils/api';
+import { api } from '../utils/api';
+import { pagesAPI } from '../utils/api';
 import { API_BASE_URL } from '../config/apiConfig';
 import { toast } from 'sonner';
 

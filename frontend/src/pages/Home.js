@@ -38,18 +38,6 @@ const Home = () => {
     );
   }
 
-  }, []);
-
-  // Si le contenu CMS est disponible, l'afficher
-  if (!loadingCMS && cmsContent) {
-    return (
-      <div className="cms-home-page">
-        <style dangerouslySetInnerHTML={{ __html: cmsContent.content_css }} />
-        <div dangerouslySetInnerHTML={{ __html: cmsContent.content_html }} />
-      </div>
-    );
-  }
-
   // Fallback: contenu React codé en dur
   const steps = [
     {

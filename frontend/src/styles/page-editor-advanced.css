@@ -272,33 +272,44 @@
 
 .panel-tabs {
   display: flex;
-  gap: 8px;
+  gap: 4px;
   flex: 1;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 4px;
 }
 
 .panel-tab {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  background: rgba(255, 255, 255, 0.15);
+  gap: 6px;
+  padding: 6px 12px;
+  background: transparent;
   border: none;
-  color: rgba(255, 255, 255, 0.8);
-  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.7);
+  border-radius: 6px;
   cursor: pointer;
   transition: all 0.2s;
-  font-weight: 600;
-  font-size: 14px;
+  font-weight: 500;
+  font-size: 13px;
+  flex: 1;
+  justify-content: center;
 }
 
 .panel-tab:hover {
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.15);
   color: white;
 }
 
 .panel-tab.active {
   background: white;
   color: #0052CC;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.panel-tab svg {
+  width: 16px;
+  height: 16px;
 }
 
 .panel-content {
@@ -388,6 +399,25 @@
 #styles-container .gjs-sm-title {
   font-size: 13px !important;
   padding: 14px 16px !important;
+}
+
+/* Message d'aide dans le panneau Styles */
+#styles-container .styles-empty-message {
+  padding: 40px 20px;
+  text-align: center;
+  color: #718096;
+}
+
+#styles-container .styles-empty-message svg {
+  display: block;
+  margin: 0 auto 16px;
+  opacity: 0.4;
+}
+
+#styles-container .styles-empty-message p {
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0;
 }
 
 /* Layers dans le panneau gauche */

@@ -125,6 +125,15 @@ const PageEditorAdvanced = () => {
   const initializeEditor = (pageContent = null) => {
     if (!editorRef.current) return;
 
+    // 🔧 FIX: Ne pas réinitialiser si l'éditeur existe déjà
+    if (editor) {
+      console.log('Editor already initialized, updating content only');
+      if (pageContent) {
+        updateEditorContent(editor, pageContent);
+      }
+      return;
+    }
+
     const grapesEditor = grapesjs.init({
       container: editorRef.current,
       plugins: [gjsPresetWebpage],
@@ -498,23 +507,9 @@ const PageEditorAdvanced = () => {
 
     // CHARGER LE CONTENU EXISTANT
     if (pageContent) {
-      try {
-        if (pageContent.content_html) {
-          grapesEditor.setComponents(pageContent.content_html);
-        }
-        if (pageContent.content_css) {
-          grapesEditor.setStyle(pageContent.content_css);
-        }
-        if (pageContent.content_json && pageContent.content_json !== '{}') {
-          const projectData = JSON.parse(pageContent.content_json);
-          grapesEditor.loadProjectData(projectData);
-        }
-        toast.success('Page chargée avec succès!');
-      } catch (error) {
-        console.error('Erreur chargement:', error);
-        toast.error('Erreur lors du chargement');
-      }
+      updateEditorContent(grapesEditor, pageContent);
     } else {
+      // Template par défaut pour nouvelle page
       grapesEditor.setComponents(`
         <section style="padding: 100px 20px; text-align: center; background: linear-gradient(135deg, #0052CC 0%, #003D99 100%); color: white;">
           <h1 style="font-size: 56px; margin-bottom: 24px; font-weight: 800;">Nouvelle Page</h1>
@@ -524,6 +519,41 @@ const PageEditorAdvanced = () => {
     }
 
     setEditor(grapesEditor);
+  };
+
+  // 🔧 FIX: Fonction dédiée pour mettre à jour le contenu
+  const updateEditorContent = (grapesEditor, pageContent) => {
+    try {
+      console.log('🔄 Chargement du contenu de la page:', pageContent.slug);
+      
+      // Charger HTML en priorité
+      if (pageContent.content_html && pageContent.content_html.trim()) {
+        console.log('✅ HTML trouvé:', pageContent.content_html.substring(0, 100) + '...');
+        grapesEditor.setComponents(pageContent.content_html);
+      }
+      
+      // Charger CSS
+      if (pageContent.content_css && pageContent.content_css.trim()) {
+        console.log('✅ CSS trouvé');
+        grapesEditor.setStyle(pageContent.content_css);
+      }
+      
+      // Charger JSON (si disponible, pour restaurer l'état GrapesJS complet)
+      if (pageContent.content_json && pageContent.content_json !== '{}' && pageContent.content_json.trim()) {
+        try {
+          console.log('✅ JSON trouvé, chargement project data');
+          const projectData = JSON.parse(pageContent.content_json);
+          grapesEditor.loadProjectData(projectData);
+        } catch (jsonError) {
+          console.warn('⚠️ Erreur parsing JSON, HTML/CSS chargés quand même:', jsonError);
+        }
+      }
+      
+      toast.success('Page chargée avec succès!');
+    } catch (error) {
+      console.error('❌ Erreur chargement contenu:', error);
+      toast.error('Erreur lors du chargement');
+    }
   };
 
   const handleSave = async () => {
@@ -736,12 +766,27 @@ const PageEditorAdvanced = () => {
           </div>
           {!rightPanelCollapsed && (
             <div className="panel-content">
-              {activeRightTab === 'blocks' && (
-                <div id="blocks-container" style={{ minHeight: '400px' }}></div>
-              )}
-              {activeRightTab === 'styles' && (
-                <div id="styles-container" style={{ minHeight: '400px' }}></div>
-              )}
+              {/* 🔧 FIX: Ne jamais masquer les conteneurs, juste les cacher visuellement */}
+              <div 
+                id="blocks-container" 
+                style={{ 
+                  minHeight: '400px',
+                  display: activeRightTab === 'blocks' ? 'block' : 'none'
+                }}
+              ></div>
+              <div 
+                id="styles-container" 
+                style={{ 
+                  minHeight: '400px',
+                  display: activeRightTab === 'styles' ? 'block' : 'none'
+                }}
+              >
+                {/* Message quand aucun élément n'est sélectionné */}
+                <div className="styles-empty-message">
+                  <Paintbrush size={32} />
+                  <p>Sélectionnez un élément dans la page<br/>pour modifier ses styles</p>
+                </div>
+              </div>
             </div>
           )}
         </div>

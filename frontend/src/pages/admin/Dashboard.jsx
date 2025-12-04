@@ -27,15 +27,22 @@ const AdminDashboard = () => {
 
   const loadStats = async () => {
     try {
-      const [pagesRes, packsRes, ordersRes] = await Promise.all([
+      // Use Promise.allSettled to prevent 403 errors from breaking stats
+      const results = await Promise.allSettled([
         pagesAPI.getAll(),
         packsAPI.getAll(),
         ordersAPI.getAll(),
       ]);
+      
+      // Extract successful results
+      const pagesRes = results[0].status === 'fulfilled' ? results[0].value : { data: [] };
+      const packsRes = results[1].status === 'fulfilled' ? results[1].value : { data: [] };
+      const ordersRes = results[2].status === 'fulfilled' ? results[2].value : { data: [] };
+      
       setStats({
-        pages: pagesRes.data.length,
-        packs: packsRes.data.length,
-        orders: ordersRes.data.length,
+        pages: pagesRes.data?.length || 0,
+        packs: packsRes.data?.length || 0,
+        orders: ordersRes.data?.length || 0,
       });
     } catch (error) {
       console.error('Error loading stats:', error);

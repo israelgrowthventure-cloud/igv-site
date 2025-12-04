@@ -380,43 +380,48 @@
    GRAPESJS CUSTOMIZATION
    ======================================== */
 
-/* 🎨 BLOCS COMPACTS - Taille réduite pour UX moderne */
+/* 🎨 BLOCS MINIMALISTES - ICÔNES UNIQUEMENT */
 #blocks-container .gjs-block {
   width: 100% !important;
-  min-height: 50px !important;
-  max-height: 65px !important;
-  padding: 10px 12px !important;
-  margin: 0 0 8px 0 !important;
-  border-radius: 8px !important;
+  min-height: 46px !important;
+  max-height: 46px !important;
+  padding: 12px !important;
+  margin: 0 0 6px 0 !important;
+  border-radius: 10px !important;
   border: 2px solid #e2e8f0 !important;
   background: white !important;
   display: flex !important;
   align-items: center !important;
-  gap: 10px !important;
+  justify-content: flex-start !important;
+  gap: 12px !important;
   transition: all 0.2s !important;
   cursor: grab !important;
+  position: relative !important;
 }
 
 #blocks-container .gjs-block:hover {
   border-color: #0052CC !important;
-  background: #f7fafc !important;
-  transform: translateY(-1px) !important;
-  box-shadow: 0 2px 8px rgba(0,82,204,0.15) !important;
+  background: #f0f7ff !important;
+  transform: translateX(4px) !important;
+  box-shadow: 0 2px 12px rgba(0,82,204,0.2) !important;
 }
 
 #blocks-container .gjs-block:active {
   cursor: grabbing !important;
+  transform: scale(0.98) !important;
 }
 
+/* Icône du bloc - Plus visible */
 #blocks-container .gjs-block svg,
 #blocks-container .gjs-block .fa {
-  font-size: 18px !important;
-  width: 18px !important;
-  height: 18px !important;
+  font-size: 20px !important;
+  width: 20px !important;
+  height: 20px !important;
   color: #0052CC !important;
   flex-shrink: 0 !important;
 }
 
+/* Label du bloc - Taille réduite mais lisible */
 #blocks-container .gjs-block-label {
   font-size: 13px !important;
   font-weight: 600 !important;
@@ -424,6 +429,33 @@
   color: #2d3748 !important;
   line-height: 1.2 !important;
   text-align: left !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+/* Tooltip au survol (si nécessaire) */
+#blocks-container .gjs-block::after {
+  content: attr(title) !important;
+  position: absolute !important;
+  left: 100% !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  margin-left: 12px !important;
+  padding: 6px 12px !important;
+  background: #1a202c !important;
+  color: white !important;
+  border-radius: 6px !important;
+  font-size: 12px !important;
+  white-space: nowrap !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transition: opacity 0.2s !important;
+  z-index: 1000 !important;
+}
+
+#blocks-container .gjs-block:hover::after {
+  opacity: 0.95 !important;
 }
 
 /* Catégories de blocs */

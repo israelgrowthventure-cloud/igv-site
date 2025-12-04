@@ -32,6 +32,196 @@ Réponds UNIQUEMENT :
 
 ---
 
+## 🎨 CMS ADMIN – REFONTE UI SQUARESPACE-STYLE (4 décembre 2025 - 03:45 UTC)
+
+### Objectif
+Transformer l'interface CMS Admin d'un éditeur basique GrapesJS (fond marron, barre sombre) en un site builder moderne type Squarespace (navigation gauche, canvas pleine page, palette IGV claire et élégante).
+
+### Architecture Nouvelle Interface
+
+**Layout 3 Zones:**
+1. **Navigation Gauche (280px):**
+   - Liste arborescence de toutes les pages
+   - Icônes (Home, FileText, Mail, Package)
+   - Affichage : slug, titre FR, statut Publié/Brouillon
+   - Bouton "+ Nouvelle page" en header
+   - Bouton supprimer par page (icône corbeille)
+
+2. **Canvas Central (flex-1):**
+   - GrapesJS intégré pleine hauteur (100%)
+   - Barre settings : Slug + Titre par langue
+   - Fond gris léger (#F7FAFC) autour du canvas
+   - Responsive device manager (Desktop/Tablet/Mobile)
+
+3. **Panneau Propriétés Droite (320px):**
+   - Onglets : Blocs / Styles / Calques
+   - Containers GrapesJS : `#blocks-container`, `#styles-container`, `#layers-container`
+   - Design blanc, bordures fines, typo cohérente IGV
+
+**Top Bar:**
+- Bouton "Retour" vers Dashboard
+- Titre de la page en cours
+- Toggle langues FR/EN/HE (style rounded, actif en bleu)
+- Toggle Publié/Brouillon (vert si publié, gris sinon, icône Eye/EyeOff)
+- Bouton "Enregistrer" (gradient bleu IGV, shadow, hover scale)
+
+### Modale Création de Page (Style Squarespace)
+
+**UI:**
+- Modale centrale plein écran (overlay noir 50%)
+- Titre "Créer une nouvelle page" (texte 3xl bold)
+- Grille 2 colonnes de cartes types
+
+**Types de Pages:**
+1. **Page Standard** - Icône FileText, gradient bleu
+2. **Landing Page** - Icône Globe, gradient violet, template hero plein écran
+3. **Article de Blog** - Icône Type, gradient vert, layout article
+4. **Page Contact** - Icône Mail, gradient orange, layout contact
+
+**Comportement:**
+- Clic sur carte → création page avec template pré-rempli
+- Redirection automatique vers éditeur de la nouvelle page
+- Page visible immédiatement dans navigation gauche
+
+### Custom Blocks GrapesJS IGV
+
+**Blocs créés:**
+1. **Héro IGV** : Section gradient bleu (#0052CC → #003D99), titre 52px, CTA white/blue, min-height 600px
+2. **2 Colonnes** : Grid 1fr 1fr, image rounded + texte, CTA bleu
+3. **3 Cartes** : Grid 3 colonnes, cartes blanches, icônes gradient bleu/emoji, shadow hover
+4. **CTA Section** : Background gradient bleu, titre + description + bouton blanc
+
+**Style Blocks Manager:**
+- Catégorie "Sections" visible
+- Icônes ligne minimalistes
+- Fond blanc, hover léger
+
+### Palette IGV Appliquée
+
+**Couleurs:**
+- Bleu primaire : `#0052CC`
+- Bleu foncé : `#003D99`
+- Bleu clair : `#0065FF`
+- Gradients : `linear-gradient(135deg, #0052CC 0%, #003D99 100%)`
+- Fond clair : `#F7FAFC`, `#F9FAFB`
+- Texte : `#1a202c` (titres), `#4a5568` (corps)
+
+**Composants:**
+- Boutons : `rounded-lg` (8px) ou `rounded-50px`, shadow-md, hover scale 1.05
+- Cartes : `rounded-2xl` (16px), border gray-200, shadow hover
+- Inputs : `rounded-lg`, border gray-300, focus ring-2 blue-500
+
+### Connexion Pages CMS ↔ Routes Front Publiques
+
+**Routing Admin:**
+- `/admin/pages` → PageEditorBuilder (affiche liste NAV + canvas vide si pas de slug)
+- `/admin/pages/new` → PageEditorBuilder (ouvre modale création)
+- `/admin/pages/:slug` → PageEditorBuilder (charge page existante)
+
+**Routing Front Public:**
+- `/page/:slug` → DynamicPage.jsx (lit content_html/css via pagesAPI.getBySlug)
+- Pages CMS accessibles via slug : exemple `/page/home`, `/page/packs`, etc.
+- Routes principales (`/`, `/packs`, `/about`) = composants React directs (non CMS pour l'instant)
+
+**API Utilisée:**
+- `GET /api/pages` → Liste toutes les pages (affichée dans NAV gauche)
+- `GET /api/pages/:slug` → Charge contenu d'une page
+- `POST /api/pages` → Création nouvelle page
+- `PUT /api/pages/:slug` → Sauvegarde modifications
+- `DELETE /api/pages/:slug` → Suppression page
+
+### Étapes Réalisées – CMS Admin
+
+**Fichiers Modifiés:**
+1. **frontend/src/pages/admin/PageEditorBuilder.jsx** (nouveau, 600 lignes)
+   - Layout 3 zones complet
+   - Navigation gauche avec liste pages + icônes + statuts
+   - Canvas GrapesJS pleine hauteur
+   - Panneau propriétés droite (Blocs/Styles/Calques)
+   - Modale création page avec 4 types de cartes
+   - Top bar moderne avec toggle langues + publié + save
+   - Custom blocks IGV (Héro, 2 cols, 3 cartes, CTA)
+   - Gestion complète CRUD pages
+
+2. **frontend/src/App.js**
+   - Import : `PageEditorBuilder` remplace `PagesList` et `PageEditorModern`
+   - Routing : `/admin/pages` → PageEditorBuilder (unique composant pour liste + édition)
+
+3. **docs/_scratch_cms_ui_notes.md**
+   - Notes techniques architecture existante
+   - Analyse backend API pages
+   - Mapping slug ↔ routes
+   - Palette IGV
+   - Points d'amélioration identifiés
+
+**Backend (inchangé):**
+- Routes `/api/pages` déjà fonctionnelles (CRUD complet)
+- Modèle Page avec `content_html`, `content_css`, `content_json`, `title` multilangue, `published`
+- Authentification requise pour création/modification/suppression
+
+### Comportement Attendu
+
+**Navigation:**
+1. Accès `/admin/pages` → Affiche liste pages dans colonne gauche + canvas vide
+2. Clic sur une page → Charge son contenu dans GrapesJS canvas
+3. Clic sur "+ Nouvelle page" → Ouvre modale types de pages
+4. Clic sur type → Crée page avec template, ouvre éditeur
+
+**Édition:**
+1. Canvas GrapesJS pleine page avec content_html/css chargé
+2. Drag & drop blocs depuis panneau droite
+3. Modification propriétés dans onglet Styles
+4. Toggle langues FR/EN/HE charge contenu traduit (si disponible)
+5. Toggle Publié/Brouillon change statut
+6. Bouton "Enregistrer" → PUT /api/pages/:slug
+
+**Création:**
+1. Modale avec 4 cartes types
+2. Sélection type → Template pré-rempli (hero, colonnes, etc.)
+3. Slug auto-généré modifiable
+4. Sauvegarde → POST /api/pages
+
+**Suppression:**
+1. Clic corbeille sur page dans NAV
+2. Confirmation → DELETE /api/pages/:slug
+3. Page retirée de la liste
+
+### Tests Production Requis
+
+**URLs à tester après déploiement:**
+- ✅ `https://israelgrowthventure.com/admin/pages` → Liste pages, navigation fonctionnelle
+- ✅ `https://israelgrowthventure.com/admin/pages/home` → Éditeur charge page home
+- ✅ `https://israelgrowthventure.com/admin/pages/new` → Modale création s'affiche
+- ✅ Création page test → Visible dans NAV + sauvegardée
+- ✅ Édition page existante → Modifications enregistrées
+- ✅ Toggle FR/EN/HE → Contenu traduit chargé
+- ✅ Publication page → Statut "Publié" activé
+- ✅ Suppression page → Retirée de la base
+
+**URLs Front Public à vérifier:**
+- ✅ `https://israelgrowthventure.com/page/home` → Affiche contenu CMS page home
+- ✅ `https://israelgrowthventure.com/page/[nouvelle-page-test]` → Affiche contenu créé
+- ⚠️ Routes principales (`/`, `/packs`, `/about`) = composants React directs (pas CMS)
+
+### Notes Importantes
+
+**Différence PageEditorModern vs PageEditorBuilder:**
+- **PageEditorModern** : Éditeur simple, pas de NAV, un seul panneau central
+- **PageEditorBuilder** : Interface complète 3 zones, liste pages, modale création, style Squarespace
+
+**Choix de Design:**
+- Remplacement du thème marron GrapesJS par fond blanc/gris clair
+- Blocs personnalisés avec gradient bleu IGV
+- Modale cartes > formulaire brut pour création
+- Navigation intégrée > liste séparée (PagesList)
+
+**Limitations Actuelles:**
+- Pages principales (`/`, `/packs`, `/about`) ne sont pas encore connectées au CMS (composants React statiques)
+- Pour connecter : créer pages CMS avec slugs "home", "packs", "about" et modifier routes App.js pour utiliser DynamicPage
+- Traductions : boutons FR/EN/HE présents mais contenu monolingue si title/content non traduits
+
+---
+
 ## 🎯 RÉPARATION PAGE /PACKS (4 décembre 2025 - 01:00 UTC)
 
 ### Analyse page /packs
@@ -2071,8 +2261,12 @@ Status:         ✅ OPÉRATIONNEL - MISSION ACCOMPLIE
 **Document maintenu par:** GitHub Copilot  
 **Dernière mise à jour:** 3 décembre 2025, 18:45 UTC  
 **Version:** 1.0 - Production Finale
- 
- - - -  
-  
- # #   <د�  C O R R E C T I O N S   C O M P L � T E S   P R O D U C T I O N   ( 4   D � c e m b r e   2 0 2 5   -   0 0 : 5 6   U T C )  
+
+ 
+ - - - 
+ 
+ 
+ 
+ # #   <د�  C O R R E C T I O N S   C O M P L � T E S   P R O D U C T I O N   ( 4   D � c e m b r e   2 0 2 5   -   0 0 : 5 6   U T C ) 
+ 
  

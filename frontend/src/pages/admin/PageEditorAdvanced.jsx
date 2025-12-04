@@ -106,7 +106,16 @@ const PageEditorAdvanced = () => {
 
   const loadPage = async () => {
     try {
+      console.log('[CMS] Loading page', { slug, lang: currentLang });
       const response = await pagesAPI.getBySlug(slug);
+      console.log('[CMS] API response', {
+        slug: response.data.slug,
+        hasHTML: !!response.data.content_html,
+        hasCSS: !!response.data.content_css,
+        hasJSON: !!response.data.content_json,
+        htmlLength: response.data.content_html?.length || 0,
+        cssLength: response.data.content_css?.length || 0,
+      });
       setPage(response.data);
       setPageData({
         slug: response.data.slug,
@@ -115,7 +124,7 @@ const PageEditorAdvanced = () => {
       });
       initializeEditor(response.data);
     } catch (error) {
-      console.error('Error loading page:', error);
+      console.error('[CMS] ❌ Error loading page:', error);
       toast.error('Erreur lors du chargement de la page');
     } finally {
       setLoading(false);
@@ -123,16 +132,24 @@ const PageEditorAdvanced = () => {
   };
 
   const initializeEditor = (pageContent = null) => {
-    if (!editorRef.current) return;
+    if (!editorRef.current) {
+      console.error('[CMS] ❌ Editor container not ready');
+      return;
+    }
 
     // 🔧 FIX: Ne pas réinitialiser si l'éditeur existe déjà
     if (editor) {
-      console.log('Editor already initialized, updating content only');
+      console.log('[CMS] Editor already initialized, updating content only');
       if (pageContent) {
         updateEditorContent(editor, pageContent);
       }
       return;
     }
+
+    console.log('[CMS] Initializing GrapesJS editor', {
+      hasPageContent: !!pageContent,
+      isNewPage: !slug,
+    });
 
     const grapesEditor = grapesjs.init({
       container: editorRef.current,
@@ -184,6 +201,8 @@ const PageEditorAdvanced = () => {
         scripts: [],
       },
     });
+
+    console.log('[CMS] ✅ GrapesJS initialized');
 
     // Ajouter des blocs modernes et enrichis
     const blockManager = grapesEditor.BlockManager;
@@ -524,34 +543,44 @@ const PageEditorAdvanced = () => {
   // 🔧 FIX: Fonction dédiée pour mettre à jour le contenu
   const updateEditorContent = (grapesEditor, pageContent) => {
     try {
-      console.log('🔄 Chargement du contenu de la page:', pageContent.slug);
+      console.log('[CMS] 🔄 Applying content to editor', {
+        slug: pageContent.slug,
+        hasHTML: !!pageContent.content_html,
+        hasCSS: !!pageContent.content_css,
+        hasJSON: !!pageContent.content_json,
+        htmlPreview: pageContent.content_html?.substring(0, 150) + '...',
+        editorReady: !!grapesEditor,
+      });
       
       // Charger HTML en priorité
       if (pageContent.content_html && pageContent.content_html.trim()) {
-        console.log('✅ HTML trouvé:', pageContent.content_html.substring(0, 100) + '...');
+        console.log('[CMS] ✅ Loading HTML content');
         grapesEditor.setComponents(pageContent.content_html);
+      } else {
+        console.warn('[CMS] ⚠️ No HTML content found for page:', pageContent.slug);
       }
       
       // Charger CSS
       if (pageContent.content_css && pageContent.content_css.trim()) {
-        console.log('✅ CSS trouvé');
+        console.log('[CMS] ✅ Loading CSS styles');
         grapesEditor.setStyle(pageContent.content_css);
       }
       
       // Charger JSON (si disponible, pour restaurer l'état GrapesJS complet)
       if (pageContent.content_json && pageContent.content_json !== '{}' && pageContent.content_json.trim()) {
         try {
-          console.log('✅ JSON trouvé, chargement project data');
+          console.log('[CMS] ✅ Loading JSON project data');
           const projectData = JSON.parse(pageContent.content_json);
           grapesEditor.loadProjectData(projectData);
         } catch (jsonError) {
-          console.warn('⚠️ Erreur parsing JSON, HTML/CSS chargés quand même:', jsonError);
+          console.warn('[CMS] ⚠️ JSON parse error, HTML/CSS loaded anyway:', jsonError);
         }
       }
       
+      console.log('[CMS] ✅ Content successfully applied to editor');
       toast.success('Page chargée avec succès!');
     } catch (error) {
-      console.error('❌ Erreur chargement contenu:', error);
+      console.error('[CMS] ❌ Error applying content:', error);
       toast.error('Erreur lors du chargement');
     }
   };

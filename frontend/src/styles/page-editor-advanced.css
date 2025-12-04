@@ -380,15 +380,73 @@
    GRAPESJS CUSTOMIZATION
    ======================================== */
 
-/* Améliorer l'affichage des blocks dans le nouveau layout */
+/* 🎨 BLOCS COMPACTS - Taille réduite pour UX moderne */
 #blocks-container .gjs-block {
-  width: calc(50% - 12px) !important;
-  min-height: 80px;
+  width: 100% !important;
+  min-height: 50px !important;
+  max-height: 65px !important;
+  padding: 10px 12px !important;
+  margin: 0 0 8px 0 !important;
+  border-radius: 8px !important;
+  border: 2px solid #e2e8f0 !important;
+  background: white !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  transition: all 0.2s !important;
+  cursor: grab !important;
+}
+
+#blocks-container .gjs-block:hover {
+  border-color: #0052CC !important;
+  background: #f7fafc !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 2px 8px rgba(0,82,204,0.15) !important;
+}
+
+#blocks-container .gjs-block:active {
+  cursor: grabbing !important;
+}
+
+#blocks-container .gjs-block svg,
+#blocks-container .gjs-block .fa {
+  font-size: 18px !important;
+  width: 18px !important;
+  height: 18px !important;
+  color: #0052CC !important;
+  flex-shrink: 0 !important;
 }
 
 #blocks-container .gjs-block-label {
-  font-size: 12px !important;
-  margin-top: 8px;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  margin: 0 !important;
+  color: #2d3748 !important;
+  line-height: 1.2 !important;
+  text-align: left !important;
+}
+
+/* Catégories de blocs */
+#blocks-container .gjs-block-category {
+  margin-bottom: 20px !important;
+}
+
+#blocks-container .gjs-block-category .gjs-title {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  color: #718096 !important;
+  padding: 12px 16px 8px !important;
+  margin: 0 !important;
+  background: transparent !important;
+  border: none !important;
+}
+
+#blocks-container .gjs-blocks-c {
+  padding: 0 16px 16px !important;
+  display: flex !important;
+  flex-direction: column !important;
 }
 
 /* Style Manager dans le panneau droit */

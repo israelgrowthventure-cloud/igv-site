@@ -1,11 +1,43 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { TrendingUp, Zap, Target, Users, ArrowRight, Calendar } from 'lucide-react';
+import { pagesAPI } from '../utils/api';
 
 const FutureCommercePage = () => {
   const { t, i18n } = useTranslation();
   const language = i18n.language;
+  const [cmsContent, setCmsContent] = useState(null);
+  const [loadingCMS, setLoadingCMS] = useState(true);
+
+  // Tenter de charger le contenu CMS
+  useEffect(() => {
+    const loadCMSContent = async () => {
+      try {
+        const response = await pagesAPI.getBySlug('le-commerce-de-demain');
+        if (response.data && response.data.published && response.data.content_html) {
+          setCmsContent(response.data);
+        }
+      } catch (error) {
+        console.log('CMS content not available for le-commerce-de-demain, using React fallback');
+      } finally {
+        setLoadingCMS(false);
+      }
+    };
+    loadCMSContent();
+  }, []);
+
+  // Si le contenu CMS est disponible, l'afficher
+  if (!loadingCMS && cmsContent) {
+    return (
+      <div className="cms-future-commerce-page">
+        <style dangerouslySetInnerHTML={{ __html: cmsContent.content_css }} />
+        <div dangerouslySetInnerHTML={{ __html: cmsContent.content_html }} />
+      </div>
+    );
+  }
+
+  // Fallback: contenu React codé en dur
 
   const content = {
     fr: {

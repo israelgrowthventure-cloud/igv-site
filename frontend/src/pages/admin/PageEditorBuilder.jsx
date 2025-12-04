@@ -9,6 +9,7 @@ import {
 import grapesjs from 'grapesjs';
 import 'grapesjs/dist/css/grapes.min.css';
 import gjsPresetWebpage from 'grapesjs-preset-webpage';
+import '../../styles/grapesjs-igv-theme.css';  // Thème IGV personnalisé
 
 /**
  * PageEditorBuilder - Interface Squarespace-style pour l'édition de pages
@@ -95,7 +96,11 @@ const PageEditorBuilder = () => {
       width: 'auto',
       fromElement: false,
       canvas: {
-        styles: ['https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css'],
+        styles: [
+          'https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css',
+          // Ajouter ici les styles du site si nécessaire
+        ],
+        scripts: [],
       },
       blockManager: {
         appendTo: '#blocks-container',
@@ -105,15 +110,19 @@ const PageEditorBuilder = () => {
         sectors: [{
           name: 'Dimensions',
           open: true,
-          properties: ['width', 'height', 'max-width', 'min-height', 'padding', 'margin'],
+          buildProps: ['width', 'height', 'max-width', 'min-height', 'padding', 'margin'],
         }, {
           name: 'Typographie',
           open: false,
-          properties: ['font-family', 'font-size', 'font-weight', 'letter-spacing', 'color', 'line-height', 'text-align'],
+          buildProps: ['font-family', 'font-size', 'font-weight', 'letter-spacing', 'color', 'line-height', 'text-align'],
         }, {
           name: 'Décorations',
           open: false,
-          properties: ['background-color', 'border', 'border-radius', 'box-shadow'],
+          buildProps: ['background-color', 'border', 'border-radius', 'box-shadow', 'background'],
+        }, {
+          name: 'Disposition',
+          open: false,
+          buildProps: ['display', 'flex-direction', 'justify-content', 'align-items', 'gap'],
         }],
       },
       layerManager: {
@@ -124,7 +133,7 @@ const PageEditorBuilder = () => {
       },
       deviceManager: {
         devices: [
-          { name: 'Desktop', width: '' },
+          { name: 'Desktop', width: '', widthMedia: '1200px' },
           { name: 'Tablet', width: '768px', widthMedia: '768px' },
           { name: 'Mobile', width: '375px', widthMedia: '480px' },
         ],

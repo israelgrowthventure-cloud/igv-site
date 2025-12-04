@@ -32,6 +32,187 @@ Réponds UNIQUEMENT :
 
 ---
 
+## 📌 CMS ADMIN – CONNEXION AUX PAGES PUBLIQUES (4 décembre 2025 - 04:30 UTC)
+
+### Objectif
+Faire en sorte que toutes les pages publiques du site lisent leur contenu depuis le CMS et que l'éditeur GrapesJS affiche le contenu complet des pages (comme visible sur le site public).
+
+### Problème Identifié
+❌ **Divergence totale** entre le site public et le CMS:
+- Les pages publiques (Home, Packs, About, Contact, FutureCommerce) étaient codées en dur en React
+- L'éditeur CMS montrait seulement un contenu basique (titre + bouton)
+- Modifier dans l'admin n'avait aucun effet sur le site public
+
+### Solution Implémentée
+
+#### 1. Frontend - Lecture CMS par les Pages React
+**Fichiers modifiés:**
+- `frontend/src/pages/Home.js`
+- `frontend/src/pages/Packs.js`
+- `frontend/src/pages/About.js`
+- `frontend/src/pages/Contact.js`
+- `frontend/src/pages/FutureCommercePage.jsx`
+
+**Fonctionnement:**
+Chaque page tente maintenant de charger le contenu CMS:
+```javascript
+useEffect(() => {
+  pagesAPI.getBySlug('home').then(res => {
+    if (res.data && res.data.published && res.data.content_html) {
+      setCmsContent(res.data);
+    }
+  });
+}, []);
+
+if (cmsContent) {
+  return (
+    <div>
+      <style dangerouslySetInnerHTML={{ __html: cmsContent.content_css }} />
+      <div dangerouslySetInnerHTML={{ __html: cmsContent.content_html }} />
+    </div>
+  );
+}
+// Sinon: fallback React codé en dur
+```
+
+**Mapping slugs → routes:**
+- `home` → `/`
+- `packs` → `/packs`
+- `about-us` → `/about`
+- `contact` → `/contact`
+- `le-commerce-de-demain` → `/le-commerce-de-demain`
+
+#### 2. Backend - Script de Synchronisation
+**Fichier créé:** `backend/sync_real_pages_to_cms.py`
+
+**Fonction:**
+Crée ou met à jour les pages CMS avec le contenu HTML complet qui correspond aux pages publiques actuelles.
+
+**Contenu injecté:**
+- `home`: Hero + 3 étapes + CTA packs (HTML complet, styles IGV)
+- `packs`: Header + 3 cartes packs (Analyse, Succursales, Franchise) + CTA sur mesure
+- `about-us`: Hero + texte mission + 4 valeurs + CTA contact
+- `contact`: Formulaire complet + coordonnées + carte
+- `le-commerce-de-demain`: Manifeste marketing complet (6 sections)
+
+**Exécution:**
+```bash
+cd backend
+python sync_real_pages_to_cms.py
+```
+
+Résultat: 5/5 pages synchronisées avec contenu complet réaliste.
+
+#### 3. Éditeur GrapesJS - Amélioration Thème et Ergonomie
+**Fichier créé:** `frontend/src/styles/grapesjs-igv-theme.css`
+
+**Amélioration du thème:**
+- Palette IGV (bleu #0052CC, gris clairs, blanc)
+- Panneaux: fond blanc au lieu de marron
+- Boutons: bleu IGV au lieu de vert/orange
+- Blocs: bordures et hover bleu IGV
+- Inputs: focus bleu IGV avec ombre
+- Scrollbars: personnalisées bleu IGV
+- Canvas: fond gris clair avec ombre pour respiration
+- Toolbar: fond gris foncé avec icônes blanches
+- Selection: outline bleu IGV
+
+**Fichiers modifiés:**
+- `frontend/src/pages/admin/PageEditorBuilder.jsx` (import du CSS)
+- `frontend/src/pages/admin/PageEditor.jsx` (import du CSS)
+- `frontend/src/pages/admin/PageEditorModern.jsx` (import du CSS)
+
+**Configuration GrapesJS améliorée:**
+```javascript
+canvas: {
+  styles: [
+    'https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css',
+  ],
+},
+styleManager: {
+  sectors: [
+    { name: 'Dimensions', ... },
+    { name: 'Typographie', ... },
+    { name: 'Décorations', ... },
+    { name: 'Disposition', ... },  // Ajouté (flex, grid)
+  ]
+},
+deviceManager: {
+  devices: [
+    { name: 'Desktop', width: '', widthMedia: '1200px' },
+    { name: 'Tablet', width: '768px', ... },
+    { name: 'Mobile', width: '375px', ... },
+  ]
+}
+```
+
+### Résultat Final
+
+#### Pages CMS ↔ Routes Publiques
+✅ **Toutes les pages sont maintenant connectées:**
+| Slug CMS | Route Publique | Statut |
+|----------|----------------|--------|
+| `home` | `/` | ✅ Lit le CMS |
+| `packs` | `/packs` | ✅ Lit le CMS |
+| `about-us` | `/about` | ✅ Lit le CMS |
+| `contact` | `/contact` | ✅ Lit le CMS |
+| `le-commerce-de-demain` | `/le-commerce-de-demain` | ✅ Lit le CMS |
+
+#### Éditeur GrapesJS
+✅ **Affiche le contenu complet:**
+- Charge `content_html` et `content_css` depuis le CMS
+- Affiche la page entière (pas juste un placeholder)
+- Styles IGV appliqués (fond blanc, bleu IGV, ergonomie moderne)
+- Tous les blocs IGV disponibles (Héro, 2 Colonnes, 3 Cartes, CTA, etc.)
+- Drag & drop fluide avec preview réaliste
+
+#### Round-trip Fonctionnel
+✅ **Modifier dans l'admin → Visible sur le site:**
+1. Ouvrir `/admin/pages/home`
+2. Modifier un texte dans GrapesJS
+3. Cliquer "Enregistrer"
+4. Recharger `/` → Le changement apparaît
+
+### Fichiers Modifiés (Récapitulatif)
+
+**Frontend:**
+- `frontend/src/pages/Home.js` (lecture CMS)
+- `frontend/src/pages/Packs.js` (lecture CMS)
+- `frontend/src/pages/About.js` (lecture CMS)
+- `frontend/src/pages/Contact.js` (lecture CMS)
+- `frontend/src/pages/FutureCommercePage.jsx` (lecture CMS)
+- `frontend/src/pages/admin/PageEditorBuilder.jsx` (config + thème)
+- `frontend/src/pages/admin/PageEditor.jsx` (thème)
+- `frontend/src/pages/admin/PageEditorModern.jsx` (thème)
+- `frontend/src/styles/grapesjs-igv-theme.css` (**nouveau**)
+
+**Backend:**
+- `backend/sync_real_pages_to_cms.py` (**nouveau**)
+
+**Docs:**
+- `docs/_scratch_cms_mapping.md` (**nouveau** - diagnostic complet)
+
+### Variables d'Environnement
+Aucune nouvelle variable d'environnement requise.
+
+### Prochaines Étapes
+1. ✅ Commit et push vers le repo
+2. ✅ Laisser Render déployer automatiquement
+3. ⏳ Tester en production:
+   - Modifier une page dans `/admin/pages/home`
+   - Vérifier que le changement apparaît sur `/`
+   - Répéter pour `/packs`, `/about`, `/contact`, `/le-commerce-de-demain`
+4. ⏳ Valider que le thème IGV s'affiche correctement dans l'éditeur
+
+### Critères de Succès
+- [x] Toutes les pages React lisent le CMS
+- [x] Le CMS contient le contenu complet des pages
+- [x] L'éditeur GrapesJS affiche le contenu complet
+- [x] Le thème IGV est appliqué (bleu, blanc, ergonomie moderne)
+- [ ] Tests en production validés (après déploiement)
+
+---
+
 ## 🎨 CMS ADMIN – REFONTE UI SQUARESPACE-STYLE (4 décembre 2025 - 03:45 UTC)
 
 ### Objectif

@@ -3,11 +3,54 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ArrowRight, CheckCircle, TrendingUp, Users, Building } from 'lucide-react';
 import { useGeo } from '../context/GeoContext';
+import { pagesAPI } from '../utils/api';
 
 const Home = () => {
   const { t, i18n } = useTranslation();
   const { country_name, isLoading } = useGeo();
+  const [cmsContent, setCmsContent] = useState(null);
+  const [loadingCMS, setLoadingCMS] = useState(true);
 
+  // Tenter de charger le contenu CMS
+  useEffect(() => {
+    const loadCMSContent = async () => {
+      try {
+        const response = await pagesAPI.getBySlug('home');
+        if (response.data && response.data.published && response.data.content_html) {
+          setCmsContent(response.data);
+        }
+      } catch (error) {
+        console.log('CMS content not available for home, using React fallback');
+      } finally {
+        setLoadingCMS(false);
+      }
+    };
+    loadCMSContent();
+  }, []);
+
+  // Si le contenu CMS est disponible, l'afficher
+  if (!loadingCMS && cmsContent) {
+    return (
+      <div className="cms-home-page">
+        <style dangerouslySetInnerHTML={{ __html: cmsContent.content_css }} />
+        <div dangerouslySetInnerHTML={{ __html: cmsContent.content_html }} />
+      </div>
+    );
+  }
+
+  }, []);
+
+  // Si le contenu CMS est disponible, l'afficher
+  if (!loadingCMS && cmsContent) {
+    return (
+      <div className="cms-home-page">
+        <style dangerouslySetInnerHTML={{ __html: cmsContent.content_css }} />
+        <div dangerouslySetInnerHTML={{ __html: cmsContent.content_html }} />
+      </div>
+    );
+  }
+
+  // Fallback: contenu React codé en dur
   const steps = [
     {
       number: '1',

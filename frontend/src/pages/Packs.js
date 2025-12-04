@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Check, Mail } from 'lucide-react';
 import { useGeo } from '../context/GeoContext';
-import { packsAPI, pricingAPI } from '../utils/api';
+import { packsAPI, pricingAPI, pagesAPI } from '../utils/api';
 import { toast } from 'sonner';
 
 const Packs = () => {
@@ -13,6 +13,25 @@ const Packs = () => {
   const [packs, setPacks] = useState([]);
   const [packsPricing, setPacksPricing] = useState({});
   const [loading, setLoading] = useState(true);
+  const [cmsContent, setCmsContent] = useState(null);
+  const [loadingCMS, setLoadingCMS] = useState(true);
+
+  // Tenter de charger le contenu CMS
+  useEffect(() => {
+    const loadCMSContent = async () => {
+      try {
+        const response = await pagesAPI.getBySlug('packs');
+        if (response.data && response.data.published && response.data.content_html) {
+          setCmsContent(response.data);
+        }
+      } catch (error) {
+        console.log('CMS content not available for packs, using React fallback');
+      } finally {
+        setLoadingCMS(false);
+      }
+    };
+    loadCMSContent();
+  }, []);
 
   // Fonction pour inverser les chiffres en hébreu (RTL)
   const formatPriceForLanguage = (priceString) => {
@@ -85,6 +104,16 @@ const Packs = () => {
 
     fetchPacksAndPricing();
   }, [zone, geoLoading, t]);
+
+  // Si le contenu CMS est disponible, l'afficher
+  if (!loadingCMS && cmsContent) {
+    return (
+      <div className="cms-packs-page">
+        <style dangerouslySetInnerHTML={{ __html: cmsContent.content_css }} />
+        <div dangerouslySetInnerHTML={{ __html: cmsContent.content_html }} />
+      </div>
+    );
+  }
 
   // Mapping UUID des packs vers leurs slugs pour le checkout
   const getPackSlug = (pack) => {

@@ -6,6 +6,7 @@ import { ArrowLeft, Save, Eye, Globe } from 'lucide-react';
 import grapesjs from 'grapesjs';
 import 'grapesjs/dist/css/grapes.min.css';
 import gjsPresetWebpage from 'grapesjs-preset-webpage';
+import '../../styles/grapesjs-igv-theme.css';  // Thème IGV personnalisé
 
 const PageEditor = () => {
   const { slug } = useParams();

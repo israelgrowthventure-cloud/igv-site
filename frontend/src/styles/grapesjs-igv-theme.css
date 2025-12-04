@@ -1,0 +1,336 @@
+/* ========================================
+   THÈME IGV POUR GRAPESJS EDITOR
+   ======================================== */
+
+/* Variables IGV */
+:root {
+  --igv-blue: #0052CC;
+  --igv-blue-dark: #003D99;
+  --igv-blue-light: #0065FF;
+  --igv-gray-50: #f7fafc;
+  --igv-gray-100: #edf2f7;
+  --igv-gray-200: #e2e8f0;
+  --igv-gray-700: #2d3748;
+  --igv-gray-900: #1a202c;
+}
+
+/* ========================================
+   PANELS & SIDEBAR
+   ======================================== */
+
+/* Tous les panneaux GrapesJS */
+.gjs-pn-panel {
+  background: white !important;
+  border-color: var(--igv-gray-200) !important;
+}
+
+/* Boutons de panel */
+.gjs-pn-btn {
+  background: white !important;
+  border-color: var(--igv-gray-200) !important;
+  color: var(--igv-gray-700) !important;
+}
+
+.gjs-pn-btn:hover {
+  background: var(--igv-gray-50) !important;
+  color: var(--igv-blue) !important;
+}
+
+.gjs-pn-btn.gjs-pn-active {
+  background: var(--igv-blue) !important;
+  color: white !important;
+  box-shadow: none !important;
+}
+
+/* ========================================
+   BLOCKS MANAGER
+   ======================================== */
+
+.gjs-block-categories {
+  background: white !important;
+}
+
+.gjs-block-category {
+  background: white !important;
+  border-bottom: 1px solid var(--igv-gray-200) !important;
+}
+
+.gjs-block-category .gjs-title {
+  background: var(--igv-gray-50) !important;
+  color: var(--igv-gray-900) !important;
+  font-weight: 600 !important;
+  padding: 12px 16px !important;
+  font-size: 13px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+}
+
+.gjs-block {
+  background: white !important;
+  border: 2px solid var(--igv-gray-200) !important;
+  border-radius: 8px !important;
+  margin: 8px !important;
+  padding: 12px !important;
+  transition: all 0.2s ease !important;
+}
+
+.gjs-block:hover {
+  border-color: var(--igv-blue) !important;
+  box-shadow: 0 4px 12px rgba(0, 82, 204, 0.15) !important;
+  transform: translateY(-2px) !important;
+}
+
+.gjs-block__media {
+  color: var(--igv-blue) !important;
+}
+
+.gjs-block-label {
+  color: var(--igv-gray-700) !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+}
+
+/* ========================================
+   STYLE MANAGER
+   ======================================== */
+
+.gjs-sm-sector {
+  background: white !important;
+  border-bottom: 1px solid var(--igv-gray-200) !important;
+}
+
+.gjs-sm-sector .gjs-sm-title {
+  background: var(--igv-gray-50) !important;
+  color: var(--igv-gray-900) !important;
+  font-weight: 600 !important;
+  padding: 12px 16px !important;
+  font-size: 13px !important;
+}
+
+.gjs-sm-sector.gjs-sm-open .gjs-sm-title {
+  background: var(--igv-blue) !important;
+  color: white !important;
+}
+
+.gjs-sm-properties {
+  background: white !important;
+  padding: 16px !important;
+}
+
+.gjs-sm-property {
+  background: white !important;
+  border-bottom: 1px solid var(--igv-gray-100) !important;
+  padding: 10px 0 !important;
+}
+
+.gjs-sm-label {
+  color: var(--igv-gray-700) !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+}
+
+/* Input fields */
+.gjs-field input,
+.gjs-field select,
+.gjs-field textarea {
+  background: white !important;
+  border: 2px solid var(--igv-gray-200) !important;
+  border-radius: 6px !important;
+  color: var(--igv-gray-900) !important;
+  padding: 8px 10px !important;
+  font-size: 13px !important;
+  transition: all 0.2s ease !important;
+}
+
+.gjs-field input:focus,
+.gjs-field select:focus,
+.gjs-field textarea:focus {
+  border-color: var(--igv-blue) !important;
+  box-shadow: 0 0 0 3px rgba(0, 82, 204, 0.1) !important;
+  outline: none !important;
+}
+
+/* ========================================
+   LAYER MANAGER
+   ======================================== */
+
+.gjs-layer {
+  background: white !important;
+  border-bottom: 1px solid var(--igv-gray-100) !important;
+  padding: 8px 12px !important;
+}
+
+.gjs-layer:hover {
+  background: var(--igv-gray-50) !important;
+}
+
+.gjs-layer.gjs-selected {
+  background: rgba(0, 82, 204, 0.1) !important;
+  border-left: 3px solid var(--igv-blue) !important;
+}
+
+.gjs-layer__icon {
+  color: var(--igv-gray-700) !important;
+}
+
+.gjs-layer__name {
+  color: var(--igv-gray-900) !important;
+  font-size: 13px !important;
+}
+
+/* ========================================
+   CANVAS
+   ======================================== */
+
+.gjs-cv-canvas {
+  background: var(--igv-gray-100) !important;
+  height: calc(100vh - 60px) !important;
+}
+
+.gjs-frame-wrapper {
+  margin: 20px auto !important;
+  max-width: 100% !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1) !important;
+  border-radius: 8px !important;
+  overflow: hidden !important;
+  background: white !important;
+}
+
+/* ========================================
+   TOOLBAR
+   ======================================== */
+
+.gjs-toolbar {
+  background: var(--igv-gray-900) !important;
+  border: none !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  border-radius: 6px !important;
+}
+
+.gjs-toolbar-item {
+  background: transparent !important;
+  border: none !important;
+  color: white !important;
+  padding: 8px 12px !important;
+}
+
+.gjs-toolbar-item:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: var(--igv-blue-light) !important;
+}
+
+/* ========================================
+   SCROLLBARS
+   ======================================== */
+
+.gjs-blocks-c::-webkit-scrollbar,
+.gjs-layers::-webkit-scrollbar,
+.gjs-sm-sectors::-webkit-scrollbar {
+  width: 8px !important;
+}
+
+.gjs-blocks-c::-webkit-scrollbar-track,
+.gjs-layers::-webkit-scrollbar-track,
+.gjs-sm-sectors::-webkit-scrollbar-track {
+  background: var(--igv-gray-100) !important;
+}
+
+.gjs-blocks-c::-webkit-scrollbar-thumb,
+.gjs-layers::-webkit-scrollbar-thumb,
+.gjs-sm-sectors::-webkit-scrollbar-thumb {
+  background: var(--igv-gray-200) !important;
+  border-radius: 4px !important;
+}
+
+.gjs-blocks-c::-webkit-scrollbar-thumb:hover,
+.gjs-layers::-webkit-scrollbar-thumb:hover,
+.gjs-sm-sectors::-webkit-scrollbar-thumb:hover {
+  background: var(--igv-blue) !important;
+}
+
+/* ========================================
+   COMPONENT SELECTION OUTLINE
+   ======================================== */
+
+.gjs-comp-selected {
+  outline: 2px solid var(--igv-blue) !important;
+  outline-offset: 0px !important;
+}
+
+/* ========================================
+   MODAL (pour création de page, etc.)
+   ======================================== */
+
+.gjs-mdl-dialog {
+  background: white !important;
+  border-radius: 12px !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3) !important;
+  border: none !important;
+}
+
+.gjs-mdl-title {
+  background: var(--igv-blue) !important;
+  color: white !important;
+  font-weight: 600 !important;
+  padding: 20px 24px !important;
+  border-radius: 12px 12px 0 0 !important;
+}
+
+.gjs-mdl-content {
+  padding: 24px !important;
+}
+
+/* Boutons dans les modales */
+.gjs-btn-prim {
+  background: var(--igv-blue) !important;
+  color: white !important;
+  border: none !important;
+  padding: 10px 24px !important;
+  border-radius: 6px !important;
+  font-weight: 600 !important;
+  transition: all 0.2s ease !important;
+}
+
+.gjs-btn-prim:hover {
+  background: var(--igv-blue-dark) !important;
+  box-shadow: 0 4px 12px rgba(0, 82, 204, 0.3) !important;
+}
+
+/* ========================================
+   DEVICE SELECTOR (responsive preview)
+   ======================================== */
+
+.gjs-pn-devices-c {
+  background: white !important;
+  border: 1px solid var(--igv-gray-200) !important;
+  border-radius: 6px !important;
+  padding: 4px !important;
+}
+
+.gjs-pn-btn.gjs-pn-active.gjs-device-selector {
+  background: var(--igv-blue) !important;
+  color: white !important;
+}
+
+/* ========================================
+   CUSTOM IMPROVEMENTS
+   ======================================== */
+
+/* Espacement du canvas pour respiration */
+.gjs-cv-canvas__frames {
+  padding: 20px !important;
+}
+
+/* Améliorer la lisibilité des labels */
+.gjs-label,
+.gjs-sm-label,
+.gjs-block-label,
+.gjs-layer__name {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
+}
+
+/* Highlight sur hover des composants dans le canvas */
+.gjs-comp-hover {
+  outline: 2px dashed var(--igv-blue-light) !important;
+  outline-offset: -2px !important;
+}

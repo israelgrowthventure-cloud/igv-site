@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Mail, MapPin, Send } from 'lucide-react';
-import { api } from '../utils/api';
+import { api, pagesAPI } from '../utils/api';
 import { API_BASE_URL } from '../config/apiConfig';
 import { toast } from 'sonner';
 
@@ -15,6 +15,35 @@ const Contact = () => {
     message: ''
   });
   const [loading, setLoading] = useState(false);
+  const [cmsContent, setCmsContent] = useState(null);
+  const [loadingCMS, setLoadingCMS] = useState(true);
+
+  // Tenter de charger le contenu CMS
+  useEffect(() => {
+    const loadCMSContent = async () => {
+      try {
+        const response = await pagesAPI.getBySlug('contact');
+        if (response.data && response.data.published && response.data.content_html) {
+          setCmsContent(response.data);
+        }
+      } catch (error) {
+        console.log('CMS content not available for contact, using React fallback');
+      } finally {
+        setLoadingCMS(false);
+      }
+    };
+    loadCMSContent();
+  }, []);
+
+  // Si le contenu CMS est disponible, l'afficher
+  if (!loadingCMS && cmsContent) {
+    return (
+      <div className="cms-contact-page">
+        <style dangerouslySetInnerHTML={{ __html: cmsContent.content_css }} />
+        <div dangerouslySetInnerHTML={{ __html: cmsContent.content_html }} />
+      </div>
+    );
+  }
 
   const handleChange = (e) => {
     setFormData({

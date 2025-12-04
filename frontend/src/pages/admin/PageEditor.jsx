@@ -55,7 +55,7 @@ const PageEditor = () => {
       container: editorRef.current,
       plugins: [gjsPresetWebpage],
       storageManager: false,
-      height: '70vh',
+      height: 'calc(100vh - 300px)',
       width: 'auto',
       panels: { defaults: [] },
       blockManager: {
@@ -93,6 +93,10 @@ const PageEditor = () => {
       },
       layersManager: {
         appendTo: '.layers-container',
+      },
+      canvas: {
+        styles: [],
+        scripts: [],
       },
     });
 
@@ -345,13 +349,42 @@ const PageEditor = () => {
       attributes: { class: 'fa fa-hand-pointer-o' }
     });
 
-    if (pageContent && pageContent.content_json) {
+    // CHARGER LE CONTENU EXISTANT (HTML + CSS)
+    if (pageContent) {
       try {
-        const projectData = JSON.parse(pageContent.content_json);
-        grapesEditor.loadProjectData(projectData);
+        // Charger HTML
+        if (pageContent.content_html) {
+          grapesEditor.setComponents(pageContent.content_html);
+          console.log('✅ HTML chargé:', pageContent.content_html.substring(0, 100));
+        }
+        
+        // Charger CSS
+        if (pageContent.content_css) {
+          grapesEditor.setStyle(pageContent.content_css);
+          console.log('✅ CSS chargé:', pageContent.content_css.substring(0, 100));
+        }
+        
+        // Charger JSON si disponible (pour restaurer l'état complet)
+        if (pageContent.content_json && pageContent.content_json !== '{}') {
+          const projectData = JSON.parse(pageContent.content_json);
+          grapesEditor.loadProjectData(projectData);
+          console.log('✅ Project data chargé');
+        }
+        
+        toast.success('Page chargée avec succès!');
       } catch (error) {
-        console.error('Error loading page content:', error);
+        console.error('Erreur chargement contenu:', error);
+        toast.error('Erreur lors du chargement du contenu');
       }
+    } else {
+      // Nouvelle page : ajouter un template de démarrage
+      grapesEditor.setComponents(`
+        <section style="padding: 60px 20px; text-align: center; background: linear-gradient(135deg, #0052CC 0%, #003D99 100%); color: white;">
+          <h1 style="font-size: 48px; margin-bottom: 20px; font-weight: bold;">Nouvelle Page</h1>
+          <p style="font-size: 20px; opacity: 0.9;">Commencez à construire votre page ici</p>
+        </section>
+      `);
+      console.log('✅ Template par défaut chargé');
     }
 
     setEditor(grapesEditor);
@@ -403,43 +436,46 @@ const PageEditor = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="spinner"></div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-blue-50">
+        <div className="text-center">
+          <div className="inline-block w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+          <p className="mt-4 text-gray-600 font-medium">Chargement de l'éditeur...</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50" data-testid="page-editor">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50" data-testid="page-editor">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
-        <div className="max-w-full px-4 py-3 flex justify-between items-center">
+      <header className="bg-white shadow-md border-b border-gray-200 sticky top-0 z-50">
+        <div className="max-w-full px-6 py-4 flex justify-between items-center">
           <div className="flex items-center space-x-4">
             <button
-              onClick={() => navigate('/admin')}
-              className="p-2 text-gray-600 hover:text-[#0052CC] transition-colors"
+              onClick={() => navigate('/admin/pages')}
+              className="p-2.5 text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-all duration-300 rounded-xl"
               data-testid="back-button"
             >
-              <ArrowLeft size={20} />
+              <ArrowLeft size={22} />
             </button>
             <div>
-              <h1 className="text-lg font-bold text-gray-900">
+              <h1 className="text-2xl font-bold text-gray-900">
                 {slug ? 'Modifier la Page' : 'Créer une Nouvelle Page'}
               </h1>
-              <p className="text-sm text-gray-500">{pageData.slug || 'Nouvelle page'}</p>
+              <p className="text-sm text-gray-500 font-mono">{pageData.slug || 'nouvelle-page'}</p>
             </div>
           </div>
 
           <div className="flex items-center space-x-3">
             {/* Language Selector */}
-            <div className="flex items-center space-x-1 border border-gray-300 rounded-lg overflow-hidden">
+            <div className="flex items-center space-x-1 bg-white border-2 border-gray-200 rounded-xl overflow-hidden shadow-sm">
               {['fr', 'en', 'he'].map((lang) => (
                 <button
                   key={lang}
                   onClick={() => setCurrentLang(lang)}
-                  className={`px-3 py-2 text-sm font-medium transition-colors ${
+                  className={`px-4 py-2.5 text-sm font-bold transition-all duration-300 ${
                     currentLang === lang
-                      ? 'bg-[#0052CC] text-white'
+                      ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white'
                       : 'bg-white text-gray-700 hover:bg-gray-50'
                   }`}
                   data-testid={`lang-button-${lang}`}
@@ -451,10 +487,10 @@ const PageEditor = () => {
 
             <button
               onClick={handlePublish}
-              className={`flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-colors ${
+              className={`flex items-center space-x-2 px-5 py-2.5 rounded-xl font-semibold transition-all duration-300 shadow-md hover:shadow-lg ${
                 pageData.published
-                  ? 'bg-green-100 text-green-700 hover:bg-green-200'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  ? 'bg-gradient-to-r from-green-500 to-green-600 text-white hover:from-green-600 hover:to-green-700'
+                  : 'bg-gradient-to-r from-gray-400 to-gray-500 text-white hover:from-gray-500 hover:to-gray-600'
               }`}
               data-testid="publish-button"
             >
@@ -465,7 +501,7 @@ const PageEditor = () => {
             <button
               onClick={handleSave}
               disabled={saving}
-              className="flex items-center space-x-2 px-4 py-2 bg-[#0052CC] text-white rounded-lg font-medium hover:bg-[#003D99] transition-colors disabled:opacity-50"
+              className="flex items-center space-x-2 px-6 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl font-bold hover:from-blue-700 hover:to-blue-800 transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105"
               data-testid="save-button"
             >
               <Save size={18} />
@@ -476,22 +512,23 @@ const PageEditor = () => {
       </header>
 
       {/* Page Settings */}
-      <div className="bg-white border-b border-gray-200 px-4 py-4">
-        <div className="max-w-full grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="bg-white border-b border-gray-200 px-6 py-4 shadow-sm">
+        <div className="max-w-full grid grid-cols-1 md:grid-cols-3 gap-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Slug de la Page (URL)</label>
+            <label className="block text-sm font-bold text-gray-900 mb-2">Slug de la Page (URL)</label>
             <input
               type="text"
               value={pageData.slug}
               onChange={(e) => setPageData({ ...pageData, slug: e.target.value })}
               disabled={!!slug}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0052CC] focus:border-transparent disabled:bg-gray-100"
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 disabled:text-gray-500 font-mono"
               placeholder="a-propos"
               data-testid="slug-input"
             />
+            <p className="mt-1 text-xs text-gray-500">URL: /{pageData.slug || 'slug'}</p>
           </div>
           <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-bold text-gray-900 mb-2">
               Titre de la Page ({currentLang.toUpperCase()})
             </label>
             <input
@@ -503,8 +540,8 @@ const PageEditor = () => {
                   title: { ...pageData.title, [currentLang]: e.target.value },
                 })
               }
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0052CC] focus:border-transparent"
-              placeholder="Entrez le titre de la page"
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder={`Entrez le titre en ${currentLang.toUpperCase()}`}
               data-testid="title-input"
             />
           </div>
@@ -512,28 +549,37 @@ const PageEditor = () => {
       </div>
 
       {/* Editor */}
-      <div className="flex" style={{ height: 'calc(100vh - 200px)' }}>
-        {/* Panels */}
-        <div className="w-64 bg-white border-r border-gray-200 overflow-y-auto">
+      <div className="flex" style={{ height: 'calc(100vh - 280px)' }}>
+        {/* Left Panel - Blocks */}
+        <div className="w-72 bg-white border-r border-gray-200 overflow-y-auto shadow-lg">
+          <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-blue-600 to-blue-700">
+            <h3 className="font-bold text-white text-lg">Éléments</h3>
+            <p className="text-blue-100 text-xs mt-1">Glissez-déposez</p>
+          </div>
           <div className="p-4">
-            <h3 className="font-semibold text-gray-900 mb-3">Éléments</h3>
             <div className="blocks-container"></div>
           </div>
           <div className="p-4 border-t border-gray-200">
-            <h3 className="font-semibold text-gray-900 mb-3">Calques</h3>
+            <h3 className="font-bold text-gray-900 mb-3 flex items-center">
+              <span className="w-2 h-2 bg-blue-600 rounded-full mr-2"></span>
+              Calques
+            </h3>
             <div className="layers-container"></div>
           </div>
         </div>
 
         {/* Main Editor */}
-        <div className="flex-1 bg-gray-100">
+        <div className="flex-1 bg-gray-100 overflow-hidden">
           <div ref={editorRef} className="h-full"></div>
         </div>
 
-        {/* Styles Panel */}
-        <div className="w-64 bg-white border-l border-gray-200 overflow-y-auto">
+        {/* Right Panel - Styles */}
+        <div className="w-80 bg-white border-l border-gray-200 overflow-y-auto shadow-lg">
+          <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-blue-600 to-blue-700">
+            <h3 className="font-bold text-white text-lg">Styles</h3>
+            <p className="text-blue-100 text-xs mt-1">Personnalisez l'apparence</p>
+          </div>
           <div className="p-4">
-            <h3 className="font-semibold text-gray-900 mb-3">Styles</h3>
             <div className="styles-container"></div>
           </div>
         </div>

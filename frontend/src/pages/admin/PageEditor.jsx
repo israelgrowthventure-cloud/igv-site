@@ -104,10 +104,10 @@ const PageEditor = () => {
       label: 'Section Héro',
       category: 'Sections',
       content: `
-        <section style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 80px 20px; text-align: center; color: white;">
+        <section style="background: linear-gradient(135deg, #0052CC 0%, #003D99 100%); padding: 80px 20px; text-align: center; color: white;">
           <h1 style="font-size: 48px; margin-bottom: 20px; font-weight: bold;">Titre Principal</h1>
           <p style="font-size: 20px; margin-bottom: 30px; opacity: 0.9;">Un sous-titre accrocheur pour captiver votre audience</p>
-          <a href="#" style="display: inline-block; padding: 15px 40px; background: white; color: #667eea; text-decoration: none; border-radius: 30px; font-weight: bold; transition: transform 0.3s;">Commencer</a>
+          <a href="#" style="display: inline-block; padding: 15px 40px; background: white; color: #0052CC; text-decoration: none; border-radius: 30px; font-weight: bold; transition: transform 0.3s;">Commencer</a>
         </section>
       `,
       attributes: { class: 'fa fa-star' }
@@ -265,12 +265,56 @@ const PageEditor = () => {
       attributes: { class: 'fa fa-envelope' }
     });
     
+    // Bloc Vidéo YouTube/Vimeo
+    blockManager.add('video-embed', {
+      label: 'Vidéo',
+      category: 'Média',
+      content: `
+        <div style="padding: 40px 20px; max-width: 1200px; margin: 0 auto;">
+          <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+            <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" src="https://www.youtube.com/embed/dQw4w9WgXcQ" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+          </div>
+          <p style="text-align: center; margin-top: 15px; color: #666; font-size: 14px;">Remplacez l'URL de la vidéo dans les propriétés de l'iframe</p>
+        </div>
+      `,
+      attributes: { class: 'fa fa-video-camera' }
+    });
+    
+    // Bloc Carrousel d'Images
+    blockManager.add('image-carousel', {
+      label: 'Carrousel',
+      category: 'Média',
+      content: `
+        <section style="padding: 60px 20px; background: #f9fafb;">
+          <h2 style="text-align: center; font-size: 36px; margin-bottom: 40px; color: #333;">Nos Réalisations</h2>
+          <div style="max-width: 1200px; margin: 0 auto; position: relative;">
+            <div style="display: flex; gap: 20px; overflow-x: auto; scroll-behavior: smooth; padding: 20px 0;">
+              <div style="min-width: 350px; height: 250px; background: linear-gradient(135deg, #0052CC 0%, #003D99 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                Image 1
+              </div>
+              <div style="min-width: 350px; height: 250px; background: linear-gradient(135deg, #003D99 0%, #002366 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                Image 2
+              </div>
+              <div style="min-width: 350px; height: 250px; background: linear-gradient(135deg, #0052CC 0%, #003D99 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                Image 3
+              </div>
+              <div style="min-width: 350px; height: 250px; background: linear-gradient(135deg, #003D99 0%, #002366 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                Image 4
+              </div>
+            </div>
+            <p style="text-align: center; margin-top: 20px; color: #666; font-size: 14px;">Faites défiler horizontalement pour voir toutes les images</p>
+          </div>
+        </section>
+      `,
+      attributes: { class: 'fa fa-picture-o' }
+    });
+    
     // Bloc Image Pleine Largeur
     blockManager.add('full-width-image', {
       label: 'Image Pleine',
       category: 'Média',
       content: `
-        <div style="width: 100%; height: 400px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 24px;">
+        <div style="width: 100%; height: 400px; background: linear-gradient(135deg, #0052CC 0%, #003D99 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 24px;">
           [Image pleine largeur - 1920x400px]
         </div>
       `,

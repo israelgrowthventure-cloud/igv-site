@@ -50,7 +50,7 @@ const Header = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center space-x-8">
+          <nav className={`hidden lg:flex items-center ${i18n.language === 'he' ? 'space-x-reverse space-x-8' : 'space-x-8'}`}>
             {navLinks.map((link) => (
               <Link
                 key={link.path}

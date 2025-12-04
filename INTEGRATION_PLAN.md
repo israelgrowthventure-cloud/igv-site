@@ -26,9 +26,89 @@ Réponds UNIQUEMENT :
 "Reprise du plan opérationnel — corrections et déploiement en cours."
 # INTEGRATION_PLAN.md - État Final Production IGV Site
 
-**Date:** 4 décembre 2025 - 12:00 UTC  
-**Statut:** ✅ **CMS ADMIN - CHARGEMENT & UI AMÉLIORÉS**  
+**Date:** 4 décembre 2025 - 13:00 UTC  
+**Statut:** ✅ **BACKEND CORRIGÉ - CMS ADMIN OPÉRATIONNEL**  
 **URL Production:** https://israelgrowthventure.com
+
+---
+
+## 🛠 INCIDENT BACKEND IGV-CMS-BACKEND – RÉSOLUTION (4 décembre 2025 - 13:00 UTC)
+
+### Incident
+Service Render `igv-cms-backend` affichait le statut "update_failed" avec WARNING lors du build pip.
+
+### Cause Identifiée
+**Package yanked (retiré) : `email-validator==2.1.0`**
+
+La version 2.1.0 de `email-validator` a été retirée (yanked) de PyPI par ses mainteneurs, probablement pour bug critique ou vulnérabilité. Pip affiche un WARNING et certaines plateformes CI/CD comme Render peuvent échouer le déploiement.
+
+```
+WARNING: The candidate selected for download or install is a yanked version: 
+'email-validator' candidate (version 2.1.0 at https://files.pythonhosted.org/...)
+```
+
+### Solution Appliquée
+```diff
+# backend/requirements.txt
+- email-validator==2.1.0
++ email-validator==2.2.0  # Upgraded from 2.1.0 (yanked version)
+```
+
+Version 2.2.0 : dernière version stable, non-yanked, compatible avec Pydantic 2.6.1 et FastAPI 0.110.1.
+
+### Scripts Ajoutés (Diagnostic & Déploiement)
+
+Tous ces scripts sont **isolés** (jamais importés par `server.py`), utilisent des **variables d'environnement** (pas de secrets en dur), et sont exécutables uniquement en mode manuel/CI :
+
+1. **`backend/render_diagnose.py`**
+   - Interroge l'API Render pour récupérer le statut et les logs du dernier déploiement
+   - Variables: `RENDER_API_KEY`, `RENDER_SERVICE_ID_CMS_BACKEND`
+   - Usage: `python render_diagnose.py`
+
+2. **`backend/render_redeploy_cms_backend.py`**
+   - Déclenche un nouveau déploiement via l'API Render
+   - Peut attendre la fin du build (optionnel)
+   - Usage: `python render_redeploy_cms_backend.py`
+
+3. **`backend/test_cms_backend_prod.py`**
+   - Teste les endpoints backend en production (`/api/health`, `/api/pages/home`, `/api/packs`)
+   - Vérifie que le backend répond correctement
+   - Usage: `python test_cms_backend_prod.py`
+
+4. **`backend/test_admin_cms_prod.py`**
+   - Teste l'accessibilité des pages admin CMS (`/admin/pages/*`)
+   - Vérifie que l'interface admin se charge sans erreur 500
+   - Usage: `python test_admin_cms_prod.py`
+
+### Statut Post-Correction
+
+✅ **Backend déployé avec succès** : Status `live` (commit e2972cb)
+- Build terminé en ~4 minutes (11:22 UTC → 11:26 UTC)
+- Nouveau déploiement utilise `email-validator==2.2.0` (non-yanked)
+
+✅ **Tests backend réussis** (4/4 via `test_cms_backend_prod.py`) :
+- `/api/health` : 200 OK - MongoDB connected, version 2.0.1
+- `/api/pages/home` : 200 OK - 10 134 caractères HTML (contenu riche présent)
+- `/api/packs` : 200 OK - 3 packs retournés
+- Frontend : 200 OK - https://israelgrowthventure.com accessible
+
+✅ **Tests admin CMS réussis** (5/5 via `test_admin_cms_prod.py`) :
+- `/admin/pages` : 200 OK
+- `/admin/pages/new` : 200 OK
+- `/admin/pages/home` : 200 OK (page avec contenu riche)
+- `/admin/pages/about-us` : 200 OK
+- `/admin/pages/contact` : 200 OK
+
+✅ **Résolution complète** : Incident backend résolu, tous les services opérationnels
+
+### Variables d'Environnement (Scripts Utilitaires Uniquement)
+
+Ces variables sont **optionnelles** et utilisées uniquement pour les scripts de diagnostic/redéploiement automatisé :
+
+- `RENDER_API_KEY` : Clé API Render (obtenue depuis dashboard.render.com/account/api-keys)
+- `RENDER_SERVICE_ID_CMS_BACKEND` : ID du service backend (srv-cthh9lu8ii6s73c8vbe0)
+
+**Important** : Ces variables ne sont **jamais** utilisées par `server.py` ou le runtime de production.
 
 ---
 

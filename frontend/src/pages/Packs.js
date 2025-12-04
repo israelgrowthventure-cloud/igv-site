@@ -42,11 +42,23 @@ const Packs = () => {
         const sortedPacks = packsData.sort((a, b) => a.order - b.order);
         setPacks(sortedPacks);
 
+        // Helper pour convertir pack en slug
+        const getPackSlug = (pack) => {
+          const nameSlugMap = {
+            'Pack Analyse': 'analyse',
+            'Pack Succursales': 'succursales',
+            'Pack Franchise': 'franchise'
+          };
+          return nameSlugMap[pack.name?.fr || ''] || pack.slug || pack.id;
+        };
+
         // Calculer les prix pour chaque pack selon la zone
         const pricingData = {};
         for (const pack of sortedPacks) {
           try {
-            const priceResponse = await pricingAPI.calculatePrice(pack.id, zone);
+            // ✅ CORRECTION: Utiliser le slug au lieu de l'UUID
+            const packSlug = getPackSlug(pack);
+            const priceResponse = await pricingAPI.calculatePrice(packSlug, zone);
             pricingData[pack.id] = priceResponse.data;
           } catch (error) {
             console.error(`Error calculating price for pack ${pack.id}:`, error);

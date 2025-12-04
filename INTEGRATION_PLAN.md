@@ -26,9 +26,130 @@ Réponds UNIQUEMENT :
 "Reprise du plan opérationnel — corrections et déploiement en cours."
 # INTEGRATION_PLAN.md - État Final Production IGV Site
 
-**Date:** 4 décembre 2025 - 00:00 UTC  
-**Statut:** 🔧 **DIAGNOSTIC COMPLET EN COURS**  
+**Date:** 4 décembre 2025 - 01:00 UTC  
+**Statut:** ✅ **RÉPARATION PAGE /PACKS COMPLÈTE**  
 **URL Production:** https://israelgrowthventure.com
+
+---
+
+## 🎯 RÉPARATION PAGE /PACKS (4 décembre 2025 - 01:00 UTC)
+
+### Analyse page /packs
+**Problème identifié:**
+- La page /packs utilisait `PacksPage.jsx` avec un composant `<Layout>` séparé
+- Le Layout utilisait une `<Navbar>` différente du `<Header>` global
+- La Navbar tentait de charger `/igv-logo.png` (fichier inexistant) → affichage "IGV Logo" en texte
+- Design et header différents de `/` (Home) et `/about`
+
+**Composants analysés:**
+- `frontend/src/pages/Home.js` : ✅ Utilise Header global, pas de Layout wrapper
+- `frontend/src/pages/About.js` : ✅ Utilise Header global, pas de Layout wrapper  
+- `frontend/src/pages/PacksPage.jsx` : ❌ Utilise `<Layout>` avec `<Navbar>` séparée
+- `frontend/src/pages/Packs.js` : ✅ Structure identique à Home/About, Header global
+
+**Décision:** Remplacer PacksPage.jsx par Packs.js dans le routing
+
+### Correction header /packs
+**Fichiers modifiés:**
+- `frontend/src/App.js` :
+  - Import changé : `PacksPage` → `Packs`
+  - Route changée : `<Route path="/packs" element={<PacksPage />} />` → `<Route path="/packs" element={<Packs />} />`
+
+**Résultat:**
+- ✅ Header identique sur /, /about et /packs
+- ✅ Logo IGV affiché correctement (h-large-fond-blanc.png)
+- ✅ Navigation cohérente sur toutes les pages
+
+### Restauration design packs
+**Design IGV original restauré:**
+- Pack Succursales (carte centrale, index 1):
+  - Fond: `bg-gradient-to-br from-blue-600 to-blue-700`
+  - Texte: `text-white` sur toute la carte
+  - Effet: `shadow-2xl scale-105` (mise en avant)
+  - Badge: `bg-yellow-400 text-gray-900` avec `rounded-full`
+  - Texte badge: "POPULAIRE" (français)
+  
+- Autres packs (Analyse et Franchise):
+  - Fond: `bg-white`
+  - Bordure: `border-2 border-gray-200`
+  - Hover: `hover:border-blue-600`
+
+**Fichiers impactés:**
+- `frontend/src/pages/Packs.js` : Design déjà conforme au style IGV original
+
+### Raccordement pricing /packs
+**Source données:**
+- Price-list officielle: `backend/PRICELIST_OFFICIELLE.json`
+- API backend: `GET /api/pricing?packId={id}&zone={zone}`
+- Intégration frontend: `frontend/src/utils/api.js` → `pricingAPI.calculatePrice()`
+
+**Zones supportées:**
+- EU : EUR (€)
+- US_CA : USD ($)
+- IL : ILS (₪)
+- ASIA_AFRICA : USD ($)
+
+**Fichiers frontend impactés:**
+- `frontend/src/pages/Packs.js` : Appelle `pricingAPI.calculatePrice()` pour chaque pack
+- `frontend/src/utils/api.js` : Utilise `GET /api/pricing` avec params `packId` et `zone`
+
+**Flux de pricing:**
+1. Détection zone via `useGeo()` context
+2. Pour chaque pack : `pricingAPI.calculatePrice(pack.id, zone)`
+3. Récupération response avec `display.total`, `display.three_times`, `display.twelve_times`
+4. Affichage formaté selon la langue (RTL pour hébreu)
+
+### Textes officiels intégrés
+**Pack Analyse:**
+- Titre: "Pack Analyse"
+- Description: "Analyse du potentiel de la marque et définition du plan d'expansion."
+- Features:
+  1. Analyse complète du marché israélien
+  2. Étude de la concurrence et des zones à fort potentiel
+  3. Identification des formats et villes prioritaires
+  4. Scénarios d'implantation (succursales, franchise, master)
+  5. Recommandations stratégiques et estimation budgétaire
+- CTA: "Choisir cette offre"
+
+**Pack Succursales:**
+- Titre: "Pack Succursales"
+- Description: "Lancement opérationnel de l'expansion par succursales (Analyse incluse)."
+- Features:
+  1. Pack Analyse inclus dans le prix
+  2. Recherche et qualification de locaux commerciaux ciblés
+  3. Négociation avec les propriétaires et centres commerciaux
+  4. Accompagnement juridique et administratif complet
+  5. Suivi jusqu'à l'ouverture opérationnelle
+  6. Revue de performance 3 mois après ouverture
+- CTA: "Choisir cette offre"
+- **Style: Carte bleue centrale avec badge "POPULAIRE"**
+
+**Pack Franchise:**
+- Titre: "Pack Franchise"
+- Description: "Lancement opérationnel de l'expansion par franchise (Analyse incluse)."
+- Features:
+  1. Pack Analyse inclus dans le prix
+  2. Analyse de la franchise et adaptation au marché israélien
+  3. Création du manuel opératoire complet
+  4. Stratégie de recrutement et sélection des franchisés
+  5. Accompagnement juridique et contractuel
+  6. Formation des franchisés et lancement des premières ouvertures
+- CTA: "Choisir cette offre"
+
+**Source:** Les textes sont récupérés depuis l'API `/api/packs` (MongoDB backend)
+
+### CMS Préservé
+**Vérification:**
+- ✅ Aucune modification des composants CMS
+- ✅ GrapesJS drag & drop intact
+- ✅ Pages admin non affectées
+- ✅ Routes admin fonctionnelles
+- ✅ Styles CSS CMS préservés
+
+**Composants CMS non touchés:**
+- `frontend/src/pages/admin/*`
+- `frontend/src/components/grapesjs/*` (si existe)
+- `backend/server.py` routes CMS (`/api/pages`, `/api/packs`)
 
 ---
 

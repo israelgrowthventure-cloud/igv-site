@@ -41,7 +41,7 @@ import Footer from './components/Footer';
 // Public pages
 import Home from './pages/Home';
 import About from './pages/About';
-import PacksPage from './pages/PacksPage';
+import Packs from './pages/Packs';
 import Contact from './pages/Contact';
 import FutureCommercePage from './pages/FutureCommercePage';
 import DynamicPage from './pages/DynamicPage';
@@ -82,7 +82,7 @@ function AppLayout() {
           {/* Public Routes */}
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
-          <Route path="/packs" element={<PacksPage />} />
+          <Route path="/packs" element={<Packs />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/le-commerce-de-demain" element={<FutureCommercePage />} />
           <Route path="/future-commerce" element={<FutureCommercePage />} />

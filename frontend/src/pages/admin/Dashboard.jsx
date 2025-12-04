@@ -75,83 +75,86 @@ const AdminDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50" data-testid="admin-dashboard">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50" data-testid="admin-dashboard">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-[#0052CC] to-[#0065FF] rounded-lg flex items-center justify-center">
+      <header className="bg-white shadow-md border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex justify-between items-center">
+          <div className="flex items-center space-x-4">
+            <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-blue-800 rounded-xl flex items-center justify-center shadow-lg">
               <span className="text-white font-bold text-xl">IGV</span>
             </div>
             <div>
-              <h1 className="text-xl font-bold text-gray-900">CMS Admin</h1>
+              <h1 className="text-2xl font-bold text-gray-900">CMS Admin</h1>
               <p className="text-sm text-gray-500">Israel Growth Venture</p>
             </div>
           </div>
           <button
             onClick={handleLogout}
-            className="flex items-center space-x-2 px-4 py-2 text-gray-700 hover:text-[#0052CC] transition-colors"
+            className="flex items-center space-x-2 px-5 py-2.5 text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-all duration-300 rounded-xl font-medium"
             data-testid="logout-button"
           >
             <LogOut size={20} />
-            <span>Logout</span>
+            <span>Déconnexion</span>
           </button>
         </div>
       </header>
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="mb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">Dashboard</h2>
-          <p className="text-gray-600">Manage your website content and settings</p>
+        <div className="mb-10">
+          <h2 className="text-4xl font-bold text-gray-900 mb-3">Tableau de Bord</h2>
+          <p className="text-lg text-gray-600">Gérez votre site et votre contenu</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
           {menuItems.map((item, index) => (
             <Link
               key={index}
               to={item.link}
-              className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 p-6 border border-gray-100 hover:border-[#0052CC]"
+              className="bg-white rounded-2xl shadow-md hover:shadow-2xl transition-all duration-300 p-8 border border-gray-100 hover:border-blue-300 transform hover:scale-105 group"
               data-testid={`menu-item-${index}`}
             >
-              <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center text-[#0052CC] mb-4">
+              <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-700 rounded-xl flex items-center justify-center text-white mb-5 group-hover:scale-110 transition-transform shadow-lg">
                 {item.icon}
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-1">{item.title}</h3>
-              <p className="text-sm text-gray-600 mb-3">{item.description}</p>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">{item.title}</h3>
+              <p className="text-sm text-gray-600 mb-4">{item.description}</p>
               {item.count !== undefined && (
-                <div className="text-2xl font-bold text-[#0052CC]">{item.count}</div>
+                <div className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
+                  {item.count}
+                </div>
               )}
             </Link>
           ))}
         </div>
 
         {/* Quick Actions */}
-        <div className="mt-12 bg-white rounded-xl shadow-md p-8">
-          <h3 className="text-xl font-bold text-gray-900 mb-6">Quick Actions</h3>
+        <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
+          <h3 className="text-2xl font-bold text-gray-900 mb-6">Actions Rapides</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Link
-              to="/admin/pages"
-              className="px-6 py-4 bg-[#0052CC] text-white rounded-lg font-semibold hover:bg-[#003D99] transition-all duration-300 text-center"
+              to="/admin/pages/new"
+              className="px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl font-semibold hover:from-blue-700 hover:to-blue-800 transition-all duration-300 text-center shadow-lg hover:shadow-xl transform hover:scale-105"
               data-testid="quick-action-create-page"
             >
-              Create New Page
+              Créer une Page
             </Link>
             <Link
               to="/admin/packs"
-              className="px-6 py-4 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-all duration-300 text-center"
+              className="px-8 py-4 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-xl font-semibold hover:from-green-700 hover:to-green-800 transition-all duration-300 text-center shadow-lg hover:shadow-xl transform hover:scale-105"
               data-testid="quick-action-create-pack"
             >
-              Add New Pack
+              Gérer les Packs
             </Link>
-            <Link
-              to="/"
+            <a
+              href="https://israelgrowthventure.com"
               target="_blank"
-              className="px-6 py-4 bg-gray-600 text-white rounded-lg font-semibold hover:bg-gray-700 transition-all duration-300 text-center"
+              rel="noopener noreferrer"
+              className="px-8 py-4 bg-gradient-to-r from-gray-700 to-gray-800 text-white rounded-xl font-semibold hover:from-gray-800 hover:to-gray-900 transition-all duration-300 text-center shadow-lg hover:shadow-xl transform hover:scale-105"
               data-testid="quick-action-view-site"
             >
-              View Live Site
-            </Link>
+              Voir le Site
+            </a>
           </div>
         </div>
       </main>

@@ -53,7 +53,7 @@ import Terms from './pages/Terms';
 import LoginPage from './pages/admin/LoginPage';
 import Dashboard from './pages/admin/Dashboard';
 import PagesList from './pages/admin/PagesList';
-import PageEditorModern from './pages/admin/PageEditorModern';
+import PageEditorBuilder from './pages/admin/PageEditorBuilder';
 import PacksAdmin from './pages/admin/PacksAdmin';
 import PricingAdmin from './pages/admin/PricingAdmin';
 import TranslationsAdmin from './pages/admin/TranslationsAdmin';
@@ -97,9 +97,9 @@ function AppLayout() {
           {/* CMS Emergent Admin Routes */}
           <Route path="/admin/login" element={<LoginPage />} />
           <Route path="/admin" element={<Dashboard />} />
-          <Route path="/admin/pages" element={<PagesList />} />
-          <Route path="/admin/pages/new" element={<PageEditorModern />} />
-          <Route path="/admin/pages/:slug" element={<PageEditorModern />} />
+          <Route path="/admin/pages" element={<PageEditorBuilder />} />
+          <Route path="/admin/pages/new" element={<PageEditorBuilder />} />
+          <Route path="/admin/pages/:slug" element={<PageEditorBuilder />} />
           <Route path="/admin/packs" element={<PacksAdmin />} />
           <Route path="/admin/pricing" element={<PricingAdmin />} />
           <Route path="/admin/translations" element={<TranslationsAdmin />} />

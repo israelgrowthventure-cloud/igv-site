@@ -53,7 +53,7 @@ import Terms from './pages/Terms';
 import LoginPage from './pages/admin/LoginPage';
 import Dashboard from './pages/admin/Dashboard';
 import PagesList from './pages/admin/PagesList';
-import PageEditor from './pages/admin/PageEditor';
+import PageEditorModern from './pages/admin/PageEditorModern';
 import PacksAdmin from './pages/admin/PacksAdmin';
 import PricingAdmin from './pages/admin/PricingAdmin';
 import TranslationsAdmin from './pages/admin/TranslationsAdmin';
@@ -98,8 +98,8 @@ function AppLayout() {
           <Route path="/admin/login" element={<LoginPage />} />
           <Route path="/admin" element={<Dashboard />} />
           <Route path="/admin/pages" element={<PagesList />} />
-          <Route path="/admin/pages/new" element={<PageEditor />} />
-          <Route path="/admin/pages/:slug" element={<PageEditor />} />
+          <Route path="/admin/pages/new" element={<PageEditorModern />} />
+          <Route path="/admin/pages/:slug" element={<PageEditorModern />} />
           <Route path="/admin/packs" element={<PacksAdmin />} />
           <Route path="/admin/pricing" element={<PricingAdmin />} />
           <Route path="/admin/translations" element={<TranslationsAdmin />} />

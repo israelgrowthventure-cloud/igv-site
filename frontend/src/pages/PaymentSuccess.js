@@ -215,7 +215,11 @@ const PaymentSuccess = () => {
             </p>
           </div>
         </div>
+        {/* Fermeture de la Carte principale (bg-white rounded-2xl) - était manquante */}
       </div>
+      {/* Fermeture de max-w-2xl */}
+    </div>
+    {/* Fermeture de min-h-screen */}
     </>
   );
 };

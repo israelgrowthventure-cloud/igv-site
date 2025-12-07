@@ -82,7 +82,7 @@ def init_admin_and_pages():
             {
                 "$set": {
                     "email": ADMIN_EMAIL,
-                    "password_hash": hashed_password,
+                    "hashed_password": hashed_password,  # Fixed: was password_hash
                     "role": "admin",
                     "updated_at": datetime.now(timezone.utc).isoformat()
                 },

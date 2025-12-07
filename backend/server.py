@@ -90,7 +90,7 @@ mongo_url = os.environ.get('MONGO_URL')
 if not mongo_url:
     raise RuntimeError("MONGO_URL environment variable must be set for production")
 
-db_name = os.environ.get('DB_NAME', 'igv_db')
+db_name = os.environ.get('DB_NAME', 'IGV-Cluster')  # Updated default to match Render config
 
 # Configure MongoDB client with connection timeout
 try:

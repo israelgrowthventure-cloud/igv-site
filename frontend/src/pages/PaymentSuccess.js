@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { Helmet } from 'react-helmet-async';
 import { CheckCircle, ArrowLeft, Package } from 'lucide-react';
 
 /**
@@ -81,10 +82,18 @@ const PaymentSuccess = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-white py-20 px-4" dir={i18n.language === 'he' ? 'rtl' : 'ltr'}>
-      <div className="max-w-2xl mx-auto">
-        {/* Carte principale */}
-        <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12 text-center">
+    <>
+      {/* SEO - noindex car page spécifique à un paiement */}
+      <Helmet>
+        <title>{t('payment.success.title') || 'Paiement confirmé'} - Israel Growth Venture</title>
+        <meta name="robots" content="noindex, nofollow" />
+        <meta name="description" content={t('payment.success.message') || 'Confirmation de paiement'} />
+      </Helmet>
+
+      <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-white py-20 px-4" dir={i18n.language === 'he' ? 'rtl' : 'ltr'}>
+        <div className="max-w-2xl mx-auto">
+          {/* Carte principale */}
+          <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12 text-center">
           {/* Icône de succès */}
           <div className="flex justify-center mb-6">
             <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center">
@@ -207,7 +216,7 @@ const PaymentSuccess = () => {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

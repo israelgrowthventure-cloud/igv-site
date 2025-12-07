@@ -58,6 +58,7 @@ import PageEditorAdvanced from './pages/admin/PageEditorAdvanced';
 import PacksAdmin from './pages/admin/PacksAdmin';
 import PricingAdmin from './pages/admin/PricingAdmin';
 import TranslationsAdmin from './pages/admin/TranslationsAdmin';
+import AdminAccount from './pages/admin/AdminAccount';
 
 // Loading component
 const Loading = () => (
@@ -104,6 +105,7 @@ function AppLayout() {
           {/* CMS Emergent Admin Routes */}
           <Route path="/admin/login" element={<LoginPage />} />
           <Route path="/admin" element={<Dashboard />} />
+          <Route path="/admin/account" element={<AdminAccount />} />
           <Route path="/admin/pages" element={<PagesList />} />
           <Route path="/admin/pages/new" element={<PageEditorAdvanced />} />
           <Route path="/admin/pages/:slug" element={<PageEditorAdvanced />} />

@@ -1065,6 +1065,49 @@ async def get_me(current_user: User = Depends(get_current_user)):
     """Get current user info"""
     return current_user
 
+@api_router.post("/admin/change-password")
+async def change_password(request: Request, current_user: User = Depends(get_current_user)):
+    """Change current user password"""
+    try:
+        payload = await request.json()
+        old_password = payload.get("old_password")
+        new_password = payload.get("new_password")
+        
+        if not old_password or not new_password:
+            raise HTTPException(status_code=400, detail="Ancien et nouveau mot de passe requis")
+        
+        if len(new_password) < 8:
+            raise HTTPException(status_code=400, detail="Le nouveau mot de passe doit contenir au moins 8 caractères")
+        
+        # Récupérer le hash du mot de passe actuel
+        user_doc = await db.users.find_one({"email": current_user.email})
+        if not user_doc:
+            raise HTTPException(status_code=404, detail="Utilisateur non trouvé")
+        
+        password_hash = user_doc.get("password_hash") or user_doc.get("password")
+        if not password_hash:
+            raise HTTPException(status_code=500, detail="Erreur de configuration du mot de passe")
+        
+        # Vérifier l'ancien mot de passe
+        if not pwd_context.verify(old_password, password_hash):
+            raise HTTPException(status_code=400, detail="Ancien mot de passe incorrect")
+        
+        # Hasher et enregistrer le nouveau mot de passe
+        new_hashed_password = pwd_context.hash(new_password)
+        await db.users.update_one(
+            {"email": current_user.email},
+            {"$set": {"password_hash": new_hashed_password}}
+        )
+        
+        logger.info(f"Password changed successfully for user: {current_user.email}")
+        return {"status": "ok", "message": "Mot de passe mis à jour avec succès"}
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error changing password: {e}")
+        raise HTTPException(status_code=500, detail="Erreur lors du changement de mot de passe")
+
 # ==================== PAGE ROUTES ====================
 
 @api_router.get("/pages", response_model=List[Page])

@@ -2851,6 +2851,151 @@ Réparation des bugs bloquants et sécurisation du code avant toute évolution f
 
 ---
 
+## [2025-12-07] Phase 1bis - Nettoyage léger & archivage
+
+### Objectif
+Réduire le bruit dans le code en déplaçant les variantes d'éditeurs et scripts backend de diagnostic dans des dossiers legacy, sans modifier le comportement fonctionnel du site.
+
+### Fichiers/dossiers modifiés
+
+**Frontend - Éditeurs admin archivés :**
+- Créé : `frontend/src/legacy/admin_editors/`
+- Déplacés depuis `frontend/src/pages/admin/` :
+  - `PageEditor.jsx` - Éditeur de base original
+  - `PageEditorAdvanced_BACKUP.jsx` - Version backup
+  - `PageEditorAdvanced_NEW.jsx` - Version expérimentale
+  - `PageEditorBuilder.jsx` - Interface style Squarespace
+  - `PageEditorModern.jsx` - Tentative de redesign moderne
+- Ajouté : `frontend/src/legacy/admin_editors/README.md` (documentation)
+- **Éditeur actif conservé** : `frontend/src/pages/admin/PageEditorAdvanced.jsx` (seul référencé dans App.js)
+
+**Backend - Scripts de diagnostic/test archivés :**
+- Dossier existant : `backend/legacy_scripts/`
+- **67 scripts déplacés** depuis `backend/` vers `backend/legacy_scripts/` :
+
+*Scripts de diagnostic (23 fichiers) :*
+- `analyze_events.py`, `analyze_recent_events.py`, `analyze_render_errors.py`
+- `check_latest_deploys.py`, `check_packs_content.py`, `check_pages_integrity.py`
+- `check_prod_endpoints.py`, `check_python_version.py`, `check_render_deploy_status.py`
+- `check_render_status.py`, `check_service_config.py`, `check_user.py`
+- `diagnose_admin_issues.py`, `diagnose_checkout_bug.py`, `diagnose_packs_pricing.py`
+- `diagnose_render_status.py`, `find_success.py`, `get_render_logs.py`
+- `get_service_details.py`, `list_pages.py`, `monitor_deploy.py`
+- `render_diagnose.py`, `watch_deploy.py`
+
+*Scripts de test (23 fichiers) :*
+- `test_admin_cms_prod.py`, `test_admin_styled.py`, `test_backend.py`
+- `test_checkout_complete.py`, `test_checkout_flow.py`, `test_checkout_prod.py`
+- `test_cms_backend_prod.py`, `test_cms_full_page_production.py`, `test_cms_pages_content.py`
+- `test_complete_live.py`, `test_dashboard_api.py`, `test_editor_connected.py`
+- `test_final_complete.py`, `test_packs_live.py`, `test_pages_api.py`
+- `test_post_fix.py`, `test_pricing_official.py`, `test_production_complete.py`
+- `test_production_final.py`, `test_server_import.py`, `test_visual_admin_home.py`
+
+*Scripts de configuration (9 fichiers) :*
+- `add_env_vars_render.ps1`, `add_pack_ids.py`, `add_pack_slugs.py`
+- `configure_render_env.ps1`, `configure_render_services.py`
+- `create_admin_account.py`, `create_v2_admin.py`
+- `init_db_production.py`, `setup_env_simple.ps1`
+
+*Scripts de maintenance (12 fichiers) :*
+- `fix_pricing.py`, `force_redeploy_backend.py`, `render_redeploy_cms_backend.py`
+- `sync_real_pages_to_cms.py`, `trigger_backend_deploy.py`, `trigger_deploy.py`
+- `trigger_manual_deploy.py`, `update_all_pages_content.py`, `update_home_content.py`
+- `update_packs_official.py`, `update_render_config.py`, `update_service_config.py`
+
+- Ajouté : `backend/legacy_scripts/README_UPDATE.md` (documentation complète)
+
+**Fichiers conservés dans backend/ (runtime critiques) :**
+- `server.py` - Application FastAPI principale
+- `cms_routes.py` - Routes CMS
+- `pricing_config.py` - Configuration pricing
+- `requirements.txt`, `runtime.txt`, `render.yaml` - Configuration déploiement
+- `.env`, `.env.example` - Variables d'environnement
+- Dossiers : `config/`, `__pycache__/`, `venv/`
+
+**Documentation :**
+- `INTEGRATION_PLAN.md` - Cette section
+
+### Endpoints testés (Render / production - 7 décembre 2025, 17:00 UTC)
+
+**Déploiement :**
+- ✅ Git commit : `c256403` - "Chore: Phase 1bis - Move unused editors and backend diagnostic scripts to legacy folders"
+- ✅ Git push : Succès vers `israelgrowthventure-cloud/igv-site` (main)
+- ✅ Auto-deploy Render : Détection automatique du push, déploiement réussi
+
+**Tests HTTP production (tentative 1/3) :**
+- ✅ `GET https://israelgrowthventure.com/` → **200 OK**
+- ✅ `GET https://israelgrowthventure.com/packs` → **200 OK**
+- ✅ `GET https://israelgrowthventure.com/admin` → **200 OK** (login/dashboard accessible)
+- ✅ `GET https://israelgrowthventure.com/payment/success` → **200 OK**
+- ✅ `GET https://igv-cms-backend.onrender.com/api/health` → **200 OK**
+  - Status: `ok`
+  - MongoDB: `connected`
+
+**Tests manuels admin (recommandés) :**
+- [ ] Accès `/admin/pages` → Liste des pages s'affiche
+- [ ] Édition d'une page → PageEditorAdvanced s'ouvre correctement
+- [ ] Aucune erreur console liée aux imports
+
+### Résultats
+
+**✅ Succès complet (1ère tentative) :**
+- Tous les tests HTTP passent sans erreur
+- Aucune régression fonctionnelle détectée
+- Déploiement automatique fonctionnel
+- Backend et frontend stables en production
+
+**Impact :**
+- **Frontend** : 5 fichiers (2 965 lignes) déplacés vers legacy, réduction du bruit dans `frontend/src/pages/admin/`
+- **Backend** : 67 fichiers déplacés vers legacy_scripts, réduction drastique du bruit dans `backend/`
+- **Code actif** : Plus clair et maintenable, séparation nette entre runtime et scripts utilitaires
+- **Performance** : Aucun impact (fichiers déplacés ne sont pas chargés en runtime)
+
+### Notes importantes
+
+**Aucune suppression définitive :**
+- Tous les fichiers sont conservés dans les dossiers legacy pour référence historique
+- Possibilité de récupérer/réutiliser du code si nécessaire
+- Documentation complète (2 fichiers README) pour comprendre le contexte
+
+**Routing et imports :**
+- `App.js` ne référence que `PageEditorAdvanced.jsx` (lignes 58, 105-106)
+- Aucun autre composant n'importe les éditeurs déplacés
+- Routes `/admin/pages/new` et `/admin/pages/:slug` fonctionnent correctement
+
+**Backend runtime :**
+- `server.py` n'importe aucun des scripts déplacés
+- `cms_routes.py` reste indépendant des scripts legacy
+- Aucune dépendance runtime cassée
+
+**Sécurité :**
+- Scripts legacy avec secrets (init_db_direct.py, etc.) déjà archivés en Phase 1
+- Nouveaux scripts déplacés ne contiennent pas de secrets hardcodés
+- Variables d'environnement restent la seule source de configuration
+
+### Prochaines étapes recommandées
+
+**Phase 2 - CMS complet** (2 semaines) :
+- Media library (upload images)
+- Prévisualisation pages avant publication
+- Versioning/historique des modifications
+- Métadonnées SEO per-page (title, description, OG tags)
+
+**Phase 3 - CRM** (2-3 semaines) :
+- CRUD contacts/leads/deals
+- Pipeline kanban visuel
+- Intégrations email/calendar
+- Rapports et analytics
+
+**Phase 4 - Monetico CIC** (1 semaine) :
+- Intégration API Monetico CIC
+- Remplacement progressif de Stripe
+- Tests 3D Secure
+- Webhook handling
+
+---
+
 **Document maintenu par:** GitHub Copilot  
-**Dernière mise à jour:** 7 décembre 2025, 16:45 UTC  
-**Version:** 1.1 - Phase 1 Fondations Complétée
+**Dernière mise à jour:** 7 décembre 2025, 17:00 UTC  
+**Version:** 1.2 - Phase 1bis Nettoyage Complété

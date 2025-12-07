@@ -89,6 +89,11 @@ function AppLayout() {
           <Route path="/le-commerce-de-demain" element={<FutureCommercePage />} />
           <Route path="/future-commerce" element={<FutureCommercePage />} />
           <Route path="/terms" element={<Terms />} />
+          
+          {/* Étude d'Implantation 360° - CMS-driven landing pages */}
+          <Route path="/etude-implantation-360" element={<DynamicPage />} />
+          <Route path="/etude-implantation-360/merci" element={<DynamicPage />} />
+          
           <Route path="/page/:slug" element={<DynamicPage />} />
           
           {/* Technical routes */}

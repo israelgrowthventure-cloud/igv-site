@@ -112,6 +112,24 @@ const Home = () => {
         </div>
       </section>
 
+      {/* Étude d'Implantation 360° - Featured CTA */}
+      <section className="py-20 px-4 bg-gradient-to-br from-blue-600 to-blue-800">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-4xl font-bold text-white mb-4">
+            Étude d'Implantation IGV – Israël 360°
+          </h2>
+          <p className="text-xl text-blue-100 mb-8">
+            Une analyse complète et personnalisée pour réussir votre implantation en Israël
+          </p>
+          <Link
+            to="/etude-implantation-360"
+            className="inline-flex items-center justify-center px-10 py-5 bg-white text-blue-600 rounded-lg hover:bg-gray-100 font-bold text-lg shadow-xl hover:shadow-2xl transition-all"
+          >
+            Découvrir l'Étude 360° <ArrowRight className="ml-2" size={24} />
+          </Link>
+        </div>
+      </section>
+
       {/* Packs CTA */}
       <section className="py-20 px-4 bg-white">
         <div className="max-w-7xl mx-auto text-center">

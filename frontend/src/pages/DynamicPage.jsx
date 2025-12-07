@@ -1,12 +1,28 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import { pagesAPI } from '../utils/api';
 import { toast } from 'sonner';
 
 const DynamicPage = () => {
-  const { slug } = useParams();
+  const { slug: paramSlug } = useParams();
+  const location = useLocation();
   const [page, setPage] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  // Determine slug: either from URL params or from pathname
+  const getSlugFromPath = () => {
+    if (paramSlug) return paramSlug;
+    
+    const path = location.pathname;
+    // Handle direct routes like /etude-implantation-360 or /etude-implantation-360/merci
+    if (path === '/etude-implantation-360') return 'etude-implantation-360';
+    if (path === '/etude-implantation-360/merci') return 'etude-implantation-merci';
+    
+    // Fallback: extract slug from path (remove leading slash)
+    return path.replace(/^\//, '').replace(/\//g, '-');
+  };
+
+  const slug = getSlugFromPath();
 
   useEffect(() => {
     loadPage();
@@ -18,7 +34,7 @@ const DynamicPage = () => {
       setPage(response.data);
     } catch (error) {
       console.error('Error loading page:', error);
-      toast.error('Page not found');
+      toast.error('Page introuvable');
     } finally {
       setLoading(false);
     }

@@ -109,46 +109,39 @@ while ($attempt -lt $maxAttempts) {
             -UseBasicParsing `
             -TimeoutSec 10 `
             -ErrorAction Stop
-        
         if ($response.Content -match 'main\.(\w+)\.js') {
             $currentHash = $matches[1]
-            
             if ($currentHash -ne $previousHash) {
-                Write-Host "  🎉🎉🎉 NOUVEAU BUILD DÉTECTÉ! 🎉🎉🎉`n" -ForegroundColor Green -BackgroundColor Black
-                Write-Host "     Ancien: main.$previousHash.js" -ForegroundColor Red
-                Write-Host "     Nouveau: main.$currentHash.js" -ForegroundColor Green
-                
+                Write-Host "NOUVEAU BUILD DÉTECTÉ!" -ForegroundColor Green
+                Write-Host "Ancien: main.$previousHash.js" -ForegroundColor Red
+                Write-Host "Nouveau: main.$currentHash.js" -ForegroundColor Green
                 # Test routes SPA
-                Write-Host "`n🧪 Test des routes SPA:" -ForegroundColor Yellow
+                Write-Host "Test des routes SPA:" -ForegroundColor Yellow
                 $testRoutes = @('/about', '/api/health')
                 foreach ($route in $testRoutes) {
                     try {
                         $testResp = Invoke-WebRequest "https://igv-site.onrender.com$route" -UseBasicParsing -TimeoutSec 10
-                        Write-Host "  ✅ $route → $($testResp.StatusCode)" -ForegroundColor Green
+                        Write-Host "  OK $route → $($testResp.StatusCode)" -ForegroundColor Green
                     } catch {
-                        Write-Host "  ⚠️ $route → $($_.Exception.Response.StatusCode.value__)" -ForegroundColor Yellow
+                        Write-Host "  WARN $route → $($_.Exception.Response.StatusCode.value__)" -ForegroundColor Yellow
                     }
                 }
-                
-                Write-Host "`n✅✅✅ DÉPLOIEMENT RÉUSSI! ✅✅✅" -ForegroundColor Green -BackgroundColor Black
-                Write-Host "`n📋 RÉSUMÉ:" -ForegroundColor Cyan
-                Write-Host "   Service: igv-site" -ForegroundColor White
-                Write-Host "   Bundle: main.$currentHash.js" -ForegroundColor Green
-                Write-Host "   URL: https://israelgrowthventure.com" -ForegroundColor Cyan
+                Write-Host "DÉPLOIEMENT RÉUSSI!" -ForegroundColor Green
+                Write-Host "Service: igv-site" -ForegroundColor White
+                Write-Host "Bundle: main.$currentHash.js" -ForegroundColor Green
+                Write-Host "URL: https://israelgrowthventure.com" -ForegroundColor Cyan
                 exit 0
             } else {
-                Write-Host "  ⏳ Build en cours... (hash: $currentHash)" -ForegroundColor Yellow
+                Write-Host "Build en cours... (hash: $currentHash)" -ForegroundColor Yellow
             }
         } else {
-            Write-Host "  ⚠️ Bundle non détecté (service redémarre...)" -ForegroundColor Yellow
+            Write-Host "Bundle non détecté (service redémarre...)" -ForegroundColor Yellow
         }
-        
     } catch {
-        Write-Host "  ⚠️ Service non disponible (build en cours)" -ForegroundColor Yellow
+        Write-Host "Service non disponible (build en cours)" -ForegroundColor Yellow
     }
 }
-
-Write-Host "`n⚠️ Timeout du monitoring (10 minutes)" -ForegroundColor Yellow
+Write-Host "Timeout du monitoring (10 minutes)" -ForegroundColor Yellow
 Write-Host "Le build peut encore être en cours." -ForegroundColor Gray
 Write-Host "Vérifier: https://dashboard.render.com/web/$serviceId" -ForegroundColor Cyan
 exit 1

@@ -86,7 +86,10 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # MongoDB connection with timeout and error handling
-mongo_url = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
+mongo_url = os.environ.get('MONGO_URL')
+if not mongo_url:
+    raise RuntimeError("MONGO_URL environment variable must be set for production")
+
 db_name = os.environ.get('DB_NAME', 'igv_db')
 
 # Configure MongoDB client with connection timeout
@@ -129,7 +132,9 @@ app.add_middleware(
 )
 
 # JWT Configuration
-JWT_SECRET = os.environ.get('JWT_SECRET', 'your-secret-key-change-in-production')
+JWT_SECRET = os.environ.get('JWT_SECRET')
+if not JWT_SECRET:
+    raise RuntimeError("JWT_SECRET environment variable must be set for production")
 JWT_ALGORITHM = 'HS256'
 JWT_EXPIRATION_HOURS = 24
 
@@ -141,6 +146,7 @@ security = HTTPBearer()
 
 # --- Auth Models ---
 class User(BaseModel):
+    """Modèle utilisateur pour authentification JWT et gestion des rôles (admin/editor)."""
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     email: str
@@ -148,16 +154,19 @@ class User(BaseModel):
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class UserCreate(BaseModel):
+    """Payload de création d'utilisateur (email, mot de passe, rôle)."""
     email: str
     password: str
     role: str = "editor"
 
 class UserLogin(BaseModel):
+    """Payload de login utilisateur (email, mot de passe)."""
     email: str
     password: str
 
 # --- Page Models ---
 class Page(BaseModel):
+    """Modèle de page CMS (GrapesJS) avec contenu multilingue, HTML/CSS, publication."""
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     slug: str
@@ -170,6 +179,7 @@ class Page(BaseModel):
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class PageCreate(BaseModel):
+    """Payload de création de page CMS (slug, titres, contenu, publication)."""
     slug: str
     title: Dict[str, str]
     content_json: str = "{}"
@@ -178,6 +188,7 @@ class PageCreate(BaseModel):
     published: bool = False
 
 class PageUpdate(BaseModel):
+    """Payload de mise à jour partielle d'une page CMS."""
     title: Optional[Dict[str, str]] = None
     content_json: Optional[str] = None
     content_html: Optional[str] = None
@@ -186,6 +197,7 @@ class PageUpdate(BaseModel):
 
 # --- Pack Models ---
 class Pack(BaseModel):
+    """Modèle de pack de services IGV (nom, description, features, prix, slug, état)."""
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     name: Dict[str, str]
@@ -199,6 +211,7 @@ class Pack(BaseModel):
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class PackCreate(BaseModel):
+    """Payload de création de pack de services IGV."""
     name: Dict[str, str]
     description: Dict[str, str]
     features: Dict[str, List[str]]
@@ -210,6 +223,7 @@ class PackCreate(BaseModel):
 
 # --- Pricing Models ---
 class PricingRule(BaseModel):
+    """Modèle de règle de pricing géographique (zone, pays, prix, devise, état)."""
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     zone_name: str
@@ -689,7 +703,7 @@ async def create_checkout_session(checkout: CheckoutRequest):
                     "zone": zone,
                     "total_price": total_price,
                 },
-                success_url=f"{FRONTEND_URL}/packs?payment=success",
+                success_url=f"{FRONTEND_URL}/payment/success?provider=stripe&pack={checkout.packName}&amount={total_price}&currency={currency}&status=confirmed",
                 cancel_url=f"{FRONTEND_URL}/packs?payment=cancel",
             )
             
@@ -741,7 +755,7 @@ async def create_checkout_session(checkout: CheckoutRequest):
                     "installments": installments,
                     "monthly_amount": monthly_amount,
                 },
-                success_url=f"{FRONTEND_URL}/packs?payment=success",
+                success_url=f"{FRONTEND_URL}/payment/success?provider=stripe&pack={checkout.packName}&amount={monthly_amount}x{installments}&currency={currency}&status=confirmed",
                 cancel_url=f"{FRONTEND_URL}/packs?payment=cancel",
             )
             
@@ -977,7 +991,9 @@ async def detect_location():
 
 # Identifiants admin (depuis variables d'environnement)
 ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL', 'postmaster@israelgrowthventure.com')
-ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'Admin@igv')
+ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD')
+if not ADMIN_PASSWORD:
+    logger.warning("ADMIN_PASSWORD not set - admin authentication may not work")
 
 class LoginRequest(BaseModel):
     email: str

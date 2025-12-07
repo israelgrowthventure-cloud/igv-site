@@ -246,19 +246,21 @@ const PageEditorAdvanced = () => {
       // Charger le contenu si disponible
       if (pageContent && pageContent.content_html) {
         updateEditorContent(grapesEditor, pageContent);
-      } else if (pageNotFound && slug === 'home') {
-        // Injecter le HTML public de la home si la base est vide
-        fetch('/').then(res => res.text()).then(html => {
-          const match = html.match(/<body[^>]*>([\s\S]*?)<\/body>/);
-          if (match) {
-            grapesEditor.setComponents(match[1]);
-            toast.info('Contenu public de la home injecté dans l’éditeur');
-          } else {
-            grapesEditor.setComponents('<section><h1>Page Home vide</h1></section>');
-          }
-        });
       } else if (pageNotFound) {
-        grapesEditor.setComponents('<section><h1>Page non trouvée</h1></section>');
+        // Message pour page non trouvée
+        grapesEditor.setComponents(`
+          <section style="min-height: 400px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%); padding: 60px 20px;">
+            <div style="text-align: center; max-width: 600px;">
+              <div style="font-size: 72px; margin-bottom: 24px;">📄</div>
+              <h1 style="font-size: 32px; color: #2d3748; margin-bottom: 16px; font-weight: 800;">Page non trouvée</h1>
+              <p style="font-size: 18px; color: #718096; margin-bottom: 32px; line-height: 1.6;">Cette page n'existe pas encore dans la base de données. Commencez à créer du contenu avec les blocs de la barre latérale, puis cliquez sur "Enregistrer" pour la créer.</p>
+              <div style="padding: 16px 24px; background: white; border-left: 4px solid #0052CC; border-radius: 8px; text-align: left;">
+                <p style="margin: 0; color: #4a5568; font-size: 14px;"><strong>Slug:</strong> /${slug}</p>
+              </div>
+            </div>
+          </section>
+        `);
+        toast.info('Page non trouvée - Créez du contenu et enregistrez');
       } else {
         // Template par défaut pour nouvelle page
         grapesEditor.setComponents(`

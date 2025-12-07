@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { pagesAPI } from 'utils/api';
+import { pagesAPI } from '../../utils/api';
 import { toast } from 'sonner';
 import { 
   ArrowLeft, Save, Eye, EyeOff, Home, FileText, Mail, Package,

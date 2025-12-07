@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { pagesAPI } from 'utils/api';
+import { pagesAPI } from '../../utils/api';
 import { FileText, Edit, Trash2, Plus, ArrowLeft, Eye, EyeOff } from 'lucide-react';
 import { toast } from 'sonner';
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { translationsAPI } from 'utils/api';
+import { translationsAPI } from '../../utils/api';
 import { toast } from 'sonner';
 import { ArrowLeft, Plus, Save } from 'lucide-react';
 

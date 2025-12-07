@@ -14,25 +14,7 @@ const Packs = () => {
   const [packs, setPacks] = useState([]);
   const [packsPricing, setPacksPricing] = useState({});
   const [loading, setLoading] = useState(true);
-  const [cmsContent, setCmsContent] = useState(null);
-  const [loadingCMS, setLoadingCMS] = useState(true);
-
-  // Tenter de charger le contenu CMS
-  useEffect(() => {
-    const loadCMSContent = async () => {
-      try {
-        const response = await pagesAPI.getBySlug('packs');
-        if (response.data && response.data.published && response.data.content_html) {
-          setCmsContent(response.data);
-        }
-      } catch (error) {
-        console.log('CMS content not available for packs, using React fallback');
-      } finally {
-        setLoadingCMS(false);
-      }
-    };
-    loadCMSContent();
-  }, []);
+  // CMS overlay logic removed: always render React v2 Packs page
 
   // Fonction pour inverser les chiffres en hébreu (RTL)
   const formatPriceForLanguage = (priceString) => {
@@ -51,8 +33,14 @@ const Packs = () => {
 
   useEffect(() => {
     const fetchPacksAndPricing = async () => {
-      if (!zone || geoLoading) return;
-
+      const DEFAULT_ZONE = 'EU'; // Zone par défaut si géolocalisation échoue
+      
+      // Attendre que la géolocalisation soit terminée
+      if (geoLoading) return;
+      
+      // Utiliser la zone détectée ou la zone par défaut
+      const effectiveZone = zone || DEFAULT_ZONE;
+      
       try {
         // Récupérer les packs actifs du backend
         const packsResponse = await packsAPI.getAll(true);
@@ -72,49 +60,61 @@ const Packs = () => {
           return nameSlugMap[pack.name?.fr || ''] || pack.slug || pack.id;
         };
 
-        // Calculer les prix pour chaque pack selon la zone
-        const pricingData = {};
-        for (const pack of sortedPacks) {
+        // ✅ AMÉLIORATION: Paralléliser les appels pricing avec Promise.all
+        const pricingPromises = sortedPacks.map(async (pack) => {
           try {
-            // ✅ CORRECTION: Utiliser le slug au lieu de l'UUID
             const packSlug = getPackSlug(pack);
-            const priceResponse = await pricingAPI.calculatePrice(packSlug, zone);
-            pricingData[pack.id] = priceResponse.data;
+            const priceResponse = await pricingAPI.calculatePrice(packSlug, effectiveZone);
+            return { packId: pack.id, data: priceResponse.data };
           } catch (error) {
             console.error(`Error calculating price for pack ${pack.id}:`, error);
             // Fallback avec prix de base
-            pricingData[pack.id] = {
-              zone: zone,
-              display: {
-                total: `${pack.base_price.toLocaleString()} EUR`,
-                three_times: `3 x ${Math.round(pack.base_price / 3).toLocaleString()} EUR`,
-                twelve_times: `12 x ${Math.round(pack.base_price / 12).toLocaleString()} EUR`
+            return {
+              packId: pack.id,
+              data: {
+                zone: effectiveZone,
+                display: {
+                  total: `${pack.base_price.toLocaleString()} EUR`,
+                  three_times: `3 x ${Math.round(pack.base_price / 3).toLocaleString()} EUR`,
+                  twelve_times: `12 x ${Math.round(pack.base_price / 12).toLocaleString()} EUR`
+                }
               }
             };
           }
-        }
+        });
+
+        const pricingResults = await Promise.all(pricingPromises);
+        
+        // Construire l'objet pricingData à partir des résultats
+        const pricingData = {};
+        pricingResults.forEach(result => {
+          pricingData[result.packId] = result.data;
+        });
 
         setPacksPricing(pricingData);
-        setLoading(false);
       } catch (error) {
         console.error('Error fetching packs:', error);
         toast.error(t('errors.loading_packs') || 'Error loading packs');
+      } finally {
+        // ✅ GARANTIE: setLoading(false) toujours appelé
         setLoading(false);
       }
     };
 
-    fetchPacksAndPricing();
-  }, [zone, geoLoading, t]);
+    // ✅ SÉCURITÉ: Timeout de 10 secondes pour forcer la fin du loading
+    const timeoutId = setTimeout(() => {
+      if (loading) {
+        console.warn('Loading timeout reached (10s), forcing loading end');
+        setLoading(false);
+      }
+    }, 10000);
 
-  // Si le contenu CMS est disponible, l'afficher
-  if (!loadingCMS && cmsContent) {
-    return (
-      <div className="cms-packs-page">
-        <style dangerouslySetInnerHTML={{ __html: cmsContent.content_css }} />
-        <div dangerouslySetInnerHTML={{ __html: cmsContent.content_html }} />
-      </div>
-    );
-  }
+    fetchPacksAndPricing();
+    
+    return () => clearTimeout(timeoutId);
+  }, [zone, geoLoading, t, loading]);
+
+  // CMS overlay logic removed: always render React v2 Packs page
 
   // Mapping UUID des packs vers leurs slugs pour le checkout
   const getPackSlug = (pack) => {

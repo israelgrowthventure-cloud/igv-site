@@ -48,6 +48,7 @@ import DynamicPage from './pages/DynamicPage';
 import Checkout from './pages/Checkout';
 import Appointment from './pages/Appointment';
 import Terms from './pages/Terms';
+import PaymentSuccess from './pages/PaymentSuccess';
 
 // CMS Emergent Admin pages
 import LoginPage from './pages/admin/LoginPage';
@@ -92,6 +93,7 @@ function AppLayout() {
           
           {/* Technical routes */}
           <Route path="/checkout/:packId" element={<Checkout />} />
+          <Route path="/payment/success" element={<PaymentSuccess />} />
           <Route path="/appointment" element={<Appointment />} />
           
           {/* CMS Emergent Admin Routes */}
@@ -111,6 +113,9 @@ function AppLayout() {
 }
 
 function App() {
+  // Mount admin on #admin-root if present, else fallback to #root
+  const adminRoot = document.getElementById('admin-root');
+  const mountNode = adminRoot || document.getElementById('root');
   return (
     <HelmetProvider>
       <LanguageProvider>

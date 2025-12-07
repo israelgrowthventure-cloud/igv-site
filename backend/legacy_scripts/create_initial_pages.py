@@ -1,21 +1,10 @@
 """
-Script de création des pages initiales du CMS
-==============================================
-
-Crée 4 pages de base:
-1. Home (Accueil)
-2. Packs (Services)
-3. About Us (À propos)
-4. Contact
-
-Chaque page a:
-- Slug unique
-- Titre multilingue (FR/EN/HE)
-- Contenu HTML de base
-- Status publié
-
-IMPORTANT: Ce script s'exécute directement sur la base MongoDB de production
+import shutil
+import os
 """
+# Move the legacy script to the legacy directory
+shutil.move('c:\\Users\\PC\\Desktop\\IGV\\igv site\\igv-website-complete\\backend\\create_initial_pages.py', 
+            'c:\\Users\\PC\\Desktop\\IGV\\igv site\\igv-website-complete\\backend\\legacy\\create_initial_pages.py')
 
 import os
 import sys

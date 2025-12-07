@@ -19,7 +19,7 @@ DB_NAME = os.environ.get('DB_NAME', 'igv_cms_db')
 # Ici on met à jour les autres pages avec un contenu minimal mais visible
 
 PAGES_CONTENT = {
-    "about": {
+    "about-us": {
         "content_html": """
 <section style="background: linear-gradient(135deg, #0052CC 0%, #003D99 100%); padding: 100px 20px; text-align: center; color: white;">
   <div style="max-width: 1000px; margin: 0 auto;">

@@ -14,7 +14,8 @@ const LoginPage = () => {
     setLoading(true);
 
     try {
-      const response = await authAPI.login(credentials);
+      // Appel API avec email et password séparés (signature correcte)
+      const response = await authAPI.login(credentials.email, credentials.password);
       localStorage.setItem('igv_token', response.data.access_token);
       localStorage.setItem('igv_user', JSON.stringify(response.data.user));
       toast.success('Login successful!');
@@ -48,7 +49,7 @@ const LoginPage = () => {
               required
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0052CC] focus:border-transparent"
               data-testid="login-email-input"
-              placeholder="admin@igv.co.il"
+              placeholder="postmaster@israelgrowthventure.com"
             />
           </div>
 
@@ -83,8 +84,8 @@ const LoginPage = () => {
         </form>
 
         <div className="mt-6 text-center text-sm text-gray-600">
-          <p>Default credentials for demo:</p>
-          <p className="font-mono text-xs mt-2">admin@igv.co.il / admin123</p>
+          <p>Production credentials:</p>
+          <p className="font-mono text-xs mt-2">postmaster@israelgrowthventure.com</p>
         </div>
       </div>
     </div>

@@ -868,6 +868,83 @@ async def create_etude_implantation_360_lead(payload: EtudeImplantation360LeadCr
             detail="Failed to create lead. Please try again or contact support."
         )
 
+@app.get("/api/leads/etude-implantation-360")
+async def list_etude_implantation_360_leads(
+    page: int = 1,
+    page_size: int = 20,
+    current_user: User = Depends(get_current_user)
+):
+    """
+    List all leads for Étude d'Implantation 360° (admin only).
+    
+    Returns paginated list of leads sorted by creation date (most recent first).
+    
+    Args:
+        page: Page number (1-indexed)
+        page_size: Number of items per page (max 100)
+        current_user: Authenticated admin user
+        
+    Returns:
+        dict: {
+            "items": List[Lead],
+            "total": int,
+            "page": int,
+            "page_size": int,
+            "total_pages": int
+        }
+    """
+    try:
+        # Validate pagination params
+        page = max(1, page)
+        page_size = min(page_size, 100)
+        skip = (page - 1) * page_size
+        
+        # Count total leads
+        total = await db.etude_implantation_360_leads.count_documents({})
+        
+        # Fetch leads sorted by created_at descending
+        leads_cursor = db.etude_implantation_360_leads.find(
+            {},
+            {"_id": 1, "full_name": 1, "work_email": 1, "role": 1, "brand_group": 1,
+             "implantation_horizon": 1, "created_at": 1, "status": 1, "source": 1}
+        ).sort("created_at", -1).skip(skip).limit(page_size)
+        
+        leads = await leads_cursor.to_list(length=page_size)
+        
+        # Format leads (convert _id to id, format dates)
+        formatted_leads = []
+        for lead in leads:
+            formatted_lead = {
+                "id": lead.get("_id"),
+                "full_name": lead.get("full_name"),
+                "work_email": lead.get("work_email"),
+                "role": lead.get("role"),
+                "brand_group": lead.get("brand_group"),
+                "implantation_horizon": lead.get("implantation_horizon"),
+                "status": lead.get("status", "new"),
+                "source": lead.get("source", "website"),
+                "created_at": lead.get("created_at").isoformat() if isinstance(lead.get("created_at"), datetime) else lead.get("created_at")
+            }
+            formatted_leads.append(formatted_lead)
+        
+        # Calculate total pages
+        total_pages = (total + page_size - 1) // page_size
+        
+        return {
+            "items": formatted_leads,
+            "total": total,
+            "page": page,
+            "page_size": page_size,
+            "total_pages": total_pages
+        }
+        
+    except Exception as e:
+        logger.error(f"Error listing Étude 360° leads: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=500,
+            detail="Failed to retrieve leads"
+        )
+
 # ==================== API Router for Other Routes ====================
 
 api_router = APIRouter(prefix="/api")

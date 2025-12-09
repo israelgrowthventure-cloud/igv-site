@@ -59,6 +59,7 @@ import PacksAdmin from './pages/admin/PacksAdmin';
 import PricingAdmin from './pages/admin/PricingAdmin';
 import TranslationsAdmin from './pages/admin/TranslationsAdmin';
 import AdminAccount from './pages/admin/AdminAccount';
+import EtudeImplantation360Leads from './pages/admin/EtudeImplantation360Leads';
 
 // Loading component
 const Loading = () => (
@@ -112,6 +113,7 @@ function AppLayout() {
           <Route path="/admin/packs" element={<PacksAdmin />} />
           <Route path="/admin/pricing" element={<PricingAdmin />} />
           <Route path="/admin/translations" element={<TranslationsAdmin />} />
+          <Route path="/admin/leads/etude-implantation-360" element={<EtudeImplantation360Leads />} />
         </Routes>
       </main>
       {!isAdminPage && <Footer />}

@@ -60,10 +60,10 @@ const AdminDashboard = () => {
   };
 
   const menuItems = [
-    { icon: <FileText size={24} />, title: 'Pages', description: 'Manage website pages', link: '/admin/pages', count: stats.pages },
-    { icon: <Package size={24} />, title: 'Packs', description: 'Manage packs and offers', link: '/admin/packs', count: stats.packs },
-    { icon: <DollarSign size={24} />, title: 'Pricing', description: 'Manage pricing rules', link: '/admin/pricing' },
-    { icon: <Settings size={24} />, title: 'Translations', description: 'Manage translations', link: '/admin/translations' },
+    { icon: <FileText size={24} />, title: 'Pages', description: 'Gérer les pages du site', link: '/admin/pages', count: stats.pages },
+    { icon: <Package size={24} />, title: 'Packs', description: 'Gérer les packs et offres', link: '/admin/packs', count: stats.packs },
+    { icon: <DollarSign size={24} />, title: 'Pricing', description: 'Gérer les règles de prix', link: '/admin/pricing' },
+    { icon: <Settings size={24} />, title: 'Translations', description: 'Gérer les traductions', link: '/admin/translations' },
   ];
 
   if (loading) {
@@ -131,7 +131,7 @@ const AdminDashboard = () => {
         {/* Quick Actions */}
         <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
           <h3 className="text-2xl font-bold text-gray-900 mb-6">Actions Rapides</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <Link
               to="/admin/pages/new"
               className="px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl font-semibold hover:from-blue-700 hover:to-blue-800 transition-all duration-300 text-center shadow-lg hover:shadow-xl transform hover:scale-105"
@@ -145,6 +145,13 @@ const AdminDashboard = () => {
               data-testid="quick-action-create-pack"
             >
               Gérer les Packs
+            </Link>
+            <Link
+              to="/admin/leads/etude-implantation-360"
+              className="px-8 py-4 bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-xl font-semibold hover:from-purple-700 hover:to-purple-800 transition-all duration-300 text-center shadow-lg hover:shadow-xl transform hover:scale-105"
+              data-testid="quick-action-leads"
+            >
+              Leads Étude 360°
             </Link>
             <a
               href="https://israelgrowthventure.com"

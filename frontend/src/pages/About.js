@@ -26,8 +26,20 @@ const About = () => {
     loadCMSContent();
   }, []);
 
+  // Pendant le chargement CMS : afficher un loader minimal
+  if (loadingCMS) {
+    return (
+      <div className="min-h-screen pt-20 flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
+          <p className="text-gray-600">Chargement...</p>
+        </div>
+      </div>
+    );
+  }
+
   // Si le contenu CMS est disponible, l'afficher
-  if (!loadingCMS && cmsContent) {
+  if (cmsContent) {
     return (
       <div className="cms-about-page">
         <style dangerouslySetInnerHTML={{ __html: cmsContent.content_css }} />
@@ -36,7 +48,7 @@ const About = () => {
     );
   }
 
-  // Fallback: contenu React codé en dur
+  // Fallback: contenu React codé en dur (seulement si CMS échoue)
 
   const values = [
     {

@@ -183,20 +183,70 @@ def run_tests():
     print(f"SECTION 5: Page Merci Étude 360° (enrichie)")
     print(f"{'='*60}")
     
+    # Test 5.1: Vérifier que l'API CMS contient le contenu enrichi
+    timestamp = datetime.now().strftime("%H:%M:%S")
+    print(f"\n[{timestamp}] 5.1 - API CMS Page Merci (contenu enrichi)")
+    print(f"  URL: {BACKEND_URL}/api/pages/etude-implantation-merci")
+    print(f"  Méthode: GET")
+    try:
+        response = requests.get(f"{BACKEND_URL}/api/pages/etude-implantation-merci", timeout=15)
+        print(f"  Status: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            content_html = data.get('content_html', '')
+            
+            # Vérifier présence des éléments clés
+            has_demande = "Demande bien reçue" in content_html
+            has_24h = "24 heures" in content_html
+            has_steps = "Prochaines étapes" in content_html or "prochaine" in content_html.lower()
+            
+            print(f"  Contient 'Demande bien reçue': {has_demande}")
+            print(f"  Contient '24 heures': {has_24h}")
+            print(f"  Contient étapes: {has_steps}")
+            
+            success = has_demande and has_24h
+            if success:
+                print(f"  Résultat: ✅ PASS")
+            else:
+                print(f"  Résultat: ❌ FAIL - Contenu enrichi incomplet")
+            
+            results.append({
+                "name": "5.1 - API CMS Page Merci (contenu enrichi)",
+                "success": success,
+                "status_code": response.status_code,
+                "expected_status": 200
+            })
+        else:
+            print(f"  Résultat: ❌ FAIL - Status {response.status_code}")
+            results.append({
+                "name": "5.1 - API CMS Page Merci (contenu enrichi)",
+                "success": False,
+                "status_code": response.status_code,
+                "expected_status": 200
+            })
+    except Exception as e:
+        print(f"  Résultat: ❌ ERREUR - {e}")
+        results.append({
+            "name": "5.1 - API CMS Page Merci (contenu enrichi)",
+            "success": False,
+            "status_code": None,
+            "expected_status": 200
+        })
+    
+    # Test 5.2: Vérifier que les routes frontend sont accessibles
     test_step(
-        name="5.1 - Page Merci accessible",
+        name="5.2 - Route Frontend /etude-implantation-360/merci",
         url=f"{FRONTEND_URL}/etude-implantation-360/merci",
         method="GET",
-        expected_status=200,
-        check_content="Demande bien reçue"
+        expected_status=200
     )
     
     test_step(
-        name="5.2 - Page Merci (route alternative)",
+        name="5.3 - Route Frontend /etude-implantation-merci",
         url=f"{FRONTEND_URL}/etude-implantation-merci",
         method="GET",
-        expected_status=200,
-        check_content="24 heures"
+        expected_status=200
     )
     
     # ========== SECTION 6: Non-régression ==========

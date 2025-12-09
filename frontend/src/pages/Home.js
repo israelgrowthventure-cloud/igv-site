@@ -40,7 +40,7 @@ const Home = () => {
     );
   }
 
-  // Si le contenu CMS est disponible, l'afficher
+  // Si le contenu CMS est disponible, l'afficher (VERSION MODERNE PRIORITAIRE)
   if (cmsContent) {
     return (
       <div className="cms-home-page">
@@ -50,138 +50,34 @@ const Home = () => {
     );
   }
 
-  // Fallback: contenu React codé en dur (seulement si CMS échoue)
-  const steps = [
-    {
-      number: '1',
-      title: t('steps.step1.title'),
-      description: t('steps.step1.description'),
-      icon: Users,
-    },
-    {
-      number: '2',
-      title: t('steps.step2.title'),
-      description: t('steps.step2.description'),
-      icon: TrendingUp,
-    },
-    {
-      number: '3',
-      title: t('steps.step3.title'),
-      description: t('steps.step3.description'),
-      icon: Building,
-    }
-  ];
-
+  // Si CMS échoue : afficher message d'erreur propre (pas de fallback layout complet)
   return (
-    <div className="min-h-screen bg-white">
-      {/* Hero Section */}
-      <section className="relative pt-32 pb-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-            {/* Left side - Text */}
-            <div>
-              <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
-                {t('hero.title')}
-              </h1>
-              <p className="text-xl text-gray-600 mb-8">
-                {t('hero.subtitle')}
-              </p>
-              <p className="text-lg text-gray-700 mb-8">
-                {t('hero.description')}
-              </p>
-              
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Link
-                  to="/appointment"
-                  className="inline-flex items-center justify-center px-8 py-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold"
-                >
-                  {t('hero.cta')} <ArrowRight className="ml-2" size={20} />
-                </Link>
-                <Link
-                  to="/about"
-                  className="inline-flex items-center justify-center px-8 py-4 border-2 border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 font-semibold"
-                >
-                  {t('hero.secondary')}
-                </Link>
-              </div>
-
-              {!isLoading && country_name && (
-                <p className="text-sm text-gray-500 mt-6">
-                  📍 {t('pricing.region')} : {country_name}
-                </p>
-              )}
-            </div>
-
-            {/* Right side - Image */}
-            <div className="relative">
-              <div className="bg-gradient-to-br from-blue-400 to-blue-600 rounded-lg shadow-2xl overflow-hidden h-96">
-                <img 
-                  src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=600&h=400&fit=crop"
-                  alt="Team collaboration"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Steps Section */}
-      <section className="py-20 px-4 bg-gray-50">
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-4xl font-bold text-gray-900 mb-12 text-center">
-            {t('steps.title')}
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {steps.map((step, index) => {
-              const IconComponent = step.icon;
-              return (
-                <div key={index} className="bg-white p-8 rounded-lg shadow hover:shadow-lg">
-                  <div className="flex items-center justify-center w-12 h-12 bg-blue-600 text-white rounded-full mb-4 font-bold">
-                    {step.number}
-                  </div>
-                  <IconComponent className="text-blue-600 mb-4" size={32} />
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">{step.title}</h3>
-                  <p className="text-gray-600">{step.description}</p>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* Étude d'Implantation 360° - Featured CTA */}
-      <section className="py-20 px-4 bg-gradient-to-br from-blue-600 to-blue-800">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl font-bold text-white mb-4">
-            Étude d'Implantation IGV – Israël 360°
-          </h2>
-          <p className="text-xl text-blue-100 mb-8">
-            Une analyse complète et personnalisée pour réussir votre implantation en Israël
-          </p>
-          <Link
-            to="/etude-implantation-360"
-            className="inline-flex items-center justify-center px-10 py-5 bg-white text-blue-600 rounded-lg hover:bg-gray-100 font-bold text-lg shadow-xl hover:shadow-2xl transition-all"
+    <div className="min-h-screen bg-white flex items-center justify-center px-4">
+      <div className="text-center max-w-2xl">
+        <h1 className="text-4xl font-bold text-gray-900 mb-4">
+          Israel Growth Venture
+        </h1>
+        <p className="text-xl text-gray-600 mb-8">
+          Le contenu de cette page est temporairement indisponible.
+        </p>
+        <p className="text-gray-500 mb-8">
+          Veuillez actualiser la page ou réessayer dans quelques instants.
+        </p>
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <button
+            onClick={() => window.location.reload()}
+            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold"
           >
-            Découvrir l'Étude 360° <ArrowRight className="ml-2" size={24} />
-          </Link>
-        </div>
-      </section>
-
-      {/* Packs CTA */}
-      <section className="py-20 px-4 bg-white">
-        <div className="max-w-7xl mx-auto text-center">
-          <h2 className="text-4xl font-bold text-gray-900 mb-8">
-            {t('packs.title')}
-          </h2>
+            Actualiser la page
+          </button>
           <Link
             to="/packs"
-            className="inline-block px-8 py-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold"
+            className="px-6 py-3 border-2 border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 font-semibold"
           >
-            {t('packs.viewAll')} →
+            Voir nos packs
           </Link>
         </div>
-      </section>
+      </div>
     </div>
   );
 };

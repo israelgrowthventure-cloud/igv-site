@@ -1668,6 +1668,76 @@ async def save_content(content: dict, request: Request):
         logger.error(f"Error saving content: {e}")
         raise HTTPException(status_code=500, detail=f"Error saving content: {str(e)}")
 
+# ==================== Monetico Payment Provider ====================
+from app.payments import MoneticoPaymentProvider
+from decimal import Decimal as Dec
+
+class MoneticoPaymentRequest(BaseModel):
+    """Requête initialisation paiement Monetico"""
+    pack: str = Field(..., description="Slug du pack (analyse, succursales, franchise)")
+    amount: float = Field(..., gt=0, description="Montant en EUR")
+    currency: str = Field(default="EUR", description="Devise")
+    customer_email: EmailStr = Field(..., description="Email client")
+    customer_name: str = Field(..., description="Nom client")
+    order_reference: str = Field(..., description="Référence commande unique")
+
+@app.post("/api/payments/monetico/init")
+async def initialize_monetico_payment(request: MoneticoPaymentRequest):
+    """
+    Initialiser un paiement Monetico (CB)
+    
+    Retourne les données du formulaire à POSTer vers Monetico :
+    - form_action : URL Monetico
+    - form_method : "POST"
+    - form_fields : dict des champs du formulaire
+    
+    Si Monetico non configuré (variables d'environnement manquantes) :
+    - Retourne 503 avec message clair
+    """
+    logger.info(f"Monetico payment init: pack={request.pack}, amount={request.amount}, email={request.customer_email}")
+    
+    try:
+        provider = MoneticoPaymentProvider()
+        
+        # Vérifier configuration
+        if not provider.is_configured():
+            logger.warning("Monetico non configuré - variables d'environnement manquantes")
+            raise HTTPException(
+                status_code=503,
+                detail={
+                    "error": "payment_provider_not_configured",
+                    "message": "Le paiement par carte bancaire sera bientôt disponible. Merci d'utiliser le virement bancaire.",
+                    "provider": "monetico"
+                }
+            )
+        
+        # Initialiser paiement
+        payment_data = provider.initialize_payment(
+            amount=Dec(str(request.amount)),
+            currency=request.currency,
+            pack_slug=request.pack,
+            customer_email=request.customer_email,
+            customer_name=request.customer_name,
+            order_reference=request.order_reference
+        )
+        
+        logger.info(f"Monetico payment initialized: ref={request.order_reference}")
+        
+        return {
+            "success": True,
+            "provider": "monetico",
+            "form_action": payment_data['form_action'],
+            "form_method": payment_data['form_method'],
+            "form_fields": payment_data['form_fields']
+        }
+        
+    except ValueError as e:
+        logger.error(f"Monetico init error: {e}")
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        logger.error(f"Monetico unexpected error: {e}")
+        raise HTTPException(status_code=500, detail="Erreur lors de l'initialisation du paiement")
+
 # ==================== Include API Router ====================
 # Les routes du api_router seront préfixées par /api
 # Donc @api_router.post("/contact") devient POST /api/contact

@@ -17,7 +17,7 @@ const DynamicPage = () => {
     const path = location.pathname;
     // Handle direct routes like /etude-implantation-360 or /etude-implantation-360/merci
     if (path === '/etude-implantation-360') return 'etude-implantation-360';
-    if (path === '/etude-implantation-360/merci') return 'etude-implantation-merci';
+    if (path === '/etude-implantation-360/merci' || path === '/etude-implantation-merci') return 'etude-implantation-merci';
     
     // Fallback: extract slug from path (remove leading slash)
     return path.replace(/^\//, '').replace(/\//g, '-');

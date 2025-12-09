@@ -13,12 +13,12 @@ const About = () => {
   useEffect(() => {
     const loadCMSContent = async () => {
       try {
-        const response = await pagesAPI.getBySlug('about-us');
+        const response = await pagesAPI.getBySlug('qui-sommes-nous');
         if (response.data && response.data.published && response.data.content_html) {
           setCmsContent(response.data);
         }
       } catch (error) {
-        console.log('CMS content not available for about-us, using React fallback');
+        console.log('CMS content not available for qui-sommes-nous, using React fallback');
       } finally {
         setLoadingCMS(false);
       }

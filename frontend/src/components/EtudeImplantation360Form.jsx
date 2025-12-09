@@ -94,16 +94,26 @@ const EtudeImplantation360Form = () => {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.detail || 'Erreur lors de l\'envoi du formulaire');
+        // Message d'erreur détaillé en français
+        const errorMsg = 'Une erreur est survenue lors de l\'envoi du formulaire. Merci de réessayer dans quelques minutes ou de nous écrire à contact@israelgrowthventure.com';
+        throw new Error(errorMsg);
       }
 
-      // Success - redirect to thank you page
-      toast.success('Votre demande a été envoyée avec succès !');
-      navigate('/etude-implantation-merci');
+      const result = await response.json();
+      
+      // Success - redirect to thank you page uniquement si succès
+      if (response.status === 201) {
+        toast.success('Votre demande a été envoyée avec succès !');
+        // Navigation vers la page merci
+        navigate('/etude-implantation-360/merci');
+      } else {
+        throw new Error('Réponse inattendue du serveur');
+      }
       
     } catch (error) {
       console.error('Form submission error:', error);
-      setErrorMessage(error.message || 'Une erreur est survenue. Veuillez réessayer.');
+      const displayError = error.message || 'Une erreur est survenue lors de l\'envoi du formulaire. Merci de réessayer dans quelques minutes ou de nous écrire à contact@israelgrowthventure.com';
+      setErrorMessage(displayError);
       toast.error('Erreur lors de l\'envoi');
     } finally {
       setIsSubmitting(false);
@@ -121,6 +131,13 @@ const EtudeImplantation360Form = () => {
             Remplissez ce formulaire pour lancer un échange exploratoire avec notre équipe
           </p>
         </div>
+
+        {/* Message d'erreur global */}
+        {errorMessage && (
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+            <p className="text-sm text-red-800">{errorMessage}</p>
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-6" noValidate>
           {/* Nom */}

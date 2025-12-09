@@ -8,9 +8,35 @@ import { pagesAPI } from '../utils/api';
 const Home = () => {
   const { t, i18n } = useTranslation();
   const { country_name, isLoading } = useGeo();
-  // CMS overlay logic removed: always render React v2 Home page
+  const [cmsContent, setCmsContent] = useState(null);
+  const [loadingCMS, setLoadingCMS] = useState(true);
 
-  // CMS overlay logic removed: always render React v2 Home page
+  // Charger le contenu CMS
+  useEffect(() => {
+    const loadCMSContent = async () => {
+      try {
+        const response = await pagesAPI.getBySlug('home');
+        if (response.data && response.data.published && response.data.content_html) {
+          setCmsContent(response.data);
+        }
+      } catch (error) {
+        console.log('CMS content not available for home, using React fallback');
+      } finally {
+        setLoadingCMS(false);
+      }
+    };
+    loadCMSContent();
+  }, []);
+
+  // Si le contenu CMS est disponible, l'afficher
+  if (!loadingCMS && cmsContent) {
+    return (
+      <div className="cms-home-page">
+        <style dangerouslySetInnerHTML={{ __html: cmsContent.content_css }} />
+        <div dangerouslySetInnerHTML={{ __html: cmsContent.content_html }} />
+      </div>
+    );
+  }
 
   // Fallback: contenu React codé en dur
   const steps = [

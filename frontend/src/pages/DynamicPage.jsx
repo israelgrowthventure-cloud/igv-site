@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
 import { pagesAPI } from '../utils/api';
 import { toast } from 'sonner';
+import EtudeImplantation360Form from '../components/EtudeImplantation360Form';
 
 const DynamicPage = () => {
   const { slug: paramSlug } = useParams();
@@ -58,11 +59,21 @@ const DynamicPage = () => {
     );
   }
 
+  // Check if this is the Étude 360° page to show the form
+  const isEtude360Page = slug === 'etude-implantation-360';
+
   return (
     <div className="dynamic-page">
       <div className="py-20" data-testid="dynamic-page">
         <style dangerouslySetInnerHTML={{ __html: page.content_css }} />
         <div dangerouslySetInnerHTML={{ __html: page.content_html }} />
+        
+        {/* Formulaire de qualification pour Étude 360° */}
+        {isEtude360Page && (
+          <div className="container mx-auto px-4">
+            <EtudeImplantation360Form />
+          </div>
+        )}
       </div>
     </div>
   );

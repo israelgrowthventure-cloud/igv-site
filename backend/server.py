@@ -75,6 +75,12 @@ from pricing_config import (
 # Import des routes CMS
 from cms_routes import cms_router
 
+# Import des schemas Étude 360°
+from schemas.etude_implantation_360 import EtudeImplantation360LeadCreate, EtudeImplantation360LeadOut
+
+# Import du service email
+from services.email_notifications import email_service
+
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
@@ -801,6 +807,66 @@ async def stripe_webhook(request: Request):
         logger.info(f"Checkout completed: {session}")
         # TODO: mark order as paid in DB using session.metadata or session.id
     return {"status": "received"}
+
+# ==================== Étude d'Implantation 360° Lead Capture ====================
+
+@app.post("/api/leads/etude-implantation-360", response_model=EtudeImplantation360LeadOut, status_code=201)
+async def create_etude_implantation_360_lead(payload: EtudeImplantation360LeadCreate):
+    """
+    Create a new lead for Étude d'Implantation 360° offering.
+    
+    This endpoint:
+    1. Validates lead data (full_name, work_email, implantation_horizon, etc.)
+    2. Stores lead in MongoDB collection 'etude_implantation_360_leads'
+    3. Sends email notification to IGV team
+    4. Returns created lead with ID and timestamp
+    
+    Args:
+        payload: Lead data from form submission
+        
+    Returns:
+        EtudeImplantation360LeadOut: Created lead with id, email, name, created_at, status
+        
+    Raises:
+        HTTPException 500: If database insertion or email fails
+    """
+    try:
+        # Create lead document with timestamp and status
+        lead_doc = {
+            **payload.model_dump(),
+            "_id": str(uuid.uuid4()),
+            "created_at": datetime.now(timezone.utc),
+            "status": "new",  # Status lifecycle: new → contacted → qualified → converted
+            "updated_at": datetime.now(timezone.utc)
+        }
+        
+        # Insert into MongoDB
+        await db.etude_implantation_360_leads.insert_one(lead_doc)
+        logger.info(f"Lead created: {lead_doc['_id']} - {lead_doc['work_email']}")
+        
+        # Send email notification to IGV team (non-blocking - failure doesn't break API)
+        try:
+            await email_service.send_etude_implantation_360_notification(lead_doc)
+            logger.info(f"Email notification sent for lead {lead_doc['_id']}")
+        except Exception as email_error:
+            logger.error(f"Failed to send email notification for lead {lead_doc['_id']}: {email_error}")
+            # Continue - email failure shouldn't prevent lead creation
+        
+        # Return formatted response
+        return EtudeImplantation360LeadOut(
+            id=lead_doc["_id"],
+            work_email=lead_doc["work_email"],
+            full_name=lead_doc["full_name"],
+            created_at=lead_doc["created_at"],
+            status=lead_doc["status"]
+        )
+        
+    except Exception as e:
+        logger.error(f"Error creating Étude 360° lead: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=500,
+            detail="Failed to create lead. Please try again or contact support."
+        )
 
 # ==================== API Router for Other Routes ====================
 

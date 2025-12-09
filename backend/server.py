@@ -44,6 +44,7 @@ from pathlib import Path
 from pydantic import BaseModel, Field, ConfigDict, EmailStr
 from typing import List, Optional, Dict
 from datetime import datetime, timezone, timedelta
+from decimal import Decimal
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import os
@@ -1670,7 +1671,6 @@ async def save_content(content: dict, request: Request):
 
 # ==================== Monetico Payment Provider ====================
 from app.payments import MoneticoPaymentProvider
-from decimal import Decimal as Dec
 
 class MoneticoPaymentRequest(BaseModel):
     """Requête initialisation paiement Monetico"""
@@ -1712,10 +1712,10 @@ async def initialize_monetico_payment(request: MoneticoPaymentRequest):
             )
         
         # Initialiser paiement
+        # Initialiser paiement
         payment_data = provider.initialize_payment(
-            amount=Dec(str(request.amount)),
+            amount=Decimal(str(request.amount)),
             currency=request.currency,
-            pack_slug=request.pack,
             customer_email=request.customer_email,
             customer_name=request.customer_name,
             order_reference=request.order_reference

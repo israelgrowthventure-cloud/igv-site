@@ -19,8 +19,10 @@ FRONTEND_URL = "https://israelgrowthventure.com"
 BACKEND_URL = "https://igv-cms-backend.onrender.com"
 
 # Credentials admin pour tests CMS
+# Note: Ces credentials peuvent être différents en production
+# Le test CMS est optionnel pour la validation Phase 6
 ADMIN_EMAIL = "admin@israelgrowthventure.com"
-ADMIN_PASSWORD = "Admin123!IGV2024"
+ADMIN_PASSWORD = "Admin123!IGV2024"  # Peut nécessiter mise à jour
 
 def test_page(url, name):
     """Test une page frontend"""

@@ -1670,7 +1670,7 @@ async def save_content(content: dict, request: Request):
         raise HTTPException(status_code=500, detail=f"Error saving content: {str(e)}")
 
 # ==================== Monetico Payment Provider ====================
-from app.payments import MoneticoPaymentProvider
+# Import déplacé dans la fonction pour éviter échec au démarrage
 
 class MoneticoPaymentRequest(BaseModel):
     """Requête initialisation paiement Monetico"""
@@ -1697,6 +1697,16 @@ async def initialize_monetico_payment(request: MoneticoPaymentRequest):
     logger.info(f"Monetico payment init: pack={request.pack}, amount={request.amount}, email={request.customer_email}")
     
     try:
+        # Import dynamique pour éviter échec au démarrage si module indisponible
+        try:
+            from app.payments import MoneticoPaymentProvider
+        except ImportError:
+            # Fallback: essayer import direct depuis payments
+            import sys
+            import os
+            sys.path.insert(0, os.path.dirname(__file__))
+            from payments.providers.monetico import MoneticoPaymentProvider
+        
         provider = MoneticoPaymentProvider()
         
         # Vérifier configuration

@@ -1,3 +1,14 @@
+// ============================================================
+// ATTENTION - Layout final IGV validé (Phase 6 - Design V2)
+// ============================================================
+// Page Contact avec formulaire fonctionnel + informations contact.
+// Contenu prioritairement depuis CMS (slug: 'contact').
+// Fallback React avec formulaire, email, adresse, carte.
+// 
+// NE PAS MODIFIER la structure sans demande explicite du client.
+// Modifications futures : via contenu CMS uniquement.
+// ============================================================
+
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Mail, MapPin, Send } from 'lucide-react';

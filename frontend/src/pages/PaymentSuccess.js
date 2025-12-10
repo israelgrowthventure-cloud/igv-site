@@ -49,9 +49,10 @@ const PaymentSuccess = () => {
 
   const getProviderDisplayName = (provider) => {
     const providerNames = {
-      'stripe': 'Stripe',
-      'monetico': 'Monetico (CIC)',
-      'cb': 'Carte Bancaire'
+      'stripe': 'Carte bancaire (Stripe - Legacy)',
+      'monetico': 'Carte bancaire (Monetico CIC)',
+      'cb': 'Carte Bancaire',
+      'virement': 'Virement bancaire'
     };
     return providerNames[provider.toLowerCase()] || 'Carte Bancaire';
   };

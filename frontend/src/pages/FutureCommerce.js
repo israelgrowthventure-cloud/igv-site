@@ -1,3 +1,13 @@
+// ============================================================
+// ATTENTION - Layout final IGV validé (Phase 6 - Design V2)
+// ============================================================
+// Page Le Commerce de Demain - Vision et approche IGV.
+// Hero dark moderne, sections réalités, services, Israël, pourquoi series.
+// 
+// NE PAS MODIFIER la structure sans demande explicite du client.
+// Modifications futures : via contenu CMS uniquement si migration CMS.
+// ============================================================
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';

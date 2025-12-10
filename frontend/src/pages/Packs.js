@@ -1,3 +1,14 @@
+// ============================================================
+// ATTENTION - Layout final IGV validé (Phase 6 - Design V2)
+// ============================================================
+// Page Packs avec pricing dynamique géolocalisé + paiements Monetico.
+// 3 packs: Analyse (CB Monetico), Succursales/Franchise (virements).
+// Stripe retiré de l'interface (code backend conservé en legacy).
+// 
+// NE PAS MODIFIER la structure sans demande explicite du client.
+// Modifications futures : via backend packs/pricing uniquement.
+// ============================================================
+
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -127,9 +138,85 @@ const Packs = () => {
     return nameSlugMap[frenchName] || pack.slug || pack.id;
   };
 
-  const handleOrderPack = (pack) => {
+  // ============================================================
+  // GESTION PAIEMENTS - Phase 6 (Monetico + Virements)
+  // ============================================================
+  // Pack Analyse: CB via Monetico prioritaire + virement optionnel
+  // Packs Succursales/Franchise: Virement uniquement (montants élevés)
+  // Stripe retiré de l'interface utilisateur (code backend conservé en legacy)
+  // ============================================================
+  
+  const handleOrderPack = async (pack) => {
     const slug = getPackSlug(pack);
-    navigate(`/checkout/${slug}`);
+    const packPricing = packsPricing[pack.id];
+
+    // Pack Analyse = paiement CB Monetico
+    if (slug === 'analyse') {
+      await handleMoneticoPayment(pack, packPricing);
+    } 
+    // Autres packs = virement bancaire uniquement
+    else {
+      showWireTransferInfo(pack, packPricing);
+    }
+  };
+
+  const handleMoneticoPayment = async (pack, pricing) => {
+    try {
+      const { initMoneticoPayment, submitMoneticoForm } = await import('../api/paymentsApi');
+      
+      const slug = getPackSlug(pack);
+      const amount = pricing?.price || pack.base_price || 0;
+      
+      // Générer référence commande unique
+      const orderRef = `IGV-${slug.toUpperCase()}-${Date.now()}`;
+
+      toast.info('Initialisation du paiement...');
+
+      const formData = await initMoneticoPayment({
+        pack: slug,
+        amount: amount,
+        currency: pricing?.currency || 'EUR',
+        customer_email: 'client@example.com', // TODO: Récupérer email utilisateur connecté
+        customer_name: 'Client IGV', // TODO: Récupérer nom utilisateur
+        order_reference: orderRef
+      });
+
+      // Soumettre le formulaire Monetico
+      submitMoneticoForm(formData);
+
+    } catch (error) {
+      console.error('Monetico payment error:', error);
+      
+      // Si Monetico non disponible, proposer virement
+      toast.error(error.message || 'Paiement CB indisponible');
+      
+      // Afficher alternative virement après 2s
+      setTimeout(() => {
+        toast.info('Vous pouvez effectuer un virement bancaire');
+        showWireTransferInfo(pack, pricing);
+      }, 2000);
+    }
+  };
+
+  const showWireTransferInfo = (pack, pricing) => {
+    const slug = getPackSlug(pack);
+    const amount = pricing?.display?.total || `${pack.base_price} EUR`;
+    const orderRef = `IGV-${slug.toUpperCase()}-${Date.now()}`;
+
+    // TODO Phase 7: Créer modal dédiée virements avec RIB
+    toast.info(
+      `Paiement par virement bancaire\n\n` +
+      `Pack: ${pack.name.fr}\n` +
+      `Montant: ${amount}\n` +
+      `Référence: ${orderRef}\n\n` +
+      `Merci de nous contacter pour recevoir les coordonnées bancaires (CIC France ou Mizrahi Israël)`,
+      { duration: 8000 }
+    );
+    
+    // Redirection vers contact
+    setTimeout(() => {
+      navigate('/contact');
+    }, 3000);
   };
 
   return (

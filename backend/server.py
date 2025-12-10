@@ -1705,6 +1705,8 @@ class InlineMoneticoPaymentProvider:
         pack_slug: str = 'pack',
         **kwargs
     ) -> dict:
+        from datetime import datetime
+        
         if not self.is_configured():
             raise ValueError("Monetico non configuré")
         

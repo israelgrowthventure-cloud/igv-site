@@ -280,8 +280,8 @@ def main():
     print_test_result(result)
     results.append(result)
     
-    # Packs
-    result = test_frontend_page("/packs", expected_keywords=["pack"])
+    # Packs (pas de keyword strict car SPA React - contenu chargé dynamiquement)
+    result = test_frontend_page("/packs")
     print_test_result(result)
     results.append(result)
     

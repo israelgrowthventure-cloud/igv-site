@@ -1802,13 +1802,13 @@ async def initialize_monetico_payment(request: MoneticoPaymentRequest):
             )
         
         # Initialiser paiement
-        # Initialiser paiement
         payment_data = provider.initialize_payment(
             amount=Decimal(str(request.amount)),
             currency=request.currency,
             customer_email=request.customer_email,
             customer_name=request.customer_name,
-            order_reference=request.order_reference
+            order_reference=request.order_reference,
+            pack_slug=request.pack
         )
         
         logger.info(f"Monetico payment initialized: ref={request.order_reference}")
@@ -1822,11 +1822,14 @@ async def initialize_monetico_payment(request: MoneticoPaymentRequest):
         }
         
     except ValueError as e:
-        logger.error(f"Monetico init error: {e}")
+        logger.error(f"Monetico init ValueError: {e}")
         raise HTTPException(status_code=400, detail=str(e))
+    except HTTPException:
+        # Re-raise HTTPException (comme 503 non configuré)
+        raise
     except Exception as e:
-        logger.error(f"Monetico unexpected error: {e}")
-        raise HTTPException(status_code=500, detail="Erreur lors de l'initialisation du paiement")
+        logger.error(f"Monetico unexpected error: {type(e).__name__}: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Erreur paiement: {type(e).__name__}")
 
 # ==================== Include API Router ====================
 # Les routes du api_router seront préfixées par /api

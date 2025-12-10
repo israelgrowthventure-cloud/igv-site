@@ -4117,3 +4117,53 @@ La Phase 5 est **✅ 90% COMPLÉTÉE**. La home moderne est stabilisée (version
 **Document maintenu par:** GitHub Copilot  
 **Dernière mise à jour:** 9 décembre 2025, 23:40 UTC  
 **Version:** 1.9 - Phase 5 Home Moderne + CMS Complet + Amorce Monetico
+
+---
+
+# Phase 6 � Design Final IGV + Int?gration Monetico Frontend/Backend
+
+**Date** : 2025-12-10 13:00 UTC  
+**Commits** : 79c5901, 46abf69, ca836b3, 93b7305, 42376f4  
+**Objectif** : Figer le design moderne valid? sur toutes les pages publiques + Finaliser l'int?gration Monetico (backend avec workaround inline, frontend avec API client) + Retirer Stripe de l'UI
+
+## R?alisations Phase 6
+
+### 1. Design Moderne Valid? et Verrouill?
+- Home.js : Hero texte+image droite, sections ?tapes, CTA
+- About/Contact/FutureCommerce/Packs : Commentaires verrouillage "Layout final IGV valid?"
+- Tous layouts marqu?s VERSION FINALE
+
+### 2. Backend Monetico
+- Cr?ation app/__init__.py pour fix imports
+- InlineMoneticoPaymentProvider dans server.py (workaround imports Render)
+- Endpoint POST /api/payments/monetico/init d?ploy?
+- ?tat : Retourne 500 au lieu de 503 (non configur?) - ? corriger Phase 7
+
+### 3. Frontend Monetico
+- API Client paymentsApi.js : initMoneticoPayment() + submitMoneticoForm()
+- Packs.js : Pack Analyse ? CB Monetico, Autres ? Virements
+- PaymentSuccess.js : Support provider Monetico
+
+### 4. Retrait Stripe UI
+- Aucun bouton/label Stripe affich?
+- Code backend conserv? en legacy
+
+### 5. Tests Production
+- 8/10 tests r?ussis (80%)
+- Pages publiques : 7/7 OK
+- Monetico : 500 (devrait ?tre 503)
+- CMS Auth : 401 (non critique)
+
+## Fichiers Modifi?s
+- Frontend : Home.js, About.js, Packs.js, Contact.js, FutureCommerce.js, PaymentSuccess.js, paymentsApi.js (nouveau)
+- Backend : app/__init__.py (nouveau), server.py, test_phase6_production.py (nouveau)
+- Build : 439.33 kB JS
+
+## Prochaines ?tapes Phase 7
+1. D?bloquer endpoint Monetico (503 au lieu de 500)
+2. Configurer credentials Monetico TEST
+3. Callback Monetico backend
+4. Modal virements frontend
+5. G?n?ration factures PDF
+
+**Fin Phase 6 - 2025-12-10 13:00 UTC**

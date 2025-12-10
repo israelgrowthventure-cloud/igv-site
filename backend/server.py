@@ -1670,7 +1670,94 @@ async def save_content(content: dict, request: Request):
         raise HTTPException(status_code=500, detail=f"Error saving content: {str(e)}")
 
 # ==================== Monetico Payment Provider ====================
-# Import déplacé dans la fonction pour éviter échec au démarrage
+# Code MoneticoPaymentProvider inliné directement (workaround imports)
+
+class InlineMoneticoPaymentProvider:
+    """Provider Monetico inline pour éviter problèmes imports"""
+    
+    def __init__(self):
+        self.tpe = os.getenv('MONETICO_TPE')
+        self.company_code = os.getenv('MONETICO_COMPANY_CODE')
+        self.key = os.getenv('MONETICO_KEY')
+        self.env = os.getenv('MONETICO_ENV', 'TEST')
+        self.url_success = os.getenv('MONETICO_URL_SUCCESS', 'https://israelgrowthventure.com/payment/success')
+        self.url_failure = os.getenv('MONETICO_URL_FAILURE', 'https://israelgrowthventure.com/payment/failure')
+        
+        self.payment_url = (
+            'https://p.monetico-services.com/paiement.cgi'
+            if self.env == 'PROD'
+            else 'https://p.monetico-services.com/test/paiement.cgi'
+        )
+    
+    def is_configured(self) -> bool:
+        return all([self.tpe, self.company_code, self.key])
+    
+    def get_provider_name(self) -> str:
+        return 'monetico'
+    
+    def initialize_payment(
+        self,
+        amount: Decimal,
+        currency: str,
+        customer_email: str,
+        customer_name: str,
+        order_reference: str,
+        pack_slug: str = 'pack',
+        **kwargs
+    ) -> dict:
+        if not self.is_configured():
+            raise ValueError("Monetico non configuré")
+        
+        amount_str = f"{amount:.2f}{currency}"
+        date_str = datetime.now().strftime("%d/%m/%Y:%H:%M:%S")
+        
+        form_data = {
+            'version': '3.0',
+            'TPE': self.tpe,
+            'date': date_str,
+            'montant': amount_str,
+            'reference': order_reference,
+            'texte-libre': f'Pack {pack_slug}',
+            'lgue': 'FR',
+            'societe': self.company_code,
+            'mail': customer_email,
+            'url_retour': self.url_success,
+            'url_retour_ok': self.url_success,
+            'url_retour_err': self.url_failure,
+        }
+        
+        mac = self._compute_mac(form_data)
+        form_data['MAC'] = mac
+        
+        return {
+            'form_action': self.payment_url,
+            'form_method': 'POST',
+            'form_fields': form_data
+        }
+    
+    def _compute_mac(self, data: dict) -> str:
+        import hmac
+        import hashlib
+        
+        chain_parts = [
+            data.get('TPE', ''),
+            data.get('date', ''),
+            data.get('montant', ''),
+            data.get('reference', ''),
+            data.get('texte-libre', ''),
+            data.get('version', '3.0'),
+            data.get('lgue', 'FR'),
+            data.get('societe', self.company_code or ''),
+            data.get('mail', ''),
+        ]
+        
+        chain = '*'.join(str(p) for p in chain_parts)
+        key_bytes = self.key.encode('utf-8') if self.key else b''
+        chain_bytes = chain.encode('utf-8')
+        
+        mac = hmac.new(key_bytes, chain_bytes, hashlib.sha1).hexdigest()
+        return mac.upper()
+
 
 class MoneticoPaymentRequest(BaseModel):
     """Requête initialisation paiement Monetico"""
@@ -1697,17 +1784,8 @@ async def initialize_monetico_payment(request: MoneticoPaymentRequest):
     logger.info(f"Monetico payment init: pack={request.pack}, amount={request.amount}, email={request.customer_email}")
     
     try:
-        # Import dynamique pour éviter échec au démarrage si module indisponible
-        try:
-            from app.payments import MoneticoPaymentProvider
-        except ImportError:
-            # Fallback: essayer import direct depuis payments
-            import sys
-            import os
-            sys.path.insert(0, os.path.dirname(__file__))
-            from payments.providers.monetico import MoneticoPaymentProvider
-        
-        provider = MoneticoPaymentProvider()
+        # Utiliser la classe inline (workaround imports)
+        provider = InlineMoneticoPaymentProvider()
         
         # Vérifier configuration
         if not provider.is_configured():

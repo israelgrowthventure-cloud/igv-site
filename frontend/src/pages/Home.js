@@ -11,6 +11,7 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ArrowRight, TrendingUp, Globe, Users } from 'lucide-react';
 import { useCMSContent } from '../hooks/useCMSContent';
+import SEO from '../components/SEO';
 
 const Home = () => {
   const { t, i18n } = useTranslation();
@@ -130,21 +131,27 @@ const Home = () => {
 
   return (
     <div className="min-h-screen pt-16">
+      <SEO
+        title={getText('seo.title', `${currentContent.hero.title} - Israel Growth Venture`)}
+        description={getText('seo.description', currentContent.hero.subtitle)}
+        pathname="/"
+        image="https://israelgrowthventure.com/og-home.jpg"
+      />
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-br from-white via-blue-50 to-white py-20 lg:py-32">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className={`text-center transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
-              {currentContent.hero.title}
+              {getText('hero.title', currentContent.hero.title)}
             </h1>
             <p className="text-lg sm:text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-              {currentContent.hero.subtitle}
+              {getText('hero.subtitle', currentContent.hero.subtitle)}
             </p>
             <Link
               to="/packs"
               className="inline-flex items-center px-8 py-4 bg-[#0052CC] text-white rounded-lg font-semibold hover:bg-[#003D99] transition-all duration-300 hover:shadow-lg hover:scale-105"
             >
-              {currentContent.hero.cta}
+              {getText('hero.cta', currentContent.hero.cta)}
               <ArrowRight className="ml-2" size={20} />
             </Link>
           </div>
@@ -156,8 +163,12 @@ const Home = () => {
                 key={index}
                 className="text-center p-6 bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300"
               >
-                <div className="text-4xl font-bold text-[#0052CC] mb-2">{stat.value}</div>
-                <div className="text-gray-600">{stat.label}</div>
+                <div className="text-4xl font-bold text-[#0052CC] mb-2">
+                  {getText(`stats.${index}.value`, stat.value)}
+                </div>
+                <div className="text-gray-600">
+                  {getText(`stats.${index}.label`, stat.label)}
+                </div>
               </div>
             ))}
           </div>
@@ -178,31 +189,35 @@ const Home = () => {
                   <div className="w-16 h-16 mx-auto mb-6 bg-blue-50 rounded-full flex items-center justify-center text-[#0052CC]">
                     <Icon size={32} />
                   </div>
-                  <h3 className="text-xl font-semibold mb-4 text-gray-900">{feature.title}</h3>
-                  <p className="text-gray-600">{feature.description}</p>
+                  <h3 className="text-xl font-semibold mb-4 text-gray-900">
+                    {getText(`features.${index}.title`, feature.title)}
+                  </h3>
+                  <p className="text-gray-600">
+                    {getText(`features.${index}.description`, feature.description)}
+                  </p>
                 </div>
               );
             })}
-          </div>
-        </div>
-      </section>
-
       {/* CTA Section */}
       <section className="py-20 bg-gradient-to-r from-[#0052CC] to-[#0065FF]">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl sm:text-4xl font-bold text-white mb-6">
-            {currentContent.cta.title}
+            {getText('cta.title', currentContent.cta.title)}
           </h2>
           <p className="text-xl text-blue-100 mb-8">
-            {currentContent.cta.description}
+            {getText('cta.description', currentContent.cta.description)}
           </p>
           <Link
             to="/contact"
             className="inline-flex items-center px-8 py-4 bg-white text-[#0052CC] rounded-lg font-semibold hover:bg-gray-100 transition-all duration-300 hover:shadow-lg"
           >
-            {currentContent.cta.button}
+            {getText('cta.button', currentContent.cta.button)}
           </Link>
         </div>
+      </section>
+    </div>
+  );
+};      </div>
       </section>
     </div>
   );

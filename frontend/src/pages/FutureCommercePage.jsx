@@ -14,6 +14,7 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Zap, ArrowRight, Calendar } from 'lucide-react';
 import { useCMSContent } from '../hooks/useCMSContent';
+import SEO from '../components/SEO';
 
 const FutureCommercePage = () => {
   const { i18n } = useTranslation();
@@ -233,6 +234,12 @@ const FutureCommercePage = () => {
 
   return (
     <div className="future-commerce-page">
+      <SEO
+        title={getText('seo.title', `${currentContent.title} - Israel Growth Venture`)}
+        description={getText('seo.description', currentContent.subtitle)}
+        pathname="/future-commerce"
+        image="https://israelgrowthventure.com/og-future-commerce.jpg"
+      />
       {/* Hero Section - Bold Statement */}
       <section className="relative py-20 lg:py-32 bg-black text-white overflow-hidden" data-testid="future-commerce-hero">
         <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-[#0052CC] opacity-90"></div>

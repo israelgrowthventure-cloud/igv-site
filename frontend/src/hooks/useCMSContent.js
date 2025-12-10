@@ -75,6 +75,7 @@ export const useCMSContent = (pageSlug) => {
 
   /**
    * Récupère une URL d'image depuis le CMS ou retourne l'image par défaut
+   * Supporte les images multilingues {fr: "url", en: "url", he: "url"} ou URL simple
    * @param {string} path - Chemin vers l'image (ex: "hero.image")
    * @param {string} fallbackImage - Image par défaut (peut être null pour pas d'image)
    * @returns {string|null} URL de l'image ou null
@@ -93,7 +94,12 @@ export const useCMSContent = (pageSlug) => {
       }
     }
     
-    // Les images ne sont pas multilingues (sauf imageAlt)
+    // Si l'image est multilingue {fr, en, he}, prendre selon la langue active
+    if (value && typeof value === 'object' && (value.fr || value.en || value.he)) {
+      return value[language] || value.fr || fallbackImage;
+    }
+    
+    // Sinon retourner l'URL directe (string)
     return value || fallbackImage;
   };
 

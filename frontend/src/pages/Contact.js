@@ -13,6 +13,7 @@ import { Mail, MapPin, Send } from 'lucide-react';
 import { API_BASE_URL } from '../config/apiConfig';
 import { toast } from 'sonner';
 import { useCMSContent } from '../hooks/useCMSContent';
+import SEO from '../components/SEO';
 
 const Contact = () => {
   const { t, i18n } = useTranslation();
@@ -76,6 +77,12 @@ const Contact = () => {
 
   return (
     <div className="min-h-screen pt-20">
+      <SEO
+        title={`${t('contact.title')} - Israel Growth Venture`}
+        description={t('contact.subtitle')}
+        pathname="/contact"
+        image="https://israelgrowthventure.com/og-contact.jpg"
+      />
       {/* Hero */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 to-white">
         <div className="max-w-7xl mx-auto text-center">

@@ -11,6 +11,7 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Target, Users, Award, TrendingUp } from 'lucide-react';
 import { useCMSContent } from '../hooks/useCMSContent';
+import SEO from '../components/SEO';
 
 const About = () => {
   const { t, i18n } = useTranslation();
@@ -128,14 +129,20 @@ const About = () => {
 
   return (
     <div className="min-h-screen pt-16">
+      <SEO
+        title={getText('seo.title', `${currentContent.title} - Israel Growth Venture`)}
+        description={getText('seo.description', currentContent.subtitle)}
+        pathname="/about"
+        image="https://israelgrowthventure.com/og-about.jpg"
+      />
       {/* Hero */}
       <section className="py-20 bg-gradient-to-br from-white via-blue-50 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6">
-            {currentContent.title}
+            {getText('hero.title', currentContent.title)}
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            {currentContent.subtitle}
+            {getText('hero.subtitle', currentContent.subtitle)}
           </p>
         </div>
       </section>
@@ -144,10 +151,10 @@ const About = () => {
       <section className="py-20 bg-white">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="space-y-8 text-lg text-gray-700 leading-relaxed">
-            <p>{currentContent.description}</p>
-            <p>{currentContent.collaboration}</p>
-            <p>{currentContent.support}</p>
-            <p className="text-xl font-semibold text-[#0052CC]">{currentContent.service}</p>
+            <p>{getText('mission.description', currentContent.description)}</p>
+            <p>{getText('mission.collaboration', currentContent.collaboration)}</p>
+            <p>{getText('mission.support', currentContent.support)}</p>
+            <p className="text-xl font-semibold text-[#0052CC]">{getText('mission.service', currentContent.service)}</p>
           </div>
         </div>
       </section>
@@ -166,8 +173,12 @@ const About = () => {
                   <div className="w-16 h-16 mx-auto mb-6 bg-blue-50 rounded-full flex items-center justify-center text-[#0052CC]">
                     <Icon size={32} />
                   </div>
-                  <h3 className="text-xl font-semibold mb-3 text-gray-900">{value.title}</h3>
-                  <p className="text-gray-600">{value.description}</p>
+                  <h3 className="text-xl font-semibold mb-3 text-gray-900">
+                    {getText(`values.${index}.title`, value.title)}
+                  </h3>
+                  <p className="text-gray-600">
+                    {getText(`values.${index}.description`, value.description)}
+                  </p>
                 </div>
               );
             })}
@@ -179,16 +190,16 @@ const About = () => {
       <section className="py-20 bg-gradient-to-r from-[#0052CC] to-[#0065FF]">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl sm:text-4xl font-bold text-white mb-6">
-            {currentContent.cta.title}
+            {getText('cta.title', currentContent.cta.title)}
           </h2>
           <p className="text-xl text-blue-100 mb-8">
-            {currentContent.cta.description}
+            {getText('cta.description', currentContent.cta.description)}
           </p>
           <Link
             to="/contact"
             className="inline-flex items-center px-8 py-4 bg-white text-[#0052CC] rounded-lg font-semibold hover:bg-gray-100 transition-all duration-300 hover:shadow-lg"
           >
-            {currentContent.cta.button}
+            {getText('cta.button', currentContent.cta.button)}
           </Link>
         </div>
       </section>

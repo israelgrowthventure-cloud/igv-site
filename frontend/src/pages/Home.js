@@ -10,10 +10,12 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ArrowRight, TrendingUp, Globe, Users } from 'lucide-react';
+import { useCMSContent } from '../hooks/useCMSContent';
 
 const Home = () => {
   const { t, i18n } = useTranslation();
   const [isVisible, setIsVisible] = useState(false);
+  const { getText, getImage } = useCMSContent('home');
 
   useEffect(() => {
     setIsVisible(true);

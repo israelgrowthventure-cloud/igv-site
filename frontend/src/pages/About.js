@@ -10,9 +10,11 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Target, Users, Award, TrendingUp } from 'lucide-react';
+import { useCMSContent } from '../hooks/useCMSContent';
 
 const About = () => {
   const { t, i18n } = useTranslation();
+  const { getText, getImage } = useCMSContent('about');
 
   const content = {
     fr: {

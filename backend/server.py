@@ -173,7 +173,24 @@ class UserLogin(BaseModel):
 
 # --- Page Models ---
 class Page(BaseModel):
-    """Modèle de page CMS (GrapesJS) avec contenu multilingue, HTML/CSS, publication."""
+    """Modèle de page CMS (GrapesJS) avec contenu multilingue, HTML/CSS, publication.
+    
+    structured_content: Contenu structuré pour injection dans design Emergent React.
+    Permet de stocker textes ET images par langue sans écraser le design.
+    
+    Exemple de structure:
+    {
+      "hero": {
+        "line1": {"fr": "...", "en": "...", "he": "..."},
+        "image": "https://...",
+        "imageAlt": {"fr": "...", "en": "...", "he": "..."}
+      },
+      "section1": {
+        "title": {"fr": "...", "en": "...", "he": "..."},
+        "image": "https://..."
+      }
+    }
+    """
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     slug: str
@@ -181,6 +198,7 @@ class Page(BaseModel):
     content_json: str  # GrapesJS JSON
     content_html: str = ""  # GrapesJS HTML
     content_css: str = ""  # GrapesJS CSS
+    structured_content: Optional[Dict] = None  # Contenu structuré pour injection Emergent
     published: bool = False
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
@@ -192,6 +210,7 @@ class PageCreate(BaseModel):
     content_json: str = "{}"
     content_html: str = ""
     content_css: str = ""
+    structured_content: Optional[Dict] = None
     published: bool = False
 
 class PageUpdate(BaseModel):
@@ -200,6 +219,7 @@ class PageUpdate(BaseModel):
     content_json: Optional[str] = None
     content_html: Optional[str] = None
     content_css: Optional[str] = None
+    structured_content: Optional[Dict] = None
     published: Optional[bool] = None
 
 # --- Pack Models ---

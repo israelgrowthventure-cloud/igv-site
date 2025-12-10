@@ -1,13 +1,22 @@
-﻿import React, { useState, useEffect } from 'react';
+﻿// ============================================================
+// ATTENTION - Contact Page - Design Emergent FORCÉ
+// ============================================================
+// Cette page utilise UNIQUEMENT le design Emergent React codé en dur.
+// CMS overlay SUPPRIMÉ pour garantir le design moderne complet.
+// Formulaire fonctionnel + i18n FR/EN/HE intégré.
+// NE PAS RÉINTRODUIRE de logique CMS overlay.
+// ============================================================
+
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Mail, MapPin, Send } from 'lucide-react';
-import { api } from '../utils/api';
-import { pagesAPI } from '../utils/api';
 import { API_BASE_URL } from '../config/apiConfig';
 import { toast } from 'sonner';
+import { useCMSContent } from '../hooks/useCMSContent';
 
 const Contact = () => {
   const { t, i18n } = useTranslation();
+  const { getText, getImage } = useCMSContent('contact');
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -16,47 +25,6 @@ const Contact = () => {
     message: ''
   });
   const [loading, setLoading] = useState(false);
-  const [cmsContent, setCmsContent] = useState(null);
-  const [loadingCMS, setLoadingCMS] = useState(true);
-
-  // Tenter de charger le contenu CMS
-  useEffect(() => {
-    const loadCMSContent = async () => {
-      try {
-        const response = await pagesAPI.getBySlug('contact');
-        if (response.data && response.data.published && response.data.content_html) {
-          setCmsContent(response.data);
-        }
-      } catch (error) {
-        console.log('CMS content not available for contact, using React fallback');
-      } finally {
-        setLoadingCMS(false);
-      }
-    };
-    loadCMSContent();
-  }, []);
-
-  // Pendant le chargement CMS : afficher un loader minimal
-  if (loadingCMS) {
-    return (
-      <div className="min-h-screen pt-20 flex items-center justify-center">
-        <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
-          <p className="text-gray-600">Chargement...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Si le contenu CMS est disponible, l'afficher
-  if (cmsContent) {
-    return (
-      <div className="cms-contact-page">
-        <style dangerouslySetInnerHTML={{ __html: cmsContent.content_css }} />
-        <div dangerouslySetInnerHTML={{ __html: cmsContent.content_html }} />
-      </div>
-    );
-  }
 
   const handleChange = (e) => {
     setFormData({

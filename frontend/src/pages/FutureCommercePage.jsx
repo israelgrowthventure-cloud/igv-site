@@ -1,43 +1,26 @@
-import React, { useEffect, useState } from 'react';
+// ============================================================
+// ATTENTION - Future Commerce Page - Design Emergent TOUJOURS ACTIF
+// ============================================================
+// Architecture hybride intelligente :
+// - Design Emergent React TOUJOURS rendu (hero noir, gradients, sections)
+// - Contenu CMS chargé en arrière-plan et injecté dans les textes uniquement
+// - Si CMS disponible : utilise les textes CMS pour la langue active
+// - Sinon : fallback sur contenus hardcodés FR/EN/HE
+// - JAMAIS de remplacement complet du design par overlay CMS
+// ============================================================
+
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { TrendingUp, Zap, Target, Users, ArrowRight, Calendar } from 'lucide-react';
-import { pagesAPI } from '../utils/api';
+import { Zap, ArrowRight, Calendar } from 'lucide-react';
+import { useCMSContent } from '../hooks/useCMSContent';
 
 const FutureCommercePage = () => {
-  const { t, i18n } = useTranslation();
+  const { i18n } = useTranslation();
   const language = i18n.language;
-  const [cmsContent, setCmsContent] = useState(null);
-  const [loadingCMS, setLoadingCMS] = useState(true);
+  const { getText, getImage } = useCMSContent('le-commerce-de-demain');
 
-  // Tenter de charger le contenu CMS
-  useEffect(() => {
-    const loadCMSContent = async () => {
-      try {
-        const response = await pagesAPI.getBySlug('le-commerce-de-demain');
-        if (response.data && response.data.published && response.data.content_html) {
-          setCmsContent(response.data);
-        }
-      } catch (error) {
-        console.log('CMS content not available for le-commerce-de-demain, using React fallback');
-      } finally {
-        setLoadingCMS(false);
-      }
-    };
-    loadCMSContent();
-  }, []);
-
-  // Si le contenu CMS est disponible, l'afficher
-  if (!loadingCMS && cmsContent) {
-    return (
-      <div className="cms-future-commerce-page">
-        <style dangerouslySetInnerHTML={{ __html: cmsContent.content_css }} />
-        <div dangerouslySetInnerHTML={{ __html: cmsContent.content_html }} />
-      </div>
-    );
-  }
-
-  // Fallback: contenu React codé en dur
+  // Contenus fallback hardcodés (utilisés si CMS n'a pas de contenu)
 
   const content = {
     fr: {
@@ -255,14 +238,14 @@ const FutureCommercePage = () => {
         <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-[#0052CC] opacity-90"></div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold mb-8 leading-tight" data-testid="hero-title">
-            {currentContent.hero.line1}
+            {getText('hero.line1', currentContent.hero.line1)}
           </h1>
           <div className="space-y-4 text-2xl sm:text-3xl lg:text-4xl text-gray-300 mb-8">
-            <p>{currentContent.hero.line2}</p>
-            <p>{currentContent.hero.line3}</p>
+            <p>{getText('hero.line2', currentContent.hero.line2)}</p>
+            <p>{getText('hero.line3', currentContent.hero.line3)}</p>
           </div>
           <p className="text-xl lg:text-2xl text-gray-400 max-w-4xl mx-auto mb-12 leading-relaxed">
-            {currentContent.hero.description}
+            {getText('hero.description', currentContent.hero.description)}
           </p>
         </div>
       </section>
@@ -272,10 +255,10 @@ const FutureCommercePage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6">
-              {currentContent.israel.title}
+              {getText('israel.title', currentContent.israel.title)}
             </h2>
             <p className="text-2xl text-[#0052CC] font-semibold mb-8">
-              {currentContent.israel.subtitle}
+              {getText('israel.subtitle', currentContent.israel.subtitle)}
             </p>
           </div>
 

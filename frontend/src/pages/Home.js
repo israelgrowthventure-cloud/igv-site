@@ -1,86 +1,207 @@
-﻿// ATTENTION : Layout restauré version stable pré-bug (10/12/2025).
-// Ne pas modifier la structure ou le design sans demande explicite du client IGV.
+﻿// ============================================================
+// ATTENTION - Home Page Phase 7 - Design Emergent restauré
+// ============================================================
+// Design moderne avec hero, stats, features sections
+// Basé sur igv-website-v2 (référence Emergent)
+// NE PAS MODIFIER sans validation client IGV
+// ============================================================
 
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ArrowRight, CheckCircle, TrendingUp, Users, Building } from 'lucide-react';
-import { useGeo } from '../context/GeoContext';
-import { pagesAPI } from '../utils/api';
+import { ArrowRight, TrendingUp, Globe, Users } from 'lucide-react';
 
 const Home = () => {
   const { t, i18n } = useTranslation();
-  const { country_name, isLoading } = useGeo();
-  const [cmsContent, setCmsContent] = useState(null);
-  const [loadingCMS, setLoadingCMS] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
 
-  // Charger le contenu CMS
   useEffect(() => {
-    const loadCMSContent = async () => {
-      try {
-        const response = await pagesAPI.getBySlug('home');
-        if (response.data && response.data.published && response.data.content_html) {
-          setCmsContent(response.data);
-        }
-      } catch (error) {
-        console.log('CMS content not available for home, using React fallback');
-      } finally {
-        setLoadingCMS(false);
-      }
-    };
-    loadCMSContent();
+    setIsVisible(true);
   }, []);
 
-  // Pendant le chargement CMS : afficher un loader minimal
-  if (loadingCMS) {
-    return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
-          <p className="text-gray-600">Chargement...</p>
-        </div>
-      </div>
-    );
-  }
+  const content = {
+    fr: {
+      hero: {
+        title: "Développez votre entreprise en Israël",
+        subtitle: "Expertise complète pour l'expansion de votre marque sur le marché israélien",
+        cta: "Découvrir nos offres"
+      },
+      stats: [
+        { value: '500+', label: 'Projets réussis' },
+        { value: '15+', label: 'Années d\'expérience' },
+        { value: '98%', label: 'Clients satisfaits' }
+      ],
+      features: [
+        {
+          icon: TrendingUp,
+          title: 'Croissance Stratégique',
+          description: 'Plans d\'expansion sur mesure pour votre marché cible'
+        },
+        {
+          icon: Globe,
+          title: 'Expertise Locale',
+          description: 'Connaissance approfondie du marché israélien'
+        },
+        {
+          icon: Users,
+          title: 'Accompagnement Complet',
+          description: 'De l\'analyse à la mise en œuvre opérationnelle'
+        }
+      ],
+      cta: {
+        title: 'Prêt à commencer ?',
+        description: 'Contactez-nous pour discuter de votre projet',
+        button: 'Nous contacter'
+      }
+    },
+    en: {
+      hero: {
+        title: "Expand Your Business in Israel",
+        subtitle: "Complete expertise for your brand expansion in the Israeli market",
+        cta: "Discover our offers"
+      },
+      stats: [
+        { value: '500+', label: 'Successful projects' },
+        { value: '15+', label: 'Years of experience' },
+        { value: '98%', label: 'Satisfied clients' }
+      ],
+      features: [
+        {
+          icon: TrendingUp,
+          title: 'Strategic Growth',
+          description: 'Customized expansion plans for your target market'
+        },
+        {
+          icon: Globe,
+          title: 'Local Expertise',
+          description: 'In-depth knowledge of the Israeli market'
+        },
+        {
+          icon: Users,
+          title: 'Full Support',
+          description: 'From analysis to operational implementation'
+        }
+      ],
+      cta: {
+        title: 'Ready to start?',
+        description: 'Contact us to discuss your project',
+        button: 'Contact us'
+      }
+    },
+    he: {
+      hero: {
+        title: "הרחיבו את העסק שלכם בישראל",
+        subtitle: "מומחיות מלאה להרחבת המותג שלכם בשוק הישראלי",
+        cta: "גלו את ההצעות שלנו"
+      },
+      stats: [
+        { value: '500+', label: 'פרויקטים מוצלחים' },
+        { value: '15+', label: 'שנות ניסיון' },
+        { value: '98%', label: 'לקוחות מרוצים' }
+      ],
+      features: [
+        {
+          icon: TrendingUp,
+          title: 'צמיחה אסטרטגית',
+          description: 'תוכניות התרחבות מותאמות לשוק היעד שלכם'
+        },
+        {
+          icon: Globe,
+          title: 'מומחיות מקומית',
+          description: 'ידע מעמיק של השוק הישראלי'
+        },
+        {
+          icon: Users,
+          title: 'תמיכה מלאה',
+          description: 'מניתוח ועד ליישום תפעולי'
+        }
+      ],
+      cta: {
+        title: 'מוכנים להתחיל?',
+        description: 'צרו איתנו קשר כדי לדון בפרויקט שלכם',
+        button: 'צרו קשר'
+      }
+    }
+  };
 
-  // Si le contenu CMS est disponible, l'afficher (VERSION MODERNE PRIORITAIRE)
-  if (cmsContent) {
-    return (
-      <div className="cms-home-page">
-        <style dangerouslySetInnerHTML={{ __html: cmsContent.content_css }} />
-        <div dangerouslySetInnerHTML={{ __html: cmsContent.content_html }} />
-      </div>
-    );
-  }
+  const currentContent = content[i18n.language] || content.fr;
 
-  // Si CMS ├⌐choue : afficher message d'erreur propre (pas de fallback layout complet)
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center px-4">
-      <div className="text-center max-w-2xl">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">
-          Israel Growth Venture
-        </h1>
-        <p className="text-xl text-gray-600 mb-8">
-          Le contenu de cette page est temporairement indisponible.
-        </p>
-        <p className="text-gray-500 mb-8">
-          Veuillez actualiser la page ou r├⌐essayer dans quelques instants.
-        </p>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <button
-            onClick={() => window.location.reload()}
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold"
-          >
-            Actualiser la page
-          </button>
+    <div className="min-h-screen pt-16">
+      {/* Hero Section */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-white via-blue-50 to-white py-20 lg:py-32">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className={`text-center transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
+              {currentContent.hero.title}
+            </h1>
+            <p className="text-lg sm:text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
+              {currentContent.hero.subtitle}
+            </p>
+            <Link
+              to="/packs"
+              className="inline-flex items-center px-8 py-4 bg-[#0052CC] text-white rounded-lg font-semibold hover:bg-[#003D99] transition-all duration-300 hover:shadow-lg hover:scale-105"
+            >
+              {currentContent.hero.cta}
+              <ArrowRight className="ml-2" size={20} />
+            </Link>
+          </div>
+
+          {/* Stats */}
+          <div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-8">
+            {currentContent.stats.map((stat, index) => (
+              <div
+                key={index}
+                className="text-center p-6 bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300"
+              >
+                <div className="text-4xl font-bold text-[#0052CC] mb-2">{stat.value}</div>
+                <div className="text-gray-600">{stat.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+            {currentContent.features.map((feature, index) => {
+              const Icon = feature.icon;
+              return (
+                <div
+                  key={index}
+                  className="text-center p-8 rounded-xl border border-gray-100 hover:border-[#0052CC] hover:shadow-lg transition-all duration-300"
+                >
+                  <div className="w-16 h-16 mx-auto mb-6 bg-blue-50 rounded-full flex items-center justify-center text-[#0052CC]">
+                    <Icon size={32} />
+                  </div>
+                  <h3 className="text-xl font-semibold mb-4 text-gray-900">{feature.title}</h3>
+                  <p className="text-gray-600">{feature.description}</p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-20 bg-gradient-to-r from-[#0052CC] to-[#0065FF]">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-6">
+            {currentContent.cta.title}
+          </h2>
+          <p className="text-xl text-blue-100 mb-8">
+            {currentContent.cta.description}
+          </p>
           <Link
-            to="/packs"
-            className="px-6 py-3 border-2 border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 font-semibold"
+            to="/contact"
+            className="inline-flex items-center px-8 py-4 bg-white text-[#0052CC] rounded-lg font-semibold hover:bg-gray-100 transition-all duration-300 hover:shadow-lg"
           >
-            Voir nos packs
+            {currentContent.cta.button}
           </Link>
         </div>
-      </div>
+      </section>
     </div>
   );
 };

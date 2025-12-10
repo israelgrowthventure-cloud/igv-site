@@ -1,15 +1,4 @@
-// ============================================================
-// ATTENTION - Layout final IGV validé (Phase 6 - Design V2)
-// ============================================================
-// Page Contact avec formulaire fonctionnel + informations contact.
-// Contenu prioritairement depuis CMS (slug: 'contact').
-// Fallback React avec formulaire, email, adresse, carte.
-// 
-// NE PAS MODIFIER la structure sans demande explicite du client.
-// Modifications futures : via contenu CMS uniquement.
-// ============================================================
-
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Mail, MapPin, Send } from 'lucide-react';
 import { api } from '../utils/api';
@@ -99,7 +88,7 @@ const Contact = () => {
       throw new Error('Failed to send contact form');
     }
 
-    // Succès : on affiche le toast + on reset le formulaire
+    // Succ├¿s : on affiche le toast + on reset le formulaire
     toast.success(t('contact.form.success'));
     setFormData({
       name: '',
@@ -280,7 +269,7 @@ const Contact = () => {
                   </h3>
                   <p className="text-sm text-gray-600">
                     Lundi - Vendredi: 9h00 - 18h00<br />
-                    Samedi - Dimanche: Fermé
+                    Samedi - Dimanche: Ferm├⌐
                   </p>
                 </div>
               </div>

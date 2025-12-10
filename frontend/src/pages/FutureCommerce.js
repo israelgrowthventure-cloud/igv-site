@@ -1,14 +1,4 @@
-// ============================================================
-// ATTENTION - Layout final IGV validé (Phase 6 - Design V2)
-// ============================================================
-// Page Le Commerce de Demain - Vision et approche IGV.
-// Hero dark moderne, sections réalités, services, Israël, pourquoi series.
-// 
-// NE PAS MODIFIER la structure sans demande explicite du client.
-// Modifications futures : via contenu CMS uniquement si migration CMS.
-// ============================================================
-
-import React from 'react';
+﻿import React from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ArrowRight, TrendingUp, Eye, Zap, Target } from 'lucide-react';
@@ -121,7 +111,7 @@ const FutureCommerce = () => {
                   {reality.points && (
                     <div className="space-y-2 mb-3">
                       {reality.points.map((point, idx) => (
-                        <p key={idx} className="text-sm text-gray-600">• {point}</p>
+                        <p key={idx} className="text-sm text-gray-600">Γאó {point}</p>
                       ))}
                     </div>
                   )}
@@ -202,10 +192,10 @@ const FutureCommerce = () => {
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-600 to-blue-700 text-white">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl sm:text-4xl font-bold mb-6">
-            Prêt à tester votre concept en Israël ?
+            Pr├¬t ├á tester votre concept en Isra├½l ?
           </h2>
           <p className="text-lg text-blue-100 mb-8">
-            Réservez un appel de 30 minutes pour discuter de votre projet
+            R├⌐servez un appel de 30 minutes pour discuter de votre projet
           </p>
           <Link
             to="/appointment"

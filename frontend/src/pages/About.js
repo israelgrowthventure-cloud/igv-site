@@ -1,15 +1,4 @@
-// ============================================================
-// ATTENTION - Layout final IGV validé (Phase 6 - Design V2)
-// ============================================================
-// Page Qui Sommes-Nous avec design moderne validé.
-// Contenu prioritairement depuis CMS (slug: 'qui-sommes-nous').
-// Fallback React avec hero, valeurs, team Mickael, CTA contact.
-// 
-// NE PAS MODIFIER la structure sans demande explicite du client.
-// Modifications futures : via contenu CMS uniquement.
-// ============================================================
-
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Award, Target, Users, TrendingUp } from 'lucide-react';
@@ -59,28 +48,28 @@ const About = () => {
     );
   }
 
-  // Fallback: contenu React codé en dur (seulement si CMS échoue)
+  // Fallback: contenu React cod├⌐ en dur (seulement si CMS ├⌐choue)
 
   const values = [
     {
       icon: Award,
       title: 'Expertise',
-      description: 'Plus de 20 ans d\'expérience dans l\'immobilier commercial et l\'expansion de marques'
+      description: 'Plus de 20 ans d\'exp├⌐rience dans l\'immobilier commercial et l\'expansion de marques'
     },
     {
       icon: Target,
-      title: 'Résultats',
-      description: 'Approche orientée résultats avec un taux de réussite élevé pour nos clients'
+      title: 'R├⌐sultats',
+      description: 'Approche orient├⌐e r├⌐sultats avec un taux de r├⌐ussite ├⌐lev├⌐ pour nos clients'
     },
     {
       icon: Users,
       title: 'Accompagnement',
-      description: 'Support complet de A à Z, de l\'analyse initiale au suivi post-ouverture'
+      description: 'Support complet de A ├á Z, de l\'analyse initiale au suivi post-ouverture'
     },
     {
       icon: TrendingUp,
-      title: 'Réseau',
-      description: 'Réseau étendu de partenaires locaux et connexions avec les autorités'
+      title: 'R├⌐seau',
+      description: 'R├⌐seau ├⌐tendu de partenaires locaux et connexions avec les autorit├⌐s'
     }
   ];
 
@@ -118,7 +107,7 @@ const About = () => {
               />
               <div className="absolute -bottom-6 -right-6 bg-blue-600 text-white p-6 rounded-xl shadow-xl">
                 <div className="text-3xl font-bold mb-1">20+</div>
-                <div className="text-sm">Ans d'expérience</div>
+                <div className="text-sm">Ans d'exp├⌐rience</div>
               </div>
             </div>
           </div>
@@ -173,10 +162,10 @@ const About = () => {
                 <h3 className="text-2xl font-bold text-gray-900 mb-4">Mickael</h3>
                 <div className="text-blue-600 font-semibold mb-4">Fondateur & CEO</div>
                 <p className="text-base text-gray-600 leading-relaxed mb-4">
-                  Avec plus de 20 ans d'expérience en tant qu'agent immobilier professionnel à Paris et trois nominations comme meilleur agent du réseau Procomm, Mickael a acquis une expertise reconnue dans le domaine.
+                  Avec plus de 20 ans d'exp├⌐rience en tant qu'agent immobilier professionnel ├á Paris et trois nominations comme meilleur agent du r├⌐seau Procomm, Mickael a acquis une expertise reconnue dans le domaine.
                 </p>
                 <p className="text-base text-gray-600 leading-relaxed">
-                  Passionné par l'aide aux entreprises à réussir dans ce pays dynamique, il comprend profondément les besoins de ses clients et développe des stratégies personnalisées pour maximiser leur succès.
+                  Passionn├⌐ par l'aide aux entreprises ├á r├⌐ussir dans ce pays dynamique, il comprend profond├⌐ment les besoins de ses clients et d├⌐veloppe des strat├⌐gies personnalis├⌐es pour maximiser leur succ├¿s.
                 </p>
               </div>
             </div>
@@ -191,7 +180,7 @@ const About = () => {
             Travaillons ensemble
           </h2>
           <p className="text-lg text-blue-100 mb-8">
-            Contactez-nous pour discuter de votre projet d'expansion en Israël
+            Contactez-nous pour discuter de votre projet d'expansion en Isra├½l
           </p>
           <Link
             to="/contact"

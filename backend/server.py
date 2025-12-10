@@ -1781,7 +1781,7 @@ async def initialize_monetico_payment(request: MoneticoPaymentRequest):
     - form_fields : dict des champs du formulaire
     
     Si Monetico non configuré (variables d'environnement manquantes) :
-    - Retourne 503 avec message clair
+    - Retourne 503 avec message clair (JAMAIS 500)
     """
     logger.info(f"Monetico payment init: pack={request.pack}, amount={request.amount}, email={request.customer_email}")
     
@@ -1822,14 +1822,30 @@ async def initialize_monetico_payment(request: MoneticoPaymentRequest):
         }
         
     except ValueError as e:
+        # Erreur de configuration ou de validation
         logger.error(f"Monetico init ValueError: {e}")
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(
+            status_code=503,
+            detail={
+                "error": "payment_configuration_error",
+                "message": "Le paiement par carte bancaire n'est pas disponible actuellement. Merci d'utiliser le virement bancaire.",
+                "provider": "monetico"
+            }
+        )
     except HTTPException:
         # Re-raise HTTPException (comme 503 non configuré)
         raise
     except Exception as e:
+        # Toute autre exception = considérer comme non configuré (pas d'erreur 500)
         logger.error(f"Monetico unexpected error: {type(e).__name__}: {e}", exc_info=True)
-        raise HTTPException(status_code=500, detail=f"Erreur paiement: {type(e).__name__}")
+        raise HTTPException(
+            status_code=503,
+            detail={
+                "error": "payment_provider_unavailable",
+                "message": "Le paiement par carte bancaire n'est pas disponible actuellement. Merci d'utiliser le virement bancaire.",
+                "provider": "monetico"
+            }
+        )
 
 # ==================== Include API Router ====================
 # Les routes du api_router seront préfixées par /api

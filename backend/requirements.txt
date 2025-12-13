@@ -1,2 +1,7 @@
 fastapi
 uvicorn
+pydantic
+python-dotenv
+httpx
+aiosmtplib
+email-validator

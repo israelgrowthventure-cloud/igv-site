@@ -6,3 +6,5 @@ httpx
 motor
 PyJWT
 python-multipart
+aiosmtplib
+email-validator

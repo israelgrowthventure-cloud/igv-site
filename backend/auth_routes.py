@@ -8,6 +8,7 @@ from pydantic import BaseModel, EmailStr
 import jwt # Using PyJWT
 from datetime import datetime, timedelta
 import os
+import logging
 
 router = APIRouter(prefix="/auth", tags=["authentication"])
 
@@ -66,7 +67,8 @@ def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(securit
         if email is None:
             raise HTTPException(status_code=401, detail="Invalid token")
         return User(email=email, role=payload.get("role", "viewer"), name=payload.get("name", "User"))
-    except jwt.PyJWTError: # PyJWT exception base class
+    except Exception as e: # Catch all JWT errors
+        logging.error(f"JWT decode error: {str(e)}")
         raise HTTPException(status_code=401, detail="Invalid token")
 
 @router.post("/login", response_model=TokenResponse)

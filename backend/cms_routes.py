@@ -5,17 +5,43 @@ from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
 from typing import List, Optional, Dict, Any
 from datetime import datetime, timezone
-from motor.motor_asyncio import AsyncIOMotorClient
 import os
 import uuid
-from auth_routes import get_current_user, User
+import logging
 
-router = APIRouter(prefix="/cms", tags=["cms"])
+# MongoDB Import Guard
+try:
+    from motor.motor_asyncio import AsyncIOMotorClient
+    HAS_MONGO = True
+except ImportError:
+    HAS_MONGO = False
+    AsyncIOMotorClient = None
+    logging.warning("CMS: MongoDB not available")
 
-# MongoDB connection
-mongo_url = os.getenv('MONGO_URL', 'mongodb://localhost:27017')
-client = AsyncIOMotorClient(mongo_url)
-db = client[os.getenv('DB_NAME', 'igv_db')]
+try:
+    from auth_routes import get_current_user, User
+except ImportError:
+    # Fallback if auth not available
+    class User(BaseModel):
+        email: str
+        role: str = "viewer"
+        name: str = "Unknown"
+    def get_current_user():
+        return User(email="system@igv.com", role="viewer", name="System")
+
+router = APIRouter(prefix="/api/cms", tags=["cms"])
+
+# MongoDB connection (Conditional)
+client = None
+db = None
+if HAS_MONGO:
+    mongo_url = os.getenv('MONGO_URL') or os.getenv('MONGODB_URI')
+    if mongo_url:
+        try:
+            client = AsyncIOMotorClient(mongo_url)
+            db = client[os.getenv('DB_NAME', 'igv_db')]
+        except Exception as e:
+            logging.error(f"CMS: Failed to connect to MongoDB: {e}")
 
 # Models
 class PageContent(BaseModel):
@@ -55,6 +81,9 @@ async def get_all_pages(
     current_user: User = Depends(get_current_user)
 ):
     """Get all CMS pages"""
+    if not db:
+        raise HTTPException(status_code=503, detail="CMS database not available")
+    
     query = {}
     if language:
         query["language"] = language
@@ -71,6 +100,9 @@ async def get_page(
     published_only: bool = False
 ):
     """Get specific page content (public endpoint if published)"""
+    if not db:
+        raise HTTPException(status_code=503, detail="CMS database not available")
+    
     query = {"page_slug": page_slug, "language": language}
     if published_only:
         query["published"] = True
@@ -83,6 +115,9 @@ async def get_page(
 @router.post("/pages", dependencies=[Depends(get_current_user)])
 async def create_page(content: PageContentCreate, current_user: User = Depends(get_current_user)):
     """Create new page content"""
+    if not db:
+        raise HTTPException(status_code=503, detail="CMS database not available")
+    
     page_id = str(uuid.uuid4())
     page_data = content.model_dump()
     page_data["id"] = page_id

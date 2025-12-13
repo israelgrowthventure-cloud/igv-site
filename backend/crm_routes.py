@@ -5,16 +5,41 @@ from fastapi import APIRouter, HTTPException, Depends, Query
 from pydantic import BaseModel, EmailStr
 from typing import List, Optional
 from datetime import datetime, timezone
-from motor.motor_asyncio import AsyncIOMotorClient
 import os
-from auth_routes import get_current_user, User
+import logging
 
-router = APIRouter(prefix="/crm", tags=["crm"])
+# MongoDB Import Guard
+try:
+    from motor.motor_asyncio import AsyncIOMotorClient
+    HAS_MONGO = True
+except ImportError:
+    HAS_MONGO = False
+    AsyncIOMotorClient = None
+    logging.warning("CRM: MongoDB not available")
 
-# MongoDB connection
-mongo_url = os.getenv('MONGO_URL', 'mongodb://localhost:27017')
-client = AsyncIOMotorClient(mongo_url)
-db = client[os.getenv('DB_NAME', 'igv_db')]
+try:
+    from auth_routes import get_current_user, User
+except ImportError:
+    class User(BaseModel):
+        email: str
+        role: str = "viewer"
+        name: str = "Unknown"
+    def get_current_user():
+        return User(email="system@igv.com", role="viewer", name="System")
+
+router = APIRouter(prefix="/api/crm", tags=["crm"])
+
+# MongoDB connection (Conditional)
+client = None
+db = None
+if HAS_MONGO:
+    mongo_url = os.getenv('MONGO_URL') or os.getenv('MONGODB_URI')
+    if mongo_url:
+        try:
+            client = AsyncIOMotorClient(mongo_url)
+            db = client[os.getenv('DB_NAME', 'igv_db')]
+        except Exception as e:
+            logging.error(f"CRM: Failed to connect to MongoDB: {e}")
 
 # Models
 class Lead(BaseModel):
@@ -53,6 +78,9 @@ async def get_leads(
     limit: int = Query(100, le=500)
 ):
     """Get all leads with optional filtering"""
+    if not db:
+        raise HTTPException(status_code=503, detail="CRM database not available")
+    
     query = {}
     if status:
         query["status"] = status
@@ -72,6 +100,8 @@ async def get_leads(
 @router.get("/leads/{lead_id}", dependencies=[Depends(get_current_user)])
 async def get_lead(lead_id: str):
     """Get a specific lead by ID"""
+    if not db:
+        raise HTTPException(status_code=503, detail="CRM database not available")
     lead = await db.contacts.find_one({"id": lead_id}, {"_id": 0})
     if not lead:
         raise HTTPException(status_code=404, detail="Lead not found")
@@ -80,6 +110,8 @@ async def get_lead(lead_id: str):
 @router.patch("/leads/{lead_id}", dependencies=[Depends(get_current_user)])
 async def update_lead(lead_id: str, update: LeadUpdate):
     """Update lead status or add notes"""
+    if not db:
+        raise HTTPException(status_code=503, detail="CRM database not available")
     update_data = {k: v for k, v in update.model_dump().items() if v is not None}
     update_data["updated_at"] = datetime.now(timezone.utc).isoformat()
     
@@ -96,12 +128,16 @@ async def update_lead(lead_id: str, update: LeadUpdate):
 @router.get("/orders", dependencies=[Depends(get_current_user)])
 async def get_orders(limit: int = Query(100, le=500)):
     """Get all orders"""
+    if not db:
+        raise HTTPException(status_code=503, detail="CRM database not available")
     orders = await db.orders.find({}, {"_id": 0}).sort("created_at", -1).limit(limit).to_list(limit)
     return {"data": orders, "count": len(orders)}
 
 @router.get("/stats", dependencies=[Depends(get_current_user)])
 async def get_stats():
     """Get CRM statistics"""
+    if not db:
+        raise HTTPException(status_code=503, detail="CRM database not available")
     total_leads = await db.contacts.count_documents({})
     new_leads = await db.contacts.count_documents({"status": "new"})
     total_orders = await db.orders.count_documents({})

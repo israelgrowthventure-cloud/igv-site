@@ -11,14 +11,15 @@ Dernière mise à jour : 13/12/2025 21:20 UTC
 
 ### 2. DÉPLOIEMENT RENDER
 - [x] **Git Push** : Code V3 poussé sur `main`.
-  - *Preuve* : Commit `d7b6674` (feat(ALIGN): V3 Table Rase). ✅
-- [ ] **Frontend (igv-site-web)** : ❌ **FAILED DEPLOY**
-  - *Preuve* : Screenshot utilisateur (Dashboard Render).
-  - *Action* : Récupération logs et correction build.
-- [/] **Backend (igv-cms-backend)** : 🔄 **DEPLOYING**
-  - *Preuve* : Screenshot utilisateur (Dashboard Render).
+  - *Preuve* : Commit `c2537f0` (fix dotenv). ✅
+- [/] **Frontend (igv-site-web)** : 🔄 **BUILDING**
+  - *ID* : `dep-d4utlmur433s73d25org`
+  - *Correctif* : Ajout `dotenv` dans dependencies.
+- [ ] **Backend (igv-cms-backend)** : ❌ **FAILED**
+  - *Statut* : `update_failed` (Rollback v2.0.1 actif).
+  - *Cause* : Logs inaccessibles (404). Config/Env probable.
 - [ ] **Pas de "Failed Deploy"** :
-  - *Statut* : ❌ Frontend Failed.
+  - *Statut* : ⚠️ Backend Failed.
 
 ### 3. VALIDATION FONCTIONNELLE PROD
 - [x] **Frontend URL** (`https://israelgrowthventure.com`)

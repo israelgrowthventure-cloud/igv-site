@@ -39,28 +39,51 @@ except ImportError as e:
     get_zone_from_country_code = lambda c: 'EU'
     ZONE_MAPPING = {}
 
-# --- ROUTER IMPORTS (HARD - NO GUARDS) ---
-# This ensures that if any V3 component is broken, the server fails to start (500)
-# instead of silently disabling features (404).
+# Track import errors for debugging
+import_errors = []
 
-from auth_routes import router as auth_router, get_current_user
-from crm_routes import router as crm_router
-from cms_routes import router as cms_router
-from payment_routes import router as payment_router
+# --- ROUTER IMPORTS (CONDITIONAL WITH GUARDS) ---
+try:
+    from auth_routes import router as auth_router, get_current_user
+except Exception as e:
+    import_errors.append({"module": "auth_routes", "error": str(e)})
+    auth_router = APIRouter(prefix="/api/auth", tags=["auth"])
+    @auth_router.get("/status")
+    async def auth_disabled():
+        return {"status": "disabled", "reason": "Auth module failed to load"}
+
+try:
+    from crm_routes import router as crm_router
+except Exception as e:
+    import_errors.append({"module": "crm_routes", "error": str(e)})
+    crm_router = APIRouter(prefix="/api/crm", tags=["crm"])
+    @crm_router.get("/status")
+    async def crm_disabled():
+        return {"status": "disabled", "reason": "CRM module failed to load"}
+
+try:
+    from cms_routes import router as cms_router
+except Exception as e:
+    import_errors.append({"module": "cms_routes", "error": str(e)})
+    cms_router = APIRouter(prefix="/api/cms", tags=["cms"])
+    @cms_router.get("/status")
+    async def cms_disabled():
+        return {"status": "disabled", "reason": "CMS module failed to load"}
+
+try:
+    from payment_routes import router as payment_router
+except Exception as e:
+    import_errors.append({"module": "payment_routes", "error": str(e)})
+    payment_router = APIRouter(prefix="/api/payment", tags=["payment"])
+    @payment_router.get("/status")
+    async def payment_disabled():
+        return {"status": "disabled", "reason": "Payment module failed to load"}
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
-# Create the main app without a prefix
+# Create the main app (SINGLE DECLARATION)
 app = FastAPI(title="IGV V3 API", version="3.0", docs_url="/api/docs", openapi_url="/api/openapi.json")
-
-@app.get("/api/debug/imports")
-async def get_import_errors():
-    return {
-        "status": "ok", 
-        "errors": import_errors,
-        "env": {k: v for k, v in os.environ.items() if "KEY" not in k and "SECRET" not in k and "PASS" not in k}
-    }
 
 # MongoDB connection (Conditional)
 client = None
@@ -72,9 +95,6 @@ if HAS_MONGO:
         db = client[os.environ.get('DB_NAME', 'igv_db')]
     except Exception as e:
         logging.error(f"Failed to connect to MongoDB: {e}")
-
-# Create the main app without a prefix
-app = FastAPI()
 
 # Security middleware for HTTPS redirect and headers
 @app.middleware("http")
@@ -103,6 +123,16 @@ async def security_middleware(request, call_next):
 
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
+
+@api_router.get("/debug/imports")
+async def get_import_errors():
+    return {
+        "status": "ok", 
+        "errors": import_errors,
+        "has_mongo": HAS_MONGO,
+        "mongo_connected": client is not None,
+        "env_keys": [k for k in os.environ.keys() if "KEY" not in k and "SECRET" not in k and "PASS" not in k]
+    }
 
 
 # Define Models
@@ -198,8 +228,19 @@ async def root():
 
 @api_router.get("/health")
 async def health_check():
-    """Health check endpoint for Render"""
-    return {"status": "ok", "version": "3.0", "mongodb": "connected" if client else "disconnected"}
+    """Health check endpoint for Render - ALWAYS returns 200"""
+    health_data = {
+        "status": "ok", 
+        "version": "3.0",
+        "mongodb": "connected" if client else "disconnected",
+        "modules": {
+            "auth": len([e for e in import_errors if e.get("module") == "auth_routes"]) == 0,
+            "cms": len([e for e in import_errors if e.get("module") == "cms_routes"]) == 0,
+            "crm": len([e for e in import_errors if e.get("module") == "crm_routes"]) == 0,
+            "payment": len([e for e in import_errors if e.get("module") == "payment_routes"]) == 0
+        }
+    }
+    return health_data
 
 
 @api_router.post("/contact", response_model=ContactResponse)

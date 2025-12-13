@@ -68,8 +68,12 @@ def verify_project():
     # 3. Design & UI/UX
     print("\n--- Phase 3: Design ---")
     # Checked Home.js above
-    # Check CTA reduction (we now look for btn-emergent class)
-    check_file_content(packs_js, must_contain=['btn-emergent']) # Reduced padding via class
+    # Check Home design presence via V2 test ids
+    check_file_content(home_js, must_contain=['data-testid="hero-section"'])
+    
+    # Check Styles
+    app_css = os.path.join(root_dir, 'frontend', 'src', 'App.css')
+    check_file_content(app_css, must_contain=['Space Grotesk', '--igv-blue'])
     
     # 4. Finalization (Technical)
     print("\n--- Phase 4: Technical ---")

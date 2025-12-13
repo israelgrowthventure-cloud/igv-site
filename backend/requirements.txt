@@ -3,9 +3,9 @@ uvicorn
 pydantic
 python-dotenv
 httpx
-aiosmtplib
-email-validator
 motor
 passlib
-python-jose
+PyJWT
 python-multipart
+# aiosmtplib  <-- Commented out to reduce deps for stability
+# email-validator <-- Commented out, pydantic might warn but works

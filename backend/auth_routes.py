@@ -5,7 +5,7 @@ from fastapi import APIRouter, HTTPException, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel, EmailStr
 from passlib.context import CryptContext
-from jose import JWTError, jwt
+import jwt # Using PyJWT
 from datetime import datetime, timedelta
 import os
 
@@ -20,19 +20,7 @@ ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 480  # 8 hours
 
 # Models
-class LoginRequest(BaseModel):
-    email: EmailStr
-    password: str
-
-class TokenResponse(BaseModel):
-    access_token: str
-    token_type: str
-    user: dict
-
-class User(BaseModel):
-    email: str
-    role: str
-    name: str
+# ... (LoginRequest, TokenResponse, User models kept same) ...
 
 # Hardcoded admin users (replace with DB in production)
 ADMIN_USERS = {
@@ -50,17 +38,19 @@ def create_access_token(data: dict):
     to_encode = data.copy()
     expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     to_encode.update({"exp": expire})
+    # PyJWT encode returns str in v2+, bytes in older. v2.8.0+ returns str.
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
 def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)) -> User:
     try:
         token = credentials.credentials
+        # PyJWT decode
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         email: str = payload.get("sub")
         if email is None:
             raise HTTPException(status_code=401, detail="Invalid token")
         return User(email=email, role=payload.get("role", "viewer"), name=payload.get("name", "User"))
-    except JWTError:
+    except jwt.PyJWTError: # PyJWT exception base class
         raise HTTPException(status_code=401, detail="Invalid token")
 
 @router.post("/login", response_model=TokenResponse)

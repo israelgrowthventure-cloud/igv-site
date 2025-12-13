@@ -4,8 +4,5 @@ pydantic
 python-dotenv
 httpx
 motor
-passlib
 PyJWT
 python-multipart
-# aiosmtplib  <-- Commented out to reduce deps for stability
-# email-validator <-- Commented out, pydantic might warn but works

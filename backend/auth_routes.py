@@ -12,7 +12,7 @@ import os
 router = APIRouter(prefix="/auth", tags=["authentication"])
 
 # Security
-pwd_context = CryptContext(schemes=["sha256_crypt"], deprecated="auto")
+import hashlib as hash_lib # Renamed to avoid reserved word conflict if any
 security = HTTPBearer()
 
 SECRET_KEY = os.getenv("JWT_SECRET", "your-secret-key-change-in-production")
@@ -23,16 +23,20 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 480  # 8 hours
 # ... (LoginRequest, TokenResponse, User models kept same) ...
 
 # Hardcoded admin users (replace with DB in production)
+# SHA256 of "admin123"
+ADMIN_HASH = "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9" 
+
 ADMIN_USERS = {
     "admin@israelgrowthventure.com": {
-        "password_hash": pwd_context.hash("admin123"),  # Change this!
+        "password_hash": ADMIN_HASH,
         "role": "admin",
         "name": "Administrator"
     }
 }
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    return pwd_context.verify(plain_password, hashed_password)
+    # Standard SHA256 check
+    return hash_lib.sha256(plain_password.encode()).hexdigest() == hashed_password
 
 def create_access_token(data: dict):
     to_encode = data.copy()

@@ -13,7 +13,7 @@ export const useGeo = () => {
 
 export const GeoProvider = ({ children }) => {
     const [zone, setZone] = useState('EU'); // Default to EU
-    const [countryCode, set CountryCode] = useState('FR');
+    const [countryCode, setCountryCode] = useState('FR');
     const [countryName, setCountryName] = useState('France');
     const [currency, setCurrency] = useState('EUR');
     const [symbol, setSymbol] = useState('€');

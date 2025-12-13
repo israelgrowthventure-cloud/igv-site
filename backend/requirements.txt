@@ -6,6 +6,6 @@ httpx
 aiosmtplib
 email-validator
 motor
-passlib[bcrypt]
+passlib
 python-jose
 python-multipart

@@ -65,7 +65,7 @@
   "scripts": {
     "start": "node server.js",
     "dev": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "echo \"Using pre-built assets\"",
     "test": "react-scripts test"
   },
   "browserslist": {

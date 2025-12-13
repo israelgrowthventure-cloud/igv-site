@@ -15,12 +15,22 @@ export const LanguageProvider = ({ children }) => {
   const [translations, setTranslations] = useState({});
 
   useEffect(() => {
-    // Load language from localStorage or browser
+    // 1. Check URL params first (SEO / Direct link)
+    const params = new URLSearchParams(window.location.search);
+    const langParam = params.get('lang');
+
+    if (langParam && ['fr', 'en', 'he'].includes(langParam)) {
+      setLanguage(langParam);
+      localStorage.setItem('igv_language', langParam);
+      return;
+    }
+
+    // 2. Load language from localStorage
     const savedLang = localStorage.getItem('igv_language');
     if (savedLang) {
       setLanguage(savedLang);
     } else {
-      // Detect browser language
+      // 3. Detect browser language
       const browserLang = navigator.language.split('-')[0];
       if (['fr', 'en', 'he'].includes(browserLang)) {
         setLanguage(browserLang);
@@ -31,6 +41,8 @@ export const LanguageProvider = ({ children }) => {
   const changeLanguage = (lang) => {
     setLanguage(lang);
     localStorage.setItem('igv_language', lang);
+    // Optional: Update URL to reflect language without reload? 
+    // Maybe too invasive for now, let's keep it simple.
   };
 
   const t = (key, lang = language) => {
@@ -43,4 +55,3 @@ export const LanguageProvider = ({ children }) => {
     </LanguageContext.Provider>
   );
 };
-

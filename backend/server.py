@@ -56,7 +56,7 @@ import httpx
 import aiosmtplib
 import stripe
 from dotenv import load_dotenv
-from fastapi.responses import PlainTextResponse
+from fastapi.responses import PlainTextResponse, RedirectResponse
 import jwt
 from passlib.context import CryptContext
 
@@ -117,6 +117,23 @@ except Exception as e:
 app = FastAPI(title="IGV Backend", version="1.0.0")
 
 # Healthcheck route pour Render
+
+# ==================== HTTPS Redirect Middleware ====================
+@app.middleware("http")
+async def force_https(request: Request, call_next):
+    # Skip for localhost/dev
+    if "localhost" in request.url.netloc or "127.0.0.1" in request.url.netloc:
+        return await call_next(request)
+        
+    # Check X-Forwarded-Proto (set by Render load balancer)
+    forwarded_proto = request.headers.get("X-Forwarded-Proto", "https")
+    
+    if forwarded_proto == "http":
+        url = str(request.url).replace("http://", "https://", 1)
+        return RedirectResponse(url, status_code=301)
+        
+    return await call_next(request)
+
 @app.get("/")
 def healthcheck():
     return {"status": "ok"}
@@ -1774,7 +1791,11 @@ class InlineMoneticoPaymentProvider:
         ]
         
         chain = '*'.join(str(p) for p in chain_parts)
-        key_bytes = self.key.encode('utf-8') if self.key else b''
+                # Fix for hex key (usual for Monetico) vs ASCII key
+        try:
+            key_bytes = bytes.fromhex(self.key) if self.key else b''
+        except (ValueError, TypeError):
+            key_bytes = self.key.encode('utf-8') if self.key else b''
         chain_bytes = chain.encode('utf-8')
         
         mac = hmac.new(key_bytes, chain_bytes, hashlib.sha1).hexdigest()

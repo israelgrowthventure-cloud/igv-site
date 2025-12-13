@@ -1,227 +1,122 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useSearchParams, Link } from 'react-router-dom';
+import { CheckCircle, Download, Home, ArrowRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { Helmet } from 'react-helmet-async';
-import { CheckCircle, ArrowLeft, Package } from 'lucide-react';
+import { toast } from 'sonner';
 
-/**
- * Page de succès après paiement
- * Utilisée pour Stripe (actuellement) et Monetico (futur)
- * 
- * Query params supportés:
- * - provider: "stripe" ou "monetico"
- * - pack: nom du pack
- * - amount: montant payé
- * - currency: devise (EUR, USD, ILS, etc.)
- * - status: statut du paiement
- */
 const PaymentSuccess = () => {
-  const { t, i18n } = useTranslation();
-  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  
-  // Récupération des paramètres de paiement
-  const provider = searchParams.get('provider') || 'stripe';
-  const packName = searchParams.get('pack') || searchParams.get('packName') || t('packs.unknownPack');
-  const amount = searchParams.get('amount') || '';
-  const currency = searchParams.get('currency') || 'EUR';
-  const status = searchParams.get('status') || 'confirmed';
+  const { t } = useTranslation();
+  const [loading, setLoading] = useState(true);
 
-  const [paymentDetails, setPaymentDetails] = useState({
-    provider: provider,
-    pack: packName,
-    amount: amount,
-    currency: currency,
-    status: status,
-    date: new Date().toLocaleDateString(i18n.language)
-  });
+  // Param?tres communs
+  const status = searchParams.get('status');
+  const provider = searchParams.get('provider'); // 'stripe' or 'monetico'
+  const amount = searchParams.get('amount');
+  const currency = searchParams.get('currency') || 'EUR';
+  const packName = searchParams.get('pack');
+
+  // Param?tres Monetico sp?cifiques (retour par d?faut)
+  const codeRetour = searchParams.get('code-retour'); // paiement, annulation...
 
   useEffect(() => {
-    // Log pour debugging
-    console.log('Payment Success - Query params:', {
-      provider: searchParams.get('provider'),
-      pack: searchParams.get('pack'),
-      amount: searchParams.get('amount'),
-      currency: searchParams.get('currency'),
-      status: searchParams.get('status')
-    });
-  }, [searchParams]);
+    // Simulation de v?rification
+    const timer = setTimeout(() => {
+      setLoading(false);
+      if (codeRetour === 'paiement' || status === 'confirmed') {
+        toast.success(t('payment.success_toast', 'Paiement confirm? avec succ?s !'));
+      }
+    }, 1500);
 
-  const getProviderDisplayName = (provider) => {
-    const providerNames = {
-      'stripe': 'Carte bancaire (Stripe - Legacy)',
-      'monetico': 'Carte bancaire (Monetico CIC)',
-      'cb': 'Carte Bancaire',
-      'virement': 'Virement bancaire'
-    };
-    return providerNames[provider.toLowerCase()] || 'Carte Bancaire';
+    return () => clearTimeout(timer);
+  }, [codeRetour, status, t]);
+
+  const handleDownloadInvoice = () => {
+    toast.info("Le t?l?chargement de la facture sera disponible bient?t.");
+    // TODO: Connecter ? l'API backend pour g?n?rer le PDF
   };
 
-  const formatAmount = (amount, currency) => {
-    if (!amount) return '';
-    
-    const currencySymbols = {
-      'EUR': '€',
-      'USD': '$',
-      'ILS': '₪',
-      'eur': '€',
-      'usd': '$',
-      'ils': '₪'
-    };
-    
-    const symbol = currencySymbols[currency] || currency;
-    const numAmount = parseFloat(amount);
-    
-    if (isNaN(numAmount)) return `${amount} ${symbol}`;
-    
-    const formatted = numAmount.toLocaleString(i18n.language);
-    
-    if (currency === 'ILS' || currency === 'ils') {
-      return `${formatted} ${symbol}`;
-    }
-    return `${formatted} ${symbol}`;
-  };
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center pt-20">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-green-500 mb-6"></div>
+        <h2 className="text-2xl font-semibold text-gray-700">Traitement de votre commande...</h2>
+      </div>
+    );
+  }
 
   return (
-    <>
-      {/* SEO - noindex car page spécifique à un paiement */}
-      <Helmet>
-        <title>{t('payment.success.title') || 'Paiement confirmé'} - Israel Growth Venture</title>
-        <meta name="robots" content="noindex, nofollow" />
-        <meta name="description" content={t('payment.success.message') || 'Confirmation de paiement'} />
-      </Helmet>
-
-      <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-white py-20 px-4" dir={i18n.language === 'he' ? 'rtl' : 'ltr'}>
-        <div className="max-w-2xl mx-auto">
-          {/* Carte principale */}
-          <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12 text-center">
-          {/* Icône de succès */}
-          <div className="flex justify-center mb-6">
-            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center">
-              <CheckCircle className="w-12 h-12 text-green-600" />
-            </div>
+    <div className="min-h-screen bg-gray-50 pt-32 pb-20 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
+        <div className="bg-green-600 p-8 text-center">
+          <div className="mx-auto bg-white rounded-full h-20 w-20 flex items-center justify-center mb-4">
+            <CheckCircle className="h-12 w-12 text-green-600" />
           </div>
-
-          {/* Titre principal */}
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            {t('payment.success.title') || 'Paiement confirmé !'}
+          <h1 className="text-3xl font-bold text-white mb-2">
+            {t('payment.success_title', 'Paiement R?ussi !')}
           </h1>
-
-          {/* Message de remerciement */}
-          <p className="text-lg text-gray-600 mb-8">
-            {t('payment.success.message') || 'Merci, votre paiement a bien été reçu. Nous vous confirmerons la suite par email.'}
+          <p className="text-green-100 text-lg">
+            {t('payment.success_subtitle', 'Merci de votre confiance. Votre commande est valid?e.')}
           </p>
+        </div>
 
-          {/* Détails du paiement */}
-          <div className="bg-gray-50 rounded-xl p-6 mb-8 text-left">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
-              <Package className="w-5 h-5 mr-2 text-blue-600" />
-              {t('payment.success.details') || 'Détails de la commande'}
-            </h2>
-            
-            <div className="space-y-3">
-              {/* Pack */}
-              {paymentDetails.pack && (
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-600">{t('payment.success.pack') || 'Pack'} :</span>
-                  <span className="font-semibold text-gray-900">{paymentDetails.pack}</span>
-                </div>
-              )}
+        <div className="p-8">
+          <div className="border-b border-gray-100 pb-8 mb-8">
+            <h2 className="text-xl font-semibold text-gray-900 mb-6">D?tails de la commande</h2>
 
-              {/* Montant */}
-              {paymentDetails.amount && (
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-600">{t('payment.success.amount') || 'Montant'} :</span>
-                  <span className="font-semibold text-gray-900">
-                    {formatAmount(paymentDetails.amount, paymentDetails.currency)}
-                  </span>
-                </div>
-              )}
+            <div className="space-y-4">
+              <div className="flex justify-between items-center py-2">
+                <span className="text-gray-600">Pack choisi</span>
+                <span className="font-semibold text-gray-900 capitalize">{packName || 'Pack Standard'}</span>
+              </div>
 
-              {/* Mode de paiement */}
-              <div className="flex justify-between items-center">
-                <span className="text-gray-600">{t('payment.success.method') || 'Paiement'} :</span>
+              <div className="flex justify-between items-center py-2">
+                <span className="text-gray-600">Montant pay?</span>
                 <span className="font-semibold text-gray-900">
-                  {getProviderDisplayName(paymentDetails.provider)}
+                  {amount ? `${amount} ${currency === 'EUR' ? '?' : currency}` : 'Consulter facture'}
                 </span>
               </div>
 
-              {/* Statut */}
-              <div className="flex justify-between items-center">
-                <span className="text-gray-600">{t('payment.success.status') || 'Statut'} :</span>
-                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
-                  <CheckCircle className="w-4 h-4 mr-1" />
-                  {t('payment.success.confirmed') || 'Confirmé'}
-                </span>
+              <div className="flex justify-between items-center py-2">
+                <span className="text-gray-600">M?thode</span>
+                <span className="font-medium text-gray-900 uppercase">{provider || 'Carte Bancaire'}</span>
               </div>
 
-              {/* Date */}
-              <div className="flex justify-between items-center">
-                <span className="text-gray-600">{t('payment.success.date') || 'Date'} :</span>
-                <span className="font-semibold text-gray-900">{paymentDetails.date}</span>
+              <div className="flex justify-between items-center py-2">
+                <span className="text-gray-600">Date</span>
+                <span className="text-gray-900">{new Date().toLocaleDateString()}</span>
               </div>
             </div>
           </div>
 
-          {/* Prochaines étapes */}
-          <div className="bg-blue-50 border border-blue-100 rounded-xl p-6 mb-8 text-left">
-            <h3 className="text-lg font-semibold text-blue-900 mb-3">
-              {t('payment.success.nextSteps') || 'Prochaines étapes'}
-            </h3>
-            <ul className="space-y-2 text-blue-800">
-              <li className="flex items-start">
-                <CheckCircle className="w-5 h-5 mr-2 mt-0.5 flex-shrink-0 text-blue-600" />
-                <span>{t('payment.success.step1') || 'Vous recevrez un email de confirmation sous quelques minutes'}</span>
-              </li>
-              <li className="flex items-start">
-                <CheckCircle className="w-5 h-5 mr-2 mt-0.5 flex-shrink-0 text-blue-600" />
-                <span>{t('payment.success.step2') || 'Notre équipe vous contactera pour planifier un rendez-vous'}</span>
-              </li>
-              <li className="flex items-start">
-                <CheckCircle className="w-5 h-5 mr-2 mt-0.5 flex-shrink-0 text-blue-600" />
-                <span>{t('payment.success.step3') || 'Nous commencerons votre accompagnement selon le pack choisi'}</span>
-              </li>
-            </ul>
-          </div>
-
-          {/* Boutons d'action */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button
-              onClick={() => navigate('/')}
-              className="flex items-center justify-center px-6 py-3 bg-gray-100 text-gray-700 font-semibold rounded-lg hover:bg-gray-200 transition-colors"
-            >
-              <ArrowLeft className="w-5 h-5 mr-2" />
-              {t('payment.success.backHome') || "Retour à l'accueil"}
-            </button>
-            
-            <button
-              onClick={() => navigate('/packs')}
-              className="flex items-center justify-center px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              <Package className="w-5 h-5 mr-2" />
-              {t('payment.success.viewPacks') || 'Voir nos packs'}
-            </button>
-          </div>
-
-          {/* Contact */}
-          <div className="mt-8 pt-6 border-t border-gray-200">
-            <p className="text-sm text-gray-600">
-              {t('payment.success.question') || 'Une question ?'}{' '}
-              <a 
-                href="mailto:contact@israelgrowthventure.com" 
-                className="text-blue-600 hover:text-blue-700 font-medium"
-              >
-                {t('payment.success.contactUs') || 'Contactez-nous'}
-              </a>
+          <div className="bg-blue-50 rounded-xl p-6 mb-8 border border-blue-100">
+            <h3 className="font-semibold text-blue-900 mb-2">Prochaines ?tapes</h3>
+            <p className="text-blue-700 text-sm mb-0">
+              Un consultant IGV va prendre contact avec vous sous 24h ouvr?es pour d?marrer votre accompagnement.
+              Un email de confirmation vous a ?t? envoy?.
             </p>
           </div>
+
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <button
+              onClick={handleDownloadInvoice}
+              className="inline-flex items-center justify-center px-6 py-3 border border-gray-300 shadow-sm text-base font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-colors"
+            >
+              <Download className="mr-2 h-5 w-5" />
+              T?l?charger facture
+            </button>
+
+            <Link
+              to="/"
+              className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-green-600 hover:bg-green-700 shadow-lg hover:shadow-xl transition-all"
+            >
+              <Home className="mr-2 h-5 w-5" />
+              Retour ? l'accueil
+            </Link>
+          </div>
         </div>
-        {/* Fermeture de la Carte principale (bg-white rounded-2xl) - était manquante */}
       </div>
-      {/* Fermeture de max-w-2xl */}
     </div>
-    {/* Fermeture de min-h-screen */}
-    </>
   );
 };
 

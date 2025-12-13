@@ -68,8 +68,8 @@ def verify_project():
     # 3. Design & UI/UX
     print("\n--- Phase 3: Design ---")
     # Checked Home.js above
-    # Check CTA reduction (py-3 replaced by py-2 mostly, tough to regex exact count but let's check one)
-    check_file_content(packs_js, must_contain=['py-2 px-4']) # Reduced padding
+    # Check CTA reduction (we now look for btn-emergent class)
+    check_file_content(packs_js, must_contain=['btn-emergent']) # Reduced padding via class
     
     # 4. Finalization (Technical)
     print("\n--- Phase 4: Technical ---")

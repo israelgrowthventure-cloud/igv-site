@@ -9,7 +9,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ArrowRight, TrendingUp, Globe, Users } from 'lucide-react';
+import { ArrowRight, TrendingUp, Globe, Users, Award } from 'lucide-react';
 import { useCMSContent } from '../hooks/useCMSContent';
 import SEO from '../components/SEO';
 
@@ -95,36 +95,36 @@ const Home = () => {
     },
     he: {
       hero: {
-        title: "������ �� ���� ���� ������",
-        subtitle: "������� ���� ������ ����� ���� ���� �������",
-        cta: "��� �� ������ ����"
+        title: "    ",
+        subtitle: "      ",
+        cta: "   "
       },
       stats: [
-        { value: '500+', label: '�������� �������' },
-        { value: '20+', label: '���� ������' },
-        { value: '98%', label: '������ ������' }
+        { value: '500+', label: ' ' },
+        { value: '20+', label: ' ' },
+        { value: '98%', label: ' ' }
       ],
       features: [
         {
           icon: TrendingUp,
-          title: '����� ��������',
-          description: '������� ������� ������� ���� ���� ����'
+          title: ' ',
+          description: '     '
         },
         {
           icon: Globe,
-          title: '������� ������',
-          description: '��� ����� �� ���� �������'
+          title: ' ',
+          description: '    '
         },
         {
           icon: Users,
-          title: '����� ����',
-          description: '������ ��� ������ ������'
+          title: ' ',
+          description: '   '
         }
       ],
       cta: {
-        title: '������ ������?',
-        description: '��� ����� ��� ��� ���� ������� ����',
-        button: '��� ���'
+        title: ' ?',
+        description: '      ',
+        button: ' '
       }
     }
   };
@@ -132,77 +132,95 @@ const Home = () => {
   const currentContent = content[i18n.language] || content.fr;
 
   return (
-    <div className="min-h-screen pt-16">
+    <div className="min-h-screen pt-16 font-sans">
       <SEO
         title={getText('seo.title', `${currentContent.hero.title} - Israel Growth Venture`)}
         description={getText('seo.description', currentContent.hero.subtitle)}
         pathname="/"
         image="https://israelgrowthventure.com/og-home.jpg"
       />
-      {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-white via-blue-50 to-white py-20 lg:py-32">
+      {/* Hero Section - Emergent Layout (2 Col) */}
+      <section className="relative overflow-hidden bg-white py-20 lg:py-32">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className={`text-center transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
-              {getText('hero.title', currentContent.hero.title)}
-            </h1>
-            <p className="text-lg sm:text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-              {getText('hero.subtitle', currentContent.hero.subtitle)}
-            </p>
-                        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link
-                to="/packs"
-                className="inline-flex items-center px-6 py-3 bg-[#0052CC] text-white rounded-lg font-semibold hover:bg-[#003D99] transition-all duration-300 hover:shadow-lg hover:scale-105"
-              >
-                {getText('hero.cta', currentContent.hero.cta)}
-                <ArrowRight className="ml-2" size={20} />
-              </Link>
-              <Link
-                to="/contact"
-                className="inline-flex items-center px-6 py-3 bg-white text-[#0052CC] border-2 border-[#0052CC] rounded-lg font-semibold hover:bg-blue-50 transition-all duration-300 hover:shadow-lg hover:scale-105"
-              >
-                {currentContent.hero.cta2 || "Parler à un expert"}
-              </Link>
-            </div>
-          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
 
-          {/* Stats */}
-          <div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-8">
-            {currentContent.stats.map((stat, index) => (
-              <div
-                key={index}
-                className="text-center p-6 bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300"
-              >
-                <div className="text-4xl font-bold text-[#0052CC] mb-2">
-                  {getText(`stats.${index}.value`, stat.value)}
-                </div>
-                <div className="text-gray-600">
-                  {getText(`stats.${index}.label`, stat.label)}
-                </div>
+            {/* Left Column: Content */}
+            <div className={`text-left transition-all duration-1000 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'}`}>
+
+              {/* Badge Experience (Mobile Top / Desktop Inline) */}
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-sm font-semibold mb-6">
+                <Award size={16} />
+                <span>20+ {t('common.years_experience', 'Ann?es d\'exp?rience')}</span>
               </div>
-            ))}
+
+              <h1 className="hero-title text-4xl sm:text-5xl lg:text-6xl text-gray-900 mb-6 leading-tight">
+                {getText('hero.title', currentContent.hero.title)}
+              </h1>
+              <p className="text-lg sm:text-xl text-gray-600 mb-8 max-w-xl leading-relaxed">
+                {getText('hero.subtitle', currentContent.hero.subtitle)}
+              </p>
+
+              <div className="flex flex-col sm:flex-row items-start gap-4">
+                <Link
+                  to="/packs"
+                  className="btn-emergent btn-primary"
+                >
+                  {getText('hero.cta', currentContent.hero.cta)}
+                  <ArrowRight className="ml-2" size={18} />
+                </Link>
+                <Link
+                  to="/contact"
+                  className="btn-emergent btn-secondary"
+                >
+                  {currentContent.hero.cta2 || "Parler à un expert"}
+                </Link>
+              </div>
+            </div>
+
+            {/* Right Column: Visual / Badge */}
+            <div className={`relative hidden lg:block h-full min-h-[400px] transition-all duration-1000 delay-200 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'}`}>
+              <div className="absolute inset-0 bg-gradient-to-tr from-blue-50 to-white rounded-3xl -z-10 transform rotate-3 scale-95"></div>
+              {/* Placeholder for Hero Image - using a gradient block for now to fit specs */}
+              <div className="w-full h-full bg-blue-50/50 rounded-2xl flex items-center justify-center p-8 border border-blue-100">
+                <div className="badge-experience">
+                  <div className="years">20+</div>
+                  <div className="label">
+                    Ann?es<br />d'Exp?rience
+                  </div>
+                </div>
+                {/* Decorative elements */}
+                <div className="absolute -top-10 -right-10 w-40 h-40 bg-blue-500/5 rounded-full blur-3xl"></div>
+                <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-purple-500/5 rounded-full blur-3xl"></div>
+              </div>
+            </div>
+
           </div>
         </div>
       </section>
 
       {/* Features Section */}
-      <section className="py-20 bg-white">
+      <section className="py-24 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4 font-work-sans">Pourquoi IGV ?</h2>
+            <div className="w-20 h-1 bg-blue-600 mx-auto rounded-full"></div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {currentContent.features.map((feature, index) => {
               const Icon = feature.icon;
               return (
                 <div
                   key={index}
-                  className="text-center p-8 rounded-xl border border-gray-100 hover:border-[#0052CC] hover:shadow-lg transition-all duration-300"
+                  className="group bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-transparent hover:border-blue-100"
                 >
-                  <div className="w-16 h-16 mx-auto mb-6 bg-blue-50 rounded-full flex items-center justify-center text-[#0052CC]">
-                    <Icon size={32} />
+                  <div className="w-14 h-14 mb-6 bg-blue-50 rounded-xl flex items-center justify-center text-blue-600 group-hover:scale-110 transition-transform duration-300">
+                    <Icon size={28} />
                   </div>
-                  <h3 className="text-xl font-semibold mb-4 text-gray-900">
+                  <h3 className="text-xl font-bold mb-3 text-gray-900 font-work-sans">
                     {getText(`features.${index}.title`, feature.title)}
                   </h3>
-                  <p className="text-gray-600">
+                  <p className="text-gray-600 leading-relaxed text-sm">
                     {getText(`features.${index}.description`, feature.description)}
                   </p>
                 </div>
@@ -213,17 +231,18 @@ const Home = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-[#0052CC] to-[#0065FF]">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-6">
+      <section className="py-24 bg-white relative overflow-hidden">
+        <div className="absolute inset-0 bg-blue-900 opacity-[0.02] pattern-dots"></div>
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-6 font-work-sans">
             {getText('cta.title', currentContent.cta.title)}
           </h2>
-          <p className="text-xl text-blue-100 mb-8">
+          <p className="text-xl text-gray-600 mb-10 max-w-2xl mx-auto">
             {getText('cta.description', currentContent.cta.description)}
           </p>
           <Link
             to="/contact"
-            className="inline-flex items-center px-6 py-3 bg-white text-[#0052CC] rounded-lg font-semibold hover:bg-gray-100 transition-all duration-300 hover:shadow-lg"
+            className="btn-emergent btn-primary px-8 py-4 text-lg shadow-xl shadow-blue-500/20"
           >
             {getText('cta.button', currentContent.cta.button)}
           </Link>
@@ -234,4 +253,3 @@ const Home = () => {
 }
 
 export default Home;
-

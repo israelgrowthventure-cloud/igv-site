@@ -92,3 +92,85 @@ select:focus {
     display: none;
   }
 }
+
+/* ============================================================
+   EMERGENT DESIGN SYSTEM - COMPONENT CLASSES
+   ============================================================ */
+
+/* Buttons */
+.btn-emergent {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.625rem 1.25rem; /* ~10px 20px - reduced size */
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 0.9375rem; /* 15px */
+  border-radius: 99px; /* Rounded full for modern look */
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+  line-height: 1.2;
+}
+
+.btn-primary {
+  background-color: #0052CC;
+  color: white;
+  border: 1px solid transparent;
+  box-shadow: 0 2px 4px rgba(0, 82, 204, 0.15);
+}
+
+.btn-primary:hover {
+  background-color: #003D99;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(0, 82, 204, 0.2);
+}
+
+.btn-secondary {
+  background-color: white;
+  color: #0052CC;
+  border: 1px solid #E2E8F0;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.btn-secondary:hover {
+  background-color: #F8FAFC;
+  border-color: #0052CC;
+  color: #003D99;
+}
+
+/* Badge "20+ Years" */
+.badge-experience {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: white;
+  padding: 0.75rem 1.25rem;
+  border-radius: 1rem;
+  box-shadow: 0 10px 40px -10px rgba(0,0,0,0.1);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  font-family: 'Work Sans', sans-serif;
+  max-width: fit-content;
+}
+
+.badge-experience .years {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #0052CC;
+  line-height: 1;
+}
+
+.badge-experience .label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #4A5568;
+  line-height: 1.2;
+  text-align: left;
+}
+
+/* Hero Typography */
+.hero-title {
+  font-family: 'Work Sans', sans-serif;
+  font-weight: 800; /* Extra bold */
+  letter-spacing: -0.02em;
+  color: #1A202C;
+}

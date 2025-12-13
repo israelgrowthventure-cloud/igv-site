@@ -244,7 +244,7 @@ const Contact = () => {
                   </h3>
                   <p className="text-sm text-gray-600">
                     Lundi - Vendredi: 9h00 - 18h00<br />
-                    Samedi - Dimanche: Ferm├⌐
+                    Samedi - Dimanche: Fermé
                   </p>
                 </div>
               </div>

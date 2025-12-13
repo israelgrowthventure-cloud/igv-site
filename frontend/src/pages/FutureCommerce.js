@@ -192,10 +192,10 @@ const FutureCommerce = () => {
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-600 to-blue-700 text-white">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl sm:text-4xl font-bold mb-6">
-            Pr├¬t ├á tester votre concept en Isra├½l ?
+            Prêt à tester votre concept en Israël ?
           </h2>
           <p className="text-lg text-blue-100 mb-8">
-            R├⌐servez un appel de 30 minutes pour discuter de votre projet
+            Réservez un appel de 30 minutes pour discuter de votre projet
           </p>
           <Link
             to="/appointment"

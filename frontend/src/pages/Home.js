@@ -1,8 +1,8 @@
-﻿// ============================================================
-// ATTENTION - Home Page Phase 7 - Design Emergent restauré
+// ============================================================
+// ATTENTION - Home Page Phase 7 - Design Emergent restaur?
 // ============================================================
 // Design moderne avec hero, stats, features sections
-// Basé sur igv-website-v2 (référence Emergent)
+// Bas? sur igv-website-v2 (r?f?rence Emergent)
 // NE PAS MODIFIER sans validation client IGV
 // ============================================================
 
@@ -25,34 +25,34 @@ const Home = () => {
   const content = {
     fr: {
       hero: {
-        title: "Développez votre entreprise en Israël",
-        subtitle: "Expertise complète pour l'expansion de votre marque sur le marché israélien",
-        cta: "Découvrir nos offres"
+        title: "D?veloppez votre entreprise en Isra?l",
+        subtitle: "Expertise compl?te pour l'expansion de votre marque sur le march? isra?lien",
+        cta: "D?couvrir nos offres"
       },
       stats: [
-        { value: '500+', label: 'Projets réussis' },
-        { value: '15+', label: 'Années d\'expérience' },
+        { value: '500+', label: 'Projets r?ussis' },
+        { value: '15+', label: 'Ann?es d\'exp?rience' },
         { value: '98%', label: 'Clients satisfaits' }
       ],
       features: [
         {
           icon: TrendingUp,
-          title: 'Croissance Stratégique',
-          description: 'Plans d\'expansion sur mesure pour votre marché cible'
+          title: 'Croissance Strat?gique',
+          description: 'Plans d\'expansion sur mesure pour votre march? cible'
         },
         {
           icon: Globe,
           title: 'Expertise Locale',
-          description: 'Connaissance approfondie du marché israélien'
+          description: 'Connaissance approfondie du march? isra?lien'
         },
         {
           icon: Users,
           title: 'Accompagnement Complet',
-          description: 'De l\'analyse à la mise en œuvre opérationnelle'
+          description: 'De l\'analyse ? la mise en ?uvre op?rationnelle'
         }
       ],
       cta: {
-        title: 'Prêt à commencer ?',
+        title: 'Pr?t ? commencer ?',
         description: 'Contactez-nous pour discuter de votre projet',
         button: 'Nous contacter'
       }
@@ -93,36 +93,36 @@ const Home = () => {
     },
     he: {
       hero: {
-        title: "הרחיבו את העסק שלכם בישראל",
-        subtitle: "מומחיות מלאה להרחבת המותג שלכם בשוק הישראלי",
-        cta: "גלו את ההצעות שלנו"
+        title: "������ �� ���� ���� ������",
+        subtitle: "������� ���� ������ ����� ���� ���� �������",
+        cta: "��� �� ������ ����"
       },
       stats: [
-        { value: '500+', label: 'פרויקטים מוצלחים' },
-        { value: '15+', label: 'שנות ניסיון' },
-        { value: '98%', label: 'לקוחות מרוצים' }
+        { value: '500+', label: '�������� �������' },
+        { value: '15+', label: '���� ������' },
+        { value: '98%', label: '������ ������' }
       ],
       features: [
         {
           icon: TrendingUp,
-          title: 'צמיחה אסטרטגית',
-          description: 'תוכניות התרחבות מותאמות לשוק היעד שלכם'
+          title: '����� ��������',
+          description: '������� ������� ������� ���� ���� ����'
         },
         {
           icon: Globe,
-          title: 'מומחיות מקומית',
-          description: 'ידע מעמיק של השוק הישראלי'
+          title: '������� ������',
+          description: '��� ����� �� ���� �������'
         },
         {
           icon: Users,
-          title: 'תמיכה מלאה',
-          description: 'מניתוח ועד ליישום תפעולי'
+          title: '����� ����',
+          description: '������ ��� ������ ������'
         }
       ],
       cta: {
-        title: 'מוכנים להתחיל?',
-        description: 'צרו איתנו קשר כדי לדון בפרויקט שלכם',
-        button: 'צרו קשר'
+        title: '������ ������?',
+        description: '��� ����� ��� ��� ���� ������� ����',
+        button: '��� ���'
       }
     }
   };
@@ -198,6 +198,10 @@ const Home = () => {
                 </div>
               );
             })}
+          </div>
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section className="py-20 bg-gradient-to-r from-[#0052CC] to-[#0065FF]">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -217,11 +221,7 @@ const Home = () => {
       </section>
     </div>
   );
-};      </div>
-      </section>
-    </div>
-  );
-};
+}
 
 export default Home;
 

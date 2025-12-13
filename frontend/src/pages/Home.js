@@ -27,11 +27,12 @@ const Home = () => {
       hero: {
         title: "D?veloppez votre entreprise en Isra?l",
         subtitle: "Expertise compl?te pour l'expansion de votre marque sur le march? isra?lien",
-        cta: "D?couvrir nos offres"
+        cta: "D?couvrir nos offres",
+        cta2: "Parler ? un expert"
       },
       stats: [
         { value: '500+', label: 'Projets r?ussis' },
-        { value: '15+', label: 'Ann?es d\'exp?rience' },
+        { value: '20+', label: 'Ann?es d\'exp?rience' },
         { value: '98%', label: 'Clients satisfaits' }
       ],
       features: [
@@ -61,11 +62,12 @@ const Home = () => {
       hero: {
         title: "Expand Your Business in Israel",
         subtitle: "Complete expertise for your brand expansion in the Israeli market",
-        cta: "Discover our offers"
+        cta: "Discover our offers",
+        cta2: "Talk to an expert"
       },
       stats: [
         { value: '500+', label: 'Successful projects' },
-        { value: '15+', label: 'Years of experience' },
+        { value: '20+', label: 'Years of experience' },
         { value: '98%', label: 'Satisfied clients' }
       ],
       features: [
@@ -99,7 +101,7 @@ const Home = () => {
       },
       stats: [
         { value: '500+', label: '�������� �������' },
-        { value: '15+', label: '���� ������' },
+        { value: '20+', label: '���� ������' },
         { value: '98%', label: '������ ������' }
       ],
       features: [
@@ -147,13 +149,21 @@ const Home = () => {
             <p className="text-lg sm:text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
               {getText('hero.subtitle', currentContent.hero.subtitle)}
             </p>
-            <Link
-              to="/packs"
-              className="inline-flex items-center px-8 py-4 bg-[#0052CC] text-white rounded-lg font-semibold hover:bg-[#003D99] transition-all duration-300 hover:shadow-lg hover:scale-105"
-            >
-              {getText('hero.cta', currentContent.hero.cta)}
-              <ArrowRight className="ml-2" size={20} />
-            </Link>
+                        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Link
+                to="/packs"
+                className="inline-flex items-center px-6 py-3 bg-[#0052CC] text-white rounded-lg font-semibold hover:bg-[#003D99] transition-all duration-300 hover:shadow-lg hover:scale-105"
+              >
+                {getText('hero.cta', currentContent.hero.cta)}
+                <ArrowRight className="ml-2" size={20} />
+              </Link>
+              <Link
+                to="/contact"
+                className="inline-flex items-center px-6 py-3 bg-white text-[#0052CC] border-2 border-[#0052CC] rounded-lg font-semibold hover:bg-blue-50 transition-all duration-300 hover:shadow-lg hover:scale-105"
+              >
+                {currentContent.hero.cta2 || "Parler à un expert"}
+              </Link>
+            </div>
           </div>
 
           {/* Stats */}
@@ -213,7 +223,7 @@ const Home = () => {
           </p>
           <Link
             to="/contact"
-            className="inline-flex items-center px-8 py-4 bg-white text-[#0052CC] rounded-lg font-semibold hover:bg-gray-100 transition-all duration-300 hover:shadow-lg"
+            className="inline-flex items-center px-6 py-3 bg-white text-[#0052CC] rounded-lg font-semibold hover:bg-gray-100 transition-all duration-300 hover:shadow-lg"
           >
             {getText('cta.button', currentContent.cta.button)}
           </Link>

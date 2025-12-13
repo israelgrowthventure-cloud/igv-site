@@ -323,7 +323,7 @@ const Packs = () => {
                   {/* CTA */}
                   <button
                     onClick={() => handleOrderPack(pack)}
-                    className={`w-full py-3 px-4 rounded-lg font-semibold transition-colors ${
+                    className={`w-full py-2 px-4 rounded-lg font-semibold transition-colors ${
                       isHighlighted
                         ? 'bg-white text-blue-600 hover:bg-gray-100'
                         : 'bg-blue-600 text-white hover:bg-blue-700'
@@ -350,7 +350,7 @@ const Packs = () => {
           </p>
           <a
             href="mailto:contact@israelgrowthventure.com"
-            className="inline-flex items-center px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
+            className="inline-flex items-center px-5 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
             data-testid="custom-pack-contact"
           >
             <Mail className="w-5 h-5 mr-2" />

@@ -39,21 +39,47 @@ except ImportError as e:
     get_zone_from_country_code = lambda c: 'EU'
     ZONE_MAPPING = {}
 
-# Import route modules (Guarded)
-auth_router = None
-crm_router = None
-cms_router = None
-payment_router = None 
+# --- ROUTER IMPORTS WITH DEBUGGING ---
+import_errors = {}
+
+try:
+    from auth_routes import router as auth_router, get_current_user
+except ImportError as e:
+    import_errors["auth"] = str(e)
+    auth_router = None
+    get_current_user = None
+
 try:
     from crm_routes import router as crm_router
-    from cms_routes import router as cms_router
-    from payment_routes import router as payment_router
-except ImportError:
-    pass
+except ImportError as e:
+    import_errors["crm"] = str(e)
+    crm_router = None
 
+try:
+    from cms_routes import router as cms_router
+except ImportError as e:
+    import_errors["cms"] = str(e)
+    cms_router = None
+
+try:
+    from payment_routes import router as payment_router
+except ImportError as e:
+    import_errors["payment"] = str(e)
+    payment_router = None
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
+
+# Create the main app without a prefix
+app = FastAPI(title="IGV V3 API", version="3.0", docs_url="/api/docs", openapi_url="/api/openapi.json")
+
+@app.get("/api/debug/imports")
+async def get_import_errors():
+    return {
+        "status": "ok", 
+        "errors": import_errors,
+        "env": {k: v for k, v in os.environ.items() if "KEY" not in k and "SECRET" not in k and "PASS" not in k}
+    }
 
 # MongoDB connection (Conditional)
 client = None

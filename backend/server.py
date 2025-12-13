@@ -24,17 +24,29 @@ from pricing_config import (
 )
 
 # Import route modules
+# try:
+#     from auth_routes import router as auth_router
+#     from crm_routes import router as crm_router
+#     from cms_routes import router as cms_router
+#     from payment_routes import router as payment_router
+# except ImportError as e:
+#     logging.warning(f"Could not import route modules: {e}")
+#     auth_router = None
+#     crm_router = None
+#     cms_router = None
+#     payment_router = None
+
+# Temporary Workaround for Deployment
+auth_router = None
+crm_router = None
+cms_router = None
+# payment_router = None 
 try:
-    from auth_routes import router as auth_router
     from crm_routes import router as crm_router
     from cms_routes import router as cms_router
     from payment_routes import router as payment_router
-except ImportError as e:
-    logging.warning(f"Could not import route modules: {e}")
-    auth_router = None
-    crm_router = None
-    cms_router = None
-    payment_router = None
+except ImportError:
+    pass
 
 
 ROOT_DIR = Path(__file__).parent

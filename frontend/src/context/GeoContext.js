@@ -20,19 +20,26 @@ export const GeoProvider = ({ children }) => {
     zone: ZONES.EU, // Défaut
     loading: true,
     error: null,
+    isManuallySet: false,
   });
 
   useEffect(() => {
     const fetchGeoData = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/api/geo`);
-        
+        // ✅ AMÉLIORATION: Ajout d'un timeout de 1 seconde
+        const fetchPromise = fetch(`${API_BASE_URL}/api/geo`);
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Geolocation timeout')), 1000)
+        );
+
+        const response = await Promise.race([fetchPromise, timeoutPromise]);
+
         if (!response.ok) {
           throw new Error('Failed to fetch geo data');
         }
-        
+
         const data = await response.json();
-        
+
         setGeoData({
           ip: data.ip,
           country_code: data.country_code,
@@ -40,9 +47,11 @@ export const GeoProvider = ({ children }) => {
           zone: data.zone,
           loading: false,
           error: null,
+          isManuallySet: false,
         });
       } catch (error) {
-        console.error('Geo detection error:', error);
+        console.warn('Geo detection failed or timeout, using default zone:', error.message);
+        // ✅ AMÉLIORATION: Fallback immédiat vers zone par défaut
         setGeoData({
           ip: null,
           country_code: 'FR',
@@ -50,6 +59,7 @@ export const GeoProvider = ({ children }) => {
           zone: ZONES.EU,
           loading: false,
           error: error.message,
+          isManuallySet: false,
         });
       }
     };
@@ -57,9 +67,19 @@ export const GeoProvider = ({ children }) => {
     fetchGeoData();
   }, []);
 
+  // ✅ NOUVEAU: Fonction pour définir manuellement la zone
+  const setZoneManually = (zone) => {
+    setGeoData(prev => ({
+      ...prev,
+      zone,
+      isManuallySet: true,
+    }));
+  };
+
   const value = {
     ...geoData,
     isLoading: geoData.loading,
+    setZoneManually, // Exposer la fonction
   };
 
   return <GeoContext.Provider value={value}>{children}</GeoContext.Provider>;

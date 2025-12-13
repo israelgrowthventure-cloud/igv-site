@@ -17,11 +17,12 @@ import { useGeo } from '../context/GeoContext';
 import { packsAPI, pricingAPI } from '../utils/api';
 import { pagesAPI } from '../utils/api';
 import { toast } from 'sonner';
+import ZoneSelector from '../components/ZoneSelector';
 
 const Packs = () => {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
-  const { zone, country_name, isLoading: geoLoading } = useGeo();
+  const { zone, country_name, isLoading: geoLoading, setZoneManually, error: geoError } = useGeo();
   const [packs, setPacks] = useState([]);
   const [packsPricing, setPacksPricing] = useState({});
   const [loading, setLoading] = useState(true);

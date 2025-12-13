@@ -39,33 +39,14 @@ except ImportError as e:
     get_zone_from_country_code = lambda c: 'EU'
     ZONE_MAPPING = {}
 
-# --- ROUTER IMPORTS WITH DEBUGGING ---
-import_errors = {}
+# --- ROUTER IMPORTS (HARD - NO GUARDS) ---
+# This ensures that if any V3 component is broken, the server fails to start (500)
+# instead of silently disabling features (404).
 
-try:
-    from auth_routes import router as auth_router, get_current_user
-except ImportError as e:
-    import_errors["auth"] = str(e)
-    auth_router = None
-    get_current_user = None
-
-try:
-    from crm_routes import router as crm_router
-except ImportError as e:
-    import_errors["crm"] = str(e)
-    crm_router = None
-
-try:
-    from cms_routes import router as cms_router
-except ImportError as e:
-    import_errors["cms"] = str(e)
-    cms_router = None
-
-try:
-    from payment_routes import router as payment_router
-except ImportError as e:
-    import_errors["payment"] = str(e)
-    payment_router = None
+from auth_routes import router as auth_router, get_current_user
+from crm_routes import router as crm_router
+from cms_routes import router as cms_router
+from payment_routes import router as payment_router
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -410,15 +391,11 @@ async def get_cart():
 # Include the router in the main app
 app.include_router(api_router)
 
-# Include auth and CRM routers if available
-if auth_router:
-    app.include_router(auth_router)
-if crm_router:
-    app.include_router(crm_router)
-if cms_router:
-    app.include_router(cms_router)
-if payment_router:
-    app.include_router(payment_router)
+# Include auth and CRM routers (Mandatory V3)
+app.include_router(auth_router)
+app.include_router(crm_router)
+app.include_router(cms_router)
+app.include_router(payment_router)
 
 app.add_middleware(
     CORSMiddleware,

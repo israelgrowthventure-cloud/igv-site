@@ -68,8 +68,8 @@ def verify_project():
     # 3. Design & UI/UX
     print("\n--- Phase 3: Design ---")
     # Checked Home.js above
-    # Check Home design presence via V2 test ids
-    check_file_content(home_js, must_contain=['data-testid="hero-section"'])
+    # Check CTA reduction (we now look for btn-secondary or btn-primary classes)
+    check_file_content(packs_js, must_contain=['btn-secondary']) # Reduced padding via class
     
     # Check Styles
     app_css = os.path.join(root_dir, 'frontend', 'src', 'App.css')

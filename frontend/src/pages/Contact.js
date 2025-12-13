@@ -183,7 +183,7 @@ const Contact = () => {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full btn-emergent btn-primary py-3 px-6 shadow-lg shadow-blue-500/20 disabled:opacity-70 disabled:cursor-not-allowed"
+                  className="w-full btn-primary py-3 px-6 shadow-lg shadow-blue-500/20 disabled:opacity-70 disabled:cursor-not-allowed"
                   data-testid="contact-submit-btn"
                 >
                   {loading ? (

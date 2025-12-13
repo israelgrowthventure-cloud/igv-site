@@ -38,38 +38,53 @@ h6 {
   --igv-text-secondary: #6B7280;
 }
 
+/* FORCED BUTTON STYLES (URGENT) */
 .btn-primary {
-  background: var(--igv-blue);
-  color: white;
-  padding: 12px 32px;
-  border-radius: 8px;
-  font-weight: 500;
-  border: none;
-  cursor: pointer;
-  transition: all 0.3s ease;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: var(--igv-blue) !important;
+  color: white !important;
+  padding: 10px 24px !important;
+  /* Reduced size per request */
+  border-radius: 99px !important;
+  /* Rounded pill style */
+  font-weight: 600 !important;
+  font-size: 15px !important;
+  border: none !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+  text-decoration: none !important;
+  box-shadow: 0 4px 12px rgba(0, 82, 204, 0.2) !important;
 }
 
 .btn-primary:hover {
-  background: var(--igv-blue-dark);
-  transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(0, 82, 204, 0.3);
+  background: var(--igv-blue-dark) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 16px rgba(0, 82, 204, 0.3) !important;
 }
 
 .btn-secondary {
-  background: white;
-  color: var(--igv-blue);
-  padding: 12px 32px;
-  border-radius: 8px;
-  font-weight: 500;
-  border: 2px solid var(--igv-blue);
-  cursor: pointer;
-  transition: all 0.3s ease;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: white !important;
+  color: var(--igv-blue) !important;
+  padding: 10px 24px !important;
+  /* Reduced size per request */
+  border-radius: 99px !important;
+  font-weight: 600 !important;
+  font-size: 15px !important;
+  border: 2px solid var(--igv-blue) !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+  text-decoration: none !important;
 }
 
 .btn-secondary:hover {
-  background: var(--igv-blue);
-  color: white;
-  transform: translateY(-2px);
+  background: #f8fafc !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
 }
 
 /* Animations */

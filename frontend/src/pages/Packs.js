@@ -213,8 +213,8 @@ const Packs = () => {
                 <div
                   key={pack.id}
                   className={`relative rounded-2xl p-8 transition-all duration-300 ${isHighlighted
-                      ? 'bg-white shadow-xl scale-105 border-2 border-blue-600 z-10'
-                      : 'bg-white border border-gray-200 hover:border-blue-300 shadow-sm hover:shadow-lg'
+                    ? 'bg-white shadow-xl scale-105 border-2 border-blue-600 z-10'
+                    : 'bg-white border border-gray-200 hover:border-blue-300 shadow-sm hover:shadow-lg'
                     }`}
                   data-testid={`pack-${pack.id}`}
                 >
@@ -274,9 +274,9 @@ const Packs = () => {
                   {/* CTA */}
                   <button
                     onClick={() => handleOrderPack(pack)}
-                    className={`w-full btn-emergent ${isHighlighted
-                        ? 'btn-primary shadow-lg shadow-blue-500/20'
-                        : 'btn-secondary'
+                    className={`w-full ${isHighlighted
+                      ? 'btn-primary shadow-lg shadow-blue-500/20'
+                      : 'btn-secondary'
                       }`}
                     data-testid={`order-pack-${pack.id}`}
                   >
@@ -300,7 +300,7 @@ const Packs = () => {
           </p>
           <a
             href="mailto:contact@israelgrowthventure.com"
-            className="btn-emergent btn-secondary"
+            className="btn-secondary"
             data-testid="custom-pack-contact"
           >
             <Mail className="w-5 h-5 mr-2" />

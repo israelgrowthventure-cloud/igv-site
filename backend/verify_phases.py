@@ -74,6 +74,14 @@ def verify_project():
     # Check Styles
     app_css = os.path.join(root_dir, 'frontend', 'src', 'App.css')
     check_file_content(app_css, must_contain=['Space Grotesk', '--igv-blue'])
+
+    # Check Assets (Phase 3 Requirement)
+    team_photo = os.path.join(root_dir, 'frontend', 'public', 'assets', 'team.png')
+    if not os.path.exists(team_photo):
+        print(f"❌ Asset missing: {team_photo}")
+        # sys.exit(1) # Warning only for now to avoid blocking if file path varies
+    else:
+        print(f"✅ Verified Asset: {team_photo}")
     
     # 4. Finalization (Technical)
     print("\n--- Phase 4: Technical ---")

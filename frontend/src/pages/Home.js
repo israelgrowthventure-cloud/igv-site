@@ -5,113 +5,63 @@ import { ArrowRight, TrendingUp, Globe, Users } from 'lucide-react';
 import SEO from '../components/SEO';
 import { useCMSContent } from '../hooks/useCMSContent';
 
+// Assets
+const FALLBACK_TEAM_PHOTO = '/assets/team.png';
+
 const Home = () => {
   const { t, i18n } = useTranslation();
   const [isVisible, setIsVisible] = useState(false);
-  const { getText } = useCMSContent('home');
+
+  // CMS Integration
+  const { getText, getImage, isLoading } = useCMSContent('home');
   const language = i18n.language;
 
   useEffect(() => {
     setIsVisible(true);
   }, []);
 
-  const content = {
-    fr: {
-      hero: {
-        title: "Développez votre entreprise en Israël",
-        subtitle: "Expertise complète pour l'expansion de votre marque sur le marché israélien",
-        cta: "Découvrir nos offres",
-      },
-      stats: [
-        { value: '500+', label: 'Projets réussis' },
-        { value: '20+', label: 'Années d\'expérience' },
-        { value: '98%', label: 'Clients satisfaits' },
-      ],
-      features: [
-        {
-          icon: <TrendingUp size={32} />,
-          title: 'Croissance Stratégique',
-          description: 'Plans d\'expansion sur mesure pour votre marché cible',
-        },
-        {
-          icon: <Globe size={32} />,
-          title: 'Expertise Locale',
-          description: 'Connaissance approfondie du marché israélien',
-        },
-        {
-          icon: <Users size={32} />,
-          title: 'Accompagnement Complet',
-          description: 'De l\'analyse à la mise en œuvre opérationnelle',
-        },
-      ],
+  // Content Fallbacks (V2 Structure)
+  const defaultContent = {
+    hero: {
+      title: t('home.hero.title', "Développez votre entreprise en Israël"),
+      subtitle: t('home.hero.subtitle', "Expertise complète pour l'expansion de votre marque sur le marché israélien"),
+      cta: t('home.hero.cta', "Découvrir nos offres"),
     },
-    en: {
-      hero: {
-        title: 'Expand Your Business in Israel',
-        subtitle: 'Complete expertise for your brand expansion in the Israeli market',
-        cta: 'Discover our offers',
-      },
-      stats: [
-        { value: '500+', label: 'Successful projects' },
-        { value: '20+', label: 'Years of experience' },
-        { value: '98%', label: 'Satisfied clients' },
-      ],
-      features: [
-        {
-          icon: <TrendingUp size={32} />,
-          title: 'Strategic Growth',
-          description: 'Customized expansion plans for your target market',
-        },
-        {
-          icon: <Globe size={32} />,
-          title: 'Local Expertise',
-          description: 'In-depth knowledge of the Israeli market',
-        },
-        {
-          icon: <Users size={32} />,
-          title: 'Full Support',
-          description: 'From analysis to operational implementation',
-        },
-      ],
-    },
-    he: {
-      hero: {
-        title: 'הרחיבו את העסק שלכם בישראל',
-        subtitle: 'מומחיות מלאה להרחבת המותג שלכם בשוק הישראלי',
-        cta: 'גלו את ההצעות שלנו',
-      },
-      stats: [
-        { value: '500+', label: 'פרויקטים מוצלחים' },
-        { value: '20+', label: 'שנות ניסיון' },
-        { value: '98%', label: 'לקוחות מרוצים' },
-      ],
-      features: [
-        {
-          icon: <TrendingUp size={32} />,
-          title: 'צמיחה אסטרטגית',
-          description: 'תוכניות התרחבות מותאמות לשוק היעד שלכם',
-        },
-        {
-          icon: <Globe size={32} />,
-          title: 'מומחיות מקומית',
-          description: 'ידע מעמיק של השוק הישראלי',
-        },
-        {
-          icon: <Users size={32} />,
-          title: 'תמיכה מלאה',
-          description: 'מניתוח ועד ליישום תפעולי',
-        },
-      ],
-    },
+    stats: [
+      { value: '500+', label: t('home.stats.projects', 'Projets réussis') },
+      { value: '20+', label: t('home.stats.experience', 'Années d\'expérience') },
+      { value: '98%', label: t('home.stats.clients', 'Clients satisfaits') },
+    ]
   };
 
-  const currentContent = content[language] || content.fr;
+  // Get dynamic values or use defaults
+  const heroTitle = getText('hero.title', defaultContent.hero.title);
+  const heroSubtitle = getText('hero.subtitle', defaultContent.hero.subtitle);
+  const heroCTA = getText('hero.cta', defaultContent.hero.cta);
+
+  // Images (Dynamic with fallback to local assets)
+  const heroImage = getImage('hero.image', FALLBACK_TEAM_PHOTO);
+
+  const stats = [
+    {
+      value: getText('stats.0.value', defaultContent.stats[0].value),
+      label: getText('stats.0.label', defaultContent.stats[0].label)
+    },
+    {
+      value: getText('stats.1.value', defaultContent.stats[1].value),
+      label: getText('stats.1.label', defaultContent.stats[1].label)
+    },
+    {
+      value: getText('stats.2.value', defaultContent.stats[2].value),
+      label: getText('stats.2.label', defaultContent.stats[2].label)
+    }
+  ];
 
   return (
     <div className="min-h-screen pt-16 font-sans">
       <SEO
-        title={getText('seo.title', `${currentContent.hero.title} - Israel Growth Venture`)}
-        description={getText('seo.description', currentContent.hero.subtitle)}
+        title={`${heroTitle} - Israel Growth Venture`}
+        description={heroSubtitle}
         pathname="/"
         image="https://israelgrowthventure.com/og-home.jpg"
       />
@@ -127,61 +77,58 @@ const Home = () => {
             <div className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'}`}>
               {/* Badge Experience (Mobile/Inline) */}
               <div className="inline-block px-4 py-1.5 bg-blue-50 text-blue-600 font-semibold rounded-full text-sm mb-6 border border-blue-100">
-                {currentContent.stats[1].value} {currentContent.stats[1].label}
+                {stats[1].value} {stats[1].label}
               </div>
 
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight font-work-sans" data-testid="hero-title">
-                {currentContent.hero.title}
+                {heroTitle}
               </h1>
               <p className="text-lg sm:text-xl text-gray-600 mb-8 max-w-lg leading-relaxed" data-testid="hero-subtitle">
-                {currentContent.hero.subtitle}
+                {heroSubtitle}
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link
                   to="/packs"
-                  className="btn-primary" // Using enforced class
+                  className="btn-primary"
                   data-testid="hero-cta-button"
                 >
-                  {currentContent.hero.cta}
+                  {heroCTA}
                   <ArrowRight className="ml-2 w-5 h-5" />
                 </Link>
 
                 <Link
                   to="/contact"
-                  className="btn-secondary" // Using enforced class
+                  className="btn-secondary"
                 >
-                  {language === 'fr' ? 'Parler à un expert' : 'Talk to an expert'}
+                  {language === 'fr' ? 'Parler à un expert' : language === 'en' ? 'Talk to an expert' : 'דבר עם מומחה'}
                 </Link>
               </div>
             </div>
 
-            {/* Visual/Stats (Right Column) */}
+            {/* Visual/Image (Right Column) */}
             <div className={`relative hidden lg:block transition-all duration-1000 delay-300 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'}`}>
-              <div className="relative z-10 grid gap-6">
-                {/* Main Stat Card */}
-                <div className="bg-white p-8 rounded-2xl shadow-xl border border-gray-100 transform rotate-2 hover:rotate-0 transition-transform duration-300">
-                  <div className="flex items-center gap-4 mb-4">
+              <div className="relative z-10 w-full h-[500px]">
+                {/* Team Photo / Hero Image */}
+                <img
+                  src={heroImage}
+                  alt="Team IGV"
+                  className="w-full h-full object-cover rounded-2xl shadow-2xl border-4 border-white transform rotate-2 hover:rotate-0 transition-transform duration-500"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.style.display = 'none'; // Hide if fails
+                  }}
+                />
+
+                {/* Floating Stat Card Overlay */}
+                <div className="absolute -bottom-8 -left-8 bg-white p-6 rounded-2xl shadow-xl border border-gray-100 max-w-sm animate-bounce-slow">
+                  <div className="flex items-center gap-4">
                     <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center text-white">
                       <TrendingUp size={24} />
                     </div>
                     <div>
-                      <div className="text-3xl font-bold text-gray-900">{currentContent.stats[0].value}</div>
-                      <div className="text-sm text-gray-500">{currentContent.stats[0].label}</div>
-                    </div>
-                  </div>
-                  <div className="w-full bg-gray-100 rounded-full h-2">
-                    <div className="bg-blue-600 h-2 rounded-full" style={{ width: '90%' }}></div>
-                  </div>
-                </div>
-
-                {/* Secondary Stat Card */}
-                <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 max-w-sm ml-auto transform -rotate-2 hover:rotate-0 transition-transform duration-300">
-                  <div className="flex items-center gap-3">
-                    <Users className="text-blue-600" size={24} />
-                    <div>
-                      <div className="text-2xl font-bold text-gray-900">{currentContent.stats[2].value}</div>
-                      <div className="text-xs text-gray-500">{currentContent.stats[2].label}</div>
+                      <div className="text-3xl font-bold text-gray-900">{stats[0].value}</div>
+                      <div className="text-sm text-gray-500">{stats[0].label}</div>
                     </div>
                   </div>
                 </div>
@@ -198,24 +145,53 @@ const Home = () => {
       <section className="py-24 bg-white" data-testid="features-section">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4 font-work-sans">Pourquoi nous choisir ?</h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">Une approche globale combinant expertise locale et stratégie internationale.</p>
+            <h2 className="text-3xl font-bold text-gray-900 mb-4 font-work-sans">
+              {getText('features.title', "Pourquoi nous choisir ?")}
+            </h2>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              {getText('features.subtitle', "Une approche globale combinant expertise locale et stratégie internationale.")}
+            </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {currentContent.features.map((feature, index) => (
-              <div
-                key={index}
-                className="group p-8 rounded-2xl bg-white border border-gray-100 hover:border-blue-100 hover:shadow-xl hover:shadow-blue-900/5 transition-all duration-300"
-                data-testid={`feature-${index}`}
-              >
-                <div className="w-14 h-14 mb-6 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                  {feature.icon}
-                </div>
-                <h3 className="text-xl font-bold mb-3 text-gray-900 font-work-sans">{feature.title}</h3>
-                <p className="text-gray-600 leading-relaxed">{feature.description}</p>
+            {/* Note: Features content is hard to fully dynamic without mapping an array from CMS */}
+            {/* For now, we keep the structure but allow text overrides via CMS if keys exist */}
+
+            <div className="group p-8 rounded-2xl bg-white border border-gray-100 hover:border-blue-100 hover:shadow-xl hover:shadow-blue-900/5 transition-all duration-300">
+              <div className="w-14 h-14 mb-6 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                <TrendingUp size={28} />
               </div>
-            ))}
+              <h3 className="text-xl font-bold mb-3 text-gray-900 font-work-sans">
+                {getText('features.0.title', "Croissance Stratégique")}
+              </h3>
+              <p className="text-gray-600 leading-relaxed">
+                {getText('features.0.description', "Plans d'expansion sur mesure pour votre marché cible.")}
+              </p>
+            </div>
+
+            <div className="group p-8 rounded-2xl bg-white border border-gray-100 hover:border-blue-100 hover:shadow-xl hover:shadow-blue-900/5 transition-all duration-300">
+              <div className="w-14 h-14 mb-6 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                <Globe size={28} />
+              </div>
+              <h3 className="text-xl font-bold mb-3 text-gray-900 font-work-sans">
+                {getText('features.1.title', "Expertise Locale")}
+              </h3>
+              <p className="text-gray-600 leading-relaxed">
+                {getText('features.1.description', "Connaissance approfondie du marché israélien.")}
+              </p>
+            </div>
+
+            <div className="group p-8 rounded-2xl bg-white border border-gray-100 hover:border-blue-100 hover:shadow-xl hover:shadow-blue-900/5 transition-all duration-300">
+              <div className="w-14 h-14 mb-6 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                <Users size={28} />
+              </div>
+              <h3 className="text-xl font-bold mb-3 text-gray-900 font-work-sans">
+                {getText('features.2.title', "Accompagnement Complet")}
+              </h3>
+              <p className="text-gray-600 leading-relaxed">
+                {getText('features.2.description', "De l'analyse à la mise en œuvre opérationnelle.")}
+              </p>
+            </div>
           </div>
         </div>
       </section>

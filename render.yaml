@@ -25,6 +25,18 @@ services:
         sync: false
       - key: STRIPE_WEBHOOK_SECRET
         sync: false
+      - key: MONETICO_KEY
+        sync: false
+      - key: MONETICO_TPE
+        sync: false
+      - key: MONETICO_COMPANY_CODE
+        sync: false
+      - key: MONETICO_ENV
+        value: PROD
+      - key: MONETICO_URL_SUCCESS
+        value: https://israelgrowthventure.com/payment/success
+      - key: MONETICO_URL_FAILURE
+        value: https://israelgrowthventure.com/payment/failure
       - key: SMTP_HOST
         value: smtp.gmail.com
       - key: SMTP_PORT

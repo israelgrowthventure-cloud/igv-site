@@ -4,7 +4,7 @@ Authentication routes for admin access
 from fastapi import APIRouter, HTTPException, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel, EmailStr
-from passlib.context import CryptContext
+# Removed passlib import
 import jwt # Using PyJWT
 from datetime import datetime, timedelta
 import os
@@ -12,7 +12,7 @@ import os
 router = APIRouter(prefix="/auth", tags=["authentication"])
 
 # Security
-import hashlib as hash_lib # Renamed to avoid reserved word conflict if any
+import hashlib as hash_lib
 security = HTTPBearer()
 
 SECRET_KEY = os.getenv("JWT_SECRET", "your-secret-key-change-in-production")
@@ -20,7 +20,19 @@ ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 480  # 8 hours
 
 # Models
-# ... (LoginRequest, TokenResponse, User models kept same) ...
+class LoginRequest(BaseModel):
+    email: EmailStr
+    password: str
+
+class TokenResponse(BaseModel):
+    access_token: str
+    token_type: str
+    user: dict
+
+class User(BaseModel):
+    email: str
+    role: str
+    name: str
 
 # Hardcoded admin users (replace with DB in production)
 # SHA256 of "admin123"

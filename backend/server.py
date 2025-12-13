@@ -168,6 +168,11 @@ async def send_email_gmail(to_email: str, subject: str, body: str, html_body: st
 async def root():
     return {"message": "Israel Growth Venture API", "version": "3.0"}
 
+@api_router.get("/health")
+async def health_check():
+    """Health check endpoint for Render"""
+    return {"status": "ok", "version": "3.0", "mongodb": "connected" if client else "disconnected"}
+
 
 @api_router.post("/contact", response_model=ContactResponse)
 async def create_contact(contact: ContactForm):

@@ -12,13 +12,13 @@ Dernière mise à jour : 13/12/2025 21:20 UTC
 ### 2. DÉPLOIEMENT RENDER
 - [x] **Git Push** : Code V3 poussé sur `main`.
   - *Preuve* : Commit `d7b6674` (feat(ALIGN): V3 Table Rase). ✅
-- [x] **Frontend (igv-site-web)** : Déployé & Healthy.
-  - *Preuve* : `https://israelgrowthventure.com` répond 200 OK. ✅
-- [ ] **Backend (igv-cms-backend)** : Version V3 active.
-  - *Statut* : ⚠️ **PARTIEL** (Répond 200 mais version v2.0.1 Legacy).
-  - *Cause* : Auto-deploy Render pas encore déclenché/détecté.
+- [ ] **Frontend (igv-site-web)** : ❌ **FAILED DEPLOY**
+  - *Preuve* : Screenshot utilisateur (Dashboard Render).
+  - *Action* : Récupération logs et correction build.
+- [/] **Backend (igv-cms-backend)** : 🔄 **DEPLOYING**
+  - *Preuve* : Screenshot utilisateur (Dashboard Render).
 - [ ] **Pas de "Failed Deploy"** :
-  - *Statut* : ⚠️ En attente confirmation nouveau build.
+  - *Statut* : ❌ Frontend Failed.
 
 ### 3. VALIDATION FONCTIONNELLE PROD
 - [x] **Frontend URL** (`https://israelgrowthventure.com`)

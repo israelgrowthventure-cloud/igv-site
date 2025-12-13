@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ArrowRight, TrendingUp, Eye, Zap, Target } from 'lucide-react';
@@ -29,14 +29,53 @@ const FutureCommerce = () => {
   const israelPoints = t('futureCommerce.israel.points', { returnObjects: true });
   const whySeriesItems = t('futureCommerce.why_series.items', { returnObjects: true });
 
+  const scrollToSection = (id) => {
+    const element = document.getElementById(id);
+    if (element) {
+      const offset = 100; // Account for fixed header
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - offset;
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  const tocSections = [
+    { id: 'hero', title: t('futureCommerce.toc.hero') || 'Introduction' },
+    { id: 'israel', title: t('futureCommerce.toc.israel') || 'Pourquoi Israël ?' },
+    { id: 'realities', title: t('futureCommerce.toc.realities') || '3 Réalités' },
+    { id: 'what-we-do', title: t('futureCommerce.toc.whatWeDo') || 'Ce que nous faisons' },
+    { id: 'why-series', title: t('futureCommerce.toc.whySeries') || 'Pourquoi les séries' },
+    { id: 'cta', title: t('futureCommerce.toc.cta') || 'Contactez-nous' }
+  ];
+
   return (
     <div className="min-h-screen pt-20">
+      {/* Table of Contents */}
+      <div className="sticky top-20 z-30 bg-white border-b border-gray-200 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <nav className="flex overflow-x-auto py-3 gap-2" aria-label="Table of contents">
+            {tocSections.map((section) => (
+              <button
+                key={section.id}
+                onClick={() => scrollToSection(section.id)}
+                className="whitespace-nowrap px-4 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+              >
+                {section.title}
+              </button>
+            ))}
+          </nav>
+        </div>
+      </div>
+
       {/* Hero */}
-      <section className="relative py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-900 via-blue-900 to-gray-900 text-white overflow-hidden">
+      <section id="hero" className="relative py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-900 via-blue-900 to-gray-900 text-white overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmlkKSIvPjwvc3ZnPg==')] opacity-20" />
         </div>
-        
+
         <div className="max-w-5xl mx-auto relative z-10">
           <div className="text-center mb-12">
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
@@ -49,33 +88,12 @@ const FutureCommerce = () => {
               {t('futureCommerce.hero.line3')}
             </p>
           </div>
-          
+
           <p className="text-lg text-gray-300 leading-relaxed text-center max-w-3xl mx-auto">
             {t('futureCommerce.hero.description')}
           </p>
         </div>
       </section>
-
-      
-      {/* Table of Contents */}
-      <nav className="sticky top-20 z-40 bg-white border-b border-gray-200 shadow-sm">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex flex-wrap justify-center gap-4 text-sm">
-            <a href="#israel" className="px-3 py-1.5 text-blue-600 hover:bg-blue-50 rounded-md transition-colors font-medium">
-              Pourquoi Israël
-            </a>
-            <a href="#realities" className="px-3 py-1.5 text-blue-600 hover:bg-blue-50 rounded-md transition-colors font-medium">
-              3 Réalités
-            </a>
-            <a href="#what-we-do" className="px-3 py-1.5 text-blue-600 hover:bg-blue-50 rounded-md transition-colors font-medium">
-              Ce que nous faisons
-            </a>
-            <a href="#why-series" className="px-3 py-1.5 text-blue-600 hover:bg-blue-50 rounded-md transition-colors font-medium">
-              Pourquoi les franchises
-            </a>
-          </div>
-        </div>
-      </nav>
 
       {/* Israel Section */}
       <section id="israel" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
@@ -132,7 +150,7 @@ const FutureCommerce = () => {
                   {reality.points && (
                     <div className="space-y-2 mb-3">
                       {reality.points.map((point, idx) => (
-                        <p key={idx} className="text-sm text-gray-600">Γאó {point}</p>
+                        <p key={idx} className="text-sm text-gray-600">• {point}</p>
                       ))}
                     </div>
                   )}
@@ -147,7 +165,7 @@ const FutureCommerce = () => {
       </section>
 
       {/* What We Do */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+      <section id="what-we-do" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
@@ -178,7 +196,7 @@ const FutureCommerce = () => {
       </section>
 
       {/* Why Series */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-gray-50 to-white">
+      <section id="why-series" className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-gray-50 to-white">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-8">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
@@ -210,7 +228,7 @@ const FutureCommerce = () => {
       </section>
 
       {/* CTA */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-600 to-blue-700 text-white">
+      <section id="cta" className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-600 to-blue-700 text-white">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl sm:text-4xl font-bold mb-6">
             Prêt à tester votre concept en Israël ?

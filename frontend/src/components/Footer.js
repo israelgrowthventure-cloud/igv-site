@@ -2,7 +2,6 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Mail, MapPin } from 'lucide-react';
-import igvLogo from "../assets/h-large-fond-blanc.png";
 
 const Footer = () => {
   const { t } = useTranslation();
@@ -27,11 +26,9 @@ const Footer = () => {
           {/* Company Info */}
           <div className="lg:col-span-2">
             <div className="flex items-center space-x-3 mb-4">
-              <img
-                src={igvLogo}
-                alt="Israel Growth Venture"
-                className="h-12 w-auto"
-              />
+              <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-800 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-lg">IGV</span>
+              </div>
               <div>
                 <div className="text-lg font-bold text-white">{t('footer.company')}</div>
               </div>

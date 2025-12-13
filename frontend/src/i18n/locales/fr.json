@@ -12,11 +12,10 @@
     "cart": "Panier"
   },
   "hero": {
-    "title": "Israel Growth Venture",
+    "title": "Israël Growth Venture",
     "subtitle": "Votre partenaire stratégique pour une expansion réussie en Israël",
     "description": "Nous sommes spécialisés dans l'accompagnement des marques pour leur expansion réussie sur le marché israélien. Avec notre expertise et notre réseau, nous proposons des solutions sur mesure pour aider les entreprises à s'implanter, se développer et prospérer dans l'un des marchés les plus dynamiques et innovants du monde.",
     "cta": "En savoir plus",
-    "secondary": "Qui sommes-nous",
     "bookAppointment": "Réserver un rendez-vous"
   },
   "about": {
@@ -27,7 +26,6 @@
     "service": "Si vous cherchez à établir et développer votre marque ou à étendre votre concept par le biais de franchises ou de succursales, l'équipe Israel Growth Venture est à votre service."
   },
   "steps": {
-    "title": "Comment ça marche ?",
     "step1": {
       "title": "Planifiez une réunion avec un expert",
       "description": "Discutez de votre projet d'expansion en Israël avec nos spécialistes."
@@ -44,51 +42,42 @@
   "packs": {
     "title": "Nos Packs",
     "subtitle": "Solutions adaptées à vos besoins d'expansion",
-    "viewAll": "Voir tous les packs",
     "analyse": {
       "name": "Pack Analyse",
       "description": "Analyse complète du marché israélien pour jusqu'à 3 ouvertures de magasins",
       "features": [
-        "Étude détaillée du marché israélien dans votre segment",
-        "Analyse de la concurrence et des zones à fort potentiel",
-        "Identification des formats et villes prioritaires",
-        "Scénarios d'implantation (succursales, franchise, master)",
-        "Recommandations stratégiques et estimation budgétaire"
+        "Étude de marché approfondie",
+        "Analyse de la concurrence",
+        "Identification des opportunités",
+        "Recommandations stratégiques",
+        "Support jusqu'à 3 ouvertures"
       ],
-      "note": "Diagnostic complet du potentiel de votre marque en Israël. Ce pack ne comprend pas la recherche ni l'ouverture de points de vente."
+      "note": "Pour plus d'ouvertures, nous consulter."
     },
     "succursales": {
       "name": "Pack Succursales",
       "description": "Solution complète pour l'ouverture de succursales en Israël",
       "features": [
-        "Analyse de marché incluse (sur la base du Pack Analyse)",
-        "Recherche et qualification de locaux commerciaux ciblés",
-        "Négociation avec les propriétaires / centres commerciaux",
-        "Accompagnement jusqu'à l'ouverture opérationnelle",
-        "Revue de performance 3 mois après ouverture (ajustements, recommandations)"
-      ],
-      "note": "Solution clé en main pour l'ouverture de succursales en Israël. Pack conçu pour vos 3 premières succursales. Au-delà, accompagnement sur devis."
+        "Analyse de marché incluse",
+        "Recherche de locaux commerciaux",
+        "Support administratif et légal",
+        "Accompagnement à l'ouverture",
+        "Suivi post-ouverture"
+      ]
     },
     "franchise": {
       "name": "Pack Franchise",
       "description": "Développement complet de votre réseau de franchise",
       "features": [
-        "Analyse de la franchise et adaptation au marché israélien",
-        "Structuration du dossier franchise (pack, modèle économique, profil franchisé)",
-        "Préconisations juridiques pour contrat de franchise (avec vos avocats)",
-        "Recherche et sélection de master franchisé / franchisés",
-        "Accompagnement jusqu'à la signature des premiers contrats"
-      ],
-      "note": "Développement complet de votre réseau de franchise en Israël. Pack dédié au lancement de votre réseau. Déploiement élargi sur devis."
+        "Analyse de marché incluse",
+        "Structuration du dossier franchise",
+        "Recherche de franchisés",
+        "Formation et accompagnement",
+        "Support continu"
+      ]
     },
     "cta": "Demander une facture",
-    "ctaTalk": "Parler de ce pack",
-    "orderButton": "Commander ce pack",
-    "customPack": {
-      "title": "Besoin d'un pack personnalisé ?",
-      "description": "Chaque projet est unique. Contactez-nous pour discuter d'une solution sur mesure adaptée à vos besoins spécifiques.",
-      "contact": "Nous contacter"
-    }
+    "ctaTalk": "Parler de ce pack"
   },
   "futureCommerce": {
     "title": "Le commerce tel que vous le pratiquez est mort.",
@@ -208,33 +197,6 @@
   },
   "pricing": {
     "region": "Prix selon votre région",
-    "detecting": "Détection en cours...",
-    "or": "ou"
-  },
-  "checkout": {
-    "title": "Paiement",
-    "packNotFound": "Pack introuvable",
-    "packNotFoundDesc": "Le pack que vous demandez n'existe pas.",
-    "backToPacks": "Retour aux packs",
-    "selectPaymentPlan": "Sélectionnez votre plan de paiement",
-    "oneTimePayment": "Paiement comptant",
-    "threeTimesPayment": "Paiement en 3 fois",
-    "twelveTimesPayment": "Paiement sur 12 mois",
-    "customerInfo": "Informations client",
-    "fullName": "Nom complet",
-    "fullNamePlaceholder": "John Doe",
-    "company": "Société (optionnel)",
-    "companyPlaceholder": "Votre entreprise",
-    "email": "Email",
-    "emailPlaceholder": "john@exemple.com",
-    "phone": "Téléphone (optionnel)",
-    "phonePlaceholder": "+33 6 12 34 56 78",
-    "country": "Pays",
-    "countryPlaceholder": "France",
-    "proceedToPayment": "Procéder au paiement",
-    "processing": "Traitement...",
-    "loading": "Chargement...",
-    "errorPrefix": "Erreur",
-    "packNote": "Note"
+    "detecting": "Détection en cours..."
   }
 }

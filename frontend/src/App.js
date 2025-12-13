@@ -1,65 +1,33 @@
 import React, { Suspense } from 'react';
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import { Toaster } from 'sonner';
-import { GeoProvider } from './context/GeoContext';
-import { LanguageProvider } from './context/LanguageContext';
 import './i18n/config';
 import './App.css';
 
-// Build metadata for deployment tracking
-window.__IGV_BUILD_VERSION__ = '0.1.4';
-window.__IGV_BUILD_DATE__ = '2025-12-02T16:42:00Z';
+// Context Providers
+import { GeoProvider } from './context/GeoContext';
+import { AuthProvider } from './context/AuthContext';
 
 // Layout Components
 import Header from './components/Header';
 import Footer from './components/Footer';
 
-/**
- * CRITICAL ARCHITECTURE: HYBRID ROUTING WITH CMS ENABLED
- * =======================================================
- * This application uses a hybrid routing approach with CMS fully activated:
- * 
- * 1. TECHNICAL/PAYMENT ROUTES (React Components - NOT CMS):
- *    - /checkout/:packId - Stripe payment processing
- *    - /appointment - Calendar booking
- *    - /editor - Protected drag & drop editor (Emergent Builder)
- * 
- * 2. CONTENT/MARKETING ROUTES (CMS-Driven):
- *    - / (home)
- *    - /packs
- *    - /about
- *    - /contact
- *    - /future-commerce
- *    - /terms
- *    - Any future landing/content pages
- * 
- * CMS Backend: https://igv-cms-backend.onrender.com
- * Editor Access: Protected by VITE_EDITOR_ACCESS_CODE
- */
-
-// Public pages
+// Pages
 import Home from './pages/Home';
 import About from './pages/About';
 import Packs from './pages/Packs';
+import FutureCommerce from './pages/FutureCommerce';
 import Contact from './pages/Contact';
-import FutureCommercePage from './pages/FutureCommercePage';
-import DynamicPage from './pages/DynamicPage';
-import Checkout from './pages/Checkout';
 import Appointment from './pages/Appointment';
 import Terms from './pages/Terms';
 import PaymentSuccess from './pages/PaymentSuccess';
+import PaymentFailure from './pages/PaymentFailure';
 
-// CMS Emergent Admin pages
-import LoginPage from './pages/admin/LoginPage';
-import Dashboard from './pages/admin/Dashboard';
-import PagesList from './pages/admin/PagesList';
-import PageEditorAdvanced from './pages/admin/PageEditorAdvanced';
-import PacksAdmin from './pages/admin/PacksAdmin';
-import PricingAdmin from './pages/admin/PricingAdmin';
-import TranslationsAdmin from './pages/admin/TranslationsAdmin';
-import AdminAccount from './pages/admin/AdminAccount';
-import EtudeImplantation360Leads from './pages/admin/EtudeImplantation360Leads';
+// Admin Pages
+import Login from './pages/admin/Login';
+import CMSDashboard from './pages/admin/CMSDashboard';
+import CMSEditor from './pages/admin/CMSEditor';
 
 // Loading component
 const Loading = () => (
@@ -71,71 +39,45 @@ const Loading = () => (
   </div>
 );
 
-// Wrapper pour layout conditionnel
-function AppLayout() {
-  const location = useLocation();
-  // Admin pages et editor gèrent leur propre layout
-  const isAdminPage = location.pathname.startsWith('/admin');
-
-  return (
-    <div className="App">
-      <Toaster position="top-right" richColors />
-      {!isAdminPage && <Header />}
-      <main>
-        <Routes>
-          {/* Public Routes */}
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/packs" element={<Packs />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/le-commerce-de-demain" element={<FutureCommercePage />} />
-          <Route path="/future-commerce" element={<FutureCommercePage />} />
-          <Route path="/terms" element={<Terms />} />
-          
-          {/* Étude d'Implantation 360° - CMS-driven landing pages */}
-          <Route path="/etude-implantation-360" element={<DynamicPage />} />
-          <Route path="/etude-implantation-360/merci" element={<DynamicPage />} />
-          
-          <Route path="/page/:slug" element={<DynamicPage />} />
-          
-          {/* Technical routes */}
-          <Route path="/checkout/:packId" element={<Checkout />} />
-          <Route path="/payment/success" element={<PaymentSuccess />} />
-          <Route path="/appointment" element={<Appointment />} />
-          
-          {/* CMS Emergent Admin Routes */}
-          <Route path="/admin/login" element={<LoginPage />} />
-          <Route path="/admin" element={<Dashboard />} />
-          <Route path="/admin/account" element={<AdminAccount />} />
-          <Route path="/admin/pages" element={<PagesList />} />
-          <Route path="/admin/pages/new" element={<PageEditorAdvanced />} />
-          <Route path="/admin/pages/:slug" element={<PageEditorAdvanced />} />
-          <Route path="/admin/packs" element={<PacksAdmin />} />
-          <Route path="/admin/pricing" element={<PricingAdmin />} />
-          <Route path="/admin/translations" element={<TranslationsAdmin />} />
-          <Route path="/admin/leads/etude-implantation-360" element={<EtudeImplantation360Leads />} />
-        </Routes>
-      </main>
-      {!isAdminPage && <Footer />}
-    </div>
-  );
-}
-
 function App() {
-  // Mount admin on #admin-root if present, else fallback to #root
-  const adminRoot = document.getElementById('admin-root');
-  const mountNode = adminRoot || document.getElementById('root');
   return (
     <HelmetProvider>
-      <LanguageProvider>
-        <GeoProvider>
+      <GeoProvider>
+        <AuthProvider>
           <Suspense fallback={<Loading />}>
             <BrowserRouter>
-              <AppLayout />
+              <div className="App">
+                <Toaster position="top-right" richColors />
+                <Header />
+                <main>
+                  <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/about" element={<About />} />
+                    <Route path="/packs" element={<Packs />} />
+                    <Route path="/future-commerce" element={<Future Commerce />} />
+                    <Route path="/contact" element={<Contact />} />
+                    <Route path="/appointment" element={<Appointment />} />
+                    <Route path="/terms" element={<Terms />} />
+
+                    {/* Payment Routes */}
+                    <Route path="/payment/success" element={<PaymentSuccess />} />
+                    <Route path="/payment/failure" element={<PaymentFailure />} />
+
+                    {/* Admin Routes */}
+                    <Route path="/admin/login" element={<Login />} />
+                    <Route path="/admin/cms" element={<CMSDashboard />} />
+                    <Route path="/admin/cms/editor/:page_slug/:language" element={<CMSEditor />} />
+
+                    {/* Fallback */}
+                    <Route path="*" element={<Home />} />
+                  </Routes>
+                </main>
+                <Footer />
+              </div>
             </BrowserRouter>
           </Suspense>
-        </GeoProvider>
-      </LanguageProvider>
+        </AuthProvider>
+      </GeoProvider>
     </HelmetProvider>
   );
 }

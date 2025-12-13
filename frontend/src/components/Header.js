@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import igvLogo from "../assets/h-large-fond-blanc.png";
 import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Menu, X, Globe } from 'lucide-react';
@@ -19,6 +18,7 @@ const Header = () => {
   const changeLanguage = (lng) => {
     i18n.changeLanguage(lng);
     setIsLangOpen(false);
+    // Update document direction for Hebrew
     document.dir = lng === 'he' ? 'rtl' : 'ltr';
   };
 
@@ -30,27 +30,27 @@ const Header = () => {
     { path: '/contact', label: t('nav.contact') }
   ];
 
-  const isActive = (path) => location.pathname === path;
+  const isActive = (path) => {
+    return location.pathname === path;
+  };
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
-          {/* Logo & Title */}
-          <Link to="/" className={`flex items-center space-x-3 ${i18n.language === 'he' ? 'mr-8' : 'ml-8'}`}>
-            <img
-              src={igvLogo}
-              alt="Israel Growth Venture"
-              className="h-16 w-auto"
-            />
+          {/* Logo */}
+          <Link to="/" className="flex items-center space-x-3">
+            <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-blue-800 rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-xl">IGV</span>
+            </div>
             <div className="hidden md:block">
               <div className="text-lg font-bold text-gray-900">Israel Growth Venture</div>
-              <div className="text-xs text-gray-600 max-w-xs">{t('hero.subtitle')}</div>
+              <div className="text-xs text-gray-600">{t('hero.subtitle').substring(0, 40)}...</div>
             </div>
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className={`hidden lg:flex items-center ${i18n.language === 'he' ? 'space-x-reverse space-x-8' : 'space-x-8'}`}>
+          <nav className="hidden lg:flex items-center space-x-8">
             {navLinks.map((link) => (
               <Link
                 key={link.path}
@@ -80,6 +80,7 @@ const Header = () => {
                   {i18n.language.substring(0, 2)}
                 </span>
               </button>
+              
               {isLangOpen && (
                 <div className="absolute right-0 mt-2 w-32 bg-white rounded-lg shadow-lg border border-gray-200 py-2">
                   {languages.map((lang) => (

@@ -65,6 +65,8 @@ services:
         value: 18.17.0
       - key: CI
         value: "false"
+      - key: GENERATE_SOURCEMAP
+        value: "false"
       - key: NODE_OPTIONS
         value: --openssl-legacy-provider
       - key: REACT_APP_API_BASE_URL

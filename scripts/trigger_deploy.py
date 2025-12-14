@@ -34,7 +34,11 @@ def trigger_deploy(service_id):
     
     try:
         with urllib.request.urlopen(req) as resp:
-            result = json.loads(resp.read())
+            body = resp.read()
+            if not body or len(body) == 0:
+                print("✓ Déploiement créé (pas de réponse API)", file=sys.stderr)
+                return {"status": "triggered"}
+            result = json.loads(body)
             deploy_id = result.get('id', 'unknown')
             status = result.get('status', 'unknown')
             print(f"✓ Déploiement créé: {deploy_id} (status: {status})")

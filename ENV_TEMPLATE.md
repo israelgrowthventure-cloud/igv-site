@@ -15,6 +15,8 @@ DB_NAME=igv_production
 ```
 JWT_SECRET=<généré_aléatoirement>
 BOOTSTRAP_TOKEN=<généré_aléatoirement>  # Protection de /api/admin/bootstrap
+ADMIN_EMAIL=admin@israelgrowthventure.com
+ADMIN_PASSWORD=<généré_aléatoirement>
 ```
 
 ### CORS
@@ -41,6 +43,12 @@ MONETICO_COMPANY_CODE=<code_société>
 MONETICO_VERSION=3.0
 ```
 
+### Stripe (Paiements)
+```
+STRIPE_SECRET_KEY=sk_test_...  # ou sk_live_...
+STRIPE_PUBLIC_KEY=pk_test_...  # ou pk_live_...
+```
+
 ### S3 (Upload images CMS)
 ```
 S3_BUCKET=igv-cms-uploads
@@ -49,11 +57,16 @@ AWS_ACCESS_KEY_ID=<access_key>
 AWS_SECRET_ACCESS_KEY=<secret_key>
 ```
 
-## Frontend (React 19)
+## Frontend (React 18.3.1)
 
 ### API Backend
 ```
 REACT_APP_API_URL=https://igv-cms-backend.onrender.com
+```
+
+### Stripe (paiements)
+```
+REACT_APP_STRIPE_PUBLIC_KEY=pk_test_...  # ou pk_live_...
 ```
 
 ### Build

@@ -60,7 +60,7 @@ services:
     name: igv-frontend
     runtime: node
     plan: free
-    buildCommand: rm -rf node_modules package-lock.json && npm install && npm run build
+    buildCommand: npm ci && npm run build
     staticPublishPath: build
     rootDir: frontend
     envVars:

@@ -5,6 +5,8 @@ import { Toaster } from 'sonner';
 import './i18n/config';
 import './App.css';
 
+// Build trigger: 2025-12-14-11h05
+
 // Layout Components
 import Header from './components/Header';
 import Footer from './components/Footer';

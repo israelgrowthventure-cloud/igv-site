@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-12-14T00:55:50.983328+00:00",
+  "timestamp": "2025-12-14T01:34:12.064658+00:00",
   "passed": 5,
   "failed": 0,
   "results": [
@@ -11,7 +11,7 @@
       "actual_status": 200,
       "content_length": 3575,
       "success": true,
-      "timestamp": "2025-12-14T00:55:45.695942+00:00"
+      "timestamp": "2025-12-14T01:34:07.168651+00:00"
     },
     {
       "name": "Backend Health Check",
@@ -21,7 +21,7 @@
       "actual_status": 200,
       "content_length": 114,
       "success": true,
-      "timestamp": "2025-12-14T00:55:46.984762+00:00"
+      "timestamp": "2025-12-14T01:34:08.471720+00:00"
     },
     {
       "name": "Backend Debug Imports",
@@ -31,7 +31,7 @@
       "actual_status": 200,
       "content_length": 2178,
       "success": true,
-      "timestamp": "2025-12-14T00:55:48.598021+00:00"
+      "timestamp": "2025-12-14T01:34:09.663322+00:00"
     },
     {
       "name": "CMS Pages Endpoint",
@@ -39,7 +39,7 @@
       "actual_status": 401,
       "expected": "200 or 401/403",
       "success": true,
-      "timestamp": "2025-12-14T00:55:49.783988+00:00"
+      "timestamp": "2025-12-14T01:34:10.850474+00:00"
     },
     {
       "name": "CRM Leads Endpoint (Protected)",
@@ -47,7 +47,7 @@
       "actual_status": 401,
       "expected": "401 or 403 (protected)",
       "success": true,
-      "timestamp": "2025-12-14T00:55:50.981120+00:00"
+      "timestamp": "2025-12-14T01:34:12.062701+00:00"
     }
   ]
 }

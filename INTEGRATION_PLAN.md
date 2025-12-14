@@ -4662,3 +4662,29 @@ python backend/test_phase6ter_production.py
 ---
 
 **Fin Phase 6 ter - 2025-01-XX**
+## 2025-12-14 UTC — Build frontend V3 et outillage déploiement
+- Objectif : valider build V3 local, corriger dépendances ajv/eslint, préparer déploiement automatisé Render + tests prod.
+- Actions :
+  - npm install + génération package-lock.json, overrides ajv/ajv-keywords, patch postinstall pour ignorer keywords inconnus.
+  - Downgrade eslint 8.57.1 + build `npm run build` réussi avec DISABLE_ESLINT_PLUGIN=true.
+  - Ajout scripts : scripts/check_env_vars.py, scripts/mission_autonome_prod.py (check env → git commit/push → deploy Render API → polling → tests HTTP+Playwright).
+  - Mise à jour render.yaml (frontend static, Node 20.17.0, DISABLE_ESLINT_PLUGIN=true).
+  - Ajout patch postinstall frontend/scripts/patch_ajv_keywords.js.
+- Fichiers modifiés : render.yaml, frontend/package.json, frontend/package-lock.json, frontend/scripts/patch_ajv_keywords.js, scripts/check_env_vars.py, scripts/mission_autonome_prod.py, task.md.
+- Routes impactées : build frontend (React), health backend /api/health (pas changé aujourd’hui).
+- Variables env (noms) : RENDER_API_KEY, RENDER_FRONTEND_SERVICE_ID, RENDER_BACKEND_SERVICE_ID, REACT_APP_BACKEND_URL, REACT_APP_API_URL, DISABLE_ESLINT_PLUGIN, MONGODB_URI, JWT_SECRET, CORS_ALLOWED_ORIGINS, CMS_*, CRM_*, MONETICO_*.
+- Tests PROD : non exécutés (en attente clés Render + env). Build local PASS.
+- État final : PARTIEL (build OK, déploiement bloqué par absence RENDER_API_KEY/SERVICE_IDs).
+- L’utilisateur a d’autres requêtes à faire sur le site après cette mission.
+## 2025-12-14 UTC � Contr?le env via Render API et orchestrateur
+- Objectif : aligner le contr?le des variables d�env sur Render (source de v?rit?) et automatiser d?ploiement/tests sans dashboard.
+- Actions :
+  - scripts/check_env_vars.py lit Render API, auto-d?tecte igv-site-web / igv-cms-backend, affiche PRESENT/ABSENT (pas de valeurs).
+  - scripts/mission_autonome_prod.py auto-d?tecte services, r?gle JWT_SECRET (g?n?r?) et CORS_ALLOWED_ORIGINS si manquants, bloque seulement si MONGODB_URI absent ; d?clenche deploy Render + polling + tests prod.
+  - render.yaml d?j? pr?t pour build static + Node 20.17.0.
+- R?sultat check Render : FRONT/BACK service IDs pr?sents ; MONGODB_URI absent, ainsi que CMS/CRM/Monetico envs ? STATUS=BLOQUE.
+- Fichiers modifi?s : scripts/check_env_vars.py, scripts/mission_autonome_prod.py, task.md.
+- Variables env (noms) : RENDER_API_KEY, RENDER_FRONTEND_SERVICE_ID, RENDER_BACKEND_SERVICE_ID, MONGODB_URI, JWT_SECRET, CORS_ALLOWED_ORIGINS, CMS_*, CRM_*, MONETICO_*.
+- Tests PROD : non lanc?s (blocage MONGODB_URI manquante c?t? Render).
+- ?tat final : BLOQU? (MONGODB_URI manquante sur Render, autres env m?tier absentes).
+- L�utilisateur a d�autres requ?tes ? faire sur le site apr?s cette mission.

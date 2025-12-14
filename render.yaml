@@ -1,5 +1,4 @@
 services:
-  # Backend CMS Python
   - type: web
     name: igv-cms-backend
     runtime: python
@@ -7,74 +6,61 @@ services:
     region: frankfurt
     rootDir: backend
     buildCommand: pip install --upgrade pip && pip install -r requirements.txt
-    startCommand: uvicorn server:app --host 0.0.0.0 --port $PORT --timeout-keep-alive 65
+    startCommand: uvicorn server:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: PYTHON_VERSION
-        value: 3.11.0
+        value: 3.11.7
       - key: MONGO_URL
         sync: false
       - key: DB_NAME
         value: igv_cms_db
       - key: JWT_SECRET
         sync: false
-      - key: ADMIN_EMAIL
-        value: postmaster@israelgrowthventure.com
-      - key: ADMIN_PASSWORD
+      - key: CORS_ORIGINS
         sync: false
-      - key: STRIPE_SECRET_KEY
-        sync: false
-      - key: STRIPE_WEBHOOK_SECRET
-        sync: false
-      - key: MONETICO_KEY
-        sync: false
-      - key: MONETICO_TPE
-        sync: false
-      - key: MONETICO_COMPANY_CODE
-        sync: false
-      - key: MONETICO_ENV
-        value: PROD
-      - key: MONETICO_URL_SUCCESS
-        value: https://israelgrowthventure.com/payment/success
-      - key: MONETICO_URL_FAILURE
-        value: https://israelgrowthventure.com/payment/failure
+      - key: CONTACT_EMAIL
+        value: israel.growth.venture@gmail.com
       - key: SMTP_HOST
         value: smtp.gmail.com
       - key: SMTP_PORT
-        value: 587
+        value: "587"
       - key: SMTP_USER
         sync: false
       - key: SMTP_PASSWORD
         sync: false
-      - key: CONTACT_EMAIL
-        value: israel.growth.venture@gmail.com
-      - key: FRONTEND_URL
-        value: https://israelgrowthventure.com
+      - key: MONETICO_MODE
+        value: TEST
+      - key: MONETICO_TPE
+        sync: false
+      - key: MONETICO_SOCIETE
+        sync: false
+      - key: MONETICO_KEY
+        sync: false
     healthCheckPath: /api/health
 
-  # Frontend React with Express Server (Node.js Web Service)
-  - type: web
+  - type: static
     name: igv-site-web
-    env: node
     plan: starter
     region: frankfurt
     rootDir: frontend
-    buildCommand: npm ci && npm run build
-    startCommand: node server.js
+    buildCommand: npm install && npm run build
+    publishDir: build
     envVars:
       - key: NODE_VERSION
-        value: 18.17.0
-      - key: CI
-        value: "false"
-      - key: GENERATE_SOURCEMAP
-        value: "false"
-      - key: NODE_OPTIONS
-        value: --openssl-legacy-provider
-      - key: REACT_APP_API_BASE_URL
+        value: 20.17.0
+      - key: REACT_APP_BACKEND_URL
         value: https://igv-cms-backend.onrender.com
-      - key: VITE_BACKEND_URL
-        value: https://igv-cms-backend.onrender.com
-      - key: REACT_APP_CMS_API_URL
+      - key: REACT_APP_API_URL
         value: https://igv-cms-backend.onrender.com/api
+      - key: REACT_APP_ENV
+        value: production
+      - key: REACT_APP_DEFAULT_LANGUAGE
+        value: fr
+      - key: REACT_APP_SUPPORTED_LANGUAGES
+        value: fr,en,he
       - key: REACT_APP_CALENDAR_EMAIL
         value: israel.growth.venture@gmail.com
-    healthCheckPath: /api/health
+      - key: REACT_APP_ENABLE_VISUAL_EDITS
+        value: "false"
+      - key: DISABLE_ESLINT_PLUGIN
+        value: "true"

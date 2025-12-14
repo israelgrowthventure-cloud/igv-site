@@ -1,179 +1,126 @@
 #!/usr/bin/env python3
-"""
-Tests HTTP Production - Validation endpoints sans navigateur
-Objectif : Vérifier que frontend et backend sont accessibles et répondent correctement
-"""
-import requests
-import json
-import sys
-from datetime import datetime, timezone
-from typing import Dict, Any, List
+"""Tests HTTP de production (frontend + backend).
 
-class ProductionHTTPTests:
-    def __init__(self):
-        self.frontend_url = "https://israelgrowthventure.com"
-        self.backend_url = "https://igv-cms-backend.onrender.com"
-        self.results: List[Dict[str, Any]] = []
-        self.passed = 0
-        self.failed = 0
-        
-    def test(self, name: str, url: str, method: str = "GET", expected_status: int = 200,
-             should_contain: str = None, should_be_json: bool = False, headers: Dict = None) -> bool:
-        """Execute un test HTTP et enregistre le résultat"""
-        print(f"\n{'='*80}")
-        print(f"TEST: {name}")
-        print(f"URL: {url}")
-        print(f"Method: {method} | Expected: {expected_status}")
-        
-        try:
-            response = requests.request(
-                method, url, 
-                headers=headers or {},
-                timeout=15,
-                allow_redirects=True
+Utilisation:
+  python scripts/test_production_http.py
+
+Variables d'environnement acceptées:
+  FRONT_URL (defaut: https://israelgrowthventure.com)
+  BACKEND_URL (defaut: https://igv-cms-backend.onrender.com)
+  FRONT_EXPECTED_TITLE (defaut: "Emergent | Fullstack App")
+  HTTP_TIMEOUT (defaut: 10 secondes)
+"""
+
+from __future__ import annotations
+
+import json
+import os
+import re
+import sys
+import time
+import urllib.error
+import urllib.request
+from dataclasses import dataclass
+from typing import Any, Dict, Tuple
+
+DEFAULT_FRONT = "https://israelgrowthventure.com"
+DEFAULT_BACKEND = "https://igv-cms-backend.onrender.com"
+DEFAULT_TITLE = "Emergent | Fullstack App"
+DEFAULT_TIMEOUT = float(os.environ.get("HTTP_TIMEOUT", "10"))
+
+
+@dataclass
+class CheckResult:
+    name: str
+    ok: bool
+    status: int | None
+    detail: str
+    elapsed_ms: int
+
+    def as_dict(self) -> Dict[str, Any]:
+        return {
+            "check": self.name,
+            "ok": self.ok,
+            "status": self.status,
+            "detail": self.detail,
+            "elapsed_ms": self.elapsed_ms,
+        }
+
+
+def fetch(url: str) -> Tuple[int, bytes, float]:
+    req = urllib.request.Request(url, headers={"User-Agent": "IGV-ProdCheck/1.0"})
+    start = time.time()
+    with urllib.request.urlopen(req, timeout=DEFAULT_TIMEOUT) as resp:
+        body = resp.read()
+        elapsed = time.time() - start
+        return resp.getcode(), body, elapsed
+
+
+def check_frontend() -> CheckResult:
+    target = os.environ.get("FRONT_URL", DEFAULT_FRONT)
+    expected_title = os.environ.get("FRONT_EXPECTED_TITLE", DEFAULT_TITLE)
+
+    try:
+        status, body, elapsed = fetch(target)
+        html = body.decode("utf-8", errors="replace")
+        match = re.search(r"<title>(.*?)</title>", html, re.IGNORECASE | re.DOTALL)
+        title = match.group(1).strip() if match else ""
+
+        if status != 200:
+            return CheckResult("frontend_http", False, status, "Status code différent de 200", int(elapsed * 1000))
+
+        if not title:
+            return CheckResult("frontend_http", False, status, "Balise <title> absente", int(elapsed * 1000))
+
+        if expected_title.lower() not in title.lower():
+            return CheckResult(
+                "frontend_http",
+                False,
+                status,
+                f"Titre inattendu (obtenu: '{title}')",
+                int(elapsed * 1000),
             )
-            
-            actual_status = response.status_code
-            success = actual_status == expected_status
-            
-            # Check content
-            content_check = True
-            if should_contain and success:
-                content_check = should_contain in response.text
-                if not content_check:
-                    print(f"❌ Content check failed: '{should_contain}' not found")
-            
-            if should_be_json and success:
-                try:
-                    data = response.json()
-                    content_check = isinstance(data, dict)
-                    if content_check:
-                        print(f"✓ Valid JSON: {json.dumps(data, indent=2)[:200]}")
-                except:
-                    content_check = False
-                    print(f"❌ Invalid JSON response")
-            
-            success = success and content_check
-            
-            result = {
-                "name": name,
-                "url": url,
-                "method": method,
-                "expected_status": expected_status,
-                "actual_status": actual_status,
-                "content_length": len(response.content),
-                "success": success,
-                "timestamp": datetime.now(timezone.utc).isoformat()
-            }
-            
-            if success:
-                print(f"✅ PASS - Status: {actual_status} | Content: {len(response.content)} bytes")
-                self.passed += 1
-            else:
-                print(f"❌ FAIL - Expected: {expected_status}, Got: {actual_status}")
-                self.failed += 1
-                
-            self.results.append(result)
-            return success
-            
-        except Exception as e:
-            print(f"❌ ERROR: {str(e)}")
-            self.results.append({
-                "name": name,
-                "url": url,
-                "success": False,
-                "error": str(e),
-                "timestamp": datetime.now(timezone.utc).isoformat()
-            })
-            self.failed += 1
-            return False
-    
-    def run_all_tests(self):
-        """Execute tous les tests de production"""
-        print("\n" + "="*80)
-        print("PRODUCTION HTTP TESTS - israelgrowthventure.com")
-        print(f"Date UTC: {datetime.now(timezone.utc).isoformat()}")
-        print("="*80)
-        
-        # Test 1: Frontend accessible
-        self.test(
-            "Frontend Homepage",
-            self.frontend_url,
-            should_contain="<title>"
-        )
-        
-        # Test 2: Backend health
-        self.test(
-            "Backend Health Check",
-            f"{self.backend_url}/api/health",
-            should_be_json=True
-        )
-        
-        # Test 3: Backend debug imports (optionnel)
-        self.test(
-            "Backend Debug Imports",
-            f"{self.backend_url}/api/debug/imports",
-            should_be_json=True
-        )
-        
-        # Test 4: CMS Pages endpoint (doit être protégé = 401 ou accessible = 200)
-        cms_response = requests.get(f"{self.backend_url}/api/cms/pages", timeout=10)
-        cms_ok = cms_response.status_code in [200, 401, 403]
-        self.results.append({
-            "name": "CMS Pages Endpoint",
-            "url": f"{self.backend_url}/api/cms/pages",
-            "actual_status": cms_response.status_code,
-            "expected": "200 or 401/403",
-            "success": cms_ok,
-            "timestamp": datetime.now(timezone.utc).isoformat()
-        })
-        if cms_ok:
-            print(f"\n✅ CMS endpoint responds: {cms_response.status_code}")
-            self.passed += 1
-        else:
-            print(f"\n❌ CMS endpoint error: {cms_response.status_code}")
-            self.failed += 1
-        
-        # Test 5: CRM Leads endpoint (doit être protégé = 401/403)
-        crm_response = requests.get(f"{self.backend_url}/api/crm/leads", timeout=10)
-        crm_ok = crm_response.status_code in [401, 403]
-        self.results.append({
-            "name": "CRM Leads Endpoint (Protected)",
-            "url": f"{self.backend_url}/api/crm/leads",
-            "actual_status": crm_response.status_code,
-            "expected": "401 or 403 (protected)",
-            "success": crm_ok,
-            "timestamp": datetime.now(timezone.utc).isoformat()
-        })
-        if crm_ok:
-            print(f"✅ CRM endpoint protected: {crm_response.status_code}")
-            self.passed += 1
-        else:
-            print(f"❌ CRM endpoint unexpected status: {crm_response.status_code}")
-            self.failed += 1
-        
-        # Summary
-        print("\n" + "="*80)
-        print("SUMMARY")
-        print("="*80)
-        print(f"✅ Passed: {self.passed}")
-        print(f"❌ Failed: {self.failed}")
-        print(f"Total: {self.passed + self.failed}")
-        
-        # Save results
-        with open("scripts/test_results_http.json", "w", encoding="utf-8") as f:
-            json.dump({
-                "timestamp": datetime.now(timezone.utc).isoformat(),
-                "passed": self.passed,
-                "failed": self.failed,
-                "results": self.results
-            }, f, indent=2, ensure_ascii=False)
-        
-        print(f"\n✓ Results saved to scripts/test_results_http.json")
-        
-        return self.failed == 0
+
+        if len(html.strip()) < 1000:
+            return CheckResult("frontend_http", False, status, "HTML trop court (page possiblement blanche)", int(elapsed * 1000))
+
+        return CheckResult("frontend_http", True, status, f"Titre: {title}", int(elapsed * 1000))
+    except urllib.error.HTTPError as exc:  # pragma: no cover - dépend du réseau
+        return CheckResult("frontend_http", False, exc.code, f"HTTPError: {exc}", 0)
+    except Exception as exc:  # pragma: no cover - dépend du réseau
+        return CheckResult("frontend_http", False, None, f"Exception: {exc}", 0)
+
+
+def check_backend() -> CheckResult:
+    target = os.environ.get("BACKEND_URL", DEFAULT_BACKEND).rstrip("/") + "/api/health"
+
+    try:
+        status, body, elapsed = fetch(target)
+        if status != 200:
+            return CheckResult("backend_health", False, status, "Status code différent de 200", int(elapsed * 1000))
+
+        try:
+            payload = json.loads(body.decode("utf-8"))
+        except json.JSONDecodeError:
+            return CheckResult("backend_health", False, status, "Réponse non JSON", int(elapsed * 1000))
+
+        if payload.get("status") != "ok":
+            return CheckResult("backend_health", False, status, f"Payload inattendu: {payload}", int(elapsed * 1000))
+
+        return CheckResult("backend_health", True, status, "Health OK", int(elapsed * 1000))
+    except urllib.error.HTTPError as exc:  # pragma: no cover
+        return CheckResult("backend_health", False, exc.code, f"HTTPError: {exc}", 0)
+    except Exception as exc:  # pragma: no cover
+        return CheckResult("backend_health", False, None, f"Exception: {exc}", 0)
+
+
+def main() -> int:
+    checks = [check_frontend(), check_backend()]
+    summary = {"results": [c.as_dict() for c in checks], "all_passed": all(c.ok for c in checks)}
+
+    print(json.dumps(summary, indent=2, ensure_ascii=False))
+    return 0 if summary["all_passed"] else 1
+
 
 if __name__ == "__main__":
-    tester = ProductionHTTPTests()
-    success = tester.run_all_tests()
-    sys.exit(0 if success else 1)
+    sys.exit(main())

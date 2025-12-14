@@ -6,7 +6,7 @@ const SEO = ({
   title, 
   description, 
   keywords, 
-  image = 'https://israelbiz.preview.emergentagent.com/og-image.jpg',
+  image = 'https://israelgrowthventure.com/og-image.jpg',
   type = 'website',
   pathname = ''
 }) => {

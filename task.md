@@ -1,5 +1,7 @@
 ﻿# Mission Déploiement IGV Site V3 - RESET COMPLET
 
+**RESET du 14/12/2025 – Reprise intégrale par Copilot autonome**
+
 **Date de Reset** : 2024-12-14 UTC  
 **Repo** : israelgrowthventure-cloud/igv-site  
 **Agent** : Copilot/Claude Sonnet 4.5 (autonome)  
@@ -7,33 +9,33 @@
 
 ---
 
-## Phase 0 : TABLE RASE (SÉCURISÉE) ✅
+## Phase 0 : TABLE RASE (SÉCURISÉE) ⏳
 
-### 0.1 Sécurité pré-purge ✅
-- [x] Vérifier root Git : `C:/Users/PC/Desktop/IGV/igv site/igv-site`
-- [x] Vérifier remote : `israelgrowthventure-cloud/igv-site`
-- [x] Créer `scripts/safety_guard.ps1` + `.sh`
-- [x] Guard validé : opérations autorisées uniquement dans le repo
+### 0.1 Sécurité pré-purge
+- [ ] Vérifier root Git : `C:/Users/PC/Desktop/IGV/igv site/igv-site`
+- [ ] Vérifier remote : `israelgrowthventure-cloud/igv-site`
+- [ ] Créer `scripts/safety_guard.ps1` + `.sh`
+- [ ] Guard validé : opérations autorisées uniquement dans le repo
 
-### 0.2 Purge repo ✅
-- [x] Conservation : `.git/`, `.github/`, `INTEGRATION_PLAN.md`
-- [x] Suppression : tout le reste (archives, backups, frontend legacy, backend legacy, etc.)
-- [x] État final : repo minimal et propre
+### 0.2 Purge repo
+- [ ] Conservation : `.git/`, `.github/`, `INTEGRATION_PLAN.md`
+- [ ] Suppression : tout le reste (archives, backups, frontend legacy, backend legacy, etc.)
+- [ ] État final : repo minimal et propre
 
 ---
 
-## Phase 1 : RÉINJECTION BASE SAINE V3 ✅
+## Phase 1 : RÉINJECTION BASE SAINE V3 ⏳
 
-### 1.1 Clone source V3 ✅
-- [x] Source officielle : https://github.com/igvcontact/v3
-- [x] Clone shallow (depth=1) dans `.tmp_v3_source/`
-- [x] Copie `frontend/` + `backend/` V3
-- [x] Suppression clone temporaire
+### 1.1 Clone source V3
+- [ ] Source officielle : https://github.com/igvcontact/v3
+- [ ] Clone shallow (depth=1) dans `.tmp_v3_source/`
+- [ ] Copie `frontend/` + `backend/` V3
+- [ ] Suppression clone temporaire
 
-### 1.2 Fichiers de configuration créés ✅
-- [x] `render.yaml` : services frontend + backend (Node 20.x, Python 3.11)
-- [x] `ENV_TEMPLATE.md` : NOMS de variables uniquement (pas de secrets)
-- [x] `task.md` : ce fichier (RESET complet)
+### 1.2 Fichiers de configuration créés
+- [ ] `render.yaml` : services frontend + backend (Node 20.x, Python 3.11)
+- [ ] `ENV_TEMPLATE.md` : NOMS de variables uniquement (pas de secrets)
+- [ ] `task.md` : ce fichier (RESET complet)
 
 ---
 
@@ -193,9 +195,9 @@
 
 ---
 
-## État Actuel : PHASE 1 COMPLÉTÉE ✅
+## État Actuel : RESET 14/12/2025
 
-**Prochaine étape** : Phase 2 (Backend health + alias env)
+**Prochaine étape** : Phase 0 validation → Phase 1 → Phase 2+
 
 ---
 
@@ -204,4 +206,5 @@
 - ❌ Ne jamais toucher au design public V3
 - ❌ Jamais de secrets en clair (NOMS uniquement)
 - ✅ Tout via scripts + API Render (pas de clics manuels)
+- ✅ Docs en FR uniquement
 - ✅ Docs en FR uniquement

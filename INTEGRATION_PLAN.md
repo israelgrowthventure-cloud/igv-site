@@ -4676,15 +4676,38 @@ python backend/test_phase6ter_production.py
 - Tests PROD : non exécutés (en attente clés Render + env). Build local PASS.
 - État final : PARTIEL (build OK, déploiement bloqué par absence RENDER_API_KEY/SERVICE_IDs).
 - L’utilisateur a d’autres requêtes à faire sur le site après cette mission.
-## 2025-12-14 UTC � Contr?le env via Render API et orchestrateur
-- Objectif : aligner le contr?le des variables d�env sur Render (source de v?rit?) et automatiser d?ploiement/tests sans dashboard.
+## 2025-12-14 UTC � Contr?le env via Render API et orchestrateur
+- Objectif : aligner le contrôle des variables d'env sur Render (source de vérité) et automatiser déploiement/tests sans dashboard.
 - Actions :
-  - scripts/check_env_vars.py lit Render API, auto-d?tecte igv-site-web / igv-cms-backend, affiche PRESENT/ABSENT (pas de valeurs).
-  - scripts/mission_autonome_prod.py auto-d?tecte services, r?gle JWT_SECRET (g?n?r?) et CORS_ALLOWED_ORIGINS si manquants, bloque seulement si MONGODB_URI absent ; d?clenche deploy Render + polling + tests prod.
-  - render.yaml d?j? pr?t pour build static + Node 20.17.0.
-- R?sultat check Render : FRONT/BACK service IDs pr?sents ; MONGODB_URI absent, ainsi que CMS/CRM/Monetico envs ? STATUS=BLOQUE.
-- Fichiers modifi?s : scripts/check_env_vars.py, scripts/mission_autonome_prod.py, task.md.
+  - scripts/check_env_vars.py lit Render API, auto-détecte igv-site-web / igv-cms-backend, affiche PRESENT/ABSENT (pas de valeurs).
+  - scripts/mission_autonome_prod.py auto-détecte services, règle JWT_SECRET (généré) et CORS_ALLOWED_ORIGINS si manquants, bloque seulement si MONGODB_URI absent ; déclenche deploy Render + polling + tests prod.
+  - render.yaml déjà prêt pour build static + Node 20.17.0.
+- Résultat check Render : FRONT/BACK service IDs présents ; MONGODB_URI absent, ainsi que CMS/CRM/Monetico envs → STATUS=BLOQUE.
+- Fichiers modifiés : scripts/check_env_vars.py, scripts/mission_autonome_prod.py, task.md.
 - Variables env (noms) : RENDER_API_KEY, RENDER_FRONTEND_SERVICE_ID, RENDER_BACKEND_SERVICE_ID, MONGODB_URI, JWT_SECRET, CORS_ALLOWED_ORIGINS, CMS_*, CRM_*, MONETICO_*.
-- Tests PROD : non lanc?s (blocage MONGODB_URI manquante c?t? Render).
-- ?tat final : BLOQU? (MONGODB_URI manquante sur Render, autres env m?tier absentes).
-- L�utilisateur a d�autres requ?tes ? faire sur le site apr?s cette mission.
+- Tests PROD : non lancés (blocage MONGODB_URI manquante côté Render).
+- État final : BLOQUÉ (MONGODB_URI manquante sur Render, autres env métier absentes).
+- L'utilisateur a d'autres requêtes à faire sur le site après cette mission.
+
+---
+
+## 🔄 RESET V3 - REPRISE COMPLÈTE (14/12/2025 13:35 UTC)
+
+### Objectif
+Reset complet du plan task.md et reprise intégrale de la mission de déploiement IGV V3 : suppression branding Emergent, ajout logo IGV, backend /api/health, frontend stable Render, CMS/CRM, géoloc+pricing, i18n FR/EN/HE, Monetico TEST, SEO complet, scripts déploiement automatiques.
+
+### Actions
+- Reset task.md : toutes cases [ ] décochées, note de reset ajoutée
+- Ajout entrée INTEGRATION_PLAN.md (cette section)
+- Prochaines étapes : nettoyage branding → backend health → frontend build stable → fonctionnalités métier → déploiement + tests
+
+### Fichiers modifiés
+- task.md (reset complet)
+- INTEGRATION_PLAN.md (ajout section reset)
+- frontend/package.json (TypeScript 4.9.5 ajouté, packageManager supprimé)
+
+### Variables ENV (noms uniquement)
+En cours de validation selon task.md Phase 2+
+
+### État
+⏳ ÉTAPE 0 COMPLÉTÉE - Passage à ÉTAPE 1 (nettoyage branding + logo)

@@ -40,9 +40,7 @@ const Header = () => {
         <div className="flex justify-between items-center h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-3">
-            <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-blue-800 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-xl">IGV</span>
-            </div>
+            <img src="/igv-logo.png" alt="Israel Growth Venture" className="h-10" />
             <div className="hidden md:block">
               <div className="text-lg font-bold text-gray-900">Israel Growth Venture</div>
               <div className="text-xs text-gray-600">{t('hero.subtitle').substring(0, 40)}...</div>

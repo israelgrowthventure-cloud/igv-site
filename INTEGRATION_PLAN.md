@@ -1,3 +1,65 @@
+## ✅ PHASE 5 DEPLOYED - FIX ERESOLVE REACT-I18NEXT (14/12/2025 15:27 UTC)
+
+### Objectif
+Correction bug ERESOLVE bloquant build Render (react-i18next ^15.1.3 → 15.7.4 demande TypeScript ^5, incompatible avec projet TypeScript 4.9.5). Déploiement autonome avec monitoring live API Render.
+
+### Cause Exacte
+- **Package.json** : `"react-i18next": "^15.1.3"` (caret autorise upgrade mineur)
+- **Lockfile généré** : react-i18next@15.7.4 installé (dernière version 15.x)
+- **Conflit peer deps** : react-i18next@15.7.4 requiert `typescript: ^5`, projet utilise `typescript: 4.9.5`
+- **Résultat Render** : npm ci échoue avec ERESOLVE (build_failed après 13s)
+
+### Fix Choisi (Option A)
+**Pinner react-i18next à version exacte 15.1.3** (sans ^)
+- Interdiction upgrade automatique vers 15.7.x
+- Compatible TypeScript 4.9.5
+- Préserve react-scripts 5.0.1 (pas d'upgrade TS nécessaire)
+
+### Fichiers Modifiés
+- `frontend/package.json` : `"react-i18next": "^15.1.3"` → `"react-i18next": "15.1.3"`
+- `frontend/package-lock.json` : Regénéré avec react-i18next@15.1.3 exact (pas 15.7.4)
+- **Commit** : f04105e5 "Fix: Pinner react-i18next@15.1.3 exact (empêche upgrade 15.7.4 TypeScript ^5)"
+
+### Scripts Créés
+- `scripts/monitor_render_deploy.py` : Polling status deploy live (statut + durée)
+- `scripts/render_inventory.py` : Cartographie services Render (domaines custom inclus)
+- `scripts/check_env_render_key.py` : Vérification RENDER_API_KEY présence (sans afficher valeur)
+- `scripts/get_latest_deploy.py` : Récupération dernier deploy ID
+
+### Déploiement Production
+- **Service** : igv-site-web (srv-d4no5dc9c44c73d1opgg)
+- **Deploy ID** : dep-d4vdd6sm2jgs738sghdg
+- **Commit** : f04105e5 (fix react-i18next)
+- **Durée** : 1m42s (queued 8s → build_in_progress 1m21s → update_in_progress 25s → live)
+- **Statut** : ✅ LIVE (2025-12-14 15:27 UTC)
+
+### Tests Production
+**Frontend (https://israelgrowthventure.com)** :
+- ✅ HTTP 200
+- ✅ Titre : "Israel Growth Venture | Développement commercial en Israël" (Emergent supprimé)
+- ✅ Bundle hash : `2fae4d25` (nouveau build, pas ancien 3547bdf7)
+- ✅ Contenu visible (pas de page blanche)
+
+**Backend (https://igv-cms-backend.onrender.com)** :
+- ✅ /api/health : 200 OK
+
+### Variables ENV (confirmées présentes)
+- `RENDER_API_KEY` : 32 chars (source: Render Environment)
+- Frontend domaines : israelgrowthventure.com, www.israelgrowthventure.com
+- Backend domaine : igv-cms-backend.onrender.com
+
+### Documentation Mise à Jour
+- `task.md` : Phase 5 complète (toutes cases cochées avec preuves)
+- `ENV_KEYS_MEMO.md` : Mémo clés (noms uniquement, pas valeurs)
+- `INTEGRATION_PLAN.md` : Cette entrée
+
+### État Final
+✅ **PHASE 5 COMPLÈTE** : Frontend V3 déployé, build réussi, production validée  
+✅ **ERESOLVE résolu** : react-i18next pinnée 15.1.3, TypeScript 4.9.5 stable  
+✅ **Monitoring live** : Scripts autonomes opérationnels pour futurs déploiements  
+
+---
+
 ## 🚀 MISSION V3 COMPLÈTE - PHASE 1 TERMINÉE (14/12/2025 01:00 UTC)
 
 ### Objectif

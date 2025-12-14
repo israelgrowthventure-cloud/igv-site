@@ -15,9 +15,15 @@ if sys.platform == 'win32':
 
 def trigger_deploy(service_id):
     """Déclenche un déploiement manuel."""
+    # Lecture clé avec fallback
     api_key = os.getenv('RENDER_API_KEY')
     if not api_key:
-        print("ERROR: RENDER_API_KEY non définie", file=sys.stderr)
+        api_key = os.getenv('RENDER_API_TOKEN')  # Fallback ancien nom
+        if api_key:
+            print("WARN: Fallback RENDER_API_TOKEN utilisé (préférer RENDER_API_KEY)", file=sys.stderr)
+    
+    if not api_key:
+        print("ERROR: RENDER_API_KEY manquant (ni RENDER_API_KEY ni RENDER_API_TOKEN)", file=sys.stderr)
         sys.exit(1)
     
     req = urllib.request.Request(

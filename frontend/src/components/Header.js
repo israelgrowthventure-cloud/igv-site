@@ -39,7 +39,7 @@ const Header = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-3">
+          <Link to="/" className="flex items-center gap-3">
             <img src="/igv-logo.png" alt="Israel Growth Venture" className="h-10" />
             <div className="hidden md:block">
               <div className="text-lg font-bold text-gray-900">Israel Growth Venture</div>
@@ -48,7 +48,7 @@ const Header = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center space-x-8">
+          <nav className="hidden lg:flex items-center gap-10">
             {navLinks.map((link) => (
               <Link
                 key={link.path}
@@ -65,12 +65,12 @@ const Header = () => {
           </nav>
 
           {/* Language Selector & CTA */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center gap-4">
             {/* Language Selector */}
             <div className="relative">
               <button
                 onClick={() => setIsLangOpen(!isLangOpen)}
-                className="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors"
+                className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors"
                 data-testid="language-selector-btn"
               >
                 <Globe className="w-4 h-4 text-gray-600" />

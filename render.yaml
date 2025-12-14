@@ -1,66 +1,97 @@
 services:
+  # Backend CMS/CRM (Python FastAPI + MongoDB)
   - type: web
     name: igv-cms-backend
     runtime: python
-    plan: starter
-    region: frankfurt
-    rootDir: backend
+    plan: free
     buildCommand: pip install --upgrade pip && pip install -r requirements.txt
     startCommand: uvicorn server:app --host 0.0.0.0 --port $PORT
+    rootDir: backend
     envVars:
       - key: PYTHON_VERSION
-        value: 3.11.7
+        value: 3.11.4
+      - key: MONGODB_URI
+        sync: false
       - key: MONGO_URL
         sync: false
       - key: DB_NAME
-        value: igv_cms_db
+        sync: false
       - key: JWT_SECRET
         sync: false
+      - key: CORS_ALLOWED_ORIGINS
+        value: https://israelgrowthventure.com
       - key: CORS_ORIGINS
-        sync: false
-      - key: CONTACT_EMAIL
-        value: israel.growth.venture@gmail.com
+        value: https://israelgrowthventure.com
       - key: SMTP_HOST
-        value: smtp.gmail.com
+        sync: false
       - key: SMTP_PORT
-        value: "587"
+        sync: false
       - key: SMTP_USER
         sync: false
       - key: SMTP_PASSWORD
         sync: false
+      - key: SMTP_FROM
+        sync: false
+      - key: BOOTSTRAP_TOKEN
+        generateValue: true
       - key: MONETICO_MODE
         value: TEST
       - key: MONETICO_TPE
         sync: false
-      - key: MONETICO_SOCIETE
-        sync: false
       - key: MONETICO_KEY
         sync: false
+      - key: MONETICO_COMPANY_CODE
+        sync: false
+      - key: MONETICO_VERSION
+        value: "3.0"
+      - key: S3_BUCKET
+        sync: false
+      - key: S3_REGION
+        sync: false
+      - key: AWS_ACCESS_KEY_ID
+        sync: false
+      - key: AWS_SECRET_ACCESS_KEY
+        sync: false
     healthCheckPath: /api/health
+    autoDeploy: true
 
-  - type: static
-    name: igv-site-web
-    plan: starter
-    region: frankfurt
+  # Frontend (React 19 + TailwindCSS + shadcn/ui)
+  - type: web
+    name: igv-frontend
+    runtime: node
+    plan: free
+    buildCommand: npm ci && npm run build
+    staticPublishPath: build
     rootDir: frontend
-    buildCommand: npm install && npm run build
-    publishDir: build
     envVars:
       - key: NODE_VERSION
-        value: 20.17.0
-      - key: REACT_APP_BACKEND_URL
-        value: https://igv-cms-backend.onrender.com
-      - key: REACT_APP_API_URL
-        value: https://igv-cms-backend.onrender.com/api
-      - key: REACT_APP_ENV
+        value: 20.18.3
+      - key: NODE_ENV
         value: production
-      - key: REACT_APP_DEFAULT_LANGUAGE
-        value: fr
-      - key: REACT_APP_SUPPORTED_LANGUAGES
-        value: fr,en,he
-      - key: REACT_APP_CALENDAR_EMAIL
-        value: israel.growth.venture@gmail.com
-      - key: REACT_APP_ENABLE_VISUAL_EDITS
-        value: "false"
-      - key: DISABLE_ESLINT_PLUGIN
-        value: "true"
+      - key: REACT_APP_API_URL
+        value: https://igv-cms-backend.onrender.com
+      - key: GENERATE_SOURCEMAP
+        value: false
+      - key: CI
+        value: false
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    headers:
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
+      - path: /static/*
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
+    customDomains:
+      - israelgrowthventure.com
+      - www.israelgrowthventure.com
+    autoDeploy: true

@@ -18,6 +18,7 @@ from typing import Dict, Optional, Tuple
 
 RENDER_API = "https://api.render.com/v1/services"
 TARGET_BACKEND_HOST = "igv-cms-backend.onrender.com"
+MAX_ATTEMPTS = 2
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
@@ -26,10 +27,23 @@ def run(cmd, cwd=None, check=True, capture_output=False) -> subprocess.Completed
     return subprocess.run(cmd, cwd=cwd, check=check, text=True, capture_output=capture_output)
 
 
+def _parse_response(resp):
+    body = resp.read().decode()
+    content_type = resp.headers.get("Content-Type", "")
+    if "json" in content_type.lower():
+        if not body.strip():
+            return {}
+        try:
+            return json.loads(body)
+        except json.JSONDecodeError:
+            return {}
+    return body
+
+
 def api_get(url: str, api_key: str):
     req = urllib.request.Request(url, headers={"Authorization": f"Bearer {api_key}"})
     with urllib.request.urlopen(req) as resp:
-        return json.loads(resp.read().decode())
+        return _parse_response(resp)
 
 
 def api_post(url: str, api_key: str, payload: Dict):
@@ -40,13 +54,7 @@ def api_post(url: str, api_key: str, payload: Dict):
         method="POST",
     )
     with urllib.request.urlopen(req) as resp:
-        raw = resp.read().decode().strip()
-        if not raw:
-            return {}
-        try:
-            return json.loads(raw)
-        except json.JSONDecodeError:
-            return {}
+        return _parse_response(resp)
 
 
 def _extract_urls(svc: dict) -> set[str]:
@@ -120,6 +128,19 @@ def set_env_var(api_key: str, service_id: str, key: str, value: str):
     with urllib.request.urlopen(req) as resp:
         resp.read()
     print(f"[env] set {key}=*** on {service_id}")
+
+
+def get_deploy_logs(api_key: str, service_id: str, deploy_id: str, limit: int = 200) -> list[str]:
+    url = f"{RENDER_API}/{service_id}/deploys/{deploy_id}/logs?limit={limit}"
+    data = api_get(url, api_key)
+    lines: list[str] = []
+    if isinstance(data, list):
+        for entry in data:
+            ts = entry.get("timestamp") if isinstance(entry, dict) else None
+            msg = entry.get("message") if isinstance(entry, dict) else str(entry)
+            if msg:
+                lines.append(f"[{ts}] {msg}" if ts else msg)
+    return lines
 
 
 ALIASES = {
@@ -203,18 +224,22 @@ def trigger_deploy(api_key: str, service_id: str) -> Optional[str]:
     return deploy_id
 
 
-def poll_deploy(api_key: str, service_id: str, deploy_id: str) -> bool:
+def poll_deploy(api_key: str, service_id: str, deploy_id: str):
     url = f"{RENDER_API}/{service_id}/deploys/{deploy_id}"
     for _ in range(60):
         data = api_get(url, api_key)
-        status = data.get("status")
+        status = data.get("status") if isinstance(data, dict) else None
         print(f"[render] {service_id} deploy {deploy_id} status={status}")
         if status in {"live", "succeeded", "deployed"}:
-            return True
-        if status in {"failed", "canceled", "deactivated"}:
-            return False
+            return "success", data, None
+        if status in {"failed", "canceled", "deactivated", "build_failed", "update_failed"}:
+            logs = get_deploy_logs(api_key, service_id, deploy_id, limit=200)
+            print("[render] deploy failed, collected logs (last 30 lines):")
+            for line in logs[-30:]:
+                print(line)
+            return "failed", data, logs
         time.sleep(10)
-    return False
+    return "timeout", {}, None
 
 
 def run_tests() -> bool:
@@ -247,27 +272,52 @@ def main():
         print(env_issue)
         sys.exit(1)
 
-    git_commit_push()
+    attempts = 0
+    last_reason = None
 
-    front_deploy = trigger_deploy(api_key, front_id)
-    back_deploy = trigger_deploy(api_key, back_id)
+    while attempts < MAX_ATTEMPTS:
+        attempts += 1
+        print(f"[deploy] attempt {attempts}/{MAX_ATTEMPTS}")
 
-    success = True
-    if front_deploy:
-        success &= poll_deploy(api_key, front_id, front_deploy)
-    if back_deploy:
-        success &= poll_deploy(api_key, back_id, back_deploy)
+        git_commit_push()
 
-    if not success:
-        print("Deploy failed")
-        sys.exit(1)
+        front_deploy = trigger_deploy(api_key, front_id)
+        back_deploy = trigger_deploy(api_key, back_id)
 
-    tests_ok = run_tests()
-    if not tests_ok:
-        print("Tests failed")
-        sys.exit(1)
+        success = True
+        failure_details = []
 
-    print("ALL PASS")
+        if front_deploy:
+            res, data, logs = poll_deploy(api_key, front_id, front_deploy)
+            if res != "success":
+                success = False
+                failure_details.append(("frontend", data, logs))
+
+        if back_deploy:
+            res, data, logs = poll_deploy(api_key, back_id, back_deploy)
+            if res != "success":
+                success = False
+                failure_details.append(("backend", data, logs))
+
+        if success:
+            tests_ok = run_tests()
+            if tests_ok:
+                print("ALL PASS")
+                return
+            print("Tests failed")
+            last_reason = "tests_failed"
+        else:
+            if failure_details:
+                statuses = [fd[1].get("status") for fd in failure_details if isinstance(fd[1], dict)]
+                last_reason = statuses[0] if statuses else "deploy_failed"
+
+        if attempts >= MAX_ATTEMPTS:
+            break
+
+        print(f"[deploy] retrying (reason={last_reason})")
+
+    print(f"Deployment stopped after {attempts} attempt(s), reason={last_reason}")
+    sys.exit(1)
 
 
 if __name__ == "__main__":

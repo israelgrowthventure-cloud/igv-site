@@ -1,2 +1,0 @@
-BACKEND=srv-d4ka5q63jp1c738n6b2g
-FRONTEND=srv-d4no5dc9c44c73d1opgg

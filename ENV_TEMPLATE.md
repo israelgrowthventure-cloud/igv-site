@@ -1,57 +1,69 @@
-# ENV_TEMPLATE
+# Template des Variables d'Environnement - IGV Site V3
 
-## Render API
-- RENDER_API_KEY
-- RENDER_FRONTEND_SERVICE_ID
-- RENDER_BACKEND_SERVICE_ID
+⚠️ **CE FICHIER NE CONTIENT QUE DES NOMS DE VARIABLES (JAMAIS DE VALEURS)**
 
-## Backend / Auth / Base
-- PYTHON_VERSION
-- MONGODB_URI (alias Render actuel : MONGO_URL)
-- DB_NAME (Render actuel déjà défini)
-- JWT_SECRET (présent sur Render)
-- CORS_ALLOWED_ORIGINS (alias Render actuel : CORS_ORIGINS)
-- CONTACT_EMAIL
-- SMTP_HOST
-- SMTP_PORT
-- SMTP_USER
-- SMTP_PASSWORD
+## Backend (Python FastAPI)
 
-## CMS
-- CMS_ADMIN_EMAIL
-- CMS_ADMIN_PASSWORD
-- CMS_JWT_SECRET
-- UPLOAD_PROVIDER
-- S3_ACCESS_KEY_ID
-- S3_SECRET_ACCESS_KEY
-- S3_REGION
-- S3_BUCKET
-- CLOUDINARY_CLOUD_NAME
-- CLOUDINARY_API_KEY
-- CLOUDINARY_API_SECRET
+### MongoDB (OBLIGATOIRE pour CMS/CRM)
+```
+MONGODB_URI=mongodb+srv://...
+MONGO_URL=mongodb+srv://...  # Alias de MONGODB_URI (supporté pour rétrocompatibilité)
+DB_NAME=igv_production
+```
 
-## CRM
-- CRM_ADMIN_EMAIL
-- CRM_ADMIN_PASSWORD
-- CRM_ADMIN_NAME
-- BOOTSTRAP_TOKEN
-- RBAC_ENABLED
+### Authentification & Sécurité
+```
+JWT_SECRET=<généré_aléatoirement>
+BOOTSTRAP_TOKEN=<généré_aléatoirement>  # Protection de /api/admin/bootstrap
+```
 
-## Paiement (Monetico)
-- MONETICO_MODE
-- MONETICO_TPE
-- MONETICO_SOCIETE
-- MONETICO_KEY
-- MONETICO_URL_PAIEMENT
-- MONETICO_URL_RETOUR_OK
-- MONETICO_URL_RETOUR_KO
+### CORS
+```
+CORS_ALLOWED_ORIGINS=https://israelgrowthventure.com
+CORS_ORIGINS=https://israelgrowthventure.com  # Alias (supporté)
+```
 
-## Frontend
-- NODE_VERSION
-- REACT_APP_BACKEND_URL
-- REACT_APP_API_URL
-- REACT_APP_ENV
-- REACT_APP_DEFAULT_LANGUAGE
-- REACT_APP_SUPPORTED_LANGUAGES
-- REACT_APP_CALENDAR_EMAIL
-- REACT_APP_ENABLE_VISUAL_EDITS
+### SMTP (Emails de contact)
+```
+SMTP_HOST=smtp.example.com
+SMTP_PORT=587
+SMTP_USER=noreply@israelgrowthventure.com
+SMTP_PASSWORD=<secret>
+SMTP_FROM=noreply@israelgrowthventure.com
+```
+
+### Paiement Monetico (CMS: E-Ticaret)
+```
+MONETICO_MODE=TEST  # ou PRODUCTION
+MONETICO_TPE=<numéro_terminal>
+MONETICO_KEY=<clé_secrète>
+MONETICO_COMPANY_CODE=<code_société>
+MONETICO_VERSION=3.0
+```
+
+### S3 (Upload images CMS)
+```
+S3_BUCKET=igv-cms-uploads
+S3_REGION=eu-west-1
+AWS_ACCESS_KEY_ID=<access_key>
+AWS_SECRET_ACCESS_KEY=<secret_key>
+```
+
+## Frontend (React 19)
+
+### API Backend
+```
+REACT_APP_API_URL=https://igv-cms-backend.onrender.com
+```
+
+### Build
+```
+NODE_ENV=production
+GENERATE_SOURCEMAP=false
+CI=false
+```
+
+## Notes
+- **Backend** : Si MongoDB absent, `/api/health` doit quand même répondre 200 avec `{"status":"ok","mongodb":"not_configured"}`
+- **Alias supportés** : `MONGO_URL` = `MONGODB_URI`, `CORS_ORIGINS` = `CORS_ALLOWED_ORIGINS`
+- **Render** : Configurer les variables dans Render Dashboard (Render.com > Service > Environment)

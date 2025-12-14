@@ -1,44 +1,207 @@
-﻿# IGV V3 — Checklist Production
+﻿# Mission Déploiement IGV Site V3 - RESET COMPLET
 
-Dernière mise à jour : 2025-12-14 UTC
+**Date de Reset** : 2024-12-14 UTC  
+**Repo** : israelgrowthventure-cloud/igv-site  
+**Agent** : Copilot/Claude Sonnet 4.5 (autonome)  
+**Objectif** : Table rase → Injection V3 → Déploiement PROD → Tests → Succès réel
 
-## Phase 0 — Reset complet
-- [x] Archive de sauvegarde _archive_reset_20251214_0000_UTC (tout sauf .git/.github/task.md/INTEGRATION_PLAN.md/render.yaml).
-- [x] Clonage igvcontact/v3 et synchro backend/frontend propres.
-- [x] render.yaml régénéré (backend FastAPI python3.11, frontend static React build `npm install && npm run build`, Node 20.17.0).
-- [x] Endpoint backend /api/health ajouté.
-- [x] Scripts tests prod : scripts/test_production_http.py, scripts/test_production_browser_playwright.mjs, runners .sh/.ps1.
-- [x] ENV_TEMPLATE.md recréé (variables noms uniquement).
-- [x] Générer lockfile (npm install) et vérifier build local (`npm run build` OK avec DISABLE_ESLINT_PLUGIN=true).
-- [ ] Exécuter tests prod (HTTP + Playwright) après config env.
+---
 
-## Phase 1 — Baseline prod (pas de page blanche)
-- [ ] Configurer variables Render (NOMS) + clé API dans environnement.
-- [ ] Déployer backend + frontend via Render API (sans dashboard).
-- [ ] Valider https://israelgrowthventure.com → 200 + titre attendu (pas de page blanche).
-- [ ] Valider https://igv-cms-backend.onrender.com/api/health → 200 + JSON stable.
-- [ ] Capturer résultats tests scripts/run_production_tests.* dans logs/outputs.
-- Blocage actuel : MONGODB_URI absent côté Render + autres env CMS/CRM/Monetico absentes (cf. scripts/check_env_vars.py via Render API).
+## Phase 0 : TABLE RASE (SÉCURISÉE) ✅
 
-## Phase 2 — Métier (i18n/geo/pricing/CMS/CRM)
-- [ ] Timeout géoloc 1s + fallback EU + mapping 4 zones + devises.
-- [ ] Fallback i18n cms?.heroTitle?.[locale] || t('home.hero.title') sur tout le front.
-- [ ] Packs/pricing cohérents avec ancien site (descriptions importées).
-- [ ] CMS drag&drop sécurisé (GrapesJS) + route editor protégée.
-- [ ] Endpoint CRM bootstrap admin + RBAC minimal.
+### 0.1 Sécurité pré-purge ✅
+- [x] Vérifier root Git : `C:/Users/PC/Desktop/IGV/igv site/igv-site`
+- [x] Vérifier remote : `israelgrowthventure-cloud/igv-site`
+- [x] Créer `scripts/safety_guard.ps1` + `.sh`
+- [x] Guard validé : opérations autorisées uniquement dans le repo
 
-## Phase 3 — Paiement Monetico + SEO
-- [ ] Intégration Monetico TEST (HMAC) + pages success/failure.
-- [ ] SEO complet : meta multilingue, hreflang, JSON-LD, sitemap, robots, alt images.
-- [ ] Aucune régression design V3.
+### 0.2 Purge repo ✅
+- [x] Conservation : `.git/`, `.github/`, `INTEGRATION_PLAN.md`
+- [x] Suppression : tout le reste (archives, backups, frontend legacy, backend legacy, etc.)
+- [x] État final : repo minimal et propre
 
-## Phase 4 — Déploiement autonome + validation
-- [ ] Orchestrateur scripts/mission_autonome_prod.py (env check → commit/push → deploy Render API → tests prod en boucle).
-- [ ] Déploiements Render (frontend+backend) attendus = Deployed.
-- [ ] Playwright PROD PASS, pas d'erreurs console.
-- [ ] Documentation à jour (task.md + append INTEGRATION_PLAN.md) avec preuves URLs.
+---
 
-## Preuves attendues
-- URLs: front 200 avec contenu visible, backend /api/health 200 JSON {"status":"ok"}.
-- Résultats scripts tests (JSON) conservés.
-- Aucun secret en clair; uniquement noms de variables d’environnement.
+## Phase 1 : RÉINJECTION BASE SAINE V3 ✅
+
+### 1.1 Clone source V3 ✅
+- [x] Source officielle : https://github.com/igvcontact/v3
+- [x] Clone shallow (depth=1) dans `.tmp_v3_source/`
+- [x] Copie `frontend/` + `backend/` V3
+- [x] Suppression clone temporaire
+
+### 1.2 Fichiers de configuration créés ✅
+- [x] `render.yaml` : services frontend + backend (Node 20.x, Python 3.11)
+- [x] `ENV_TEMPLATE.md` : NOMS de variables uniquement (pas de secrets)
+- [x] `task.md` : ce fichier (RESET complet)
+
+---
+
+## Phase 2 : BACKEND - HEALTH + ALIAS ENV ⏳
+
+### 2.1 Endpoint /api/health (obligatoire)
+- [ ] Route `/api/health` qui répond 200 JSON stable
+- [ ] Si MongoDB absent : `{"status":"ok","mongodb":"not_configured"}` (mais 200)
+- [ ] Si MongoDB présent : `{"status":"ok","mongodb":"connected","db":"<nom>"}`
+
+### 2.2 Alias environnement (compatibilité Render)
+- [ ] Supporter `MONGO_URL` OU `MONGODB_URI`
+- [ ] Supporter `CORS_ORIGINS` OU `CORS_ALLOWED_ORIGINS`
+- [ ] Logique : `mongo_uri = os.getenv("MONGODB_URI") or os.getenv("MONGO_URL")`
+- [ ] Aucun secret dans les logs
+
+### 2.3 Dependencies
+- [ ] Vérifier `requirements.txt` (FastAPI, Motor, PyJWT, etc.)
+- [ ] Tester import locaux avant commit
+
+---
+
+## Phase 3 : FRONTEND - BUILD STABLE SUR RENDER ⏳
+
+### 3.1 Build déterministe
+- [ ] Node LTS 20.x fixé dans `render.yaml`
+- [ ] Utiliser `npm ci` (lockfile strict)
+- [ ] Interdiction `--legacy-peer-deps` / `--force` (solution temporaire)
+
+### 3.2 React 19 + dépendances
+- [ ] Vérifier `package.json` : React 19 + TypeScript compatible
+- [ ] Si conflit peer deps : résoudre proprement (ajuster versions)
+- [ ] Build local test : `npm ci && npm run build` (doit PASS)
+
+### 3.3 Routes & environnement
+- [ ] `REACT_APP_API_URL=https://igv-cms-backend.onrender.com`
+- [ ] Routing client-side (rewrite `/* → /index.html`)
+- [ ] Headers sécurité (X-Frame-Options, Cache-Control, etc.)
+
+---
+
+## Phase 4 : CMS + CRM + MONETICO + I18N + SEO ⏳
+
+### 4.1 i18n (FR/EN/HE)
+- [ ] i18next configuré partout (frontend + backend)
+- [ ] Fallback obligatoire : `cms?.heroTitle?.[locale] || t('home.hero.title')`
+- [ ] Détection langue navigateur + sélecteur manuel
+
+### 4.2 Géolocalisation + Pricing
+- [ ] Timeout 1s, fallback Europe
+- [ ] 4 zones : EU, US/CA, IL, ASIA/Africa
+- [ ] Devise locale (€, $, ₪)
+- [ ] ZoneSelector visible et fonctionnel
+
+### 4.3 CMS (Drag&Drop)
+- [ ] Route éditeur GrapesJS protégée (JWT)
+- [ ] Champs multi-langues (textes + images)
+- [ ] Upload S3 pour images
+- [ ] Endpoint GET/POST `/api/cms/content`
+
+### 4.4 CRM (Dashboard Admin)
+- [ ] Endpoint `/api/admin/bootstrap` (protection `BOOTSTRAP_TOKEN`)
+- [ ] Créer admin si absent, sinon "already_initialized"
+- [ ] RBAC minimal : admin, editor, viewer
+- [ ] Dashboard multilingue (contacts, utilisateurs, stats)
+
+### 4.5 Monetico (Paiement)
+- [ ] Mode TEST par défaut (`MONETICO_MODE=TEST`)
+- [ ] Pack Analyse : CB Monetico actif
+- [ ] Succursales/Franchise : CB désactivé (virement uniquement)
+- [ ] Pages success/failure i18n
+- [ ] Génération facture PDF (pas de secrets dans logs)
+
+### 4.6 SEO/AIO
+- [ ] Meta dynamiques multilingues (title, description, og:*)
+- [ ] hreflang (FR/EN/HE)
+- [ ] JSON-LD schema.org
+- [ ] sitemap.xml dynamique (toutes langues)
+- [ ] robots.txt (Allow: /)
+- [ ] Alt text toutes images
+
+---
+
+## Phase 5 : DÉPLOIEMENT RENDER + TESTS PROD (AUTONOME) ⏳
+
+### 5.1 Scripts de déploiement
+- [ ] Créer `scripts/mission_autonome_prod.py` :
+  - Vérifie `RENDER_API_KEY` (présence uniquement)
+  - Auto-détecte services Render (frontend + backend)
+  - Déclenche deploy via API
+  - Attend statut "Deployed"
+  - Si "build_failed" : récupère logs, extrait cause, corrige, recommit, redeploy
+  - Itère jusqu'à succès ou blocage réel
+
+### 5.2 Tests PROD HTTP
+- [ ] Créer `scripts/test_production_http.py` :
+  - Frontend : https://israelgrowthventure.com (200, taille > seuil, title attendu)
+  - Backend : https://igv-cms-backend.onrender.com/api/health (200 + JSON valide)
+
+### 5.3 Tests PROD Browser (Playwright)
+- [ ] Créer `scripts/test_production_browser_playwright.mjs` :
+  - Page non blanche (contenu visible)
+  - Aucune erreur console bloquante
+  - Navigation fonctionnelle
+
+### 5.4 Exécution orchestrateur
+- [ ] Lancer `python scripts/mission_autonome_prod.py`
+- [ ] Suivre logs en temps réel
+- [ ] Itérer automatiquement jusqu'à PASS complet
+
+---
+
+## Phase 6 : DOCUMENTATION + PREUVES PROD ⏳
+
+### 6.1 Mise à jour task.md (ce fichier)
+- [ ] Marquer toutes les phases PASS/FAIL
+- [ ] Ajouter URLs de preuve :
+  - Frontend : https://israelgrowthventure.com (200 OK, page visible)
+  - Backend : https://igv-cms-backend.onrender.com/api/health (200 + JSON)
+- [ ] Résultats tests Playwright (screenshots si échec)
+
+### 6.2 Mise à jour INTEGRATION_PLAN.md (append-only)
+- [ ] Ajouter entrée en bas (FR) :
+  - Date/heure UTC
+  - Objectif de l'itération
+  - Fichiers modifiés
+  - Routes impactées
+  - Variables d'environnement (NOMS uniquement)
+  - Tests PROD (URLs + résultats)
+  - État final : OK / Partiel / Bloqué + cause
+
+---
+
+## Conditions de Succès (NON NÉGOCIABLES)
+
+### ✅ Frontend PROD
+- [ ] https://israelgrowthventure.com répond 200
+- [ ] Page visible (pas page blanche)
+- [ ] Pas d'erreurs console bloquantes
+- [ ] Playwright PASS
+
+### ✅ Backend PROD
+- [ ] https://igv-cms-backend.onrender.com/api/health répond 200
+- [ ] JSON valide : `{"status":"ok","mongodb":"..."}`
+
+### ✅ Fonctionnalités intégrées
+- [ ] i18n (FR/EN/HE) fonctionnel
+- [ ] Géoloc + pricing par zone
+- [ ] CMS accessible (éditeur protégé)
+- [ ] CRM admin bootstrappé
+- [ ] Monetico TEST actif
+- [ ] SEO complet (meta, hreflang, sitemap, JSON-LD)
+
+### ✅ Documentation
+- [ ] task.md à jour avec preuves
+- [ ] INTEGRATION_PLAN.md avec entrée finale
+
+---
+
+## État Actuel : PHASE 1 COMPLÉTÉE ✅
+
+**Prochaine étape** : Phase 2 (Backend health + alias env)
+
+---
+
+**Règles rappel** :
+- ❌ Ne jamais dire "TERMINÉ" sans preuves PROD URL
+- ❌ Ne jamais toucher au design public V3
+- ❌ Jamais de secrets en clair (NOMS uniquement)
+- ✅ Tout via scripts + API Render (pas de clics manuels)
+- ✅ Docs en FR uniquement

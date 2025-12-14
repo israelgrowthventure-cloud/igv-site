@@ -18,20 +18,54 @@ import httpx
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
-# MongoDB connection (aliases supported)
-mongo_url = os.environ.get('MONGODB_URI') or os.environ.get('MONGO_URL')
-if not mongo_url:
-    raise RuntimeError('Missing MongoDB connection string (MONGODB_URI or MONGO_URL)')
+# MongoDB connection with environment variable aliases (Render compatibility)
+mongo_url = os.getenv('MONGODB_URI') or os.getenv('MONGO_URL')
+db_name = os.getenv('DB_NAME', 'igv_production')
 
-client = AsyncIOMotorClient(mongo_url)
-db_name = os.environ.get('DB_NAME') or os.environ.get('MONGO_DB_NAME') or 'igv_cms_db'
-db = client[db_name]
+# Initialize MongoDB client (optional - will be None if not configured)
+client = None
+db = None
+mongodb_status = "not_configured"
+
+if mongo_url:
+    try:
+        client = AsyncIOMotorClient(mongo_url)
+        db = client[db_name]
+        mongodb_status = "configured"
+        logging.info(f"MongoDB configured for database: {db_name}")
+    except Exception as e:
+        logging.error(f"MongoDB connection error: {str(e)}")
+        mongodb_status = "error"
+else:
+    logging.warning("MongoDB not configured (MONGODB_URI or MONGO_URL not set)")
 
 # Create the main app without a prefix
 app = FastAPI()
 
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
+
+
+# Health check endpoint (REQUIRED for Render)
+@api_router.get("/health")
+async def health_check():
+    """Health check endpoint with MongoDB status"""
+    health_status = {
+        "status": "ok",
+        "mongodb": mongodb_status
+    }
+    
+    if mongodb_status == "configured" and db is not None:
+        try:
+            # Test MongoDB connection
+            await db.command('ping')
+            health_status["mongodb"] = "connected"
+            health_status["db"] = db_name
+        except Exception as e:
+            logging.error(f"MongoDB ping failed: {str(e)}")
+            health_status["mongodb"] = "error"
+    
+    return health_status
 
 
 # Define Models
@@ -120,24 +154,12 @@ async def root():
     return {"message": "Israel Growth Venture API"}
 
 
-@api_router.get("/health")
-async def health():
-    """Lightweight healthcheck for Render."""
-    db_status = "unknown"
-
-    try:
-        await db.command("ping")
-        db_status = "ok"
-    except Exception as exc:  # pragma: no cover - best effort only
-        logging.error("Healthcheck ping failed: %s", exc)
-        db_status = "error"
-
-    return {"status": "ok", "db": db_status}
-
-
 @api_router.post("/contact", response_model=ContactResponse)
 async def create_contact(contact: ContactForm):
     """Handle contact form submission"""
+    if db is None:
+        raise HTTPException(status_code=503, detail="Database not configured")
+    
     contact_dict = contact.model_dump()
     contact_obj = ContactResponse(**contact_dict)
     
@@ -204,6 +226,8 @@ async def create_contact(contact: ContactForm):
 @api_router.get("/contacts", response_model=List[ContactResponse])
 async def get_contacts():
     """Get all contacts (admin)"""
+    if db is None:
+        raise HTTPException(status_code=503, detail="Database not configured")
     contacts = await db.contacts.find({}, {"_id": 0}).to_list(1000)
     for contact in contacts:
         if isinstance(contact['timestamp'], str):
@@ -214,6 +238,8 @@ async def get_contacts():
 @api_router.post("/cart", response_model=CartItem)
 async def add_to_cart(item: CartItemCreate):
     """Add item to cart"""
+    if db is None:
+        raise HTTPException(status_code=503, detail="Database not configured")
     cart_obj = CartItem(**item.model_dump())
     doc = cart_obj.model_dump()
     doc['timestamp'] = doc['timestamp'].isoformat()
@@ -224,6 +250,8 @@ async def add_to_cart(item: CartItemCreate):
 @api_router.get("/cart", response_model=List[CartItem])
 async def get_cart():
     """Get cart items"""
+    if db is None:
+        raise HTTPException(status_code=503, detail="Database not configured")
     items = await db.cart.find({}, {"_id": 0}).to_list(1000)
     for item in items:
         if isinstance(item['timestamp'], str):
@@ -275,10 +303,12 @@ async def detect_location():
 # Include the router in the main app
 app.include_router(api_router)
 
+# CORS configuration with alias support (Render compatibility)
+cors_origins = os.getenv('CORS_ALLOWED_ORIGINS') or os.getenv('CORS_ORIGINS', '*')
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
-    allow_origins=(os.environ.get('CORS_ALLOWED_ORIGINS') or os.environ.get('CORS_ORIGINS') or '*').split(','),
+    allow_origins=cors_origins.split(','),
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -292,4 +322,5 @@ logger = logging.getLogger(__name__)
 
 @app.on_event("shutdown")
 async def shutdown_db_client():
-    client.close()
+    if client:
+        client.close()

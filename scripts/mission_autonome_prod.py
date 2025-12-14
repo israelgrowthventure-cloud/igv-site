@@ -40,7 +40,13 @@ def api_post(url: str, api_key: str, payload: Dict):
         method="POST",
     )
     with urllib.request.urlopen(req) as resp:
-        return json.loads(resp.read().decode())
+        raw = resp.read().decode().strip()
+        if not raw:
+            return {}
+        try:
+            return json.loads(raw)
+        except json.JSONDecodeError:
+            return {}
 
 
 def _extract_urls(svc: dict) -> set[str]:
@@ -112,7 +118,7 @@ def set_env_var(api_key: str, service_id: str, key: str, value: str):
         method="PUT",
     )
     with urllib.request.urlopen(req) as resp:
-        json.loads(resp.read().decode())
+        resp.read()
     print(f"[env] set {key}=*** on {service_id}")
 
 

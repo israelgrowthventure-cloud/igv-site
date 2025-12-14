@@ -31,6 +31,29 @@ HEADERS = {
     'Accept': 'application/json'
 }
 
+def get_latest_deploy_id(service_id):
+    """Récupère l'ID du dernier déploiement via la liste"""
+    url = f'https://api.render.com/v1/services/{service_id}/deploys'
+    params = {'limit': 1}
+    
+    try:
+        resp = requests.get(url, headers=HEADERS, params=params, timeout=30)
+        resp.raise_for_status()
+        data = resp.json()
+        
+        # Structure Render: [{"deploy": {...}, "cursor": "..."}]
+        if isinstance(data, list) and len(data) > 0:
+            first_item = data[0]
+            if isinstance(first_item, dict):
+                deploy = first_item.get('deploy', first_item)
+                return deploy.get('id')
+        
+        print("ERROR: Aucun déploiement trouvé", file=sys.stderr)
+        return None
+    except requests.exceptions.RequestException as e:
+        print(f"ERROR API get_latest_deploy_id: {e}", file=sys.stderr)
+        return None
+
 def get_deploy_status(service_id, deploy_id):
     """Récupère le statut d'un déploiement"""
     url = f'https://api.render.com/v1/services/{service_id}/deploys/{deploy_id}'
@@ -190,12 +213,22 @@ def monitor_deploy(service_id, deploy_id, poll_interval=10, max_wait=600):
 
 def main():
     if len(sys.argv) < 3:
-        print("Usage: python monitor_render_deploy.py <service_id> <deploy_id>")
+        print("Usage: python monitor_render_deploy.py <service_id> <deploy_id|latest>")
         print("Exemple: python monitor_render_deploy.py srv-xxx dep-yyy")
+        print("         python monitor_render_deploy.py srv-xxx latest")
         sys.exit(1)
     
     service_id = sys.argv[1]
     deploy_id = sys.argv[2]
+    
+    # Si deploy_id == "latest", récupérer le dernier deploy
+    if deploy_id.lower() == 'latest':
+        print("🔍 Récupération du dernier déploiement...")
+        deploy_id = get_latest_deploy_id(service_id)
+        if not deploy_id:
+            print("✗ Impossible de récupérer le dernier déploiement", file=sys.stderr)
+            sys.exit(1)
+        print(f"✅ Dernier deploy trouvé: {deploy_id}\n")
     
     # Options optionnelles
     poll_interval = int(sys.argv[3]) if len(sys.argv) > 3 else 10

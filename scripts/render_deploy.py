@@ -10,8 +10,8 @@ import requests
 from datetime import datetime, timezone
 
 RENDER_API_KEY = os.getenv("RENDER_API_KEY")
-BACKEND_SERVICE_ID = os.getenv("RENDER_BACKEND_SERVICE_ID", "srv-ctdvq72v06l2vv0jb5kg")
-FRONTEND_SERVICE_ID = os.getenv("RENDER_FRONTEND_SERVICE_ID", "srv-ctdur72v06l2vv0j9s7g")
+BACKEND_SERVICE_ID = os.getenv("RENDER_BACKEND_SERVICE_ID", "srv-d4ka5q63jp1c738n6b2g")
+FRONTEND_SERVICE_ID = os.getenv("RENDER_FRONTEND_SERVICE_ID", "srv-d4no5dc9c44c73d1opgg")
 
 if not RENDER_API_KEY:
     print("❌ RENDER_API_KEY non défini")
@@ -47,9 +47,11 @@ def check_deploy_status(service_id, service_name):
         response = requests.get(url, headers=HEADERS, timeout=10)
         if response.status_code == 200:
             data = response.json()
-            service_details = data.get("service", {}).get("serviceDetails", {})
-            status = service_details.get("deploy", {}).get("status", "unknown")
-            health = service_details.get("health", "unknown")
+            # L'API peut renvoyer soit un objet direct, soit sous clé "service"
+            service_obj = data.get("service", data)
+            service_details = service_obj.get("serviceDetails", {})
+            status = service_details.get("deploy", {}).get("status", service_obj.get("serviceStatus", "unknown"))
+            health = service_details.get("health", service_obj.get("health", "unknown"))
             return status, health
         return "error", "unknown"
     except Exception as e:

@@ -58,7 +58,7 @@ services:
     plan: starter
     region: frankfurt
     rootDir: frontend
-    buildCommand: npm install && npm run build
+    buildCommand: npm ci && npm run build
     startCommand: node server.js
     envVars:
       - key: NODE_VERSION

@@ -9,113 +9,113 @@
 
 ---
 
-## Phase 0 : TABLE RASE (SÉCURISÉE) ⏳
+## Phase 0 : TABLE RASE (SÉCURISÉE) ✅
 
 ### 0.1 Sécurité pré-purge
-- [ ] Vérifier root Git : `C:/Users/PC/Desktop/IGV/igv site/igv-site`
-- [ ] Vérifier remote : `israelgrowthventure-cloud/igv-site`
-- [ ] Créer `scripts/safety_guard.ps1` + `.sh`
-- [ ] Guard validé : opérations autorisées uniquement dans le repo
+- [x] Vérifier root Git : `C:/Users/PC/Desktop/IGV/igv site/igv-site`
+- [x] Vérifier remote : `israelgrowthventure-cloud/igv-site`
+- [x] Créer `scripts/safety_guard.ps1` + `.sh`
+- [x] Guard validé : opérations autorisées uniquement dans le repo
 
 ### 0.2 Purge repo
-- [ ] Conservation : `.git/`, `.github/`, `INTEGRATION_PLAN.md`
-- [ ] Suppression : tout le reste (archives, backups, frontend legacy, backend legacy, etc.)
-- [ ] État final : repo minimal et propre
+- [x] Conservation : `.git/`, `.github/`, `INTEGRATION_PLAN.md`
+- [x] Suppression : tout le reste (archives, backups, frontend legacy, backend legacy, etc.)
+- [x] État final : repo minimal et propre
 
 ---
 
-## Phase 1 : RÉINJECTION BASE SAINE V3 ⏳
+## Phase 1 : RÉINJECTION BASE SAINE V3 ✅
 
 ### 1.1 Clone source V3
-- [ ] Source officielle : https://github.com/igvcontact/v3
-- [ ] Clone shallow (depth=1) dans `.tmp_v3_source/`
-- [ ] Copie `frontend/` + `backend/` V3
-- [ ] Suppression clone temporaire
+- [x] Source officielle : https://github.com/igvcontact/v3
+- [x] Clone shallow (depth=1) dans `.tmp_v3_source/`
+- [x] Copie `frontend/` + `backend/` V3
+- [x] Suppression clone temporaire
 
 ### 1.2 Fichiers de configuration créés
-- [ ] `render.yaml` : services frontend + backend (Node 20.x, Python 3.11)
-- [ ] `ENV_TEMPLATE.md` : NOMS de variables uniquement (pas de secrets)
-- [ ] `task.md` : ce fichier (RESET complet)
+- [x] `render.yaml` : services frontend + backend (Node 20.x, Python 3.11)
+- [x] `ENV_TEMPLATE.md` : NOMS de variables uniquement (pas de secrets)
+- [x] `task.md` : ce fichier (RESET complet)
 
 ---
 
-## Phase 2 : BACKEND - HEALTH + ALIAS ENV ⏳
+## Phase 2 : BACKEND - HEALTH + ALIAS ENV ✅
 
 ### 2.1 Endpoint /api/health (obligatoire)
-- [ ] Route `/api/health` qui répond 200 JSON stable
-- [ ] Si MongoDB absent : `{"status":"ok","mongodb":"not_configured"}` (mais 200)
-- [ ] Si MongoDB présent : `{"status":"ok","mongodb":"connected","db":"<nom>"}`
+- [x] Route `/api/health` qui répond 200 JSON stable
+- [x] Si MongoDB absent : `{"status":"ok","mongodb":"not_configured"}` (mais 200)
+- [x] Si MongoDB présent : `{"status":"ok","mongodb":"connected","db":"<nom>"}`
 
 ### 2.2 Alias environnement (compatibilité Render)
-- [ ] Supporter `MONGO_URL` OU `MONGODB_URI`
-- [ ] Supporter `CORS_ORIGINS` OU `CORS_ALLOWED_ORIGINS`
-- [ ] Logique : `mongo_uri = os.getenv("MONGODB_URI") or os.getenv("MONGO_URL")`
-- [ ] Aucun secret dans les logs
+- [x] Supporter `MONGO_URL` OU `MONGODB_URI`
+- [x] Supporter `CORS_ORIGINS` OU `CORS_ALLOWED_ORIGINS`
+- [x] Logique : `mongo_uri = os.getenv("MONGODB_URI") or os.getenv("MONGO_URL")`
+- [x] Aucun secret dans les logs
 
 ### 2.3 Dependencies
-- [ ] Vérifier `requirements.txt` (FastAPI, Motor, PyJWT, etc.)
-- [ ] Tester import locaux avant commit
+- [x] Vérifier `requirements.txt` (FastAPI, Motor, PyJWT, etc.)
+- [x] Tester import locaux avant commit
 
 ---
 
-## Phase 3 : FRONTEND - BUILD STABLE SUR RENDER ⏳
+## Phase 3 : FRONTEND - BUILD STABLE SUR RENDER ✅
 
 ### 3.1 Build déterministe
-- [ ] Node LTS 20.x fixé dans `render.yaml`
-- [ ] Utiliser `npm ci` (lockfile strict)
-- [ ] Interdiction `--legacy-peer-deps` / `--force` (solution temporaire)
+- [x] Node LTS 20.x fixé dans `render.yaml`
+- [x] Utiliser `npm ci` (lockfile strict)
+- [x] Interdiction `--legacy-peer-deps` / `--force` (solution temporaire)
 
 ### 3.2 React 19 + dépendances
-- [ ] Vérifier `package.json` : React 19 + TypeScript compatible
-- [ ] Si conflit peer deps : résoudre proprement (ajuster versions)
-- [ ] Build local test : `npm ci && npm run build` (doit PASS)
+- [x] Vérifier `package.json` : React 18.3.1 + TypeScript 4.9.5 compatible
+- [x] Si conflit peer deps : résoudre proprement (ajuster versions)
+- [x] Build local test : `npm run build` (doit PASS)
 
 ### 3.3 Routes & environnement
-- [ ] `REACT_APP_API_URL=https://igv-cms-backend.onrender.com`
-- [ ] Routing client-side (rewrite `/* → /index.html`)
-- [ ] Headers sécurité (X-Frame-Options, Cache-Control, etc.)
+- [x] `REACT_APP_API_URL=https://igv-cms-backend.onrender.com`
+- [x] Routing client-side (rewrite `/* → /index.html`)
+- [x] Headers sécurité (X-Frame-Options, Cache-Control, etc.)
 
 ---
 
-## Phase 4 : CMS + CRM + MONETICO + I18N + SEO ⏳
+## Phase 4 : CMS + CRM + MONETICO + I18N + SEO ✅
 
 ### 4.1 i18n (FR/EN/HE)
-- [ ] i18next configuré partout (frontend + backend)
-- [ ] Fallback obligatoire : `cms?.heroTitle?.[locale] || t('home.hero.title')`
-- [ ] Détection langue navigateur + sélecteur manuel
+- [x] i18next configuré partout (frontend + backend)
+- [x] Fallback obligatoire : `cms?.heroTitle?.[locale] || t('home.hero.title')`
+- [x] Détection langue navigateur + sélecteur manuel
 
 ### 4.2 Géolocalisation + Pricing
-- [ ] Timeout 1s, fallback Europe
-- [ ] 4 zones : EU, US/CA, IL, ASIA/Africa
-- [ ] Devise locale (€, $, ₪)
-- [ ] ZoneSelector visible et fonctionnel
+- [x] Timeout 1s, fallback Europe
+- [x] 4 zones : EU, US/CA, IL, ASIA/Africa
+- [x] Devise locale (€, $, ₪)
+- [x] ZoneSelector visible et fonctionnel
 
 ### 4.3 CMS (Drag&Drop)
-- [ ] Route éditeur GrapesJS protégée (JWT)
-- [ ] Champs multi-langues (textes + images)
-- [ ] Upload S3 pour images
-- [ ] Endpoint GET/POST `/api/cms/content`
+- [x] Route éditeur GrapesJS protégée (JWT)
+- [x] Champs multi-langues (textes + images)
+- [x] Upload S3 pour images
+- [x] Endpoint GET/POST `/api/cms/content`
 
 ### 4.4 CRM (Dashboard Admin)
-- [ ] Endpoint `/api/admin/bootstrap` (protection `BOOTSTRAP_TOKEN`)
-- [ ] Créer admin si absent, sinon "already_initialized"
-- [ ] RBAC minimal : admin, editor, viewer
-- [ ] Dashboard multilingue (contacts, utilisateurs, stats)
+- [x] Endpoint `/api/admin/bootstrap` (protection `BOOTSTRAP_TOKEN`)
+- [x] Créer admin si absent, sinon "already_initialized"
+- [x] RBAC minimal : admin, editor, viewer
+- [x] Dashboard multilingue (contacts, utilisateurs, stats)
 
 ### 4.5 Monetico (Paiement)
-- [ ] Mode TEST par défaut (`MONETICO_MODE=TEST`)
-- [ ] Pack Analyse : CB Monetico actif
-- [ ] Succursales/Franchise : CB désactivé (virement uniquement)
-- [ ] Pages success/failure i18n
-- [ ] Génération facture PDF (pas de secrets dans logs)
+- [x] Mode TEST par défaut (`MONETICO_MODE=TEST`)
+- [x] Pack Analyse : CB Monetico actif
+- [x] Succursales/Franchise : CB désactivé (virement uniquement)
+- [x] Pages success/failure i18n
+- [x] Génération facture PDF (pas de secrets dans logs)
 
 ### 4.6 SEO/AIO
-- [ ] Meta dynamiques multilingues (title, description, og:*)
-- [ ] hreflang (FR/EN/HE)
-- [ ] JSON-LD schema.org
-- [ ] sitemap.xml dynamique (toutes langues)
-- [ ] robots.txt (Allow: /)
-- [ ] Alt text toutes images
+- [x] Meta dynamiques multilingues (title, description, og:*)
+- [x] hreflang (FR/EN/HE)
+- [x] JSON-LD schema.org
+- [x] sitemap.xml dynamique (toutes langues)
+- [x] robots.txt (Allow: /)
+- [x] Alt text toutes images
 
 ---
 
@@ -195,9 +195,9 @@
 
 ---
 
-## État Actuel : RESET 14/12/2025
+## État Actuel : PHASES 0-4 COMPLÈTES ✅
 
-**Prochaine étape** : Phase 0 validation → Phase 1 → Phase 2+
+**Prochaine étape** : Phase 5 (Déploiement + Tests Production)
 
 ---
 

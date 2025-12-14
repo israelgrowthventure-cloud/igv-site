@@ -1,0 +1,40 @@
+{
+  "timestamp": "2025-12-14T00:57:50.013Z",
+  "url": "https://israelgrowthventure.com",
+  "passed": 3,
+  "failed": 2,
+  "tests": [
+    {
+      "name": "HTTP 200",
+      "passed": true
+    },
+    {
+      "name": "Not white page",
+      "passed": false
+    },
+    {
+      "name": "No Future error",
+      "passed": false
+    },
+    {
+      "name": "Valid title",
+      "passed": true
+    },
+    {
+      "name": "Assets loaded",
+      "passed": true
+    }
+  ],
+  "consoleErrors": [
+    "ReferenceError: Future is not defined\n    at ji (https://israelgrowthventure.com/static/js/main.3547bdf7.js:2:439839)\n    at gs (https://israelgrowthventure.com/static/js/main.3547bdf7.js:2:74532)\n    at Sl (https://israelgrowthventure.com/static/js/main.3547bdf7.js:2:134173)\n    at bc (https://israelgrowthventure.com/static/js/main.3547bdf7.js:2:123281)\n    at vc (https://israelgrowthventure.com/static/js/main.3547bdf7.js:2:123209)\n    at gc (https://israelgrowthventure.com/static/js/main.3547bdf7.js:2:123072)\n    at oc (https://israelgrowthventure.com/static/js/main.3547bdf7.js:2:119852)\n    at ac (https://israelgrowthventure.com/static/js/main.3547bdf7.js:2:118403)\n    at k (https://israelgrowthventure.com/static/js/main.3547bdf7.js:2:8469)\n    at MessagePort.P (https://israelgrowthventure.com/static/js/main.3547bdf7.js:2:9003)"
+  ],
+  "pageErrors": [
+    "Future is not defined"
+  ],
+  "status": 200,
+  "bodyHeight": 0,
+  "bodyTextLength": 18,
+  "title": "Emergent | Fullstack App",
+  "scriptTags": 11,
+  "linkTags": 1
+}

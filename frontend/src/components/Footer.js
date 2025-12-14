@@ -25,12 +25,10 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Company Info */}
           <div className="lg:col-span-2">
-            <div className="flex items-center space-x-3 mb-4">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-800 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg">IGV</span>
-              </div>
+            <div className="flex items-center gap-3 mb-4">
+              <img src="/igv-logo.png" alt="Israel Growth Venture" className="h-10" />
               <div>
-                <div className="text-lg font-bold text-white">{t('footer.company')}</div>
+                <div className="text-lg font-bold text-white">Israel Growth Venture</div>
               </div>
             </div>
             <p className="text-sm text-gray-400 mb-6 max-w-md">
@@ -39,7 +37,7 @@ const Footer = () => {
             
             {/* Contact Info */}
             <div className="space-y-3">
-              <div className="flex items-start space-x-3">
+              <div className="flex items-start gap-3">
                 <Mail className="w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0" />
                 <div>
                   <div className="text-xs text-gray-500 uppercase">{t('footer.email')}</div>
@@ -48,7 +46,7 @@ const Footer = () => {
                   </a>
                 </div>
               </div>
-              <div className="flex items-start space-x-3">
+              <div className="flex items-start gap-3">
                 <MapPin className="w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0" />
                 <div>
                   <div className="text-xs text-gray-500 uppercase">{t('footer.address')}</div>

@@ -5,10 +5,6 @@ import { Toaster } from 'sonner';
 import './i18n/config';
 import './App.css';
 
-// Context Providers
-import { GeoProvider } from './context/GeoContext';
-import { AuthProvider } from './context/AuthContext';
-
 // Layout Components
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -21,13 +17,6 @@ import FutureCommerce from './pages/FutureCommerce';
 import Contact from './pages/Contact';
 import Appointment from './pages/Appointment';
 import Terms from './pages/Terms';
-import PaymentSuccess from './pages/PaymentSuccess';
-import PaymentFailure from './pages/PaymentFailure';
-
-// Admin Pages
-import Login from './pages/admin/Login';
-import CMSDashboard from './pages/admin/CMSDashboard';
-import CMSEditor from './pages/admin/CMSEditor';
 
 // Loading component
 const Loading = () => (
@@ -42,42 +31,27 @@ const Loading = () => (
 function App() {
   return (
     <HelmetProvider>
-      <GeoProvider>
-        <AuthProvider>
-          <Suspense fallback={<Loading />}>
-            <BrowserRouter>
-              <div className="App">
-                <Toaster position="top-right" richColors />
-                <Header />
-                <main>
-                  <Routes>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/about" element={<About />} />
-                    <Route path="/packs" element={<Packs />} />
-                    <Route path="/future-commerce" element={<Future Commerce />} />
-                    <Route path="/contact" element={<Contact />} />
-                    <Route path="/appointment" element={<Appointment />} />
-                    <Route path="/terms" element={<Terms />} />
-
-                    {/* Payment Routes */}
-                    <Route path="/payment/success" element={<PaymentSuccess />} />
-                    <Route path="/payment/failure" element={<PaymentFailure />} />
-
-                    {/* Admin Routes */}
-                    <Route path="/admin/login" element={<Login />} />
-                    <Route path="/admin/cms" element={<CMSDashboard />} />
-                    <Route path="/admin/cms/editor/:page_slug/:language" element={<CMSEditor />} />
-
-                    {/* Fallback */}
-                    <Route path="*" element={<Home />} />
-                  </Routes>
-                </main>
-                <Footer />
-              </div>
-            </BrowserRouter>
-          </Suspense>
-        </AuthProvider>
-      </GeoProvider>
+      <Suspense fallback={<Loading />}>
+        <BrowserRouter>
+          <div className="App">
+            <Toaster position="top-right" richColors />
+            <Header />
+            <main>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/packs" element={<Packs />} />
+                <Route path="/future-commerce" element={<FutureCommerce />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/appointment" element={<Appointment />} />
+                <Route path="/terms" element={<Terms />} />
+                <Route path="*" element={<Home />} />
+              </Routes>
+            </main>
+            <Footer />
+          </div>
+        </BrowserRouter>
+      </Suspense>
     </HelmetProvider>
   );
 }

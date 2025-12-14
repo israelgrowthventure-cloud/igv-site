@@ -1,0 +1,202 @@
+{
+  "nav": {
+    "home": "Home",
+    "about": "About Us",
+    "packs": "Our Packs",
+    "businessPlan": "Business Plan",
+    "more": "Learn More",
+    "futureCommerce": "The Future of Retail",
+    "contact": "Contact",
+    "terms": "Terms",
+    "appointment": "Appointment",
+    "cart": "Cart"
+  },
+  "hero": {
+    "title": "Israel Growth Venture",
+    "subtitle": "Your Strategic Partner for Successful Expansion in Israel",
+    "description": "We specialize in supporting brands for their successful expansion into the Israeli market. With our expertise and network, we offer tailored solutions to help businesses establish, grow, and thrive in one of the most dynamic and innovative markets in the world.",
+    "cta": "Learn More",
+    "bookAppointment": "Book an Appointment"
+  },
+  "about": {
+    "title": "Who are we?",
+    "description": "We are a company specialized in brand expansion consulting and active search for commercial real estate. Our team of brand implementation specialists will advise you and find the best locations to develop your brand in Israel.",
+    "collaboration": "We collaborate with municipalities and major property owners to actively promote and seek clients for various commercial zone development projects.",
+    "support": "Since the Israeli market is very difficult to access, our team can guide clients from creating a business plan to selecting the team of employees. We offer comprehensive support to ensure the success of your expansion.",
+    "service": "If you are looking to establish and grow your brand or expand your concept through franchises or branches, the Israel Growth Venture team is at your service."
+  },
+  "steps": {
+    "step1": {
+      "title": "Schedule a Meeting with an Expert",
+      "description": "Discuss your expansion project in Israel with our specialists."
+    },
+    "step2": {
+      "title": "Get a Free Preliminary Analysis",
+      "description": "We assess your potential and provide an initial overview of opportunities."
+    },
+    "step3": {
+      "title": "We Handle Your Expansion",
+      "description": "From property search to full establishment, we support you at every step."
+    }
+  },
+  "packs": {
+    "title": "Our Packs",
+    "subtitle": "Solutions tailored to your expansion needs",
+    "analyse": {
+      "name": "Analysis Pack",
+      "description": "Complete analysis of the Israeli market for up to 3 store openings",
+      "features": [
+        "In-depth market study",
+        "Competitive analysis",
+        "Opportunity identification",
+        "Strategic recommendations",
+        "Support for up to 3 openings"
+      ],
+      "note": "For more openings, contact us."
+    },
+    "succursales": {
+      "name": "Branches Pack",
+      "description": "Complete solution for opening branches in Israel",
+      "features": [
+        "Market analysis included",
+        "Commercial property search",
+        "Administrative and legal support",
+        "Opening support",
+        "Post-opening follow-up"
+      ]
+    },
+    "franchise": {
+      "name": "Franchise Pack",
+      "description": "Complete development of your franchise network",
+      "features": [
+        "Market analysis included",
+        "Franchise file structuring",
+        "Franchisee search",
+        "Training and support",
+        "Ongoing support"
+      ]
+    },
+    "cta": "Request an Invoice",
+    "ctaTalk": "Talk about this pack"
+  },
+  "futureCommerce": {
+    "title": "The retail you practice is dead.",
+    "subtitle": "Israel: where the future of retail is created before others",
+    "hero": {
+      "line1": "The retail you practice is dead.",
+      "line2": "Not in 10 years. Not in 5 years.",
+      "line3": "Now.",
+      "description": "Brands that continue to open stores like in 2010 are clinging to a model that no longer exists. Consumers no longer want to buy: they want to live, feel, test, participate."
+    },
+    "israel": {
+      "title": "Israel: where the future of retail is created before others",
+      "subtitle": "Israel is not a market. It's a laboratory.",
+      "points": [
+        "Consumers adopt in 3 months what Europe takes 3 years to understand.",
+        "Usage changes faster than business plans.",
+        "Concepts survive only if they are genuinely good.",
+        "Digital and physical are no longer separate: everything is hybrid, everything is instant."
+      ],
+      "conclusion": "If your concept holds in Israel, it's ready for the future."
+    },
+    "realities": {
+      "title": "3 Realities that brands must understand now",
+      "reality1": {
+        "title": "The customer no longer buys a product, they buy an experience",
+        "description": "And this experience must start before they enter the store, and continue after they leave."
+      },
+      "reality2": {
+        "title": "Retail is no longer a place. It's a medium.",
+        "description": "A store that tells nothing sells nothing."
+      },
+      "reality3": {
+        "title": "The business model must integrate:",
+        "points": [
+          "the cost of digital,",
+          "real estate inflation,",
+          "emotional expectations,",
+          "the speed of trends."
+        ],
+        "conclusion": "Many refuse to admit it. But those who succeed are those who face reality."
+      }
+    },
+    "what_we_do": {
+      "title": "What we do at IGV",
+      "description": "We test concepts in real conditions, here, in the fastest country in the world to validate an idea:",
+      "services": [
+        "We find the right locations",
+        "We set up structures",
+        "We train teams",
+        "We launch",
+        "And we follow up"
+      ],
+      "conclusion": "IGV is not consulting. It's execution."
+    },
+    "why_series": {
+      "title": "Why a \"Future of Retail\" series?",
+      "description": "Because brands need to understand where retail is going, to know where to place their bets.",
+      "content": "Every week, I share:",
+      "items": [
+        "a field observation",
+        "a consumer insight",
+        "a truth no one dares to say",
+        "a trend I see coming",
+        "or a concept worth analyzing"
+      ],
+      "conclusion": "No theory. No buzzwords. Just ground reality, now."
+    },
+    "cta": "Book a 30-minute call"
+  },
+  "contact": {
+    "title": "Contact Us",
+    "subtitle": "We're here to answer your questions",
+    "form": {
+      "name": "Full Name",
+      "email": "Email",
+      "company": "Company (optional)",
+      "phone": "Phone (optional)",
+      "message": "Message",
+      "submit": "Send",
+      "sending": "Sending...",
+      "success": "Message sent successfully!",
+      "error": "Error sending. Please try again."
+    },
+    "info": {
+      "title": "Contact Information",
+      "email": "Email",
+      "address": "Address",
+      "addressValue": "21 Gefen Street, Harish, Israel"
+    }
+  },
+  "appointment": {
+    "title": "Book an Appointment",
+    "subtitle": "Let's discuss your expansion project in Israel",
+    "description": "Book a 30-minute slot with our team to discuss your project. We'll analyze your concept and define the best strategy for your expansion.",
+    "cta": "Open Google Calendar",
+    "or": "or",
+    "contact": "Contact us by email"
+  },
+  "cart": {
+    "title": "Your Cart",
+    "empty": "Your cart is empty",
+    "total": "Total",
+    "checkout": "Request an Invoice",
+    "continueShopping": "Continue Shopping",
+    "remove": "Remove"
+  },
+  "footer": {
+    "company": "Israel Growth Venture",
+    "description": "Your strategic partner for successful expansion in Israel",
+    "contact": "Contact",
+    "email": "Email",
+    "address": "Address",
+    "addressValue": "21 Gefen Street, Harish, Israel",
+    "links": "Quick Links",
+    "legal": "Legal",
+    "rights": "All rights reserved."
+  },
+  "pricing": {
+    "region": "Price according to your region",
+    "detecting": "Detecting..."
+  }
+}

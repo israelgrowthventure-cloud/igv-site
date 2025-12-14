@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Télécharger IGV Website - Complet</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 50px;
+            max-width: 800px;
+            width: 100%;
+        }
+        h1 {
+            color: #2563eb;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #666;
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+        }
+        .info-box {
+            background: #f0f9ff;
+            border-left: 4px solid #2563eb;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        .info-box h3 {
+            color: #1e40af;
+            margin-bottom: 10px;
+        }
+        .info-box ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        .info-box li {
+            padding: 8px 0;
+            color: #374151;
+        }
+        .info-box li:before {
+            content: "✓ ";
+            color: #10b981;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+        .download-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            color: white;
+            padding: 20px 50px;
+            text-decoration: none;
+            border-radius: 50px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            box-shadow: 0 10px 30px rgba(37, 99, 235, 0.4);
+            transition: all 0.3s ease;
+            margin: 30px 0;
+        }
+        .download-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(37, 99, 235, 0.6);
+        }
+        .file-info {
+            background: #fef3c7;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .file-info strong {
+            color: #92400e;
+        }
+        .steps {
+            margin: 30px 0;
+        }
+        .step {
+            background: #f9fafb;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border-left: 4px solid #10b981;
+        }
+        .step h4 {
+            color: #059669;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+        .step p {
+            color: #4b5563;
+            line-height: 1.6;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid #e5e7eb;
+            color: #6b7280;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎉 Israel Growth Venture</h1>
+        <p class="subtitle">Site Web Complet - Prêt à Déployer</p>
+        
+        <div class="info-box">
+            <h3>📦 Contenu du Package</h3>
+            <ul>
+                <li>Frontend React complet (multilingue FR/EN/HE)</li>
+                <li>Backend FastAPI avec MongoDB</li>
+                <li>Traductions complètes dans les 3 langues</li>
+                <li>SEO optimisé (sitemap.xml, robots.txt, meta tags)</li>
+                <li>Géolocalisation IP pour prix dynamiques</li>
+                <li>Gmail SMTP pour formulaire de contact</li>
+                <li>Intégration Google Calendar</li>
+                <li>Design responsive mobile-first</li>
+            </ul>
+        </div>
+
+        <div style="text-align: center;">
+            <a href="/igv-website-complete.zip" class="download-btn" download>
+                ⬇️ Télécharger le ZIP Complet
+            </a>
+        </div>
+
+        <div class="file-info">
+            <strong>Taille du fichier :</strong> ~303 KB<br>
+            <strong>Format :</strong> ZIP (sans node_modules)
+        </div>
+
+        <div class="steps">
+            <h3 style="margin-bottom: 20px; color: #1f2937;">🚀 Installation en 3 étapes :</h3>
+            
+            <div class="step">
+                <h4>Étape 1 : Décompresser</h4>
+                <p>Extraire le fichier ZIP dans le dossier de votre choix</p>
+            </div>
+
+            <div class="step">
+                <h4>Étape 2 : Configuration</h4>
+                <p>
+                    • Backend : Copier <code>.env.example</code> → <code>.env</code> et configurer Gmail SMTP<br>
+                    • Frontend : Copier <code>.env.example</code> → <code>.env</code> et ajuster l'URL
+                </p>
+            </div>
+
+            <div class="step">
+                <h4>Étape 3 : Installation & Build</h4>
+                <p>
+                    <strong>Backend :</strong> <code>pip install -r requirements.txt</code><br>
+                    <strong>Frontend :</strong> <code>yarn install && yarn build</code>
+                </p>
+            </div>
+        </div>
+
+        <div class="info-box" style="background: #fef2f2; border-left-color: #ef4444;">
+            <h3 style="color: #dc2626;">⚠️ Important - À Configurer :</h3>
+            <ul>
+                <li>Mot de passe Gmail SMTP dans <code>backend/.env</code></li>
+                <li>Remplacer les images placeholder par vos vraies images</li>
+                <li>Ajouter votre logo IGV</li>
+                <li>Vérifier les traductions FR/EN/HE</li>
+            </ul>
+        </div>
+
+        <div class="info-box">
+            <h3>📚 Documentation Incluse</h3>
+            <p>Le ZIP contient :</p>
+            <ul>
+                <li><strong>README.md</strong> - Documentation complète</li>
+                <li><strong>GUIDE_INSTALLATION.md</strong> - Guide pas à pas détaillé</li>
+                <li><strong>.env.example</strong> - Fichiers de configuration exemples</li>
+            </ul>
+        </div>
+
+        <div class="footer">
+            <p><strong>© 2025 Israel Growth Venture</strong></p>
+            <p style="margin-top: 10px; font-size: 0.9rem;">
+                Site développé avec ❤️ - Prêt pour production
+            </p>
+        </div>
+    </div>
+</body>
+</html>

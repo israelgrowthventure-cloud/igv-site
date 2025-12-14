@@ -66,14 +66,20 @@
   - **Preuve** : .env.production créé
 - [x] Adapter routage API vers backend
   - **Preuve** : REACT_APP_BACKEND_URL=https://igv-cms-backend.onrender.com
+- [x] Ajouter server.js + express pour Render
+  - **Preuve** : Copié depuis backup, express installé
 - [ ] Vérifier i18n FR/EN/HE avec fallbacks
   - [ ] Format: `cms?.heroTitle?.[locale] || t('home.hero.title')`
 - [x] Tester build local : `npm run build`
   - **Preuve** : Build réussi (CI=false), 145.53 kB JS, 11.57 kB CSS
   - **Date** : 2025-12-14 00:25 UTC
+  - **Git** : Commits 50f3731 + 6187af3 pushés main
+- [ ] ⚠️ **BLOCAGE** : Render auto-deploy ne démarre pas
+  - **Diagnostic** : render.yaml présent, commits pushés, mais service pas redéployé
+  - **Action nécessaire** : Trigger manuel Dashboard Render ou corriger config auto-deploy
 - [ ] Vérifier aucune modification design (images/CSS/structure)
 
-**Preuves :** Build réussi + Assets générés + Aucune erreur console locale
+**Preuves :** Build réussi + Assets générés + Aucune erreur console locale + Git pushé
 
 ### Geolocation & Pricing
 - [ ] Implémenter timeout 1s pour géolocalisation

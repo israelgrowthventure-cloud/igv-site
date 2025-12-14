@@ -42,8 +42,12 @@ def _parse_response(resp):
 
 def api_get(url: str, api_key: str):
     req = urllib.request.Request(url, headers={"Authorization": f"Bearer {api_key}"})
-    with urllib.request.urlopen(req) as resp:
-        return _parse_response(resp)
+    try:
+        with urllib.request.urlopen(req) as resp:
+            return _parse_response(resp)
+    except urllib.error.HTTPError as e:
+        print(f"[api_get] HTTP {e.code} for {url}")
+        return {"error": str(e)}
 
 
 def api_post(url: str, api_key: str, payload: Dict):
@@ -134,6 +138,12 @@ def get_deploy_logs(api_key: str, service_id: str, deploy_id: str, limit: int = 
     url = f"{RENDER_API}/{service_id}/deploys/{deploy_id}/logs?limit={limit}"
     data = api_get(url, api_key)
     lines: list[str] = []
+    
+    # Handle API error (404, etc.)
+    if isinstance(data, dict) and "error" in data:
+        lines.append(f"[logs unavailable: {data['error']}]")
+        return lines
+    
     if isinstance(data, list):
         for entry in data:
             ts = entry.get("timestamp") if isinstance(entry, dict) else None

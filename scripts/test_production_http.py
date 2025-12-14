@@ -25,7 +25,7 @@ from typing import Any, Dict, Tuple
 
 DEFAULT_FRONT = "https://israelgrowthventure.com"
 DEFAULT_BACKEND = "https://igv-cms-backend.onrender.com"
-DEFAULT_TITLE = "Emergent | Fullstack App"
+DEFAULT_TITLE = "Israel Growth Venture"
 DEFAULT_TIMEOUT = float(os.environ.get("HTTP_TIMEOUT", "10"))
 
 

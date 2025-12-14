@@ -219,12 +219,19 @@ def trigger_deploy(api_key: str, service_id: str) -> Optional[str]:
         api_key,
         payload={},
     )
+    # Handle case where API returns a string instead of dict
+    if isinstance(data, str):
+        print(f"[render] API returned string: {data}")
+        return None
     deploy_id = data.get("id")
     print(f"[render] triggered {service_id} deploy {deploy_id}")
     return deploy_id
 
 
 def poll_deploy(api_key: str, service_id: str, deploy_id: str):
+    if not deploy_id:
+        print("[render] No deploy_id to poll, skipping")
+        return "skipped"
     url = f"{RENDER_API}/{service_id}/deploys/{deploy_id}"
     for _ in range(60):
         data = api_get(url, api_key)

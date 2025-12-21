@@ -124,6 +124,7 @@ const Appointment = () => {
         </div>
       </section>
     </div>
+    </>
   );
 };
 

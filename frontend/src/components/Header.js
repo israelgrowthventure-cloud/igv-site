@@ -1,26 +1,10 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
-import { Menu, X, Globe } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 
 const Header = () => {
-  const { t, i18n } = useTranslation();
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isLangOpen, setIsLangOpen] = useState(false);
-
-  const languages = [
-    { code: 'fr', name: 'FR' },
-    { code: 'en', name: 'EN' },
-    { code: 'he', name: 'HE' }
-  ];
-
-  const changeLanguage = (lng) => {
-    i18n.changeLanguage(lng);
-    setIsLangOpen(false);
-    // Update document direction for Hebrew
-    document.dir = lng === 'he' ? 'rtl' : 'ltr';
-  };
 
   // NAVIGATION MINIMALE - Pages essentielles uniquement
   const navLinks = [
@@ -59,12 +43,11 @@ const Header = () => {
             ))}
           </nav>
 
-          {/* Language Selector & CTA */}
+          {/* Mobile Menu Button */}
           <div className="flex items-center gap-4">
-            {/* Language Selector */}
-            <div className="relative">
-              <button(retiré pour simplifier) */}
-          <div className="flex items-center gap-4">              className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
               data-testid="mobile-menu-btn"
             >
               {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -91,13 +74,6 @@ const Header = () => {
                 {link.label}
               </Link>
             ))}
-            <Link
-              to="/appointment"
-              onClick={() => setIsMenuOpen(false)}
-              className="block px-4 py-3 bg-blue-600 text-white text-sm font-medium rounded-lg text-center hover:bg-blue-700 transition-colors"
-            >
-              {t('hero.bookAppointment')}
-            </Link>
           </nav>
         </div>
       )}

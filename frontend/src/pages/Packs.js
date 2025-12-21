@@ -220,6 +220,7 @@ const Packs = () => {
         </div>
       </section>
     </div>
+    </>
   );
 };
 

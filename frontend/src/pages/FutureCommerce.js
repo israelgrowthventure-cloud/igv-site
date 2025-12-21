@@ -212,6 +212,7 @@ const FutureCommerce = () => {
         </div>
       </section>
     </div>
+    </>
   );
 };
 

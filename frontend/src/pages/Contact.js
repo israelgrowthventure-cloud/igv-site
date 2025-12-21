@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Helmet } from 'react-helmet-async';
+import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Mail, MapPin, Send } from 'lucide-react';
 import { api } from '../utils/api';
@@ -6,6 +8,7 @@ import { toast } from 'sonner';
 
 const Contact = () => {
   const { t, i18n } = useTranslation();
+  const [searchParams] = useSearchParams();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -14,6 +17,14 @@ const Contact = () => {
     message: ''
   });
   const [loading, setLoading] = useState(false);
+
+  // Pré-remplir email depuis URL (si redirigé depuis l'analyse)
+  useEffect(() => {
+    const emailParam = searchParams.get('email');
+    if (emailParam) {
+      setFormData(prev => ({ ...prev, email: emailParam }));
+    }
+  }, [searchParams]);
 
   const handleChange = (e) => {
     setFormData({
@@ -49,7 +60,13 @@ const Contact = () => {
   };
 
   return (
-    <div className="min-h-screen pt-20">
+    <>
+      <Helmet>
+        <title>Contact | Israel Growth Venture</title>
+        <meta name="description" content="Contact Israel Growth Venture for market analysis and Israel expansion consulting." />
+        <link rel="canonical" content="https://israelgrowthventure.com/contact" />
+      </Helmet>
+      <div className="min-h-screen pt-20">
       {/* Hero */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 to-white">
         <div className="max-w-7xl mx-auto text-center">

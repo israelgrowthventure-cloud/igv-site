@@ -12,7 +12,11 @@ const Appointment = () => {
   };
 
   return (
-    <div className="min-h-screen pt-20">
+    <>
+      <Helmet>
+        <meta name="robots" content="noindex, nofollow" />
+      </Helmet>
+      <div className="min-h-screen pt-20">
       {/* Hero */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 to-white">
         <div className="max-w-4xl mx-auto text-center">

@@ -116,6 +116,29 @@ def monitor_deploy(service_id, deploy_id, poll_interval=10, max_wait=600):
     Returns:
         True si deployed, False si failed/timeout
     """
+    # Vérification initiale: déploiement déjà terminé?
+    deploy = get_deploy_status(service_id, deploy_id)
+    if not deploy:
+        print("✗ Impossible de récupérer le statut du déploiement", file=sys.stderr)
+        return False
+    
+    initial_status = deploy.get('status', 'unknown')
+    finished_at = deploy.get('finishedAt')
+    
+    # Si déjà terminé (live/failed) et finishedAt existe → pas de monitoring
+    if initial_status in ['live', 'deactivated', 'build_failed', 'update_failed', 'canceled'] and finished_at:
+        commit_msg = deploy.get('commit', {}).get('message', 'N/A')[:60]
+        commit_id = deploy.get('commit', {}).get('id', 'N/A')[:8]
+        print("=" * 80)
+        print("DEPLOY DÉJÀ TERMINÉ - AUCUN MONITORING ACTIF")
+        print("=" * 80)
+        print(f"Deploy ID: {deploy_id}")
+        print(f"Status: {initial_status.upper()}")
+        print(f"Commit: {commit_id} - {commit_msg}")
+        print(f"Finished: {finished_at}")
+        print("\nℹ️  Aucun déploiement en cours – Service déjà live.")
+        return initial_status in ['live', 'deactivated']
+    
     print("=" * 80)
     print("RENDER DEPLOY MONITOR - LIVE TRACKING")
     print(f"Service: {service_id}")

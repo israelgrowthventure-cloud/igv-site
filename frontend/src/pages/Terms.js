@@ -1,11 +1,19 @@
 import React from 'react';
+import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 
 const Terms = () => {
   const { t } = useTranslation();
 
   return (
-    <div className="min-h-screen pt-20">
+    <>
+      <Helmet>
+        <title>Legal & Privacy | Israel Growth Venture</title>
+        <meta name="description" content="Terms of service, privacy policy, and legal information for Israel Growth Venture." />
+        <meta name="robots" content="noindex" />
+        <link rel="canonical" content="https://israelgrowthventure.com/legal" />
+      </Helmet>
+      <div className="min-h-screen pt-20">
       {/* Hero */}
       <section className="py-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 to-white">
         <div className="max-w-4xl mx-auto text-center">

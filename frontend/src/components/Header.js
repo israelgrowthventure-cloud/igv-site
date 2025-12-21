@@ -22,12 +22,11 @@ const Header = () => {
     document.dir = lng === 'he' ? 'rtl' : 'ltr';
   };
 
+  // NAVIGATION MINIMALE - Pages essentielles uniquement
   const navLinks = [
-    { path: '/', label: t('nav.home') },
-    { path: '/about', label: t('nav.about') },
-    { path: '/packs', label: t('nav.packs') },
-    { path: '/future-commerce', label: t('nav.futureCommerce') },
-    { path: '/contact', label: t('nav.contact') }
+    { path: '/about', label: 'About' },
+    { path: '/contact', label: 'Contact' },
+    { path: '/legal', label: 'Legal' }
   ];
 
   const isActive = (path) => {
@@ -38,13 +37,9 @@ const Header = () => {
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
-          {/* Logo */}
-          <Link to="/" className="flex items-center gap-3">
-            <img src="/igv-logo.png" alt="Israel Growth Venture" className="h-10" />
-            <div className="hidden md:block">
-              <div className="text-lg font-bold text-gray-900">Israel Growth Venture</div>
-              <div className="text-xs text-gray-600">{t('hero.subtitle').substring(0, 40)}...</div>
-            </div>
+          {/* Logo - Minimaliste */}
+          <Link to="/" className="flex items-center">
+            <img src="/igv-logo.png" alt="Israel Growth Venture" className="h-12" />
           </Link>
 
           {/* Desktop Navigation */}
@@ -68,48 +63,8 @@ const Header = () => {
           <div className="flex items-center gap-4">
             {/* Language Selector */}
             <div className="relative">
-              <button
-                onClick={() => setIsLangOpen(!isLangOpen)}
-                className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors"
-                data-testid="language-selector-btn"
-              >
-                <Globe className="w-4 h-4 text-gray-600" />
-                <span className="text-sm font-medium text-gray-700 uppercase">
-                  {i18n.language.substring(0, 2)}
-                </span>
-              </button>
-              
-              {isLangOpen && (
-                <div className="absolute right-0 mt-2 w-32 bg-white rounded-lg shadow-lg border border-gray-200 py-2">
-                  {languages.map((lang) => (
-                    <button
-                      key={lang.code}
-                      onClick={() => changeLanguage(lang.code)}
-                      className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 transition-colors ${
-                        i18n.language === lang.code ? 'bg-blue-50 text-blue-600 font-semibold' : 'text-gray-700'
-                      }`}
-                      data-testid={`lang-${lang.code}`}
-                    >
-                      {lang.name}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* CTA Button */}
-            <Link
-              to="/appointment"
-              className="hidden md:inline-flex items-center px-6 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors shadow-sm"
-              data-testid="header-appointment-btn"
-            >
-              {t('hero.bookAppointment')}
-            </Link>
-
-            {/* Mobile Menu Button */}
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
+              <button(retiré pour simplifier) */}
+          <div className="flex items-center gap-4">              className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
               data-testid="mobile-menu-btn"
             >
               {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}

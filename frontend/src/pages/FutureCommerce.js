@@ -30,7 +30,11 @@ const FutureCommerce = () => {
   const whySeriesItems = t('futureCommerce.why_series.items', { returnObjects: true });
 
   return (
-    <div className="min-h-screen pt-20">
+    <>
+      <Helmet>
+        <meta name="robots" content="noindex, nofollow" />
+      </Helmet>
+      <div className="min-h-screen pt-20">
       {/* Hero */}
       <section className="relative py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-900 via-blue-900 to-gray-900 text-white overflow-hidden">
         <div className="absolute inset-0 opacity-10">

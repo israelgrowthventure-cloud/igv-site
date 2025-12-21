@@ -12,7 +12,8 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 
 // Pages
-import Home from './pages/Home';
+import NewHome from './pages/NewHome';  // NOUVELLE landing page
+import Home from './pages/Home';  // Ancienne home (conservée en arrière-plan)
 import About from './pages/About';
 import Packs from './pages/Packs';
 import FutureCommerce from './pages/FutureCommerce';
@@ -44,19 +45,26 @@ function App() {
             <Header />
             <main>
               <Routes>
-                <Route path="/" element={<Home />} />
+                {/* NOUVELLE landing page unique */}
+                <Route path="/" element={<NewHome />} />
+                
+                {/* Pages essentielles ACTIVES */}
                 <Route path="/about" element={<About />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/legal" element={<Terms />} />
+                
+                {/* Anciennes pages CONSERVÉES mais NON INDEXÉES (accès direct uniquement) */}
                 <Route path="/packs" element={<Packs />} />
                 <Route path="/future-commerce" element={<FutureCommerce />} />
-                <Route path="/contact" element={<Contact />} />
                 <Route path="/appointment" element={<Appointment />} />
                 <Route path="/terms" element={<Terms />} />
+                <Route path="/old-home" element={<Home />} />  {/* Ancienne home accessible via URL directe */}
                 
                 {/* Admin Routes */}
                 <Route path="/admin/login" element={<AdminLogin />} />
                 <Route path="/admin/dashboard" element={<AdminDashboard />} />
                 
-                <Route path="*" element={<Home />} />
+                <Route path="*" element={<NewHome />} />
               </Routes>
             </main>
             <Footer />

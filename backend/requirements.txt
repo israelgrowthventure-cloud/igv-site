@@ -31,6 +31,7 @@ mypy==1.18.2
 mypy_extensions==1.1.0
 numpy==2.3.4
 oauthlib==3.3.1
+openai==1.58.1
 packaging==25.0
 pandas==2.3.3
 passlib==1.7.4
@@ -53,6 +54,7 @@ python-jose==3.5.0
 python-multipart==0.0.20
 pytokens==0.3.0
 pytz==2025.2
+reportlab==4.2.5
 requests==2.32.5
 requests-oauthlib==2.0.0
 rich==14.2.0

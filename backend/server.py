@@ -18,6 +18,9 @@ import jwt
 import hashlib
 import hmac
 
+# Import AI routes
+from ai_routes import router as ai_router
+
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -599,8 +602,9 @@ async def monetico_callback(data: Dict[str, Any]):
     return {"version": "3.0", "cdr": "0"}  # Acknowledge receipt
 
 
-# Include the router in the main app
+# Include the routers in the main app
 app.include_router(api_router)
+app.include_router(ai_router)  # AI Insight generation
 
 # CORS configuration with alias support (Render compatibility)
 cors_origins = os.getenv('CORS_ALLOWED_ORIGINS') or os.getenv('CORS_ORIGINS', '*')

@@ -42,6 +42,12 @@ TYPES_FILE = IGV_INTERNAL_DIR / 'IGV_Types_Emplacements_Activites.txt'
 WHITELIST_JEWISH = IGV_INTERNAL_DIR / 'Whitelist_1_Jewish_incl_Mixed.txt'
 WHITELIST_ARAB = IGV_INTERNAL_DIR / 'Whitelist_2_Arabe_incl_Mixed.txt'
 
+# Master Prompts directory
+PROMPTS_DIR = Path(__file__).parent / 'prompts'
+PROMPT_RESTAURATION = PROMPTS_DIR / 'MASTER_PROMPT_RESTAURATION.txt'
+PROMPT_RETAIL = PROMPTS_DIR / 'MASTER_PROMPT_RETAIL_NON_FOOD.txt'
+PROMPT_SERVICES = PROMPTS_DIR / 'MASTER_PROMPT_SERVICES_PARAMEDICAL.txt'
+
 
 class MiniAnalysisRequest(BaseModel):
     email: EmailStr
@@ -96,9 +102,25 @@ def load_igv_file(file_path: Path) -> str:
 
 
 def build_prompt(request: MiniAnalysisRequest) -> str:
-    """Build runtime prompt with IGV data + form data"""
+    """Build runtime prompt with master prompt + form data"""
     
-    # Load IGV data
+    # Select master prompt based on sector
+    if request.secteur == "Restauration / Food":
+        prompt_file = PROMPT_RESTAURATION
+        prompt_name = "MASTER_PROMPT_RESTAURATION"
+    elif request.secteur == "Retail (hors food)":
+        prompt_file = PROMPT_RETAIL
+        prompt_name = "MASTER_PROMPT_RETAIL_NON_FOOD"
+    else:  # Services or Paramédical / Santé
+        prompt_file = PROMPT_SERVICES
+        prompt_name = "MASTER_PROMPT_SERVICES_PARAMEDICAL"
+    
+    logging.info(f"Using prompt: {prompt_name} for sector: {request.secteur}")
+    
+    # Load master prompt
+    master_prompt = load_igv_file(prompt_file)
+    
+    # Load whitelists (still needed for prompt context)
     types_data = load_igv_file(TYPES_FILE)
     
     # Select whitelist based on statut_alimentaire
@@ -109,26 +131,8 @@ def build_prompt(request: MiniAnalysisRequest) -> str:
         whitelist_data = load_igv_file(WHITELIST_JEWISH)
         whitelist_name = "Whitelist_1_Jewish_incl_Mixed"
     
-    prompt = f"""Tu es un expert IGV (Israel Growth Venture) spécialisé dans l'analyse d'implantation de marques internationales en Israël.
-
-**RÈGLES ANTI-HALLUCINATION STRICTES:**
-1. N'invente JAMAIS de noms d'emplacements, de villes ou de centres commerciaux
-2. Utilise UNIQUEMENT les emplacements listés dans la Whitelist fournie ci-dessous
-3. Si un emplacement n'est PAS dans la Whitelist, tu NE DOIS PAS le mentionner
-4. Ne déduis PAS de faits de marché à partir du document "Types d'Emplacements" - utilise-le uniquement comme base logique
-5. Reste factuel et prudent dans tes recommandations
-
----
-
-**DOCUMENT DE RÉFÉRENCE 1: Types d'Emplacements et Activités (logique uniquement)**
-
-{types_data}
-
----
-
-**DOCUMENT DE RÉFÉRENCE 2: {whitelist_name} (EMPLACEMENTS AUTORISÉS - UTILISE UNIQUEMENT CEUX-CI)**
-
-{whitelist_data}
+    # Build form data section
+    form_data_section = f"""
 
 ---
 
@@ -149,43 +153,23 @@ def build_prompt(request: MiniAnalysisRequest) -> str:
 
 ---
 
-**FORMAT DE SORTIE IMPOSÉ:**
+**DOCUMENT DE RÉFÉRENCE 1: Types d'Emplacements et Activités**
 
-Génère une mini-analyse structurée en 4 sections maximum (800-1200 mots):
-
-1. **PERTINENCE MARCHÉ ISRAÉLIEN**
-   - Analyse si le secteur et le concept de {request.nom_de_marque} correspondent au marché israélien
-   - Points forts et risques identifiés
-   - Cohérence avec le positionnement déclaré
-
-2. **EMPLACEMENTS RECOMMANDÉS**
-   - Liste 3-5 emplacements PRÉCIS issus UNIQUEMENT de la Whitelist fournie
-   - Justification pour chaque emplacement (cohérence avec positionnement, cible, statut alimentaire)
-   - ATTENTION: Si statut alimentaire = Halal → quartiers arabes obligatoires
-   - Si statut alimentaire = Casher → quartiers religieux prioritaires
-   - Si aucun statut spécial → quartiers laïcs/mixtes
-
-3. **CONTRAINTES ET ADAPTATIONS NÉCESSAIRES**
-   - Réglementations spécifiques (Casher, Halal, Shabbat si applicable)
-   - Adaptations produit/service recommandées
-   - Risques identifiés dans les contraintes mentionnées par le client
-
-4. **PROCHAINES ÉTAPES SUGGÉRÉES**
-   - Actions concrètes pour valider la faisabilité
-   - Type de partenariat recommandé (franchise, succursale, joint-venture)
-   - Budget estimatif de lancement (si pertinent)
+{types_data}
 
 ---
 
-**IMPORTANT:**
-- Réponds en français
-- Sois concis mais précis
-- Ne mentionne QUE des emplacements présents dans la Whitelist
-- Si tu ne peux pas recommander d'emplacement faute de données, indique-le clairement
-- Adapte ton analyse au statut alimentaire (Halal → Whitelist arabe, autres → Whitelist juive)
+**DOCUMENT DE RÉFÉRENCE 2: {whitelist_name} (EMPLACEMENTS AUTORISÉS)**
+
+{whitelist_data}
+
+---
 """
     
-    return prompt
+    # Combine master prompt + form data
+    final_prompt = master_prompt + form_data_section
+    
+    return final_prompt
 
 
 @router.post("/mini-analysis")

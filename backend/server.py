@@ -608,13 +608,28 @@ app.include_router(api_router)
 app.include_router(ai_router)  # AI Insight generation
 app.include_router(mini_analysis_router)  # Mini-Analysis with Gemini
 
-# CORS configuration with alias support (Render compatibility)
-cors_origins = os.getenv('CORS_ALLOWED_ORIGINS') or os.getenv('CORS_ORIGINS', '*')
+# CORS configuration - Production domains explicitly allowed
+cors_origins_env = os.getenv('CORS_ALLOWED_ORIGINS') or os.getenv('CORS_ORIGINS', '')
+
+# Default production origins
+default_origins = [
+    "https://israelgrowthventure.com",
+    "https://www.israelgrowthventure.com",
+    "http://localhost:3000",  # Local development
+    "http://127.0.0.1:3000"   # Local development
+]
+
+# Merge environment origins with defaults
+if cors_origins_env and cors_origins_env != '*':
+    final_origins = list(set(default_origins + cors_origins_env.split(',')))
+else:
+    final_origins = default_origins
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
-    allow_origins=cors_origins.split(','),
-    allow_methods=["*"],
+    allow_origins=final_origins,
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
 

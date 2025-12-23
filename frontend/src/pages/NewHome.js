@@ -46,14 +46,6 @@ const NewHome = () => {
     'Plus de 10 ans'
   ];
 
-  const anciennetes = [
-    'Moins de 1 an',
-    '1-3 ans',
-    '3-5 ans',
-    '5-10 ans',
-    'Plus de 10 ans'
-  ];
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({

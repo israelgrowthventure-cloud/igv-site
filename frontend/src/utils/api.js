@@ -42,6 +42,13 @@ export const api = {
         currency: '€'
       };
     }
+  },
+
+  // Mini-analysis (uses absolute URL for Render backend)
+  sendMiniAnalysis: async (data) => {
+    const backendUrl = process.env.REACT_APP_BACKEND_URL || 'https://igv-cms-backend.onrender.com';
+    const response = await axios.post(`${backendUrl}/api/mini-analysis`, data);
+    return response.data;
   }
 };
 

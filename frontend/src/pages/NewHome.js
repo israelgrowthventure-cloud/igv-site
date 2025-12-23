@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { ArrowRight, Sparkles, Download, Check } from 'lucide-react';
 import { toast } from 'sonner';
+import api from '../utils/api';
 
 const NewHome = () => {
   const [formData, setFormData] = useState({
@@ -78,20 +79,9 @@ const NewHome = () => {
     setLoading(true);
     
     try {
-      const response = await fetch('/api/mini-analysis', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(formData)
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        if (response.status === 409) {
-          throw new Error(data.message || 'Une analyse a déjà été générée pour cette enseigne');
-        }
+      const data = await api.sendMiniAnalysis(formData);
+      
+      if (!data.success) {
         throw new Error(data.message || 'Erreur lors de la génération de l\'analyse');
       }
 
@@ -104,8 +94,17 @@ const NewHome = () => {
       
     } catch (error) {
       console.error('Error:', error);
-      setError(error.message);
-      toast.error(error.message);
+      
+      // Handle 409 Conflict (duplicate brand) with axios error structure
+      if (error.response?.status === 409) {
+        const errorMsg = error.response?.data?.detail || 'Une analyse a déjà été générée pour cette enseigne';
+        toast.error(errorMsg);
+        setError(errorMsg);
+      } else {
+        const errorMsg = error.response?.data?.detail || error.message || 'Erreur lors de la génération de l\'analyse';
+        toast.error(errorMsg);
+        setError(errorMsg);
+      }
     } finally {
       setLoading(false);
     }

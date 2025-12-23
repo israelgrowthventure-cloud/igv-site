@@ -20,6 +20,7 @@ import hmac
 
 # Import AI routes
 from ai_routes import router as ai_router
+from mini_analysis_routes import router as mini_analysis_router
 
 
 ROOT_DIR = Path(__file__).parent
@@ -605,6 +606,7 @@ async def monetico_callback(data: Dict[str, Any]):
 # Include the routers in the main app
 app.include_router(api_router)
 app.include_router(ai_router)  # AI Insight generation
+app.include_router(mini_analysis_router)  # Mini-Analysis with Gemini
 
 # CORS configuration with alias support (Render compatibility)
 cors_origins = os.getenv('CORS_ALLOWED_ORIGINS') or os.getenv('CORS_ORIGINS', '*')

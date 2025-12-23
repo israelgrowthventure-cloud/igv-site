@@ -1,0 +1,274 @@
+"""
+Mini-Analysis Routes for Israel Growth Venture
+Handles brand analysis requests with Gemini AI + IGV internal data
+"""
+
+from fastapi import APIRouter, HTTPException
+from pydantic import BaseModel, EmailStr
+from motor.motor_asyncio import AsyncIOMotorClient
+import os
+import logging
+import re
+from datetime import datetime, timezone
+from pathlib import Path
+import google.generativeai as genai
+
+router = APIRouter(prefix="/api")
+
+# Gemini API configuration
+GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
+GEMINI_MODEL = os.getenv('GEMINI_MODEL', 'gemini-2.0-flash-exp')
+
+if GEMINI_API_KEY:
+    genai.configure(api_key=GEMINI_API_KEY)
+    model = genai.GenerativeModel(GEMINI_MODEL)
+else:
+    logging.warning("GEMINI_API_KEY not configured - mini-analysis endpoint will fail")
+    model = None
+
+# MongoDB connection (from server.py)
+mongo_url = os.getenv('MONGODB_URI') or os.getenv('MONGO_URL')
+db_name = os.getenv('DB_NAME', 'igv_production')
+
+client = None
+db = None
+if mongo_url:
+    client = AsyncIOMotorClient(mongo_url)
+    db = client[db_name]
+
+# IGV internal data paths
+IGV_INTERNAL_DIR = Path(__file__).parent / 'igv_internal'
+TYPES_FILE = IGV_INTERNAL_DIR / 'IGV_Types_Emplacements_Activites.txt'
+WHITELIST_JEWISH = IGV_INTERNAL_DIR / 'Whitelist_1_Jewish_incl_Mixed.txt'
+WHITELIST_ARAB = IGV_INTERNAL_DIR / 'Whitelist_2_Arabe_incl_Mixed.txt'
+
+
+class MiniAnalysisRequest(BaseModel):
+    email: EmailStr
+    nom_de_marque: str
+    secteur: str
+    statut_alimentaire: str = ""
+    anciennete: str = ""
+    pays_dorigine: str = ""
+    concept: str = ""
+    positionnement: str = ""
+    modele_actuel: str = ""
+    differenciation: str = ""
+    objectif_israel: str = ""
+    contraintes: str = ""
+
+
+def normalize_brand_slug(brand_name: str) -> str:
+    """Normalize brand name to slug for deduplication"""
+    # Lowercase
+    slug = brand_name.lower()
+    # Remove accents (basic)
+    accents = {
+        'à': 'a', 'á': 'a', 'â': 'a', 'ã': 'a', 'ä': 'a',
+        'è': 'e', 'é': 'e', 'ê': 'e', 'ë': 'e',
+        'ì': 'i', 'í': 'i', 'î': 'i', 'ï': 'i',
+        'ò': 'o', 'ó': 'o', 'ô': 'o', 'õ': 'o', 'ö': 'o',
+        'ù': 'u', 'ú': 'u', 'û': 'u', 'ü': 'u',
+        'ç': 'c', 'ñ': 'n'
+    }
+    for accent, replacement in accents.items():
+        slug = slug.replace(accent, replacement)
+    # Remove punctuation and special chars, keep only alphanumeric and spaces
+    slug = re.sub(r'[^a-z0-9\s]', '', slug)
+    # Collapse multiple spaces
+    slug = ' '.join(slug.split())
+    # Trim
+    return slug.strip()
+
+
+def load_igv_file(file_path: Path) -> str:
+    """Load IGV internal file with error handling"""
+    if not file_path.exists():
+        logging.error(f"MISSING_IGV_FILE:{file_path}")
+        raise HTTPException(status_code=500, detail=f"Fichier IGV manquant: {file_path.name}")
+    
+    try:
+        with open(file_path, 'r', encoding='utf-8') as f:
+            return f.read()
+    except Exception as e:
+        logging.error(f"Error reading {file_path}: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Erreur lecture fichier: {file_path.name}")
+
+
+def build_prompt(request: MiniAnalysisRequest) -> str:
+    """Build runtime prompt with IGV data + form data"""
+    
+    # Load IGV data
+    types_data = load_igv_file(TYPES_FILE)
+    
+    # Select whitelist based on statut_alimentaire
+    if request.statut_alimentaire.lower() == 'halal':
+        whitelist_data = load_igv_file(WHITELIST_ARAB)
+        whitelist_name = "Whitelist_2_Arabe_incl_Mixed"
+    else:
+        whitelist_data = load_igv_file(WHITELIST_JEWISH)
+        whitelist_name = "Whitelist_1_Jewish_incl_Mixed"
+    
+    prompt = f"""Tu es un expert IGV (Israel Growth Venture) spécialisé dans l'analyse d'implantation de marques internationales en Israël.
+
+**RÈGLES ANTI-HALLUCINATION STRICTES:**
+1. N'invente JAMAIS de noms d'emplacements, de villes ou de centres commerciaux
+2. Utilise UNIQUEMENT les emplacements listés dans la Whitelist fournie ci-dessous
+3. Si un emplacement n'est PAS dans la Whitelist, tu NE DOIS PAS le mentionner
+4. Ne déduis PAS de faits de marché à partir du document "Types d'Emplacements" - utilise-le uniquement comme base logique
+5. Reste factuel et prudent dans tes recommandations
+
+---
+
+**DOCUMENT DE RÉFÉRENCE 1: Types d'Emplacements et Activités (logique uniquement)**
+
+{types_data}
+
+---
+
+**DOCUMENT DE RÉFÉRENCE 2: {whitelist_name} (EMPLACEMENTS AUTORISÉS - UTILISE UNIQUEMENT CEUX-CI)**
+
+{whitelist_data}
+
+---
+
+**DONNÉES DU FORMULAIRE CLIENT:**
+
+- **Nom de marque:** {request.nom_de_marque}
+- **Email:** {request.email}
+- **Secteur:** {request.secteur}
+- **Statut alimentaire:** {request.statut_alimentaire or "Non spécifié"}
+- **Ancienneté:** {request.anciennete or "Non spécifié"}
+- **Pays d'origine:** {request.pays_dorigine or "Non spécifié"}
+- **Concept:** {request.concept or "Non spécifié"}
+- **Positionnement:** {request.positionnement or "Non spécifié"}
+- **Modèle actuel:** {request.modele_actuel or "Non spécifié"}
+- **Différenciation:** {request.differenciation or "Non spécifié"}
+- **Objectif Israël:** {request.objectif_israel or "Non spécifié"}
+- **Contraintes:** {request.contraintes or "Non spécifié"}
+
+---
+
+**FORMAT DE SORTIE IMPOSÉ:**
+
+Génère une mini-analyse structurée en 4 sections maximum (800-1200 mots):
+
+1. **PERTINENCE MARCHÉ ISRAÉLIEN**
+   - Analyse si le secteur et le concept de {request.nom_de_marque} correspondent au marché israélien
+   - Points forts et risques identifiés
+   - Cohérence avec le positionnement déclaré
+
+2. **EMPLACEMENTS RECOMMANDÉS**
+   - Liste 3-5 emplacements PRÉCIS issus UNIQUEMENT de la Whitelist fournie
+   - Justification pour chaque emplacement (cohérence avec positionnement, cible, statut alimentaire)
+   - ATTENTION: Si statut alimentaire = Halal → quartiers arabes obligatoires
+   - Si statut alimentaire = Casher → quartiers religieux prioritaires
+   - Si aucun statut spécial → quartiers laïcs/mixtes
+
+3. **CONTRAINTES ET ADAPTATIONS NÉCESSAIRES**
+   - Réglementations spécifiques (Casher, Halal, Shabbat si applicable)
+   - Adaptations produit/service recommandées
+   - Risques identifiés dans les contraintes mentionnées par le client
+
+4. **PROCHAINES ÉTAPES SUGGÉRÉES**
+   - Actions concrètes pour valider la faisabilité
+   - Type de partenariat recommandé (franchise, succursale, joint-venture)
+   - Budget estimatif de lancement (si pertinent)
+
+---
+
+**IMPORTANT:**
+- Réponds en français
+- Sois concis mais précis
+- Ne mentionne QUE des emplacements présents dans la Whitelist
+- Si tu ne peux pas recommander d'emplacement faute de données, indique-le clairement
+- Adapte ton analyse au statut alimentaire (Halal → Whitelist arabe, autres → Whitelist juive)
+"""
+    
+    return prompt
+
+
+@router.post("/mini-analysis")
+async def generate_mini_analysis(request: MiniAnalysisRequest):
+    """
+    Generate AI-powered mini-analysis for Israel market entry
+    Includes anti-duplicate check + MongoDB persistence
+    """
+    
+    # Validate required fields
+    if not request.email or not request.nom_de_marque or not request.secteur:
+        raise HTTPException(status_code=400, detail="Email, nom_de_marque et secteur sont obligatoires")
+    
+    # Additional validation for food sector
+    if request.secteur == "Restauration / Food" and not request.statut_alimentaire:
+        raise HTTPException(status_code=400, detail="Le statut alimentaire est obligatoire pour le secteur Restauration / Food")
+    
+    # Check Gemini API key
+    if not GEMINI_API_KEY or not model:
+        raise HTTPException(status_code=500, detail="GEMINI_API_KEY non configurée - contactez l'administrateur")
+    
+    # Check MongoDB connection
+    if not db:
+        raise HTTPException(status_code=500, detail="Base de données non configurée")
+    
+    # Normalize brand name for deduplication
+    brand_slug = normalize_brand_slug(request.nom_de_marque)
+    
+    # Check for existing analysis (anti-duplicate)
+    existing = await db.mini_analyses.find_one({"brand_slug": brand_slug})
+    if existing:
+        logging.info(f"Duplicate analysis attempt for brand: {brand_slug}")
+        raise HTTPException(
+            status_code=409,
+            detail=f"Une mini-analyse a déjà été générée pour cette enseigne ({request.nom_de_marque})"
+        )
+    
+    # Build prompt with IGV data
+    try:
+        prompt = build_prompt(request)
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error building prompt: {str(e)}")
+        raise HTTPException(status_code=500, detail="Erreur lors de la construction de la requête IA")
+    
+    # Call Gemini API
+    try:
+        logging.info(f"Calling Gemini API for brand: {request.nom_de_marque} (model: {GEMINI_MODEL})")
+        response = model.generate_content(prompt)
+        analysis_text = response.text
+        
+        if not analysis_text:
+            raise HTTPException(status_code=500, detail="Réponse IA vide")
+        
+    except Exception as e:
+        logging.error(f"Gemini API error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Erreur API Gemini: {str(e)}")
+    
+    # Save to MongoDB
+    try:
+        analysis_record = {
+            "brand_slug": brand_slug,
+            "brand_name": request.nom_de_marque,
+            "email": request.email,
+            "payload_form": request.dict(),
+            "created_at": datetime.now(timezone.utc),
+            "provider": "gemini",
+            "model": GEMINI_MODEL,
+            "response_text": analysis_text
+        }
+        
+        result = await db.mini_analyses.insert_one(analysis_record)
+        logging.info(f"Analysis saved to MongoDB with ID: {result.inserted_id}")
+        
+    except Exception as e:
+        logging.error(f"MongoDB save error: {str(e)}")
+        # Don't fail the request if save fails - still return analysis
+    
+    return {
+        "success": True,
+        "analysis": analysis_text,
+        "brand_name": request.nom_de_marque,
+        "secteur": request.secteur,
+        "statut_alimentaire": request.statut_alimentaire
+    }

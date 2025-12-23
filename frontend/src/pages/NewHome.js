@@ -6,34 +6,52 @@ import { toast } from 'sonner';
 const NewHome = () => {
   const [formData, setFormData] = useState({
     email: '',
-    sector: '',
-    customSector: '',
-    companyAge: '',
-    differentiation: '',
-    wantInsight: 'yes'
+    nom_de_marque: '',
+    secteur: '',
+    statut_alimentaire: '',
+    anciennete: '',
+    pays_dorigine: '',
+    concept: '',
+    positionnement: '',
+    modele_actuel: '',
+    differenciation: '',
+    objectif_israel: '',
+    contraintes: ''
   });
   const [loading, setLoading] = useState(false);
   const [analysis, setAnalysis] = useState(null);
-  const [pdfUrl, setPdfUrl] = useState(null);
+  const [error, setError] = useState(null);
 
-  const sectors = [
-    'Retail & E-commerce',
-    'Technology & Software',
-    'Food & Beverage',
-    'Fashion & Apparel',
-    'Health & Wellness',
-    'Beauty & Cosmetics',
-    'Home & Lifestyle',
-    'Services & Consulting',
-    'Other'
+  const secteurs = [
+    'Restauration / Food',
+    'Retail (hors food)',
+    'Services',
+    'Paramédical / Santé'
   ];
 
-  const companyAges = [
-    'Less than 1 year',
-    '1-3 years',
-    '3-5 years',
-    '5-10 years',
-    'More than 10 years'
+  const statutsAlimentaires = [
+    'Casher',
+    'Halal',
+    'Healthy',
+    'Vegan/Végétarien',
+    'Aucun',
+    'À définir'
+  ];
+
+  const anciennetes = [
+    'Moins de 1 an',
+    '1-3 ans',
+    '3-5 ans',
+    '5-10 ans',
+    'Plus de 10 ans'
+  ];
+
+  const anciennetes = [
+    'Moins de 1 an',
+    '1-3 ans',
+    '3-5 ans',
+    '5-10 ans',
+    'Plus de 10 ans'
   ];
 
   const handleChange = (e) => {
@@ -44,52 +62,58 @@ const NewHome = () => {
     }));
   };
 
+  const copyToClipboard = () => {
+    if (analysis) {
+      navigator.clipboard.writeText(analysis);
+      toast.success('Analyse copiée dans le presse-papiers');
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(null);
     
-    if (!formData.email || !formData.sector || !formData.differentiation) {
-      toast.error('Please fill in all required fields');
+    if (!formData.email || !formData.nom_de_marque || !formData.secteur) {
+      toast.error('Veuillez remplir tous les champs obligatoires');
       return;
     }
 
-    if (formData.wantInsight === 'no') {
-      toast.info('Thank you for your interest. Feel free to contact us directly.');
+    if (formData.secteur === 'Restauration / Food' && !formData.statut_alimentaire) {
+      toast.error('Le statut alimentaire est obligatoire pour la restauration');
       return;
     }
 
     setLoading(true);
     
     try {
-      const response = await fetch('/api/ai/generate-insight', {
+      const response = await fetch('/api/mini-analysis', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-          email: formData.email,
-          sector: formData.sector === 'Other' ? formData.customSector : formData.sector,
-          companyAge: formData.companyAge,
-          differentiation: formData.differentiation
-        })
+        body: JSON.stringify(formData)
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        throw new Error('Failed to generate analysis');
+        if (response.status === 409) {
+          throw new Error(data.message || 'Une analyse a déjà été générée pour cette enseigne');
+        }
+        throw new Error(data.message || 'Erreur lors de la génération de l\'analyse');
       }
 
-      const data = await response.json();
       setAnalysis(data.analysis);
-      setPdfUrl(data.pdfUrl);
-      toast.success('Your Israel market insight has been generated!');
+      toast.success('Votre mini-analyse IGV a été générée!');
       
-      // Scroll to results
       setTimeout(() => {
         document.getElementById('results')?.scrollIntoView({ behavior: 'smooth' });
       }, 100);
       
     } catch (error) {
       console.error('Error:', error);
-      toast.error('An error occurred. Please try again.');
+      setError(error.message);
+      toast.error(error.message);
     } finally {
       setLoading(false);
     }
@@ -160,21 +184,21 @@ const NewHome = () => {
           <div className="max-w-4xl mx-auto text-center">
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-100 text-blue-700 rounded-full text-sm font-medium mb-8">
               <Sparkles className="w-4 h-4" />
-              Free AI-Generated Market Insight
+              Mini-Analyse IA Gratuite
             </div>
             
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
-              Is your brand relevant for the Israeli market?
+              Votre marque est-elle pertinente pour le marché israélien ?
             </h1>
             
             <p className="text-xl text-gray-700 mb-4 font-medium">
-              Get a first AI-generated market insight in less than 2 minutes.
+              Obtenez une première mini-analyse IA en moins de 2 minutes.
             </p>
             
             <div className="max-w-2xl mx-auto bg-blue-50 border-l-4 border-blue-600 p-6 rounded-lg mb-12">
               <p className="text-base text-gray-700 leading-relaxed">
-                <strong>Israel is not a test market.</strong><br />
-                This first analysis helps you understand if, how, and where your brand could make sense in Israel.
+                <strong>Israël n'est pas un marché test.</strong><br />
+                Cette première analyse vous aide à comprendre si, comment et où votre marque pourrait avoir du sens en Israël.
               </p>
             </div>
           </div>
@@ -185,14 +209,14 @@ const NewHome = () => {
           <div className="max-w-3xl mx-auto">
             <div className="bg-white rounded-2xl shadow-xl p-8 sm:p-12">
               <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-8 text-center">
-                Generate your free Israel market insight
+                Générez votre mini-analyse gratuite
               </h2>
               
               <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Email */}
                 <div>
                   <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-2">
-                    Email address *
+                    Adresse email *
                   </label>
                   <input
                     type="email"
@@ -202,115 +226,206 @@ const NewHome = () => {
                     value={formData.email}
                     onChange={handleChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="your@email.com"
+                    placeholder="votre@email.com"
                   />
                 </div>
 
-                {/* Sector */}
+                {/* Nom de marque */}
                 <div>
-                  <label htmlFor="sector" className="block text-sm font-semibold text-gray-700 mb-2">
-                    Business sector *
+                  <label htmlFor="nom_de_marque" className="block text-sm font-semibold text-gray-700 mb-2">
+                    Nom de marque *
+                  </label>
+                  <input
+                    type="text"
+                    id="nom_de_marque"
+                    name="nom_de_marque"
+                    required
+                    value={formData.nom_de_marque}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Nom de votre enseigne"
+                  />
+                </div>
+
+                {/* Secteur */}
+                <div>
+                  <label htmlFor="secteur" className="block text-sm font-semibold text-gray-700 mb-2">
+                    Secteur d'activité *
                   </label>
                   <select
-                    id="sector"
-                    name="sector"
+                    id="secteur"
+                    name="secteur"
                     required
-                    value={formData.sector}
+                    value={formData.secteur}
                     onChange={handleChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   >
-                    <option value="">Select your sector</option>
-                    {sectors.map(sector => (
-                      <option key={sector} value={sector}>{sector}</option>
+                    <option value="">Sélectionnez votre secteur</option>
+                    {secteurs.map(secteur => (
+                      <option key={secteur} value={secteur}>{secteur}</option>
                     ))}
                   </select>
                 </div>
 
-                {/* Custom Sector */}
-                {formData.sector === 'Other' && (
+                {/* Statut alimentaire (visible uniquement si Restauration) */}
+                {formData.secteur === 'Restauration / Food' && (
                   <div>
-                    <label htmlFor="customSector" className="block text-sm font-semibold text-gray-700 mb-2">
-                      Please specify your sector *
+                    <label htmlFor="statut_alimentaire" className="block text-sm font-semibold text-gray-700 mb-2">
+                      Statut alimentaire *
                     </label>
-                    <input
-                      type="text"
-                      id="customSector"
-                      name="customSector"
-                      required={formData.sector === 'Other'}
-                      value={formData.customSector}
+                    <select
+                      id="statut_alimentaire"
+                      name="statut_alimentaire"
+                      required
+                      value={formData.statut_alimentaire}
                       onChange={handleChange}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="Enter your business sector"
-                    />
+                    >
+                      <option value="">Sélectionnez un statut</option>
+                      {statutsAlimentaires.map(statut => (
+                        <option key={statut} value={statut}>{statut}</option>
+                      ))}
+                    </select>
                   </div>
                 )}
 
-                {/* Company Age */}
+                {/* Ancienneté */}
                 <div>
-                  <label htmlFor="companyAge" className="block text-sm font-semibold text-gray-700 mb-2">
-                    Company age
+                  <label htmlFor="anciennete" className="block text-sm font-semibold text-gray-700 mb-2">
+                    Ancienneté de la marque
                   </label>
                   <select
-                    id="companyAge"
-                    name="companyAge"
-                    value={formData.companyAge}
+                    id="anciennete"
+                    name="anciennete"
+                    value={formData.anciennete}
                     onChange={handleChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   >
-                    <option value="">Select company age</option>
-                    {companyAges.map(age => (
+                    <option value="">Sélectionnez</option>
+                    {anciennetes.map(age => (
                       <option key={age} value={age}>{age}</option>
                     ))}
                   </select>
                 </div>
 
-                {/* Differentiation */}
+                {/* Pays d'origine */}
                 <div>
-                  <label htmlFor="differentiation" className="block text-sm font-semibold text-gray-700 mb-2">
-                    What makes your brand unique or different? *
+                  <label htmlFor="pays_dorigine" className="block text-sm font-semibold text-gray-700 mb-2">
+                    Pays d'origine
                   </label>
-                  <textarea
-                    id="differentiation"
-                    name="differentiation"
-                    required
-                    rows={4}
-                    value={formData.differentiation}
+                  <input
+                    type="text"
+                    id="pays_dorigine"
+                    name="pays_dorigine"
+                    value={formData.pays_dorigine}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-                    placeholder="Describe your unique value proposition, competitive advantage, or what differentiates you in the market..."
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="France, USA, etc."
                   />
                 </div>
 
-                {/* Final Question */}
-                <div className="bg-gray-50 p-6 rounded-lg">
-                  <p className="text-base font-semibold text-gray-900 mb-4">
-                    Do you want to know if Israel makes sense for your business?
-                  </p>
-                  <div className="space-y-3">
-                    <label className="flex items-center gap-3 cursor-pointer">
-                      <input
-                        type="radio"
-                        name="wantInsight"
-                        value="yes"
-                        checked={formData.wantInsight === 'yes'}
-                        onChange={handleChange}
-                        className="w-5 h-5 text-blue-600"
-                      />
-                      <span className="text-gray-700">Yes, generate my free insight</span>
-                    </label>
-                    <label className="flex items-center gap-3 cursor-pointer">
-                      <input
-                        type="radio"
-                        name="wantInsight"
-                        value="no"
-                        checked={formData.wantInsight === 'no'}
-                        onChange={handleChange}
-                        className="w-5 h-5 text-blue-600"
-                      />
-                      <span className="text-gray-700">No, not right now</span>
-                    </label>
-                  </div>
+                {/* Concept */}
+                <div>
+                  <label htmlFor="concept" className="block text-sm font-semibold text-gray-700 mb-2">
+                    Concept / Description de l'activité
+                  </label>
+                  <textarea
+                    id="concept"
+                    name="concept"
+                    rows={3}
+                    value={formData.concept}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                    placeholder="Décrivez brièvement votre concept..."
+                  />
                 </div>
+
+                {/* Positionnement */}
+                <div>
+                  <label htmlFor="positionnement" className="block text-sm font-semibold text-gray-700 mb-2">
+                    Positionnement (premium, milieu de gamme, accessible...)
+                  </label>
+                  <input
+                    type="text"
+                    id="positionnement"
+                    name="positionnement"
+                    value={formData.positionnement}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="ex: Premium, Milieu de gamme"
+                  />
+                </div>
+
+                {/* Modèle actuel */}
+                <div>
+                  <label htmlFor="modele_actuel" className="block text-sm font-semibold text-gray-700 mb-2">
+                    Modèle actuel (franchise, succursales, propre...)
+                  </label>
+                  <input
+                    type="text"
+                    id="modele_actuel"
+                    name="modele_actuel"
+                    value={formData.modele_actuel}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Franchise, succursales propres, mixte..."
+                  />
+                </div>
+
+                {/* Différenciation */}
+                <div>
+                  <label htmlFor="differenciation" className="block text-sm font-semibold text-gray-700 mb-2">
+                    Quelle est votre différenciation / avantage concurrentiel ?
+                  </label>
+                  <textarea
+                    id="differenciation"
+                    name="differenciation"
+                    rows={4}
+                    value={formData.differenciation}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                    placeholder="Qu'est-ce qui vous rend unique par rapport à vos concurrents..."
+                  />
+                </div>
+
+                {/* Objectif Israel */}
+                <div>
+                  <label htmlFor="objectif_israel" className="block text-sm font-semibold text-gray-700 mb-2">
+                    Objectif / Raison de vouloir s'implanter en Israël
+                  </label>
+                  <textarea
+                    id="objectif_israel"
+                    name="objectif_israel"
+                    rows={3}
+                    value={formData.objectif_israel}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                    placeholder="Expansion internationale, marché porteur, partenariat..."
+                  />
+                </div>
+
+                {/* Contraintes */}
+                <div>
+                  <label htmlFor="contraintes" className="block text-sm font-semibold text-gray-700 mb-2">
+                    Contraintes connues ou anticipées
+                  </label>
+                  <textarea
+                    id="contraintes"
+                    name="contraintes"
+                    rows={3}
+                    value={formData.contraintes}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                    placeholder="Réglementation, certifications, budget, etc."
+                  />
+                </div>
+
+                {/* Error message */}
+                {error && (
+                  <div className="bg-red-50 border-l-4 border-red-600 p-4 rounded-lg">
+                    <p className="text-sm text-red-700">{error}</p>
+                  </div>
+                )}
 
                 {/* Submit Button */}
                 <button
@@ -321,12 +436,12 @@ const NewHome = () => {
                   {loading ? (
                     <>
                       <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      Generating your insight...
+                      Génération en cours...
                     </>
                   ) : (
                     <>
                       <Sparkles className="w-5 h-5" />
-                      Generate my free Israel market insight
+                      Générer ma mini-analyse gratuite
                       <ArrowRight className="w-5 h-5" />
                     </>
                   )}
@@ -341,20 +456,17 @@ const NewHome = () => {
           <section id="results" className="pb-20 px-4 sm:px-6 lg:px-8">
             <div className="max-w-4xl mx-auto">
               <div className="bg-white rounded-2xl shadow-xl p-8 sm:p-12">
-                <div className="flex items-center justify-between mb-8">
+                <div className="flex items-center justify-between mb-8 flex-wrap gap-4">
                   <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">
-                    Your Israel Market Insight
+                    Votre Mini-Analyse IGV
                   </h2>
-                  {pdfUrl && (
-                    <a
-                      href={pdfUrl}
-                      download
-                      className="inline-flex items-center gap-2 px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-all"
-                    >
-                      <Download className="w-5 h-5" />
-                      Download PDF
-                    </a>
-                  )}
+                  <button
+                    onClick={copyToClipboard}
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-all"
+                  >
+                    <Check className="w-5 h-5" />
+                    Copier l'analyse
+                  </button>
                 </div>
 
                 <div className="prose prose-lg max-w-none mb-8">
@@ -365,24 +477,24 @@ const NewHome = () => {
 
                 <div className="bg-blue-50 border-l-4 border-blue-600 p-6 rounded-lg mb-8">
                   <p className="text-sm text-gray-700 leading-relaxed">
-                    <strong>Note:</strong> This first insight was generated by an AI model based on your inputs.
-                    It provides an initial orientation but does not replace a full human market analysis.
-                    If you want a detailed, strategic and location-based study, you can request a complete analysis conducted by Israel Growth Venture.
+                    <strong>Note:</strong> Cette première mini-analyse a été générée par un modèle IA basé sur vos données.
+                    Elle fournit une orientation initiale mais ne remplace pas une analyse humaine complète du marché israélien.
+                    Si vous souhaitez une étude détaillée, stratégique et localisée, vous pouvez demander une analyse complète réalisée par Israel Growth Venture.
                   </p>
                 </div>
 
                 <div className="bg-gradient-to-r from-indigo-50 to-blue-50 rounded-xl p-8 text-center">
                   <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                    Want to go further?
+                    Envie d'aller plus loin ?
                   </h3>
                   <p className="text-gray-700 mb-6 max-w-2xl mx-auto">
-                    A complete human-led Israel Market Analysis (locations, budget, risks, entry model) is available.
+                    Une analyse complète du marché israélien (emplacements, budget, risques, modèle d'entrée) est disponible.
                   </p>
                   <a
                     href={`/contact?email=${encodeURIComponent(formData.email)}`}
                     className="inline-flex items-center gap-2 px-8 py-4 bg-indigo-600 text-white text-lg font-semibold rounded-xl hover:bg-indigo-700 transition-all shadow-lg hover:shadow-xl"
                   >
-                    Request full analysis (3,000 USD)
+                    Demander une analyse complète (3 000 USD)
                     <ArrowRight className="w-5 h-5" />
                   </a>
                 </div>
@@ -396,9 +508,9 @@ const NewHome = () => {
           <div className="max-w-4xl mx-auto">
             <div className="grid md:grid-cols-3 gap-8 text-center">
               {[
-                { icon: Check, text: 'AI-Powered Insights' },
-                { icon: Check, text: 'Israel Market Specialists' },
-                { icon: Check, text: 'Free Preliminary Analysis' }
+                { icon: Check, text: 'Analyse IA Instantanée' },
+                { icon: Check, text: 'Spécialistes Marché Israélien' },
+                { icon: Check, text: 'Mini-Analyse Gratuite' }
               ].map((item, idx) => (
                 <div key={idx} className="flex flex-col items-center gap-3">
                   <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">

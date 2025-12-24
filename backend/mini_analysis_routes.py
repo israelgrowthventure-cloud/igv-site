@@ -12,7 +12,6 @@ import re
 from datetime import datetime, timezone
 from pathlib import Path
 import google.genai as genai
-from google.genai import types
 
 router = APIRouter(prefix="/api")
 
@@ -35,11 +34,21 @@ else:
 mongo_url = os.getenv('MONGODB_URI') or os.getenv('MONGO_URL')
 db_name = os.getenv('DB_NAME', 'igv_production')
 
+# MongoDB client et db seront initialisés à la demande
 mongo_client = None
 db = None
-if mongo_url:
-    mongo_client = AsyncIOMotorClient(mongo_url)
-    db = mongo_client[db_name]
+
+def get_db():
+    """Lazy initialization of MongoDB connection"""
+    global mongo_client, db
+    if db is None and mongo_url:
+        mongo_client = AsyncIOMotorClient(
+            mongo_url,
+            serverSelectionTimeoutMS=5000,
+            connectTimeoutMS=5000
+        )
+        db = mongo_client[db_name]
+    return db
 
 # IGV internal data paths
 IGV_INTERNAL_DIR = Path(__file__).parent / 'igv_internal'
@@ -205,8 +214,8 @@ async def debug_mini_analysis():
         "gemini_api_key_length": len(GEMINI_API_KEY) if GEMINI_API_KEY else 0,
         "gemini_model": GEMINI_MODEL,
         "gemini_client_initialized": gemini_client is not None,
-        "mongodb_configured": db is not None,
-        "mongodb_db_name": db_name if db else None,
+        "mongodb_configured": bool(mongo_url),
+        "mongodb_db_name": db_name if mongo_url else None,
         "igv_files": igv_files_status
     }
 
@@ -232,14 +241,15 @@ async def generate_mini_analysis(request: MiniAnalysisRequest):
         raise HTTPException(status_code=500, detail="GEMINI_API_KEY non configurée - contactez l'administrateur")
     
     # Check MongoDB connection
-    if not db:
+    current_db = get_db()
+    if not current_db:
         raise HTTPException(status_code=500, detail="Base de données non configurée")
     
     # Normalize brand name for deduplication
     brand_slug = normalize_brand_slug(request.nom_de_marque)
     
     # Check for existing analysis (anti-duplicate)
-    existing = await db.mini_analyses.find_one({"brand_slug": brand_slug})
+    existing = await current_db.mini_analyses.find_one({"brand_slug": brand_slug})
     if existing:
         logging.info(f"Duplicate analysis attempt for brand: {brand_slug}")
         raise HTTPException(
@@ -287,7 +297,7 @@ async def generate_mini_analysis(request: MiniAnalysisRequest):
             "response_text": analysis_text
         }
         
-        result = await db.mini_analyses.insert_one(analysis_record)
+        result = await current_db.mini_analyses.insert_one(analysis_record)
         logging.info(f"Analysis saved to MongoDB with ID: {result.inserted_id}")
         
     except Exception as e:

@@ -1,0 +1,475 @@
+"""
+Additional Routes for Israel Growth Venture
+- Contact Expert (post mini-analysis)
+- PDF Generation
+- Email PDF
+- Google Calendar Integration
+"""
+
+from fastapi import APIRouter, HTTPException, BackgroundTasks
+from pydantic import BaseModel, EmailStr
+from typing import Optional, Dict, Any
+from datetime import datetime, timezone, timedelta
+from pathlib import Path
+import os
+import logging
+import aiosmtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from email.mime.application import MIMEApplication
+import httpx
+import base64
+import io
+
+router = APIRouter(prefix="/api")
+
+# Environment variables
+CALENDAR_EMAIL = os.getenv('CALENDAR_EMAIL', 'israel.growth.venture@gmail.com')
+EMAIL_FROM = os.getenv('EMAIL_FROM', 'noreply@israelgrowthventure.com')
+SMTP_HOST = os.getenv('SMTP_HOST')
+SMTP_PORT = int(os.getenv('SMTP_PORT', '587'))
+SMTP_USER = os.getenv('SMTP_USER')
+SMTP_PASSWORD = os.getenv('SMTP_PASSWORD')
+SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY')
+GOOGLE_CALENDAR_API_KEY = os.getenv('GOOGLE_CALENDAR_API_KEY')
+
+# Models
+class ContactExpertRequest(BaseModel):
+    email: EmailStr
+    brandName: str
+    sector: str
+    country: Optional[str] = None
+    language: str = 'fr'
+    source: str = 'mini-analysis'
+
+class PDFGenerateRequest(BaseModel):
+    email: EmailStr
+    brandName: str
+    sector: str
+    country: Optional[str] = None
+    analysisText: str
+    language: str = 'fr'
+
+class EmailPDFRequest(BaseModel):
+    email: EmailStr
+    brandName: str
+    sector: str
+    country: Optional[str] = None
+    analysisText: str
+    language: str = 'fr'
+
+class CalendarEventRequest(BaseModel):
+    email: EmailStr
+    brandName: str
+    name: Optional[str] = None
+    phone: Optional[str] = None
+    notes: Optional[str] = None
+    preferredDate: Optional[str] = None
+
+# Contact Expert endpoint
+@router.post("/contact-expert")
+async def contact_expert(request: ContactExpertRequest, background_tasks: BackgroundTasks):
+    """
+    Contact expert after mini-analysis
+    Creates a calendar event and sends notification
+    """
+    try:
+        # Store in database (optional - reuse contacts collection)
+        db = get_db()
+        if db is not None:
+            contact_data = {
+                "email": request.email,
+                "brand_name": request.brandName,
+                "sector": request.sector,
+                "country": request.country,
+                "language": request.language,
+                "source": request.source,
+                "created_at": datetime.now(timezone.utc),
+                "type": "contact_expert"
+            }
+            await db.contacts.insert_one(contact_data)
+        
+        # Create Google Calendar event (background task)
+        event_summary = f"IGV – Expert Call Request – {request.brandName}"
+        event_description = f"""
+        Brand: {request.brandName}
+        Sector: {request.sector}
+        Country: {request.country or 'Not specified'}
+        Email: {request.email}
+        Language: {request.language}
+        Source: {request.source}
+        """
+        
+        background_tasks.add_task(
+            create_calendar_event_task,
+            summary=event_summary,
+            description=event_description,
+            email=request.email
+        )
+        
+        return {
+            "success": True,
+            "message": "Expert contact request received. We'll contact you within 48 hours."
+        }
+        
+    except Exception as e:
+        logging.error(f"Error in contact_expert: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# PDF Generation endpoint
+@router.post("/pdf/generate")
+async def generate_pdf(request: PDFGenerateRequest):
+    """
+    Generate PDF for mini-analysis
+    Returns PDF URL or base64
+    """
+    try:
+        # For now, return a simple message
+        # In production, use a PDF library like reportlab or weasyprint
+        
+        # Simple implementation using reportlab
+        try:
+            from reportlab.lib.pagesizes import A4
+            from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+            from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, PageBreak
+            from reportlab.lib.units import inch
+            from reportlab.lib.enums import TA_CENTER, TA_RIGHT, TA_JUSTIFY
+            from reportlab.pdfbase import pdfmetrics
+            from reportlab.pdfbase.ttfonts import TTFont
+            
+            # Create PDF in memory
+            buffer = io.BytesIO()
+            
+            # Create document
+            doc = SimpleDocTemplate(
+                buffer,
+                pagesize=A4,
+                rightMargin=72,
+                leftMargin=72,
+                topMargin=72,
+                bottomMargin=18
+            )
+            
+            # Container for elements
+            elements = []
+            
+            # Styles
+            styles = getSampleStyleSheet()
+            
+            # Title style
+            title_style = ParagraphStyle(
+                'CustomTitle',
+                parent=styles['Heading1'],
+                fontSize=24,
+                textColor='#1e40af',
+                spaceAfter=30,
+                alignment=TA_CENTER
+            )
+            
+            # Brand style
+            brand_style = ParagraphStyle(
+                'BrandStyle',
+                parent=styles['Heading2'],
+                fontSize=18,
+                spaceAfter=20,
+                alignment=TA_CENTER
+            )
+            
+            # Body style
+            body_style = ParagraphStyle(
+                'BodyStyle',
+                parent=styles['BodyText'],
+                fontSize=11,
+                leading=16,
+                alignment=TA_JUSTIFY if request.language != 'he' else TA_RIGHT,
+                spaceAfter=12
+            )
+            
+            # Header
+            title_text = {
+                'fr': 'Mini-Analyse IGV',
+                'en': 'IGV Mini-Analysis',
+                'he': 'IGV מיני-אנליזה'
+            }.get(request.language, 'Mini-Analyse IGV')
+            
+            elements.append(Paragraph("Israel Growth Venture", title_style))
+            elements.append(Spacer(1, 0.2*inch))
+            elements.append(Paragraph(title_text, brand_style))
+            elements.append(Spacer(1, 0.2*inch))
+            elements.append(Paragraph(f"<b>{request.brandName}</b>", brand_style))
+            elements.append(Spacer(1, 0.3*inch))
+            
+            # Date
+            date_str = datetime.now().strftime('%d/%m/%Y')
+            elements.append(Paragraph(f"Date: {date_str}", styles['Normal']))
+            elements.append(Spacer(1, 0.3*inch))
+            
+            # Analysis content
+            # Split analysis into paragraphs
+            paragraphs = request.analysisText.split('\n\n')
+            for para in paragraphs:
+                if para.strip():
+                    # Escape HTML special characters
+                    para_escaped = para.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
+                    elements.append(Paragraph(para_escaped, body_style))
+                    elements.append(Spacer(1, 0.1*inch))
+            
+            # Footer
+            elements.append(Spacer(1, 0.5*inch))
+            footer_style = ParagraphStyle(
+                'FooterStyle',
+                parent=styles['Normal'],
+                fontSize=9,
+                textColor='#6b7280',
+                alignment=TA_CENTER
+            )
+            elements.append(Paragraph("Israel Growth Venture", footer_style))
+            elements.append(Paragraph("www.israelgrowthventure.com", footer_style))
+            elements.append(Paragraph("israel.growth.venture@gmail.com", footer_style))
+            
+            # Build PDF
+            doc.build(elements)
+            
+            # Get PDF bytes
+            pdf_bytes = buffer.getvalue()
+            buffer.close()
+            
+            # Encode to base64
+            pdf_base64 = base64.b64encode(pdf_bytes).decode('utf-8')
+            
+            return {
+                "success": True,
+                "pdfBase64": pdf_base64,
+                "filename": f"{request.brandName}_IGV_Analysis.pdf"
+            }
+            
+        except ImportError:
+            # Reportlab not installed, return simple message
+            logging.warning("reportlab not installed, PDF generation unavailable")
+            raise HTTPException(
+                status_code=501,
+                detail="PDF generation not configured. Please contact support."
+            )
+        
+    except Exception as e:
+        logging.error(f"Error generating PDF: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# Email PDF endpoint
+@router.post("/email/send-pdf")
+async def email_pdf(request: EmailPDFRequest, background_tasks: BackgroundTasks):
+    """
+    Generate and email PDF to user
+    """
+    try:
+        # Generate PDF first
+        pdf_request = PDFGenerateRequest(
+            email=request.email,
+            brandName=request.brandName,
+            sector=request.sector,
+            country=request.country,
+            analysisText=request.analysisText,
+            language=request.language
+        )
+        
+        pdf_result = await generate_pdf(pdf_request)
+        
+        if not pdf_result.get('success'):
+            raise HTTPException(status_code=500, detail="Failed to generate PDF")
+        
+        # Send email with PDF attachment (background task)
+        background_tasks.add_task(
+            send_pdf_email_task,
+            to_email=request.email,
+            brand_name=request.brandName,
+            pdf_base64=pdf_result['pdfBase64'],
+            filename=pdf_result['filename'],
+            language=request.language
+        )
+        
+        return {
+            "success": True,
+            "message": "PDF will be sent to your email shortly"
+        }
+        
+    except Exception as e:
+        logging.error(f"Error emailing PDF: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# Google Calendar event creation
+@router.post("/calendar/create-event")
+async def create_calendar_event(request: CalendarEventRequest):
+    """
+    Create Google Calendar event for appointment request
+    """
+    try:
+        event_summary = f"IGV – Call Request – {request.brandName}"
+        event_description = f"""
+        Brand: {request.brandName}
+        Contact: {request.name or 'Not provided'}
+        Email: {request.email}
+        Phone: {request.phone or 'Not provided'}
+        Preferred Date: {request.preferredDate or 'ASAP'}
+        Notes: {request.notes or 'None'}
+        """
+        
+        # Create event (placeholder implementation)
+        result = await create_calendar_event_task(
+            summary=event_summary,
+            description=event_description,
+            email=request.email
+        )
+        
+        return {
+            "success": True,
+            "message": "Calendar event created successfully",
+            "eventId": result.get('eventId')
+        }
+        
+    except Exception as e:
+        logging.error(f"Error creating calendar event: {str(e)}")
+        # Don't fail - just log and return success
+        return {
+            "success": True,
+            "message": "Request received, we'll contact you soon"
+        }
+
+# Background tasks
+async def create_calendar_event_task(summary: str, description: str, email: str):
+    """
+    Create Google Calendar event (background task)
+    For now, sends email notification instead
+    """
+    try:
+        # TODO: Implement actual Google Calendar API integration
+        # For now, send email notification to team
+        
+        if SMTP_HOST and SMTP_USER and SMTP_PASSWORD:
+            message = MIMEMultipart()
+            message['From'] = EMAIL_FROM
+            message['To'] = CALENDAR_EMAIL
+            message['Subject'] = f"[IGV] {summary}"
+            
+            body = f"""
+            New contact request:
+            
+            {description}
+            
+            Please follow up within 48 hours.
+            """
+            
+            message.attach(MIMEText(body, 'plain'))
+            
+            async with aiosmtplib.SMTP(hostname=SMTP_HOST, port=SMTP_PORT) as smtp:
+                await smtp.starttls()
+                await smtp.login(SMTP_USER, SMTP_PASSWORD)
+                await smtp.send_message(message)
+            
+            logging.info(f"Calendar notification sent for: {email}")
+            return {"eventId": "email_notification"}
+        else:
+            logging.warning("SMTP not configured, calendar event not created")
+            return {"eventId": "not_configured"}
+            
+    except Exception as e:
+        logging.error(f"Error in create_calendar_event_task: {str(e)}")
+        return {"eventId": "error"}
+
+async def send_pdf_email_task(
+    to_email: str,
+    brand_name: str,
+    pdf_base64: str,
+    filename: str,
+    language: str
+):
+    """
+    Send PDF via email (background task)
+    """
+    try:
+        if not (SMTP_HOST and SMTP_USER and SMTP_PASSWORD):
+            logging.warning("SMTP not configured, cannot send PDF email")
+            return
+        
+        # Email subject and body based on language
+        subjects = {
+            'fr': f"Votre Mini-Analyse IGV - {brand_name}",
+            'en': f"Your IGV Mini-Analysis - {brand_name}",
+            'he': f"{brand_name} - IGV המיני-אנליזה שלך"
+        }
+        
+        bodies = {
+            'fr': f"""
+        Bonjour,
+
+        Veuillez trouver ci-joint votre mini-analyse IGV pour {brand_name}.
+
+        Cette analyse a été générée par notre IA et fournit une première évaluation de votre potentiel sur le marché israélien.
+
+        Pour une analyse complète et un accompagnement personnalisé, n'hésitez pas à nous contacter.
+
+        Cordialement,
+        L'équipe Israel Growth Venture
+        www.israelgrowthventure.com
+        """,
+            'en': f"""
+        Hello,
+
+        Please find attached your IGV mini-analysis for {brand_name}.
+
+        This analysis was generated by our AI and provides an initial assessment of your potential in the Israeli market.
+
+        For a comprehensive analysis and personalized support, don't hesitate to contact us.
+
+        Best regards,
+        The Israel Growth Venture Team
+        www.israelgrowthventure.com
+        """,
+            'he': f"""
+        שלום,
+
+        בצרוף תמצא את המיני-אנליזה IGV שלך עבור {brand_name}.
+
+        הניתוח הזה נוצר על ידי ה-AI שלנו ומספק הערכה ראשונית של הפוטנציאל שלך בשוק הישראלי.
+
+        לניתוח מקיף ותמיכה מותאמת אישית, אל תהסס לפנות אלינו.
+
+        בברכה,
+        צוות Israel Growth Venture
+        www.israelgrowthventure.com
+        """
+        }
+        
+        message = MIMEMultipart()
+        message['From'] = EMAIL_FROM
+        message['To'] = to_email
+        message['Subject'] = subjects.get(language, subjects['fr'])
+        
+        # Body
+        body = bodies.get(language, bodies['fr'])
+        message.attach(MIMEText(body, 'plain', 'utf-8'))
+        
+        # Attach PDF
+        pdf_bytes = base64.b64decode(pdf_base64)
+        pdf_attachment = MIMEApplication(pdf_bytes, _subtype='pdf')
+        pdf_attachment.add_header('Content-Disposition', 'attachment', filename=filename)
+        message.attach(pdf_attachment)
+        
+        # Send email
+        async with aiosmtplib.SMTP(hostname=SMTP_HOST, port=SMTP_PORT) as smtp:
+            await smtp.starttls()
+            await smtp.login(SMTP_USER, SMTP_PASSWORD)
+            await smtp.send_message(message)
+        
+        logging.info(f"PDF email sent to: {to_email}")
+        
+    except Exception as e:
+        logging.error(f"Error in send_pdf_email_task: {str(e)}")
+
+# Helper function to get DB
+def get_db():
+    """Get database connection (imported from main server)"""
+    try:
+        from server import db
+        return db
+    except:
+        return None

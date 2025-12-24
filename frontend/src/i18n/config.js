@@ -17,12 +17,24 @@ i18n
     fallbackLng: 'fr',
     supportedLngs: ['fr', 'en', 'he'],
     detection: {
-      order: ['path', 'localStorage', 'navigator'],
+      order: ['localStorage', 'navigator'],
       caches: ['localStorage']
     },
     interpolation: {
       escapeValue: false
     }
   });
+
+// Update HTML lang and dir attributes on language change
+i18n.on('languageChanged', (lng) => {
+  const html = document.documentElement;
+  html.setAttribute('lang', lng);
+  html.setAttribute('dir', lng === 'he' ? 'rtl' : 'ltr');
+});
+
+// Set initial lang and dir
+const currentLang = i18n.language || 'fr';
+document.documentElement.setAttribute('lang', currentLang);
+document.documentElement.setAttribute('dir', currentLang === 'he' ? 'rtl' : 'ltr');
 
 export default i18n;

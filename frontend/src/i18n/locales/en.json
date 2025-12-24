@@ -286,7 +286,42 @@
       "success": "Your IGV mini-analysis has been generated!",
       "duplicate": "An analysis has already been generated for this brand",
       "error": "Error generating analysis. Please try again.",
-      "networkError": "Network error. Check your connection."
+      "networkError": "Network error. Check your connection.",
+      "analyzing": "Analysis in progress, this may take a few seconds...",
+      "contactExpertSuccess": "Thanks. We'll contact you within the next 48 hours.",
+      "pdfDownloading": "Downloading PDF...",
+      "pdfDownloaded": "PDF downloaded successfully!",
+      "emailSending": "Sending via email...",
+      "emailSent": "The PDF has been sent to your email!"
+    },
+    "results": {
+      "title": "Your IGV Mini-Analysis",
+      "subtitle": "Personalized AI analysis for",
+      "copy": "Copy analysis",
+      "copied": "Analysis copied to clipboard",
+      "download": "Download as PDF",
+      "email": "Email me the PDF",
+      "contactExpert": "Contact one of our experts",
+      "nextSteps": "Next steps",
+      "nextStepsDescription": "This free mini-analysis is a first assessment. For complete support and in-depth analysis of your project, our experts are at your disposal.",
+      "bookCall": "Book a 30-minute call",
+      "viewPacks": "Discover our support packages"
     }
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "close": "Close",
+    "yes": "Yes",
+    "no": "No",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "search": "Search",
+    "filter": "Filter",
+    "brandName": "Israel Growth Venture"
   }
 }

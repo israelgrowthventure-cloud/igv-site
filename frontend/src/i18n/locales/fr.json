@@ -290,7 +290,42 @@
       "success": "Votre mini-analyse IGV a été générée!",
       "duplicate": "Une analyse a déjà été générée pour cette enseigne",
       "error": "Erreur lors de la génération de l'analyse. Veuillez réessayer.",
-      "networkError": "Erreur réseau. Vérifiez votre connexion."
+      "networkError": "Erreur réseau. Vérifiez votre connexion.",
+      "analyzing": "Analyse en cours, cela peut prendre quelques secondes...",
+      "contactExpertSuccess": "Merci. Nous vous contacterons dans les prochaines 48h.",
+      "pdfDownloading": "Téléchargement du PDF...",
+      "pdfDownloaded": "PDF téléchargé avec succès!",
+      "emailSending": "Envoi par email...",
+      "emailSent": "Le PDF a été envoyé à votre email!"
+    },
+    "results": {
+      "title": "Votre Mini-Analyse IGV",
+      "subtitle": "Analyse IA personnalisée pour",
+      "copy": "Copier l'analyse",
+      "copied": "Analyse copiée dans le presse-papiers",
+      "download": "Télécharger en PDF",
+      "email": "Recevoir par email",
+      "contactExpert": "Prendre contact avec l'un de nos experts",
+      "nextSteps": "Étapes suivantes",
+      "nextStepsDescription": "Cette mini-analyse gratuite est une première évaluation. Pour un accompagnement complet et une analyse approfondie de votre projet, nos experts sont à votre disposition.",
+      "bookCall": "Réserver un appel de 30 minutes",
+      "viewPacks": "Découvrir nos packs d'accompagnement"
     }
+  },
+  "common": {
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "success": "Succès",
+    "close": "Fermer",
+    "yes": "Oui",
+    "no": "Non",
+    "cancel": "Annuler",
+    "confirm": "Confirmer",
+    "save": "Enregistrer",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "brandName": "Israel Growth Venture"
   }
 }

@@ -70,6 +70,32 @@ export const api = {
     const backendUrl = process.env.REACT_APP_BACKEND_URL || 'https://igv-cms-backend.onrender.com';
     const response = await axios.post(`${backendUrl}/api/mini-analysis`, data);
     return response.data;
+  },
+
+  // Contact expert (post mini-analysis)
+  contactExpert: async (data) => {
+    const response = await axios.post(`${API}/contact-expert`, data);
+    return response.data;
+  },
+
+  // Generate PDF for mini-analysis
+  generatePDF: async (data) => {
+    const response = await axios.post(`${API}/pdf/generate`, data, {
+      timeout: 30000 // 30 second timeout for PDF generation
+    });
+    return response.data;
+  },
+
+  // Email PDF to user
+  emailPDF: async (data) => {
+    const response = await axios.post(`${API}/email/send-pdf`, data);
+    return response.data;
+  },
+
+  // Create Google Calendar event
+  createCalendarEvent: async (data) => {
+    const response = await axios.post(`${API}/calendar/create-event`, data);
+    return response.data;
   }
 };
 

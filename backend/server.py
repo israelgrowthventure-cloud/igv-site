@@ -24,6 +24,7 @@ import traceback
 # Import AI routes
 from ai_routes import router as ai_router
 from mini_analysis_routes import router as mini_analysis_router
+from extended_routes import router as extended_router
 
 
 ROOT_DIR = Path(__file__).parent
@@ -744,6 +745,7 @@ async def monetico_callback(data: Dict[str, Any]):
 app.include_router(api_router)
 app.include_router(ai_router)  # AI Insight generation
 app.include_router(mini_analysis_router)  # Mini-Analysis with Gemini
+app.include_router(extended_router)  # Extended features: PDF, Calendar, Contact Expert
 
 # Configure logging
 logging.basicConfig(

@@ -210,5 +210,107 @@
   "pricing": {
     "region": "מחיר לפי האזור שלך",
     "detecting": "מזהה..."
+  },
+  "miniAnalysis": {
+    "hero": {
+      "title": "מיני-אנליזה מבוססת AI חינמית",
+      "subtitle": "גלה את הפוטנציאל של המותג שלך בשוק הישראלי תוך 2 דקות",
+      "description": "ה-AI שלנו מנתח את הקונספט שלך ומספק לך הערכה מקדימה מותאמת אישית של הזדמנויות ההתרחבות שלך בישראל."
+    },
+    "form": {
+      "title": "ספר לנו על המותג שלך",
+      "email": "אימייל עסקי",
+      "emailPlaceholder": "your@email.com",
+      "brandName": "שם המותג",
+      "brandNamePlaceholder": "לדוגמה: החנות שלי",
+      "sector": "סקטור עסקי",
+      "sectorPlaceholder": "בחר את הסקטור שלך",
+      "foodStatus": "סטטוס מזון",
+      "foodStatusPlaceholder": "כשר, חלאל, טבעוני...",
+      "seniority": "ותק המותג",
+      "seniorityPlaceholder": "כמה זמן אתה עובד?",
+      "originCountry": "מדינת מקור",
+      "originCountryPlaceholder": "לדוגמה: צרפת",
+      "concept": "קונספט המותג",
+      "conceptPlaceholder": "תאר את הקונספט שלך במספר מילים",
+      "positioning": "מיצוב",
+      "positioningPlaceholder": "פרמיום, נגיש, יוקרה...",
+      "currentModel": "מודל נוכחי",
+      "currentModelPlaceholder": "זכיינות, סניפים, עצמאי...",
+      "differentiation": "הבדלה תחרותית",
+      "differentiationPlaceholder": "מה הופך אותך לייחודי?",
+      "israelObjective": "מטרה בישראל",
+      "israelObjectivePlaceholder": "פתיחת חנויות, זכיינות, בדיקת שוק...",
+      "constraints": "אילוצים וחששות",
+      "constraintsPlaceholder": "תקציב, עיתוי, דרישות ספציפיות...",
+      "submit": "צור את המיני-אנליזה החינמית שלי",
+      "submitting": "מייצר...",
+      "required": "שדה חובה",
+      "requiredForFood": "חובה עבור עסקי מזון"
+    },
+    "sectors": [
+      "מסעדה / מזון",
+      "קמעונאות (ללא מזון)",
+      "שירותים",
+      "בריאות / פארא-רפואי"
+    ],
+    "foodStatuses": [
+      "כשר",
+      "חלאל",
+      "בריא",
+      "טבעוני/צמחוני",
+      "ללא",
+      "להגדיר"
+    ],
+    "seniorities": [
+      "פחות משנה",
+      "1-3 שנים",
+      "3-5 שנים",
+      "5-10 שנים",
+      "יותר מ-10 שנים"
+    ],
+    "results": {
+      "title": "המיני-אנליזה IGV שלך",
+      "subtitle": "ניתוח AI מותאם אישית עבור",
+      "copy": "העתק ניתוח",
+      "copied": "הניתוח הועתק ללוח",
+      "download": "הורד כ-PDF",
+      "email": "שלח לי את ה-PDF במייל",
+      "contactExpert": "דברי עם אחד המומחים שלנו",
+      "nextSteps": "השלבים הבאים",
+      "nextStepsDescription": "מיני-אנליזה חינמית זו היא הערכה ראשונית. לתמיכה מלאה וניתוח מעמיק של הפרויקט שלך, המומחים שלנו לשירותך.",
+      "bookCall": "הזמן שיחה של 30 דקות",
+      "viewPacks": "גלה את חבילות התמיכה שלנו"
+    },
+    "toast": {
+      "fieldsRequired": "אנא מלא את כל השדות הנדרשים",
+      "foodStatusRequired": "סטטוס מזון נדרש עבור עסקי מזון",
+      "success": "המיני-אנליזה IGV שלך נוצרה!",
+      "duplicate": "כבר נוצר ניתוח עבור מותג זה",
+      "error": "שגיאה ביצירת הניתוח. אנא נסה שוב.",
+      "networkError": "שגיאת רשת. בדוק את החיבור שלך.",
+      "analyzing": "הניתוח מתבצע, זה עשוי לקחת מספר שניות...",
+      "contactExpertSuccess": "תודה! נחזור אליך בתוך 48 שעות.",
+      "pdfDownloading": "מוריד PDF...",
+      "pdfDownloaded": "PDF הורד בהצלחה!",
+      "emailSending": "שולח במייל...",
+      "emailSent": "ה-PDF נשלח למייל שלך!"
+    }
+  },
+  "common": {
+    "loading": "טוען...",
+    "error": "שגיאה",
+    "success": "הצלחה",
+    "close": "סגור",
+    "yes": "כן",
+    "no": "לא",
+    "cancel": "ביטול",
+    "confirm": "אישור",
+    "save": "שמור",
+    "delete": "מחק",
+    "edit": "ערוך",
+    "search": "חפש",
+    "filter": "סנן",
+    "brandName": "Israel Growth Venture"
   }
 }

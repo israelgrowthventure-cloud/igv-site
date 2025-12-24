@@ -4,8 +4,9 @@ import { HelmetProvider } from 'react-helmet-async';
 import { Toaster } from 'sonner';
 import './i18n/config';
 import './App.css';
+import './styles/rtl.css';
 
-// Build trigger: 2025-12-14-11h05
+// Build trigger: 2025-12-24-v3-complete
 
 // Layout Components
 import Header from './components/Header';
@@ -14,6 +15,7 @@ import Footer from './components/Footer';
 // Pages
 import NewHome from './pages/NewHome';  // NOUVELLE landing page
 import Home from './pages/Home';  // Ancienne home (conservée en arrière-plan)
+import MiniAnalysis from './pages/MiniAnalysis'; // New i18n mini-analysis page
 import About from './pages/About';
 import Packs from './pages/Packs';
 import FutureCommerce from './pages/FutureCommerce';
@@ -48,20 +50,20 @@ function App() {
                 {/* Homepage complète */}
                 <Route path="/" element={<Home />} />
                 
-                {/* Mini-Analyse (accessible via menu + Home CTA) */}
-                <Route path="/mini-analyse" element={<NewHome />} />
+                {/* Mini-Analyse (NEW - i18n ready) */}
+                <Route path="/mini-analyse" element={<MiniAnalysis />} />
                 
                 {/* Pages essentielles ACTIVES */}
                 <Route path="/about" element={<About />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/legal" element={<Terms />} />
+                <Route path="/appointment" element={<Appointment />} />
                 
-                {/* Anciennes pages CONSERVÉES mais NON INDEXÉES (accès direct uniquement) */}
+                {/* Anciennes pages CONSERVÉES */}
                 <Route path="/packs" element={<Packs />} />
                 <Route path="/future-commerce" element={<FutureCommerce />} />
-                <Route path="/appointment" element={<Appointment />} />
                 <Route path="/terms" element={<Terms />} />
-                <Route path="/old-home" element={<Home />} />  {/* Ancienne home accessible via URL directe */}
+                <Route path="/old-home" element={<Home />} />
                 
                 {/* Admin Routes */}
                 <Route path="/admin/login" element={<AdminLogin />} />

@@ -181,22 +181,28 @@ def build_prompt(request: MiniAnalysisRequest) -> str:
 async def debug_mini_analysis():
     """Debug endpoint pour vérifier configuration mini-analysis"""
     igv_files_status = {}
-    for name, path in [
-        ("IGV_Types", TYPES_FILE),
-        ("Whitelist_Jewish", WHITELIST_JEWISH),
-        ("Whitelist_Arab", WHITELIST_ARAB),
-        ("Prompt_Restauration", PROMPT_RESTAURATION),
-        ("Prompt_Retail", PROMPT_RETAIL),
-        ("Prompt_Services", PROMPT_SERVICES)
-    ]:
-        igv_files_status[name] = {
-            "exists": path.exists(),
-            "path": str(path),
-            "size": path.stat().st_size if path.exists() else 0
-        }
+    try:
+        for name, path in [
+            ("IGV_Types", TYPES_FILE),
+            ("Whitelist_Jewish", WHITELIST_JEWISH),
+            ("Whitelist_Arab", WHITELIST_ARAB),
+            ("Prompt_Restauration", PROMPT_RESTAURATION),
+            ("Prompt_Retail", PROMPT_RETAIL),
+            ("Prompt_Services", PROMPT_SERVICES)
+        ]:
+            file_exists = path.exists()
+            igv_files_status[name] = {
+                "exists": file_exists,
+                "path": str(path),
+                "size": path.stat().st_size if file_exists else 0
+            }
+    except Exception as e:
+        logging.error(f"Error checking IGV files: {str(e)}")
+        igv_files_status["error"] = str(e)
     
     return {
         "gemini_api_key_configured": bool(GEMINI_API_KEY),
+        "gemini_api_key_length": len(GEMINI_API_KEY) if GEMINI_API_KEY else 0,
         "gemini_model": GEMINI_MODEL,
         "gemini_model_initialized": model is not None,
         "mongodb_configured": db is not None,

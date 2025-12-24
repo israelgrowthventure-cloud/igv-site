@@ -35,7 +35,7 @@ const AdminLogin = () => {
     } catch (error) {
       console.error('Login error:', error);
       
-      if (error.response?.status === 401) {
+      if (error.response && error.response.status === 401) {
         toast.error('Identifiants invalides');
       } else {
         toast.error('Erreur serveur');
@@ -53,7 +53,6 @@ const AdminLogin = () => {
 
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center px-4">
         <div className="max-w-md w-full">
-          {/* Logo/Header */}
           <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-2xl mb-4">
               <Shield className="w-8 h-8 text-white" />
@@ -66,10 +65,8 @@ const AdminLogin = () => {
             </p>
           </div>
 
-          {/* Login Form */}
           <div className="bg-white rounded-2xl shadow-xl p-8">
             <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Email */}
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
                   Email
@@ -89,7 +86,6 @@ const AdminLogin = () => {
                 </div>
               </div>
 
-              {/* Password */}
               <div>
                 <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
                   Password
@@ -109,7 +105,6 @@ const AdminLogin = () => {
                 </div>
               </div>
 
-              {/* Submit Button */}
               <button
                 type="submit"
                 disabled={loading}
@@ -129,50 +124,17 @@ const AdminLogin = () => {
               </button>
             </form>
 
-            {/* Security Notice */}
             <p className="mt-6 text-xs text-center text-gray-500">
               Accès sécurisé réservé aux administrateurs IGV
             </p>
           </div>
 
-          {/* Footer */}
           <p className="mt-6 text-center text-sm text-gray-600">
             © 2025 Israel Growth Venture. All rights reserved.
           </p>
         </div>
       </div>
     </>
-  );
-};
-
-export default AdminLogin;
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              <Lock className="inline h-4 w-4 mr-1" />
-              Password
-            </label>
-            <input
-              type="password"
-              required
-              value={credentials.password}
-              onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50"
-          >
-            {loading ? 'Connexion...' : 'Se connecter'}
-          </button>
-        </form>
-      </div>
-    </div>
   );
 };
 

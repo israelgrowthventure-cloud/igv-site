@@ -6,7 +6,7 @@ Additional Routes for Israel Growth Venture
 - Google Calendar Integration
 """
 
-from fastapi import APIRouter, HTTPException, BackgroundTasks
+from fastapi import APIRouter, HTTPException, BackgroundTasks, Response
 from pydantic import BaseModel, EmailStr
 from typing import Optional, Dict, Any
 from datetime import datetime, timezone, timedelta
@@ -138,10 +138,11 @@ def get_db():
 
 # PDF Generation endpoint
 @router.post("/pdf/generate")
-async def generate_pdf(request: PDFGenerateRequest):
+async def generate_pdf(request: PDFGenerateRequest, response: Response):
     """
     Generate PDF for mini-analysis with header and multilingual support
     MISSION C & D: PDF header integration + Hebrew RTL support
+    Adds debug headers: X-IGV-PDF-Language, X-IGV-Header-Status
     """
     try:
         # Simple implementation using reportlab
@@ -162,6 +163,10 @@ async def generate_pdf(request: PDFGenerateRequest):
             header_exists = header_path.exists()
             header_size = header_path.stat().st_size if header_exists else 0
             
+            # DEBUG HEADERS
+            response.headers["X-IGV-PDF-Language"] = request.language
+            response.headers["X-IGV-Header-Status"] = "exists" if header_exists else "missing"
+            
             logging.info(f"PDF_GENERATION: language={request.language}, brand={request.brandName}")
             logging.info(f"HEADER_PATH={header_path}")
             logging.info(f"HEADER_EXISTS={header_exists}")
@@ -169,6 +174,9 @@ async def generate_pdf(request: PDFGenerateRequest):
             
             if not header_exists:
                 logging.error(f"❌ HEADER_MISSING: {header_path}")
+                logging.error(f"  Expected location: {header_path}")
+                logging.error(f"  Current working dir: {Path.cwd()}")
+                logging.error(f"  __file__ location: {Path(__file__).resolve()}")
                 raise HTTPException(status_code=500, detail="PDF header file missing")
             
             # MISSION D: HEBREW RTL SUPPORT

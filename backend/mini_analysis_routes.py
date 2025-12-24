@@ -3,7 +3,7 @@ Mini-Analysis Routes for Israel Growth Venture
 Handles brand analysis requests with Gemini AI + IGV internal data
 """
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Response
 from pydantic import BaseModel, EmailStr
 from motor.motor_asyncio import AsyncIOMotorClient
 import os
@@ -413,10 +413,11 @@ async def debug_mini_analysis():
 
 
 @router.post("/mini-analysis")
-async def generate_mini_analysis(request: MiniAnalysisRequest):
+async def generate_mini_analysis(request: MiniAnalysisRequest, response: Response):
     """
     Generate AI-powered mini-analysis for Israel market entry
     Includes anti-duplicate check + MongoDB persistence
+    Adds debug headers: X-IGV-Lang-Requested, X-IGV-Lang-Used, X-IGV-Cache-Hit
     """
     
     # Validate required fields
@@ -432,6 +433,10 @@ async def generate_mini_analysis(request: MiniAnalysisRequest):
     if language not in {"fr", "en", "he"}:
         logging.warning(f"Invalid language '{language}', falling back to 'en'")
         language = "en"
+    
+    # DEBUG HEADERS (LIVE VERIFICATION)
+    response.headers["X-IGV-Lang-Requested"] = language
+    response.headers["X-IGV-Lang-Used"] = language
     
     logging.info(f"LANG_REQUESTED={language} LANG_USED={language}")
     
@@ -450,12 +455,18 @@ async def generate_mini_analysis(request: MiniAnalysisRequest):
     
     # Check for existing analysis (anti-duplicate)
     existing = await current_db.mini_analyses.find_one({"brand_slug": brand_slug})
+    cache_key = f"{brand_slug}_{language}"
+    
     if existing:
-        logging.info(f"Duplicate analysis attempt for brand: {brand_slug}")
+        logging.info(f"CACHE_HIT=true CACHE_KEY={cache_key}")
+        response.headers["X-IGV-Cache-Hit"] = "true"
         raise HTTPException(
             status_code=409,
             detail=f"Une mini-analyse a déjà été générée pour cette enseigne ({request.nom_de_marque})"
         )
+    else:
+        logging.info(f"CACHE_HIT=false CACHE_KEY={cache_key}")
+        response.headers["X-IGV-Cache-Hit"] = "false"
     
     # Build prompt with IGV data
     try:

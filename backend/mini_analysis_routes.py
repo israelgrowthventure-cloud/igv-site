@@ -15,17 +15,66 @@ import google.genai as genai
 
 router = APIRouter(prefix="/api")
 
+# Diagnostic endpoint for Gemini API
+@router.get("/diag-gemini")
+async def diagnose_gemini():
+    """Diagnostic endpoint to test Gemini API key"""
+    import traceback
+    
+    if not GEMINI_API_KEY:
+        return {
+            "status": "error",
+            "message": "GEMINI_API_KEY not configured",
+            "key_present": False
+        }
+    
+    if not gemini_client:
+        return {
+            "status": "error",
+            "message": "Gemini client not initialized",
+            "key_present": True,
+            "key_length": len(GEMINI_API_KEY)
+        }
+    
+    # Test API call
+    try:
+        response = gemini_client.models.generate_content(
+            model=GEMINI_MODEL,
+            contents=['Say hello in one word']
+        )
+        result_text = response.text if hasattr(response, 'text') else str(response)
+        
+        return {
+            "status": "success",
+            "message": "Gemini API working",
+            "model": GEMINI_MODEL,
+            "test_response": result_text[:100],
+            "key_length": len(GEMINI_API_KEY)
+        }
+    except Exception as e:
+        return {
+            "status": "error",
+            "message": "Gemini API call failed",
+            "error": str(e),
+            "error_type": type(e).__name__,
+            "traceback": traceback.format_exc(),
+            "key_length": len(GEMINI_API_KEY)
+        }
+
 # Gemini API configuration
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
 GEMINI_MODEL = os.getenv('GEMINI_MODEL', 'gemini-1.5-flash')
 
 gemini_client = None
+
 if GEMINI_API_KEY:
     try:
         gemini_client = genai.Client(api_key=GEMINI_API_KEY)
-        logging.info(f"✅ Gemini client configured successfully with model: {GEMINI_MODEL}")
+        key_length = len(GEMINI_API_KEY)
+        logging.info(f"✅ Gemini client initialized with model: {GEMINI_MODEL}")
+        logging.info(f"✅ GEMINI_API_KEY present: yes, length: {key_length}")
     except Exception as e:
-        logging.error(f"❌ Gemini configuration error: {str(e)}")
+        logging.error(f"❌ Gemini client initialization failed: {str(e)}")
         gemini_client = None
 else:
     logging.warning("⚠️ GEMINI_API_KEY not configured - mini-analysis endpoint will fail")
@@ -267,22 +316,66 @@ async def generate_mini_analysis(request: MiniAnalysisRequest):
         raise HTTPException(status_code=500, detail="Erreur lors de la construction de la requête IA")
     
     # Call Gemini API (new google-genai package)
+    request_id = f"req_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}"
     try:
-        logging.info(f"Calling Gemini API for brand: {request.nom_de_marque} (model: {GEMINI_MODEL})")
+        logging.info(f"[{request_id}] Calling Gemini API for brand: {request.nom_de_marque} (model: {GEMINI_MODEL})")
         
+        if not gemini_client:
+            logging.error(f"[{request_id}] Gemini client not initialized")
+            raise HTTPException(
+                status_code=500,
+                detail={"error": "Gemini client not configured", "request_id": request_id}
+            )
+        
+        # CRITICAL: contents MUST be a list for google-genai 0.2.2
+        # Signature: contents: list[Content | list[Part | str] | Part | str]
         response = gemini_client.models.generate_content(
             model=GEMINI_MODEL,
-            contents=prompt
+            contents=[prompt]  # Wrap prompt in a list
         )
         
-        analysis_text = response.text
+        # Extract text from response
+        analysis_text = response.text if hasattr(response, 'text') else str(response)
+        
+        logging.info(f"[{request_id}] ✅ Gemini response received: {len(analysis_text)} characters")
         
         if not analysis_text:
-            raise HTTPException(status_code=500, detail="Réponse IA vide")
+            raise HTTPException(
+                status_code=500,
+                detail={"error": "Réponse IA vide", "request_id": request_id}
+            )
         
+    except HTTPException:
+        raise  # Re-raise HTTPException as-is
+    except AttributeError as e:
+        import traceback
+        error_trace = traceback.format_exc()
+        logging.error(f"[{request_id}] ❌ Gemini API structure error: {str(e)}")
+        logging.error(f"[{request_id}] Response type: {type(response) if 'response' in locals() else 'no response'}")
+        logging.error(f"[{request_id}] Traceback:\n{error_trace}")
+        raise HTTPException(
+            status_code=500,
+            detail={
+                "error": f"Erreur structure API Gemini: {str(e)}",
+                "request_id": request_id,
+                "error_type": "AttributeError"
+            }
+        )
     except Exception as e:
-        logging.error(f"Gemini API error: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Erreur API Gemini: {str(e)}")
+        import traceback
+        error_trace = traceback.format_exc()
+        logging.error(f"[{request_id}] ❌ Gemini API error: {str(e)}")
+        logging.error(f"[{request_id}] Error type: {type(e).__name__}")
+        logging.error(f"[{request_id}] Traceback:\n{error_trace}")
+        raise HTTPException(
+            status_code=500,
+            detail={
+                "error": f"Erreur API Gemini: {str(e)}",
+                "request_id": request_id,
+                "error_type": type(e).__name__,
+                "traceback": error_trace
+            }
+        )
     
     # Save to MongoDB
     try:

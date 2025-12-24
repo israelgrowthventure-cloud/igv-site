@@ -1,5 +1,7 @@
 from fastapi import FastAPI, APIRouter, HTTPException, Depends, status, Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi.responses import JSONResponse
+from fastapi.exceptions import RequestValidationError
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -17,6 +19,7 @@ import httpx
 import jwt
 import hashlib
 import hmac
+import traceback
 
 # Import AI routes
 from ai_routes import router as ai_router
@@ -117,6 +120,68 @@ app.add_middleware(
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
+
+# Global exception handler to ensure CORS headers on ALL responses (including errors)
+@app.exception_handler(HTTPException)
+async def http_exception_handler(request: Request, exc: HTTPException):
+    """Ensure CORS headers are present even on error responses"""
+    origin = request.headers.get("origin", "")
+    headers = {}
+    
+    # Add CORS headers if origin is allowed
+    if origin in final_origins or "*" in final_origins:
+        headers["Access-Control-Allow-Origin"] = origin
+        headers["Access-Control-Allow-Credentials"] = "true"
+    
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"detail": exc.detail},
+        headers=headers
+    )
+
+@app.exception_handler(Exception)
+async def general_exception_handler(request: Request, exc: Exception):
+    """Catch-all exception handler with CORS headers and detailed logging"""
+    error_id = f"err_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S_%f')}"
+    error_trace = traceback.format_exc()
+    
+    logging.error(f"[{error_id}] Unhandled exception: {str(exc)}")
+    logging.error(f"[{error_id}] Type: {type(exc).__name__}")
+    logging.error(f"[{error_id}] Traceback:\n{error_trace}")
+    
+    origin = request.headers.get("origin", "")
+    headers = {}
+    
+    if origin in final_origins or "*" in final_origins:
+        headers["Access-Control-Allow-Origin"] = origin
+        headers["Access-Control-Allow-Credentials"] = "true"
+    
+    return JSONResponse(
+        status_code=500,
+        content={
+            "error": "Internal Server Error",
+            "message": str(exc),
+            "error_id": error_id,
+            "error_type": type(exc).__name__
+        },
+        headers=headers
+    )
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    """Handle validation errors with CORS headers"""
+    origin = request.headers.get("origin", "")
+    headers = {}
+    
+    if origin in final_origins or "*" in final_origins:
+        headers["Access-Control-Allow-Origin"] = origin
+        headers["Access-Control-Allow-Credentials"] = "true"
+    
+    return JSONResponse(
+        status_code=422,
+        content={"detail": exc.errors()},
+        headers=headers
+    )
 
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")

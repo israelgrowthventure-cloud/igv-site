@@ -227,8 +227,11 @@ async def process_pending_analyses(limit: int = 10):
             request_id = analysis.get("request_id", "unknown")
             
             try:
-                # Import Gemini client
-                from mini_analysis_routes import gemini_client, GEMINI_MODEL, build_prompt, MiniAnalysisRequest
+                # Import dynamically to avoid circular imports
+                import mini_analysis_routes
+                
+                gemini_client = mini_analysis_routes.gemini_client
+                GEMINI_MODEL = mini_analysis_routes.GEMINI_MODEL
                 
                 if not gemini_client:
                     logging.error(f"[{request_id}] QUEUE_RETRY: Gemini client not available")
@@ -237,11 +240,11 @@ async def process_pending_analyses(limit: int = 10):
                 
                 # Reconstruct request from payload
                 form_payload = analysis.get("form_payload", {})
-                mini_request = MiniAnalysisRequest(**form_payload)
+                mini_request = mini_analysis_routes.MiniAnalysisRequest(**form_payload)
                 language = analysis.get("language", "fr")
                 
-                # Build prompt
-                prompt = build_prompt(mini_request, language=language)
+                # Build prompt using the function
+                prompt = mini_analysis_routes.build_prompt(mini_request, language=language)
                 
                 # Call Gemini
                 logging.info(f"[{request_id}] QUEUE_RETRY: Attempting to generate analysis")
@@ -285,8 +288,8 @@ async def process_pending_analyses(limit: int = 10):
                 
                 # Send email with analysis - import function if available
                 try:
-                    from extended_routes import send_analysis_email
-                    await send_analysis_email(
+                    import extended_routes
+                    await extended_routes.send_analysis_email(
                         analysis.get("user_email"),
                         analysis.get("brand"),
                         analysis_text,

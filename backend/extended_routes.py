@@ -20,6 +20,7 @@ from email.mime.application import MIMEApplication
 import httpx
 import base64
 import io
+import json
 
 router = APIRouter(prefix="/api")
 
@@ -65,6 +66,59 @@ class CalendarEventRequest(BaseModel):
     phone: Optional[str] = None
     notes: Optional[str] = None
     preferredDate: Optional[str] = None
+
+# DIAGNOSTIC ENDPOINTS
+@router.get("/diag/pdf-header")
+async def check_pdf_header():
+    """
+    Diagnostic: Check if PDF header file exists and is accessible
+    Returns file path, existence, size
+    """
+    try:
+        from reportlab.lib.pagesizes import letter
+        from PyPDF2 import PdfReader, PdfWriter
+        reportlab_ok = True
+    except ImportError:
+        reportlab_ok = False
+    
+    header_path = Path(__file__).parent / 'assets' / 'entete_igv.pdf'
+    
+    result = {
+        "reportlab_installed": reportlab_ok,
+        "pypdf2_installed": True,
+        "header_path": str(header_path),
+        "header_exists": header_path.exists(),
+        "header_size_bytes": header_path.stat().st_size if header_path.exists() else 0,
+        "header_readable": False,
+        "header_pages": 0
+    }
+    
+    if header_path.exists():
+        try:
+            from PyPDF2 import PdfReader
+            reader = PdfReader(str(header_path))
+            result["header_readable"] = True
+            result["header_pages"] = len(reader.pages)
+        except Exception as e:
+            result["header_error"] = str(e)
+    
+    return result
+
+@router.get("/diag/smtp")
+async def check_smtp_config():
+    """
+    Diagnostic: Check SMTP configuration
+    """
+    return {
+        "smtp_configured": bool(SMTP_HOST and SMTP_USER and SMTP_PASSWORD),
+        "smtp_host": SMTP_HOST,
+        "smtp_port": SMTP_PORT,
+        "smtp_user": SMTP_USER,
+        "smtp_password_set": bool(SMTP_PASSWORD),
+        "sendgrid_api_key_set": bool(SENDGRID_API_KEY),
+        "email_from": EMAIL_FROM,
+        "calendar_email": CALENDAR_EMAIL
+    }
 
 # Contact Expert endpoint
 @router.post("/contact-expert")
@@ -496,11 +550,16 @@ async def send_pdf_to_igv(
         igv_email = "israel.growth.venture@gmail.com"
         
         # MISSION B.4: LOG EMAIL SEND REQUEST
-        logging.info(f"EMAIL_SEND_REQUEST to={igv_email} (auto)")
+        logging.info(f"EMAIL_SEND_REQUEST to={igv_email} (auto) brand={brand_name} lang={language}")
         
         if not (SMTP_HOST and SMTP_USER and SMTP_PASSWORD):
             logging.error(f"❌ EMAIL_SEND_ERROR: SMTP not configured")
-            raise Exception("SMTP credentials missing")
+            logging.error(f"   SMTP_HOST={SMTP_HOST}")
+            logging.error(f"   SMTP_USER={SMTP_USER}")
+            logging.error(f"   SMTP_PASSWORD_SET={bool(SMTP_PASSWORD)}")
+            logging.error(f"   SENDGRID_API_KEY_SET={bool(SENDGRID_API_KEY)}")
+            logging.error(f"   → Configure SMTP vars in Render Dashboard then Manual Deploy")
+            raise Exception("SMTP credentials missing - check Render env vars")
         
         # Email subject with timestamp
         from datetime import datetime, timezone

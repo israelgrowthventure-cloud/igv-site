@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 import { Lock, Mail, Loader2, Shield } from 'lucide-react';
 import { toast } from 'sonner';
-import { api } from '../../utils/api';
+import api from '../../utils/api';
 
 const AdminLogin = () => {
   const navigate = useNavigate();

@@ -7,7 +7,7 @@ import {
   Plus, Eye, Edit, Trash2, Shield, UserCheck, UserX, Loader2 
 } from 'lucide-react';
 import { toast } from 'sonner';
-import api from '../utils/api';
+import api from '../../utils/api';
 
 const AdminDashboard = () => {
   const { t, i18n } = useTranslation();

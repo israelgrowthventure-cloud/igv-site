@@ -442,6 +442,7 @@ async def generate_mini_analysis(request: MiniAnalysisRequest, response: Respons
     logging.info(f"[{request_id}] LANG_REQUESTED={language} LANG_USED={language}")
     
     # MISSION C: CREATE LEAD AUTOMATICALLY (BEFORE checking quota/duplicate)
+    lead_data = None
     try:
         from crm_routes import create_lead_in_crm
         
@@ -466,7 +467,6 @@ async def generate_mini_analysis(request: MiniAnalysisRequest, response: Respons
         
         lead_result = await create_lead_in_crm(lead_data, request_id)
         logging.info(f"[{request_id}] Lead creation result: {lead_result}")
-        
     except Exception as lead_error:
         # Don't fail the request if lead creation fails
         logging.error(f"[{request_id}] Lead creation error (non-blocking): {str(lead_error)}")
@@ -476,12 +476,13 @@ async def generate_mini_analysis(request: MiniAnalysisRequest, response: Respons
         logging.error(f"❌ Gemini not configured: API_KEY={bool(GEMINI_API_KEY)}, client={gemini_client is not None}")
         
         # Update lead status to ERROR
-        try:
-            from crm_routes import create_lead_in_crm
-            lead_data["status"] = "ERROR"
-            await create_lead_in_crm(lead_data, request_id)
-        except:
-            pass
+        if lead_data:
+            try:
+                from crm_routes import create_lead_in_crm
+                lead_data["status"] = "ERROR"
+                await create_lead_in_crm(lead_data, request_id)
+            except:
+                pass
         
         raise HTTPException(status_code=500, detail="GEMINI_API_KEY non configurée - contactez l'administrateur")
     

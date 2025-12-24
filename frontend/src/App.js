@@ -45,8 +45,11 @@ function App() {
             <Header />
             <main>
               <Routes>
-                {/* NOUVELLE landing page unique */}
-                <Route path="/" element={<NewHome />} />
+                {/* Homepage complète */}
+                <Route path="/" element={<Home />} />
+                
+                {/* Mini-Analyse (accessible via menu + Home CTA) */}
+                <Route path="/mini-analyse" element={<NewHome />} />
                 
                 {/* Pages essentielles ACTIVES */}
                 <Route path="/about" element={<About />} />
@@ -64,7 +67,7 @@ function App() {
                 <Route path="/admin/login" element={<AdminLogin />} />
                 <Route path="/admin/dashboard" element={<AdminDashboard />} />
                 
-                <Route path="*" element={<NewHome />} />
+                <Route path="*" element={<Home />} />
               </Routes>
             </main>
             <Footer />

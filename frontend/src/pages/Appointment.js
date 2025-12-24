@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { Helmet } from 'react-helmet-async';
 import { Calendar, Mail, ExternalLink } from 'lucide-react';
 import { generateGoogleCalendarLink } from '../utils/calendar';
 

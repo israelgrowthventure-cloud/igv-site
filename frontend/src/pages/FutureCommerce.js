@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { Helmet } from 'react-helmet-async';
 import { ArrowRight, TrendingUp, Eye, Zap, Target } from 'lucide-react';
 
 const FutureCommerce = () => {

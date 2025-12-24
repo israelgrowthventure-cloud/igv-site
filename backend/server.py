@@ -416,12 +416,20 @@ async def get_cart():
 
 
 @api_router.get("/detect-location")
-async def detect_location():
+async def detect_location(request: Request):
     """Detect user location based on IP using ipapi.co"""
     try:
+        # Get client IP from request headers (Render/CloudFlare forward the real IP)
+        client_ip = request.headers.get('X-Forwarded-For', '').split(',')[0].strip()
+        if not client_ip:
+            client_ip = request.headers.get('X-Real-IP', '')
+        
         async with httpx.AsyncClient() as client:
-            # Get client IP from ipapi.co
-            response = await client.get('https://ipapi.co/json/', timeout=5.0)
+            # Get location from client IP
+            if client_ip:
+                response = await client.get(f'https://ipapi.co/{client_ip}/json/', timeout=5.0)
+            else:
+                response = await client.get('https://ipapi.co/json/', timeout=5.0)
             data = response.json()
             
             country_code = data.get('country_code', 'FR')

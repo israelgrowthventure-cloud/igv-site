@@ -12,14 +12,32 @@ import re
 from datetime import datetime, timezone
 from pathlib import Path
 import google.genai as genai
+import traceback
 
 router = APIRouter(prefix="/api")
 
-# Diagnostic endpoint for Gemini API
+# Gemini API configuration
+GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
+GEMINI_MODEL = os.getenv('GEMINI_MODEL', 'gemini-1.5-flash')
+
+gemini_client = None
+
+if GEMINI_API_KEY:
+    try:
+        gemini_client = genai.Client(api_key=GEMINI_API_KEY)
+        key_length = len(GEMINI_API_KEY)
+        logging.info(f"✅ Gemini client initialized with model: {GEMINI_MODEL}")
+        logging.info(f"✅ GEMINI_API_KEY present: yes, length: {key_length}")
+    except Exception as e:
+        logging.error(f"❌ Gemini client initialization failed: {str(e)}")
+        gemini_client = None
+else:
+    logging.warning("⚠️ GEMINI_API_KEY not configured - mini-analysis endpoint will fail")
+
+# Diagnostic endpoint for Gemini API (defined AFTER configuration)
 @router.get("/diag-gemini")
 async def diagnose_gemini():
     """Diagnostic endpoint to test Gemini API key"""
-    import traceback
     
     if not GEMINI_API_KEY:
         return {
@@ -60,24 +78,6 @@ async def diagnose_gemini():
             "traceback": traceback.format_exc(),
             "key_length": len(GEMINI_API_KEY)
         }
-
-# Gemini API configuration
-GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
-GEMINI_MODEL = os.getenv('GEMINI_MODEL', 'gemini-1.5-flash')
-
-gemini_client = None
-
-if GEMINI_API_KEY:
-    try:
-        gemini_client = genai.Client(api_key=GEMINI_API_KEY)
-        key_length = len(GEMINI_API_KEY)
-        logging.info(f"✅ Gemini client initialized with model: {GEMINI_MODEL}")
-        logging.info(f"✅ GEMINI_API_KEY present: yes, length: {key_length}")
-    except Exception as e:
-        logging.error(f"❌ Gemini client initialization failed: {str(e)}")
-        gemini_client = None
-else:
-    logging.warning("⚠️ GEMINI_API_KEY not configured - mini-analysis endpoint will fail")
 
 # MongoDB connection (from server.py)
 mongo_url = os.getenv('MONGODB_URI') or os.getenv('MONGO_URL')

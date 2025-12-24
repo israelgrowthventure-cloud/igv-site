@@ -100,23 +100,23 @@ async def root():
 cors_origins_env = os.getenv('CORS_ALLOWED_ORIGINS') or os.getenv('CORS_ORIGINS', '')
 
 # Default production origins
-default_origins = [
+DEFAULT_ORIGINS = [
     "https://israelgrowthventure.com",
     "https://www.israelgrowthventure.com",
     "http://localhost:3000",  # Local development
     "http://127.0.0.1:3000"   # Local development
 ]
 
-# Merge environment origins with defaults
+# Merge environment origins with defaults (global variable for exception handlers)
 if cors_origins_env and cors_origins_env != '*':
-    final_origins = list(set(default_origins + cors_origins_env.split(',')))
+    ALLOWED_ORIGINS = list(set(DEFAULT_ORIGINS + cors_origins_env.split(',')))
 else:
-    final_origins = default_origins
+    ALLOWED_ORIGINS = DEFAULT_ORIGINS
 
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
-    allow_origins=final_origins,
+    allow_origins=ALLOWED_ORIGINS,
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
@@ -129,7 +129,7 @@ async def http_exception_handler(request: Request, exc: HTTPException):
     headers = {}
     
     # Add CORS headers if origin is allowed
-    if origin in final_origins or "*" in final_origins:
+    if origin in ALLOWED_ORIGINS or "*" in ALLOWED_ORIGINS:
         headers["Access-Control-Allow-Origin"] = origin
         headers["Access-Control-Allow-Credentials"] = "true"
     
@@ -152,7 +152,7 @@ async def general_exception_handler(request: Request, exc: Exception):
     origin = request.headers.get("origin", "")
     headers = {}
     
-    if origin in final_origins or "*" in final_origins:
+    if origin in ALLOWED_ORIGINS or "*" in ALLOWED_ORIGINS:
         headers["Access-Control-Allow-Origin"] = origin
         headers["Access-Control-Allow-Credentials"] = "true"
     
@@ -173,7 +173,7 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
     origin = request.headers.get("origin", "")
     headers = {}
     
-    if origin in final_origins or "*" in final_origins:
+    if origin in ALLOWED_ORIGINS or "*" in ALLOWED_ORIGINS:
         headers["Access-Control-Allow-Origin"] = origin
         headers["Access-Control-Allow-Credentials"] = "true"
     

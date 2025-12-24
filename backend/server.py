@@ -66,6 +66,21 @@ else:
 # Create the main app without a prefix
 app = FastAPI()
 
+# Debug endpoint to check router status
+@app.get("/debug/routers")
+async def debug_routers():
+    """Debug endpoint to check if routers are loaded"""
+    import sys
+    return {
+        "ai_router_loaded": 'ai_routes' in sys.modules,
+        "mini_analysis_router_loaded": 'mini_analysis_routes' in sys.modules,
+        "gemini_api_key_set": bool(os.getenv('GEMINI_API_KEY')),
+        "gemini_api_key_length": len(os.getenv('GEMINI_API_KEY', '')),
+        "mongodb_uri_set": bool(mongo_url),
+        "db_name": db_name,
+        "mongodb_status": mongodb_status
+    }
+
 # Ultra-light health check at root (no MongoDB dependency)
 @app.get("/health")
 async def root_health():

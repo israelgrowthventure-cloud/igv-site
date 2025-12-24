@@ -11,7 +11,8 @@ import logging
 import re
 from datetime import datetime, timezone
 from pathlib import Path
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 
 router = APIRouter(prefix="/api")
 
@@ -19,14 +20,14 @@ router = APIRouter(prefix="/api")
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
 GEMINI_MODEL = os.getenv('GEMINI_MODEL', 'gemini-1.5-flash')
 
+client = None
 if GEMINI_API_KEY:
     try:
-        genai.configure(api_key=GEMINI_API_KEY)
-        model = genai.GenerativeModel(GEMINI_MODEL)
-        logging.info(f"✅ Gemini configured successfully with model: {GEMINI_MODEL}")
+        client = genai.Client(api_key=GEMINI_API_KEY)
+        logging.info(f"✅ Gemini client configured successfully with model: {GEMINI_MODEL}")
     except Exception as e:
         logging.error(f"❌ Gemini configuration error: {str(e)}")
-        model = None
+        client = None
 else:
     logging.warning("⚠️ GEMINI_API_KEY not configured - mini-analysis endpoint will fail")
     model = None
@@ -204,7 +205,7 @@ async def debug_mini_analysis():
         "gemini_api_key_configured": bool(GEMINI_API_KEY),
         "gemini_api_key_length": len(GEMINI_API_KEY) if GEMINI_API_KEY else 0,
         "gemini_model": GEMINI_MODEL,
-        "gemini_model_initialized": model is not None,
+        "gemini_client_initialized": client is not None,
         "mongodb_configured": db is not None,
         "mongodb_db_name": db_name if db else None,
         "igv_files": igv_files_status
@@ -226,9 +227,9 @@ async def generate_mini_analysis(request: MiniAnalysisRequest):
     if request.secteur == "Restauration / Food" and not request.statut_alimentaire:
         raise HTTPException(status_code=400, detail="Le statut alimentaire est obligatoire pour le secteur Restauration / Food")
     
-    # Check Gemini API key
-    if not GEMINI_API_KEY or not model:
-        logging.error(f"❌ Gemini not configured: API_KEY={bool(GEMINI_API_KEY)}, model={model is not None}")
+    # Check Gemini client
+    if not GEMINI_API_KEY or not client:
+        logging.error(f"❌ Gemini not configured: API_KEY={bool(GEMINI_API_KEY)}, client={client is not None}")
         raise HTTPException(status_code=500, detail="GEMINI_API_KEY non configurée - contactez l'administrateur")
     
     # Check MongoDB connection
@@ -256,10 +257,15 @@ async def generate_mini_analysis(request: MiniAnalysisRequest):
         logging.error(f"Error building prompt: {str(e)}")
         raise HTTPException(status_code=500, detail="Erreur lors de la construction de la requête IA")
     
-    # Call Gemini API
+    # Call Gemini API (new google-genai package)
     try:
         logging.info(f"Calling Gemini API for brand: {request.nom_de_marque} (model: {GEMINI_MODEL})")
-        response = model.generate_content(prompt)
+        
+        response = client.models.generate_content(
+            model=GEMINI_MODEL,
+            contents=prompt
+        )
+        
         analysis_text = response.text
         
         if not analysis_text:

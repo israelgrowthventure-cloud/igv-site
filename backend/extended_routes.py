@@ -13,14 +13,25 @@ from datetime import datetime, timezone, timedelta
 from pathlib import Path
 import os
 import logging
-import aiosmtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
-from email.mime.application import MIMEApplication
 import httpx
 import base64
 import io
 import json
+
+# Conditional imports for email (CRITICAL: don't crash if not installed)
+try:
+    import aiosmtplib
+    from email.mime.text import MIMEText
+    from email.mime.multipart import MIMEMultipart
+    from email.mime.application import MIMEApplication
+    EMAIL_LIBS_AVAILABLE = True
+except ImportError as e:
+    logging.warning(f"⚠️ Email libraries not available: {str(e)}")
+    EMAIL_LIBS_AVAILABLE = False
+    aiosmtplib = None
+    MIMEText = None
+    MIMEMultipart = None
+    MIMEApplication = None
 
 router = APIRouter(prefix="/api")
 
@@ -383,16 +394,20 @@ async def generate_pdf(request: PDFGenerateRequest, response: Response):
             pdf_base64 = base64.b64encode(pdf_bytes).decode('utf-8')
             
             # MISSION B: AUTO-SEND PDF TO israel.growth.venture@gmail.com
+            # CRITICAL: Never fail PDF generation if email fails
             try:
-                igv_email = "israel.growth.venture@gmail.com"
-                await send_pdf_to_igv(
-                    brand_name=request.brandName,
-                    pdf_base64=pdf_base64,
-                    filename=f"{request.brandName}_IGV_Analysis.pdf",
-                    language=request.language,
-                    analysis_preview=request.analysisText[:200]
-                )
-                logging.info(f"✅ PDF auto-sent to {igv_email}")
+                if EMAIL_LIBS_AVAILABLE and SMTP_HOST and SMTP_USER and SMTP_PASSWORD:
+                    igv_email = "israel.growth.venture@gmail.com"
+                    await send_pdf_to_igv(
+                        brand_name=request.brandName,
+                        pdf_base64=pdf_base64,
+                        filename=f"{request.brandName}_IGV_Analysis.pdf",
+                        language=request.language,
+                        analysis_preview=request.analysisText[:200]
+                    )
+                    logging.info(f"✅ PDF auto-sent to {igv_email}")
+                else:
+                    logging.warning(f"⚠️ Email auto-send skipped: EMAIL_LIBS={EMAIL_LIBS_AVAILABLE}, SMTP_CONFIGURED={bool(SMTP_HOST and SMTP_USER and SMTP_PASSWORD)}")
             except Exception as email_error:
                 # Don't fail PDF generation if email fails, just log
                 logging.error(f"⚠️ Failed to auto-send PDF to IGV: {str(email_error)}")
@@ -422,6 +437,23 @@ async def email_pdf(request: EmailPDFRequest, background_tasks: BackgroundTasks)
     Generate and email PDF to user
     """
     try:
+        # Check email libraries first
+        if not EMAIL_LIBS_AVAILABLE:
+            return {
+                "success": False,
+                "error": "Email functionality not available",
+                "stage": "smtp",
+                "detail": "Email libraries (aiosmtplib) not installed on server"
+            }
+        
+        if not (SMTP_HOST and SMTP_USER and SMTP_PASSWORD):
+            return {
+                "success": False,
+                "error": "SMTP not configured",
+                "stage": "smtp",
+                "detail": "SMTP credentials missing in environment variables"
+            }
+        
         # Generate PDF first
         pdf_request = PDFGenerateRequest(
             email=request.email,
@@ -435,7 +467,11 @@ async def email_pdf(request: EmailPDFRequest, background_tasks: BackgroundTasks)
         pdf_result = await generate_pdf(pdf_request)
         
         if not pdf_result.get('success'):
-            raise HTTPException(status_code=500, detail="Failed to generate PDF")
+            return {
+                "success": False,
+                "error": "PDF generation failed",
+                "stage": "pdf"
+            }
         
         # Send email with PDF attachment (background task)
         background_tasks.add_task(
@@ -551,6 +587,10 @@ async def send_pdf_to_igv(
         
         # MISSION B.4: LOG EMAIL SEND REQUEST
         logging.info(f"EMAIL_SEND_REQUEST to={igv_email} (auto) brand={brand_name} lang={language}")
+        
+        if not EMAIL_LIBS_AVAILABLE:
+            logging.error(f"❌ EMAIL_SEND_ERROR: Email libraries not installed (aiosmtplib)")
+            raise Exception("Email libraries not available - install aiosmtplib")
         
         if not (SMTP_HOST and SMTP_USER and SMTP_PASSWORD):
             logging.error(f"❌ EMAIL_SEND_ERROR: SMTP not configured")

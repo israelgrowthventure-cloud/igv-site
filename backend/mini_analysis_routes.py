@@ -4,6 +4,7 @@ Handles brand analysis requests with Gemini AI + IGV internal data
 """
 
 from fastapi import APIRouter, HTTPException, Response
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel, EmailStr
 from motor.motor_asyncio import AsyncIOMotorClient
 import os
@@ -418,11 +419,13 @@ async def generate_mini_analysis(request: MiniAnalysisRequest, response: Respons
     Generate AI-powered mini-analysis for Israel market entry
     Includes anti-duplicate check + MongoDB persistence
     Adds debug headers: X-IGV-Lang-Requested, X-IGV-Lang-Used, X-IGV-Cache-Hit
+    CRITICAL: Never fails due to SMTP issues (email is separate endpoint)
     """
     
-    # Validate required fields
-    if not request.email or not request.nom_de_marque or not request.secteur:
-        raise HTTPException(status_code=400, detail="Email, nom_de_marque et secteur sont obligatoires")
+    try:
+        # Validate required fields
+        if not request.email or not request.nom_de_marque or not request.secteur:
+            raise HTTPException(status_code=400, detail="Email, nom_de_marque et secteur sont obligatoires")
     
     # Additional validation for food sector
     if request.secteur == "Restauration / Food" and not request.statut_alimentaire:
@@ -443,12 +446,29 @@ async def generate_mini_analysis(request: MiniAnalysisRequest, response: Respons
     # Check Gemini client
     if not GEMINI_API_KEY or not gemini_client:
         logging.error(f"❌ Gemini not configured: API_KEY={bool(GEMINI_API_KEY)}, client={gemini_client is not None}")
-        raise HTTPException(status_code=500, detail="GEMINI_API_KEY non configurée - contactez l'administrateur")
+        return JSONResponse(
+            status_code=500,
+            content={
+                "success": False,
+                "error": "GEMINI_API_KEY non configurée",
+                "stage": "gemini",
+                "detail": "Contactez l'administrateur"
+            }
+        )
     
     # Check MongoDB connection
     current_db = get_db()
     if current_db is None:
-        raise HTTPException(status_code=500, detail="Base de données non configurée")
+        logging.error("❌ MongoDB not configured")
+        return JSONResponse(
+            status_code=500,
+            content={
+                "success": False,
+                "error": "Base de données non configurée",
+                "stage": "db",
+                "detail": "MongoDB connection unavailable"
+            }
+        )
     
     # Normalize brand name for deduplication
     brand_slug = normalize_brand_slug(request.nom_de_marque)
@@ -590,3 +610,37 @@ async def generate_mini_analysis(request: MiniAnalysisRequest, response: Respons
         "secteur": request.secteur,
         "statut_alimentaire": request.statut_alimentaire
     }
+    
+    except HTTPException:
+        raise  # Re-raise validation errors (400, 409)
+    except Exception as e:
+        # Catch-all error handler with stage detection
+        import traceback
+        error_trace = traceback.format_exc()
+        error_id = f"err_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}"
+        
+        logging.error(f"[{error_id}] Unexpected error in mini-analysis: {str(e)}")
+        logging.error(f"[{error_id}] Type: {type(e).__name__}")
+        logging.error(f"[{error_id}] Traceback:\n{error_trace}")
+        
+        # Detect stage based on error type and message
+        stage = "unknown"
+        if "gemini" in str(e).lower() or "genai" in str(e).lower():
+            stage = "gemini"
+        elif "mongo" in str(e).lower() or "database" in str(e).lower():
+            stage = "db"
+        elif "smtp" in str(e).lower() or "email" in str(e).lower():
+            stage = "smtp"
+        elif "prompt" in str(e).lower():
+            stage = "prompt"
+        
+        return JSONResponse(
+            status_code=500,
+            content={
+                "success": False,
+                "error": str(e),
+                "stage": stage,
+                "error_type": type(e).__name__,
+                "error_id": error_id
+            }
+        )

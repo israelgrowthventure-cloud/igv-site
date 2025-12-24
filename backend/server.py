@@ -12,14 +12,21 @@ from pydantic import BaseModel, Field, ConfigDict, EmailStr
 from typing import List, Optional, Dict, Any
 import uuid
 from datetime import datetime, timezone, timedelta
-import aiosmtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
 import httpx
 import jwt
 import hashlib
 import hmac
 import traceback
+
+# Conditional email imports (don't crash if not available)
+try:
+    import aiosmtplib
+    from email.mime.text import MIMEText
+    from email.mime.multipart import MIMEMultipart
+    EMAIL_LIBS_AVAILABLE = True
+except ImportError as e:
+    logging.warning(f"⚠️ Email libraries not available in server.py: {str(e)}")
+    EMAIL_LIBS_AVAILABLE = False
 
 # Import AI routes
 from ai_routes import router as ai_router

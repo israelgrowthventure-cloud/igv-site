@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>IGV Keep-Alive</title>
+    <meta charset="UTF-8">
+    <script>
+        // Keep-Alive Ping for IGV Backend
+        const BACKEND_URL = 'https://igv-cms-backend.onrender.com';
+        const PING_INTERVAL = 600000; // 10 minutes
+        
+        function pingBackend() {
+            fetch(`${BACKEND_URL}/health`)
+                .then(response => {
+                    if (response.ok) {
+                        console.log('✅ Backend alive:', new Date().toISOString());
+                    } else {
+                        console.warn('⚠️ Backend status:', response.status);
+                    }
+                })
+                .catch(error => {
+                    console.error('❌ Backend ping failed:', error);
+                });
+        }
+        
+        // Ping immediately on load
+        pingBackend();
+        
+        // Then ping every 10 minutes
+        setInterval(pingBackend, PING_INTERVAL);
+        
+        console.log('🚀 Keep-Alive service started');
+    </script>
+</head>
+<body>
+    <h1>IGV Keep-Alive Service</h1>
+    <p>This page keeps the backend alive by pinging it every 10 minutes.</p>
+    <p>Check the browser console for ping status.</p>
+</body>
+</html>

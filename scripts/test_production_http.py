@@ -115,6 +115,11 @@ def check_backend() -> CheckResult:
 
 
 def main() -> int:
+    # Force UTF-8 encoding for console output
+    import sys
+    if hasattr(sys.stdout, 'reconfigure'):
+        sys.stdout.reconfigure(encoding='utf-8')
+    
     checks = [check_frontend(), check_backend()]
     summary = {"results": [c.as_dict() for c in checks], "all_passed": all(c.ok for c in checks)}
 

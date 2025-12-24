@@ -45,7 +45,15 @@ mongodb_status = "not_configured"
 
 if mongo_url:
     try:
-        client = AsyncIOMotorClient(mongo_url)
+        # Configure MongoDB with timeout and connection pooling
+        client = AsyncIOMotorClient(
+            mongo_url,
+            serverSelectionTimeoutMS=5000,  # 5 second timeout
+            connectTimeoutMS=5000,
+            socketTimeoutMS=5000,
+            maxPoolSize=10,
+            minPoolSize=1
+        )
         db = client[db_name]
         mongodb_status = "configured"
         logging.info(f"MongoDB configured for database: {db_name}")
@@ -57,6 +65,17 @@ else:
 
 # Create the main app without a prefix
 app = FastAPI()
+
+# Ultra-light health check at root (no MongoDB dependency)
+@app.get("/health")
+async def root_health():
+    """Ultra-fast health check - no database check"""
+    return {"status": "ok", "service": "igv-backend", "version": "1.0.0"}
+
+@app.get("/")
+async def root():
+    """Root endpoint"""
+    return {"message": "IGV Backend API", "status": "running"}
 
 # CORS configuration - MUST be configured BEFORE routers
 # Production domains explicitly allowed
@@ -99,10 +118,14 @@ async def health_check():
     
     if mongodb_status == "configured" and db is not None:
         try:
-            # Test MongoDB connection
-            await db.command('ping')
+            # Test MongoDB connection with timeout
+            import asyncio
+            await asyncio.wait_for(db.command('ping'), timeout=3.0)
             health_status["mongodb"] = "connected"
             health_status["db"] = db_name
+        except asyncio.TimeoutError:
+            logging.error("MongoDB ping timeout")
+            health_status["mongodb"] = "timeout"
         except Exception as e:
             logging.error(f"MongoDB ping failed: {str(e)}")
             health_status["mongodb"] = "error"

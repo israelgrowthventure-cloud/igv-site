@@ -1,7 +1,28 @@
 import axios from 'axios';
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'https://igv-cms-backend.onrender.com';
 const API = `${BACKEND_URL}/api`;
+
+// Configure axios with retry logic
+axios.interceptors.response.use(
+  response => response,
+  async error => {
+    const config = error.config;
+    if (!config || !config.retry) {
+      config.retry = 0;
+    }
+    
+    if (config.retry >= 3) {
+      return Promise.reject(error);
+    }
+    
+    config.retry += 1;
+    const delay = 2000 * config.retry;
+    await new Promise(resolve => setTimeout(resolve, delay));
+    
+    return axios(config);
+  }
+);
 
 // API Client
 export const api = {

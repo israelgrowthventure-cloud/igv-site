@@ -20,10 +20,15 @@ GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
 GEMINI_MODEL = os.getenv('GEMINI_MODEL', 'gemini-2.0-flash-exp')
 
 if GEMINI_API_KEY:
-    genai.configure(api_key=GEMINI_API_KEY)
-    model = genai.GenerativeModel(GEMINI_MODEL)
+    try:
+        genai.configure(api_key=GEMINI_API_KEY)
+        model = genai.GenerativeModel(GEMINI_MODEL)
+        logging.info(f"✅ Gemini configured successfully with model: {GEMINI_MODEL}")
+    except Exception as e:
+        logging.error(f"❌ Gemini configuration error: {str(e)}")
+        model = None
 else:
-    logging.warning("GEMINI_API_KEY not configured - mini-analysis endpoint will fail")
+    logging.warning("⚠️ GEMINI_API_KEY not configured - mini-analysis endpoint will fail")
     model = None
 
 # MongoDB connection (from server.py)
@@ -172,6 +177,34 @@ def build_prompt(request: MiniAnalysisRequest) -> str:
     return final_prompt
 
 
+@router.get("/mini-analysis/debug")
+async def debug_mini_analysis():
+    """Debug endpoint pour vérifier configuration mini-analysis"""
+    igv_files_status = {}
+    for name, path in [
+        ("IGV_Types", TYPES_FILE),
+        ("Whitelist_Jewish", WHITELIST_JEWISH),
+        ("Whitelist_Arab", WHITELIST_ARAB),
+        ("Prompt_Restauration", PROMPT_RESTAURATION),
+        ("Prompt_Retail", PROMPT_RETAIL),
+        ("Prompt_Services", PROMPT_SERVICES)
+    ]:
+        igv_files_status[name] = {
+            "exists": path.exists(),
+            "path": str(path),
+            "size": path.stat().st_size if path.exists() else 0
+        }
+    
+    return {
+        "gemini_api_key_configured": bool(GEMINI_API_KEY),
+        "gemini_model": GEMINI_MODEL,
+        "gemini_model_initialized": model is not None,
+        "mongodb_configured": db is not None,
+        "mongodb_db_name": db_name if db else None,
+        "igv_files": igv_files_status
+    }
+
+
 @router.post("/mini-analysis")
 async def generate_mini_analysis(request: MiniAnalysisRequest):
     """
@@ -189,6 +222,7 @@ async def generate_mini_analysis(request: MiniAnalysisRequest):
     
     # Check Gemini API key
     if not GEMINI_API_KEY or not model:
+        logging.error(f"❌ Gemini not configured: API_KEY={bool(GEMINI_API_KEY)}, model={model is not None}")
         raise HTTPException(status_code=500, detail="GEMINI_API_KEY non configurée - contactez l'administrateur")
     
     # Check MongoDB connection

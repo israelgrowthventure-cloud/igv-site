@@ -18,7 +18,7 @@ router = APIRouter(prefix="/api")
 
 # Gemini API configuration
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
-GEMINI_MODEL = os.getenv('GEMINI_MODEL', 'gemini-1.5-flash')
+GEMINI_MODEL = os.getenv('GEMINI_MODEL', 'gemini-1.5-flash-latest')  # Use -latest suffix for google-genai 0.2.2
 
 gemini_client = None
 
@@ -291,7 +291,7 @@ async def generate_mini_analysis(request: MiniAnalysisRequest):
     
     # Check MongoDB connection
     current_db = get_db()
-    if not current_db:
+    if current_db is None:
         raise HTTPException(status_code=500, detail="Base de données non configurée")
     
     # Normalize brand name for deduplication

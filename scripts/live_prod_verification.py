@@ -1,431 +1,298 @@
 """
-LIVE PRODUCTION VERIFICATION - Multilingual Mini-Analysis + PDF Header
-============================================================================
-This script calls the PRODUCTION API exactly like the frontend does,
-generates 6 real mini-analyses, downloads PDFs, and provides proof.
-
-Brands tested: "tubi" and "tubo" in FR/EN/HE
+LIVE PRODUCTION VERIFICATION SCRIPT
+Teste la génération de mini-analyses + PDF avec entête en PROD
+MISSION: Prouver que l'entête PDF est appliqué et que l'email auto est envoyé
 """
 
 import httpx
-import json
+import base64
 import os
+import sys
 from pathlib import Path
 from datetime import datetime
-import sys
 
-# Force UTF-8 on Windows
+# Force UTF-8 encoding
 if sys.platform == 'win32':
     import codecs
     sys.stdout = codecs.getwriter('utf-8')(sys.stdout.buffer, 'strict')
     sys.stderr = codecs.getwriter('utf-8')(sys.stderr.buffer, 'strict')
 
-# Production endpoints (matching frontend exactly)
+# Configuration
 BACKEND_URL = "https://igv-cms-backend.onrender.com"
-MINI_ANALYSIS_ENDPOINT = f"{BACKEND_URL}/api/mini-analysis"
-PDF_GENERATE_ENDPOINT = f"{BACKEND_URL}/api/pdf/generate"
+OUTPUT_DIR = Path("out_live_pdfs")
 
-# Output directory for PDFs
-OUTPUT_DIR = Path("out")
+# Create output directory
 OUTPUT_DIR.mkdir(exist_ok=True)
 
-# Test configurations
-TEST_CONFIGS = [
-    # Brand "tubi"
-    {
-        "brand": "tubi",
-        "language": "fr",
-        "data": {
-            "email": "test-tubi-fr@igv.com",
-            "nom_de_marque": "tubi",
-            "secteur": "Restauration / Food",
-            "statut_alimentaire": "Kasher",
-            "anciennete": "5 ans",
-            "pays_dorigine": "France",
-            "concept": "Fast-food moderne",
-            "positionnement": "Casual dining",
-            "modele_actuel": "Franchise",
-            "differenciation": "Qualité premium",
-            "objectif_israel": "Expansion régionale",
-            "contraintes": "Budget limité",
-            "language": "fr"
-        }
-    },
-    {
-        "brand": "tubi",
-        "language": "en",
-        "data": {
-            "email": "test-tubi-en@igv.com",
-            "nom_de_marque": "tubi",
-            "secteur": "Restauration / Food",
-            "statut_alimentaire": "Kosher",
-            "anciennete": "5 years",
-            "pays_dorigine": "France",
-            "concept": "Modern fast-food",
-            "positionnement": "Casual dining",
-            "modele_actuel": "Franchise",
-            "differenciation": "Premium quality",
-            "objectif_israel": "Regional expansion",
-            "contraintes": "Limited budget",
-            "language": "en"
-        }
-    },
-    {
-        "brand": "tubi",
-        "language": "he",
-        "data": {
-            "email": "test-tubi-he@igv.com",
-            "nom_de_marque": "tubi",
-            "secteur": "Restauration / Food",
-            "statut_alimentaire": "Kosher",
-            "anciennete": "5 years",
-            "pays_dorigine": "France",
-            "concept": "Modern fast-food",
-            "positionnement": "Casual dining",
-            "modele_actuel": "Franchise",
-            "differenciation": "Premium quality",
-            "objectif_israel": "Regional expansion",
-            "contraintes": "Limited budget",
-            "language": "he"
-        }
-    },
-    # Brand "tubo"
-    {
-        "brand": "tubo",
-        "language": "fr",
-        "data": {
-            "email": "test-tubo-fr@igv.com",
-            "nom_de_marque": "tubo",
-            "secteur": "Retail (hors food)",
-            "statut_alimentaire": "",
-            "anciennete": "3 ans",
-            "pays_dorigine": "Italie",
-            "concept": "Mode urbaine",
-            "positionnement": "Premium",
-            "modele_actuel": "Corporate",
-            "differenciation": "Design unique",
-            "objectif_israel": "Premier magasin",
-            "contraintes": "Logistique",
-            "language": "fr"
-        }
-    },
-    {
-        "brand": "tubo",
-        "language": "en",
-        "data": {
-            "email": "test-tubo-en@igv.com",
-            "nom_de_marque": "tubo",
-            "secteur": "Retail (hors food)",
-            "statut_alimentaire": "",
-            "anciennete": "3 years",
-            "pays_dorigine": "Italy",
-            "concept": "Urban fashion",
-            "positionnement": "Premium",
-            "modele_actuel": "Corporate",
-            "differenciation": "Unique design",
-            "objectif_israel": "First store",
-            "contraintes": "Logistics",
-            "language": "en"
-        }
-    },
-    {
-        "brand": "tubo",
-        "language": "he",
-        "data": {
-            "email": "test-tubo-he@igv.com",
-            "nom_de_marque": "tubo",
-            "secteur": "Retail (hors food)",
-            "statut_alimentaire": "",
-            "anciennete": "3 years",
-            "pays_dorigine": "Italy",
-            "concept": "Urban fashion",
-            "positionnement": "Premium",
-            "modele_actuel": "Corporate",
-            "differenciation": "Unique design",
-            "objectif_israel": "First store",
-            "contraintes": "Logistics",
-            "language": "he"
-        }
-    }
+# Test cases - 6 generations as requested
+TEST_CASES = [
+    {"brand": "tubi", "language": "fr", "sector": "Restauration / Food", "food_status": "Kasher"},
+    {"brand": "tabi", "language": "en", "sector": "Restaurant / Food", "food_status": "Kosher"},
+    {"brand": "tubi", "language": "he", "sector": "Restauration / Food", "food_status": "Kasher"},
+    {"brand": "tuto", "language": "fr", "sector": "Retail (hors food)", "food_status": ""},
+    {"brand": "tita", "language": "en", "sector": "Retail (non-food)", "food_status": ""},
+    {"brand": "tato", "language": "he", "sector": "Services", "food_status": ""},
 ]
 
-def print_separator(title=""):
-    """Print a visual separator"""
-    print(f"\n{'='*80}")
-    if title:
-        print(f"  {title}")
-        print(f"{'='*80}")
 
-def generate_mini_analysis(config):
+def generate_mini_analysis(brand: str, language: str, sector: str, food_status: str):
     """
-    Generate mini-analysis by calling PROD endpoint exactly like frontend
-    
-    Returns: (success, analysis_text, response_data)
+    Call PROD mini-analysis endpoint (same as frontend)
     """
-    brand = config["brand"]
-    language = config["language"]
-    data = config["data"]
+    print(f"\n{'='*80}")
+    print(f"GENERATING: {brand} / {language.upper()} / {sector}")
+    print(f"{'='*80}")
     
-    print_separator(f"GENERATING: {brand.upper()} - {language.upper()}")
+    url = f"{BACKEND_URL}/api/mini-analysis"
     
-    print(f"\n📋 Request Details:")
-    print(f"  Endpoint: POST {MINI_ANALYSIS_ENDPOINT}")
-    print(f"  Brand: {brand}")
-    print(f"  Language: {language}")
-    print(f"  Email: {data['email']}")
-    print(f"  Sector: {data['secteur']}")
+    # Request body (same structure as frontend api.js sendMiniAnalysis)
+    payload = {
+        "email": "test-live@igv.com",
+        "nom_de_marque": brand,
+        "secteur": sector,
+        "statut_alimentaire": food_status,
+        "anciennete": "2-5 ans",
+        "pays_dorigine": "France",
+        "concept": "Test concept for live verification",
+        "positionnement": "Premium",
+        "modele_actuel": "Franchise",
+        "differenciation": "Innovation",
+        "objectif_israel": "Expansion",
+        "contraintes": "Budget",
+        "language": language  # CRITICAL: language parameter
+    }
     
     try:
-        print(f"\n⏳ Calling production API...")
-        print(f"  (May take 30-60s for cold start + Gemini API)")
+        print(f"→ POST {url}")
+        print(f"  Body: email={payload['email']}, brand={brand}, language={language}")
         
-        # Call exactly like frontend
-        response = httpx.post(
-            MINI_ANALYSIS_ENDPOINT,
-            json=data,
-            timeout=120.0,
-            headers={
-                "Content-Type": "application/json"
-            }
-        )
+        response = httpx.post(url, json=payload, timeout=120.0)
         
-        print(f"\n✅ Response received")
-        print(f"  Status: {response.status_code}")
+        print(f"← Status: {response.status_code}")
         
-        # Extract debug headers (if backend provides them)
-        lang_requested = response.headers.get("X-IGV-Lang-Requested", "N/A")
-        lang_used = response.headers.get("X-IGV-Lang-Used", "N/A")
-        cache_hit = response.headers.get("X-IGV-Cache-Hit", "N/A")
+        # Check for debug headers (if added)
+        headers_to_check = [
+            'X-IGV-Lang-Requested',
+            'X-IGV-Lang-Used',
+            'X-IGV-Cache-Hit',
+            'X-IGV-Cache-Key'
+        ]
         
-        print(f"  Headers:")
-        print(f"    X-IGV-Lang-Requested: {lang_requested}")
-        print(f"    X-IGV-Lang-Used: {lang_used}")
-        print(f"    X-IGV-Cache-Hit: {cache_hit}")
+        for header in headers_to_check:
+            if header in response.headers:
+                print(f"  {header}: {response.headers[header]}")
         
         if response.status_code != 200:
-            print(f"\n❌ ERROR: HTTP {response.status_code}")
-            error_detail = response.json().get("detail", response.text[:200])
-            print(f"  Detail: {error_detail}")
-            return False, None, None
+            print(f"❌ FAILED: HTTP {response.status_code}")
+            print(f"Response: {response.text[:500]}")
+            return None
         
-        result = response.json()
+        data = response.json()
         
-        if not result.get("success"):
-            print(f"\n❌ ERROR: API returned success=False")
-            print(f"  Message: {result.get('message', 'Unknown error')}")
-            return False, None, result
+        if not data.get('success'):
+            print(f"❌ FAILED: success=False")
+            print(f"Message: {data.get('message', 'No message')}")
+            return None
         
-        analysis_text = result.get("analysis", "")
+        analysis_text = data.get('analysis', '')
         
-        if not analysis_text:
-            print(f"\n❌ ERROR: Empty analysis text")
-            return False, None, result
+        # Print first 600 chars
+        print(f"\n✅ SUCCESS - Analysis received")
+        print(f"  Length: {len(analysis_text)} chars")
+        print(f"\n--- FIRST 600 CHARS ---")
+        print(analysis_text[:600])
+        print(f"--- END FIRST 600 CHARS ---\n")
         
-        print(f"\n📄 Analysis received:")
-        print(f"  Length: {len(analysis_text)} characters")
-        print(f"\n  First 600 characters:")
-        print(f"  {'-'*76}")
-        print(f"  {analysis_text[:600]}")
-        print(f"  {'-'*76}")
-        
-        if len(analysis_text) > 600:
-            print(f"  ... ({len(analysis_text) - 600} more characters)")
-        
-        return True, analysis_text, result
-        
-    except httpx.TimeoutException:
-        print(f"\n❌ TIMEOUT: Request took more than 120 seconds")
-        return False, None, None
+        return {
+            "success": True,
+            "analysis": analysis_text,
+            "brand": brand,
+            "language": language,
+            "response_data": data
+        }
         
     except Exception as e:
         print(f"\n❌ EXCEPTION: {str(e)}")
         import traceback
         traceback.print_exc()
-        return False, None, None
+        return None
 
 
-def download_pdf(brand, language, analysis_text, email):
+def generate_and_download_pdf(brand: str, language: str, analysis_text: str):
     """
-    Generate and download PDF
-    
-    Returns: (success, pdf_path, pdf_size_bytes)
+    Generate PDF and download it locally
     """
-    print(f"\n📥 Generating PDF for {brand} ({language})...")
+    print(f"\n{'='*80}")
+    print(f"GENERATING PDF: {brand} / {language.upper()}")
+    print(f"{'='*80}")
     
-    pdf_data = {
-        "email": email,
+    url = f"{BACKEND_URL}/api/pdf/generate"
+    
+    payload = {
+        "email": "test-live@igv.com",
         "brandName": brand,
-        "sector": "Restauration / Food" if brand == "tubi" else "Retail (hors food)",
-        "country": "France" if brand == "tubi" else "Italy",
+        "sector": "Test Sector",
+        "country": "France",
         "analysisText": analysis_text,
         "language": language
     }
     
     try:
-        response = httpx.post(
-            PDF_GENERATE_ENDPOINT,
-            json=pdf_data,
-            timeout=60.0,
-            headers={"Content-Type": "application/json"}
-        )
+        print(f"→ POST {url}")
         
-        print(f"  Status: {response.status_code}")
+        response = httpx.post(url, json=payload, timeout=120.0)
+        
+        print(f"← Status: {response.status_code}")
         
         if response.status_code != 200:
-            print(f"  ❌ ERROR: HTTP {response.status_code}")
-            print(f"  Detail: {response.text[:200]}")
-            return False, None, 0
+            print(f"❌ PDF GENERATION FAILED: HTTP {response.status_code}")
+            print(f"Response: {response.text[:500]}")
+            return None
         
-        result = response.json()
+        data = response.json()
         
-        if not result.get("success"):
-            print(f"  ❌ ERROR: PDF generation failed")
-            return False, None, 0
+        if not data.get('success'):
+            print(f"❌ PDF GENERATION FAILED: success=False")
+            return None
         
-        # Get PDF as base64
-        pdf_base64 = result.get("pdfBase64")
+        pdf_base64 = data.get('pdfBase64')
+        filename = data.get('filename', f'{brand}_{language}.pdf')
         
         if not pdf_base64:
-            print(f"  ❌ ERROR: No PDF data returned")
-            return False, None, 0
+            print(f"❌ No PDF data in response")
+            return None
         
-        # Decode and save
-        import base64
+        # Decode and save PDF
         pdf_bytes = base64.b64decode(pdf_base64)
         
-        pdf_filename = f"{brand}_{language}.pdf"
-        pdf_path = OUTPUT_DIR / pdf_filename
+        output_file = OUTPUT_DIR / f"{brand}_{language}.pdf"
+        output_file.write_bytes(pdf_bytes)
         
-        with open(pdf_path, "wb") as f:
-            f.write(pdf_bytes)
+        print(f"✅ PDF SAVED: {output_file}")
+        print(f"  Size: {len(pdf_bytes)} bytes")
         
-        pdf_size = len(pdf_bytes)
-        
-        print(f"  ✅ PDF saved: {pdf_path}")
-        print(f"  Size: {pdf_size:,} bytes ({pdf_size/1024:.1f} KB)")
-        
-        return True, pdf_path, pdf_size
+        return {
+            "success": True,
+            "filename": str(output_file),
+            "size": len(pdf_bytes)
+        }
         
     except Exception as e:
-        print(f"  ❌ EXCEPTION: {str(e)}")
+        print(f"\n❌ PDF EXCEPTION: {str(e)}")
         import traceback
         traceback.print_exc()
-        return False, None, 0
+        return None
 
 
 def main():
-    """Run live production verification"""
-    
     print(f"\n{'#'*80}")
     print(f"# LIVE PRODUCTION VERIFICATION")
     print(f"# Backend: {BACKEND_URL}")
-    print(f"# Tests: 6 mini-analyses (tubi + tubo × FR/EN/HE)")
+    print(f"# Output: {OUTPUT_DIR}")
     print(f"# Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print(f"{'#'*80}")
     
     results = []
-    pdf_files = []
     
-    # Generate all 6 analyses
-    for i, config in enumerate(TEST_CONFIGS, 1):
-        brand = config["brand"]
-        language = config["language"]
+    for i, test_case in enumerate(TEST_CASES, 1):
+        print(f"\n\n{'#'*80}")
+        print(f"# TEST CASE {i}/{len(TEST_CASES)}")
+        print(f"{'#'*80}")
         
-        print(f"\n\n{'*'*80}")
-        print(f"* TEST {i}/6: {brand.upper()} - {language.upper()}")
-        print(f"{'*'*80}")
+        brand = test_case['brand']
+        language = test_case['language']
+        sector = test_case['sector']
+        food_status = test_case['food_status']
         
-        # Generate analysis
-        success, analysis_text, response_data = generate_mini_analysis(config)
+        # Step 1: Generate mini-analysis
+        analysis_result = generate_mini_analysis(brand, language, sector, food_status)
         
-        if not success:
-            print(f"\n❌ FAILED: Could not generate analysis")
+        if not analysis_result:
             results.append({
+                "test_case": i,
                 "brand": brand,
                 "language": language,
-                "success": False,
-                "analysis_length": 0,
-                "pdf_path": None,
-                "pdf_size": 0
+                "analysis_success": False,
+                "pdf_success": False
             })
             continue
         
-        # Download PDF
-        pdf_success, pdf_path, pdf_size = download_pdf(
+        # Step 2: Generate and download PDF
+        pdf_result = generate_and_download_pdf(
             brand, 
             language, 
-            analysis_text,
-            config["data"]["email"]
+            analysis_result['analysis']
         )
         
-        if pdf_success:
-            pdf_files.append({
-                "brand": brand,
-                "language": language,
-                "path": pdf_path,
-                "size": pdf_size
-            })
-        
         results.append({
+            "test_case": i,
             "brand": brand,
             "language": language,
-            "success": True,
-            "analysis_length": len(analysis_text),
-            "analysis_preview": analysis_text[:600],
-            "pdf_path": pdf_path if pdf_success else None,
-            "pdf_size": pdf_size
+            "analysis_success": True,
+            "analysis_length": len(analysis_result['analysis']),
+            "analysis_preview": analysis_result['analysis'][:200],
+            "pdf_success": pdf_result is not None if pdf_result else False,
+            "pdf_file": pdf_result['filename'] if pdf_result else None,
+            "pdf_size": pdf_result['size'] if pdf_result else None
         })
-        
-        # Small delay between requests
-        if i < len(TEST_CONFIGS):
-            print(f"\n⏸️  Waiting 3 seconds before next request...")
-            import time
-            time.sleep(3)
     
     # Summary
-    print_separator("FINAL SUMMARY")
+    print(f"\n\n{'='*80}")
+    print("FINAL SUMMARY")
+    print(f"{'='*80}\n")
     
-    print(f"\n📊 Results:")
-    print(f"  Total tests: {len(results)}")
-    print(f"  Successful analyses: {sum(1 for r in results if r['success'])}")
-    print(f"  PDFs generated: {len(pdf_files)}")
-    
-    print(f"\n📄 Analysis Texts (First 600 chars):")
     for result in results:
-        if result["success"]:
-            brand = result["brand"]
-            lang = result["language"]
-            preview = result["analysis_preview"]
-            
-            print(f"\n  {brand.upper()} ({lang.upper()}):")
-            print(f"    Length: {result['analysis_length']} chars")
-            print(f"    Preview: {preview[:200]}...")
+        status_analysis = "✅" if result['analysis_success'] else "❌"
+        status_pdf = "✅" if result['pdf_success'] else "❌"
+        
+        print(f"{status_analysis} Analysis | {status_pdf} PDF | {result['brand']} / {result['language'].upper()}")
+        
+        if result['analysis_success']:
+            print(f"   Preview: {result['analysis_preview'][:100]}...")
+        
+        if result['pdf_success']:
+            print(f"   PDF: {result['pdf_file']} ({result['pdf_size']} bytes)")
+        
+        print()
     
-    print(f"\n📁 PDF Files Generated:")
-    if pdf_files:
-        total_size = sum(f["size"] for f in pdf_files)
-        print(f"  Directory: {OUTPUT_DIR.absolute()}")
-        print(f"  Total size: {total_size:,} bytes ({total_size/1024:.1f} KB)")
-        print(f"\n  Files:")
-        for pdf in pdf_files:
-            print(f"    ✅ {pdf['path'].name} - {pdf['size']:,} bytes")
-    else:
-        print(f"  ❌ No PDFs generated")
+    # List all generated PDFs
+    pdfs = list(OUTPUT_DIR.glob("*.pdf"))
     
     print(f"\n{'='*80}")
-    print(f"VERIFICATION COMPLETE")
+    print(f"GENERATED PDFs ({len(pdfs)} files)")
+    print(f"{'='*80}\n")
+    
+    for pdf in sorted(pdfs):
+        size = pdf.stat().st_size
+        print(f"  {pdf.name} - {size} bytes ({size/1024:.1f} KB)")
+    
+    print(f"\n{'='*80}")
+    print("NEXT STEPS:")
     print(f"{'='*80}")
+    print(f"""
+1. ✅ Open each PDF in {OUTPUT_DIR}/ and verify:
+   - Header "entete igv.pdf" is visible at the top
+   - Content matches the language (FR/EN/HE)
+   - Professional formatting
+
+2. ✅ Check email israel.growth.venture@gmail.com:
+   - Should receive {len([r for r in results if r['pdf_success']])} emails
+   - Each with PDF attached
+   - Subject: "IGV Mini-Analysis PDF — {{brand}} — {{lang}} — {{timestamp}}"
+
+3. ✅ Check Render logs (https://dashboard.render.com):
+   - Search for: LANG_REQUESTED, HEADER_MERGE_OK, EMAIL_SEND_OK
+   - Verify no HEADER_MERGE_FAILED or EMAIL_SEND_ERROR
+
+4. 📋 Provide proof:
+   - Paste this console output
+   - Upload/share the {len(pdfs)} PDFs from {OUTPUT_DIR}/
+   - Screenshot of email inbox (israel.growth.venture@gmail.com)
+   - Extracts from Render logs
+""")
     
-    print(f"\n📋 Next Steps:")
-    print(f"  1. Check the PDFs in: {OUTPUT_DIR.absolute()}")
-    print(f"  2. Verify IGV header is visible in each PDF")
-    print(f"  3. Check Render logs for:")
-    print(f"     - LANG_REQUESTED/LANG_USED")
-    print(f"     - HEADER_PATH/HEADER_EXISTS/HEADER_MERGE_OK")
-    print(f"  4. Provide the 6 PDFs + logs extracts as proof")
-    
-    return results, pdf_files
+    return 0 if all(r['analysis_success'] and r['pdf_success'] for r in results) else 1
 
 
 if __name__ == "__main__":
-    results, pdf_files = main()
+    sys.exit(main())

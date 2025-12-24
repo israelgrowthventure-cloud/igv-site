@@ -287,7 +287,7 @@ async def generate_pdf(request: PDFGenerateRequest, response: Response):
             content_pdf_bytes = buffer.getvalue()
             buffer.close()
             
-            # MISSION C.4 & C.5: MERGE HEADER WITH CONTENT PDF
+            # MISSION C.4 & C.5: MERGE HEADER WITH CONTENT PDF (NO FALLBACK)
             try:
                 # Read header PDF
                 header_reader = PdfReader(str(header_path))
@@ -315,16 +315,33 @@ async def generate_pdf(request: PDFGenerateRequest, response: Response):
                 logging.info(f"HEADER_MERGE_OK pages={len(content_reader.pages)}")
                 
             except Exception as merge_error:
-                # MISSION C.5: EXPLICIT ERROR IF MERGE FAILS
+                # MISSION C.5: EXPLICIT ERROR IF MERGE FAILS (NO FALLBACK)
                 logging.error(f"❌ HEADER_MERGE_FAILED: {str(merge_error)}")
+                logging.error(f"❌ HEADER_PATH_USED: {header_path}")
+                logging.error(f"❌ This is a CRITICAL error - PDF generation ABORTED")
                 raise HTTPException(
                     status_code=500,
-                    detail=f"PDF header merge failed: {str(merge_error)}"
+                    detail=f"PDF header merge failed: {str(merge_error)}. Header file missing or corrupted."
                 )
 
             
             # Encode to base64
             pdf_base64 = base64.b64encode(pdf_bytes).decode('utf-8')
+            
+            # MISSION B: AUTO-SEND PDF TO israel.growth.venture@gmail.com
+            try:
+                igv_email = "israel.growth.venture@gmail.com"
+                await send_pdf_to_igv(
+                    brand_name=request.brandName,
+                    pdf_base64=pdf_base64,
+                    filename=f"{request.brandName}_IGV_Analysis.pdf",
+                    language=request.language,
+                    analysis_preview=request.analysisText[:200]
+                )
+                logging.info(f"✅ PDF auto-sent to {igv_email}")
+            except Exception as email_error:
+                # Don't fail PDF generation if email fails, just log
+                logging.error(f"⚠️ Failed to auto-send PDF to IGV: {str(email_error)}")
             
             return {
                 "success": True,
@@ -464,6 +481,80 @@ async def create_calendar_event_task(summary: str, description: str, email: str)
         logging.error(f"Error in create_calendar_event_task: {str(e)}")
         return {"eventId": "error"}
 
+async def send_pdf_to_igv(
+    brand_name: str,
+    pdf_base64: str,
+    filename: str,
+    language: str,
+    analysis_preview: str
+):
+    """
+    MISSION B: Auto-send PDF to israel.growth.venture@gmail.com
+    Called automatically after each PDF generation
+    """
+    try:
+        igv_email = "israel.growth.venture@gmail.com"
+        
+        # MISSION B.4: LOG EMAIL SEND REQUEST
+        logging.info(f"EMAIL_SEND_REQUEST to={igv_email} (auto)")
+        
+        if not (SMTP_HOST and SMTP_USER and SMTP_PASSWORD):
+            logging.error(f"❌ EMAIL_SEND_ERROR: SMTP not configured")
+            raise Exception("SMTP credentials missing")
+        
+        # Email subject with timestamp
+        from datetime import datetime, timezone
+        timestamp = datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')
+        subject = f"IGV Mini-Analysis PDF — {brand_name} — {language.upper()} — {timestamp}"
+        
+        # Email body
+        body = f"""
+New Mini-Analysis Generated
+
+Brand: {brand_name}
+Language: {language.upper()}
+Timestamp: {timestamp}
+
+Analysis Preview (first 200 chars):
+{analysis_preview}
+
+---
+Full analysis attached as PDF.
+
+Israel Growth Venture
+www.israelgrowthventure.com
+"""
+        
+        message = MIMEMultipart()
+        message['From'] = EMAIL_FROM
+        message['To'] = igv_email
+        message['Subject'] = subject
+        
+        # Body
+        message.attach(MIMEText(body, 'plain', 'utf-8'))
+        
+        # Attach PDF
+        pdf_bytes = base64.b64decode(pdf_base64)
+        pdf_attachment = MIMEApplication(pdf_bytes, _subtype='pdf')
+        pdf_attachment.add_header('Content-Disposition', 'attachment', filename=filename)
+        message.attach(pdf_attachment)
+        
+        # Send email
+        async with aiosmtplib.SMTP(hostname=SMTP_HOST, port=SMTP_PORT) as smtp:
+            await smtp.starttls()
+            await smtp.login(SMTP_USER, SMTP_PASSWORD)
+            await smtp.send_message(message)
+        
+        # MISSION B.3: LOG EMAIL_SEND_OK
+        message_id = message.get('Message-ID', 'unknown')
+        logging.info(f"EMAIL_SEND_OK to={igv_email} message_id={message_id}")
+        
+    except Exception as e:
+        # MISSION B.3: LOG EMAIL_SEND_ERROR
+        logging.error(f"EMAIL_SEND_ERROR to={igv_email} reason={str(e)}")
+        raise
+
+
 async def send_pdf_email_task(
     to_email: str,
     brand_name: str,
@@ -473,10 +564,15 @@ async def send_pdf_email_task(
 ):
     """
     Send PDF via email (background task)
+    MISSION B: Always CC israel.growth.venture@gmail.com
     """
     try:
+        # MISSION B.4: LOG EMAIL SEND REQUEST
+        igv_email = "israel.growth.venture@gmail.com"
+        logging.info(f"EMAIL_SEND_REQUEST to={to_email}, cc={igv_email}")
+        
         if not (SMTP_HOST and SMTP_USER and SMTP_PASSWORD):
-            logging.warning("SMTP not configured, cannot send PDF email")
+            logging.error(f"❌ EMAIL_SEND_ERROR: SMTP not configured (SMTP_HOST={bool(SMTP_HOST)}, SMTP_USER={bool(SMTP_USER)}, SMTP_PASSWORD={bool(SMTP_PASSWORD)})")
             return
         
         # Email subject and body based on language
@@ -531,6 +627,7 @@ async def send_pdf_email_task(
         message = MIMEMultipart()
         message['From'] = EMAIL_FROM
         message['To'] = to_email
+        message['Cc'] = igv_email  # MISSION B: Always CC israel.growth.venture@gmail.com
         message['Subject'] = subjects.get(language, subjects['fr'])
         
         # Body
@@ -547,12 +644,19 @@ async def send_pdf_email_task(
         async with aiosmtplib.SMTP(hostname=SMTP_HOST, port=SMTP_PORT) as smtp:
             await smtp.starttls()
             await smtp.login(SMTP_USER, SMTP_PASSWORD)
-            await smtp.send_message(message)
+            send_result = await smtp.send_message(message)
         
-        logging.info(f"PDF email sent to: {to_email}")
+        # MISSION B.3: LOG EMAIL_SEND_OK
+        message_id = message.get('Message-ID', 'unknown')
+        logging.info(f"EMAIL_SEND_OK to={to_email}, cc={igv_email}, message_id={message_id}")
+        logging.info(f"PDF email sent successfully to: {to_email} (CC: {igv_email})")
         
     except Exception as e:
+        # MISSION B.3: LOG EMAIL_SEND_ERROR
+        logging.error(f"EMAIL_SEND_ERROR reason={str(e)}")
         logging.error(f"Error in send_pdf_email_task: {str(e)}")
+        import traceback
+        logging.error(traceback.format_exc())
 
 # Helper function to get DB
 def get_db():

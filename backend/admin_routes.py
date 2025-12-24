@@ -190,3 +190,193 @@ async def get_lead_stats_admin(range: str = "7d"):
     except Exception as e:
         logging.error(f"Error getting lead stats: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/process-pending")
+async def process_pending_analyses(limit: int = 10):
+    """
+    MISSION: Process pending analyses (retry when quota available)
+    Protected endpoint - should check admin auth in production
+    
+    Usage: POST /api/admin/process-pending?limit=10
+    """
+    current_db = get_db()
+    
+    if current_db is None:
+        raise HTTPException(status_code=503, detail="Database not configured")
+    
+    try:
+        # Find pending analyses with retry_count < 5
+        pending = await current_db.pending_analyses.find({
+            "status": "queued",
+            "retry_count": {"$lt": 5}
+        }).sort("created_at", 1).limit(limit).to_list(limit)
+        
+        if not pending:
+            return {
+                "message": "No pending analyses to process",
+                "processed": 0,
+                "failed": 0
+            }
+        
+        processed = 0
+        failed = 0
+        results = []
+        
+        for analysis in pending:
+            request_id = analysis.get("request_id", "unknown")
+            
+            try:
+                # Import Gemini client
+                from mini_analysis_routes import gemini_client, GEMINI_MODEL, build_prompt, MiniAnalysisRequest
+                
+                if not gemini_client:
+                    logging.error(f"[{request_id}] QUEUE_RETRY: Gemini client not available")
+                    failed += 1
+                    continue
+                
+                # Reconstruct request from payload
+                form_payload = analysis.get("form_payload", {})
+                mini_request = MiniAnalysisRequest(**form_payload)
+                language = analysis.get("language", "fr")
+                
+                # Build prompt
+                prompt = build_prompt(mini_request, language=language)
+                
+                # Call Gemini
+                logging.info(f"[{request_id}] QUEUE_RETRY: Attempting to generate analysis")
+                
+                response = gemini_client.models.generate_content(
+                    model=GEMINI_MODEL,
+                    contents=[prompt]
+                )
+                
+                analysis_text = response.text if hasattr(response, 'text') else str(response)
+                
+                if not analysis_text or "LANG_FAIL" in analysis_text:
+                    raise Exception("Invalid response from Gemini")
+                
+                # Save successful analysis
+                analysis_record = {
+                    "brand_slug": analysis.get("brand", "").lower(),
+                    "brand_name": analysis.get("brand"),
+                    "email": analysis.get("user_email"),
+                    "payload_form": form_payload,
+                    "created_at": datetime.now(timezone.utc),
+                    "provider": "gemini",
+                    "model": GEMINI_MODEL,
+                    "response_text": analysis_text,
+                    "from_pending": True,
+                    "original_request_id": request_id
+                }
+                
+                await current_db.mini_analyses.insert_one(analysis_record)
+                
+                # Update pending status
+                await current_db.pending_analyses.update_one(
+                    {"_id": analysis["_id"]},
+                    {
+                        "$set": {
+                            "status": "processed",
+                            "processed_at": datetime.now(timezone.utc)
+                        }
+                    }
+                )
+                
+                # Send email with analysis - import function if available
+                try:
+                    from extended_routes import send_analysis_email
+                    await send_analysis_email(
+                        analysis.get("user_email"),
+                        analysis.get("brand"),
+                        analysis_text,
+                        language,
+                        request_id
+                    )
+                    logging.info(f"[{request_id}] QUEUE_SENT: Analysis emailed successfully")
+                except Exception as email_error:
+                    logging.error(f"[{request_id}] EMAIL_SEND_FAIL: {str(email_error)}")
+                
+                processed += 1
+                results.append({
+                    "request_id": request_id,
+                    "status": "success",
+                    "brand": analysis.get("brand")
+                })
+                
+            except Exception as e:
+                error_str = str(e).lower()
+                
+                # Increment retry count
+                new_retry_count = analysis.get("retry_count", 0) + 1
+                
+                if "resource_exhausted" in error_str or "quota" in error_str:
+                    # Still quota issue - keep queued
+                    await current_db.pending_analyses.update_one(
+                        {"_id": analysis["_id"]},
+                        {
+                            "$set": {
+                                "retry_count": new_retry_count,
+                                "last_retry_at": datetime.now(timezone.utc),
+                                "last_error": "quota_exhausted"
+                            }
+                        }
+                    )
+                    logging.warning(f"[{request_id}] QUEUE_RETRY: Quota still exhausted")
+                    failed += 1
+                else:
+                    # Other error - mark as failed
+                    await current_db.pending_analyses.update_one(
+                        {"_id": analysis["_id"]},
+                        {
+                            "$set": {
+                                "status": "failed",
+                                "retry_count": new_retry_count,
+                                "failed_at": datetime.now(timezone.utc),
+                                "error": str(e)
+                            }
+                        }
+                    )
+                    logging.error(f"[{request_id}] QUEUE_FAILED: {str(e)}")
+                    failed += 1
+                
+                results.append({
+                    "request_id": request_id,
+                    "status": "failed",
+                    "error": str(e)[:100]
+                })
+        
+        return {
+            "message": f"Processed {processed} analyses, {failed} failed",
+            "processed": processed,
+            "failed": failed,
+            "results": results
+        }
+        
+    except Exception as e:
+        logging.error(f"Error processing pending analyses: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/pending-stats")
+async def get_pending_stats():
+    """Get statistics on pending analyses"""
+    current_db = get_db()
+    
+    if current_db is None:
+        raise HTTPException(status_code=503, detail="Database not configured")
+    
+    try:
+        queued_count = await current_db.pending_analyses.count_documents({"status": "queued"})
+        processed_count = await current_db.pending_analyses.count_documents({"status": "processed"})
+        failed_count = await current_db.pending_analyses.count_documents({"status": "failed"})
+        
+        return {
+            "queued": queued_count,
+            "processed": processed_count,
+            "failed": failed_count,
+            "total": queued_count + processed_count + failed_count
+        }
+    except Exception as e:
+        logging.error(f"Error getting pending stats: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))

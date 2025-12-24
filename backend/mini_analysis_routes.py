@@ -593,31 +593,73 @@ async def generate_mini_analysis(request: MiniAnalysisRequest, response: Respons
         error_trace = traceback.format_exc()
         error_str = str(e).lower()
         
-        # MISSION A: DETECT QUOTA/RESOURCE_EXHAUSTED ERRORS
+        # MISSION: DETECT QUOTA/RESOURCE_EXHAUSTED ERRORS
         if "resource_exhausted" in error_str or "quota" in error_str:
             logging.error(f"[{request_id}] ❌ GEMINI_QUOTA_EXCEEDED: {str(e)}")
             
-            # MISSION C: Update lead status to QUOTA_BLOCKED
-            try:
-                from crm_routes import create_lead_in_crm
-                lead_data["status"] = "QUOTA_BLOCKED"
-                await create_lead_in_crm(lead_data, request_id)
-            except:
-                pass
+            # Update lead status to QUOTA_BLOCKED
+            if lead_data:
+                try:
+                    from crm_routes import create_lead_in_crm
+                    lead_data["status"] = "QUOTA_BLOCKED"
+                    await create_lead_in_crm(lead_data, request_id)
+                except:
+                    pass
             
-            # Multilingual error messages
+            # SAVE TO pending_analyses
+            try:
+                pending_record = {
+                    "created_at": datetime.now(timezone.utc),
+                    "brand": request.nom_de_marque,
+                    "language": language,
+                    "user_email": request.email,
+                    "form_payload": request.dict(),
+                    "ip_address": http_request.client.host if http_request.client else None,
+                    "user_agent": http_request.headers.get("User-Agent"),
+                    "referrer": http_request.headers.get("Referer"),
+                    "utm_source": http_request.query_params.get("utm_source"),
+                    "utm_medium": http_request.query_params.get("utm_medium"),
+                    "utm_campaign": http_request.query_params.get("utm_campaign"),
+                    "status": "queued",
+                    "error_code": "429",
+                    "request_id": request_id,
+                    "retry_count": 0
+                }
+                await current_db.pending_analyses.insert_one(pending_record)
+                logging.info(f"[{request_id}] QUEUED_OK: Saved to pending_analyses")
+            except Exception as db_error:
+                logging.error(f"[{request_id}] QUEUE_FAIL: {str(db_error)}")
+            
+            # SEND CONFIRMATION EMAIL
+            email_sent = False
+            try:
+                from extended_routes import send_quota_confirmation_email
+                await send_quota_confirmation_email(request.email, request.nom_de_marque, language, request_id)
+                logging.info(f"[{request_id}] EMAIL_SEND_OK")
+                email_sent = True
+            except Exception as email_error:
+                logging.error(f"[{request_id}] EMAIL_SEND_FAIL: {str(email_error)}")
+            
+            # Multilingual confirmation messages
             quota_messages = {
-                "fr": "Quota quotidien Gemini atteint. Veuillez réessayer demain.",
-                "en": "Daily Gemini quota reached. Please try again tomorrow.",
-                "he": "הגעתם למכסה היומית של Gemini. נסו שוב מחר."
+                "fr": "Capacité du jour atteinte.\\nVotre demande est enregistrée ✅\\nVous recevrez votre mini-analyse par email dès réouverture des créneaux (généralement sous 24–48h).",
+                "en": "Daily capacity reached.\\nYour request is saved ✅\\nYou'll receive your mini-analysis by email as soon as capacity reopens (usually within 24–48 hours).",
+                "he": "הגענו לקיבולת היומית.\\nהבקשה נשמרה ✅\\nתקבלו את המיני-אנליזה במייל ברגע שהקיבולת תיפתח מחדש (בדרך כלל תוך 24–48 שעות)."
             }
             
-            response.headers["Retry-After"] = "86400"  # 24 hours
+            response.headers["Retry-After"] = "86400"
             
             raise HTTPException(
-                status_code=429,  # Too Many Requests
+                status_code=429,
                 detail={
                     "error_code": "GEMINI_QUOTA_DAILY",
+                    "message": quota_messages,
+                    "email_sent": email_sent,
+                    "queued": True,
+                    "retry_after_seconds": 86400,
+                    "request_id": request_id
+                }
+            )
                     "message": quota_messages,
                     "retry_after_seconds": 86400,
                     "request_id": request_id

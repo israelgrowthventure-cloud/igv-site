@@ -26,6 +26,7 @@ const MiniAnalysis = () => {
   });
   
   const [loading, setLoading] = useState(false);
+  const [analysisResult, setAnalysisResult] = useState(null);
   const [analysis, setAnalysis] = useState(null);
   const [error, setError] = useState(null);
   const [showContactModal, setShowContactModal] = useState(false);
@@ -76,6 +77,7 @@ const MiniAnalysis = () => {
       }
 
       setAnalysis(data.analysis);
+      setAnalysisResult({ text: data.analysis, quota_blocked: false });
       toast.success(t('miniAnalysis.toast.success'));
       
       // Smooth scroll to results
@@ -87,14 +89,30 @@ const MiniAnalysis = () => {
       console.error('Error:', error);
       toast.dismiss(loadingToastId);
       
-      // MISSION A: Handle 429 Quota Error (no page blanche)
+      // MISSION: Handle 429 Quota Error (UX propre + message multilingue)
       if (error.response?.status === 429) {
         const errorData = error.response?.data;
         if (errorData?.error_code === 'GEMINI_QUOTA_DAILY') {
           const quotaMsg = errorData.message?.[currentLang] || errorData.message?.en || 'Quota limit reached. Please try again tomorrow.';
-          toast.error(quotaMsg);
-          setError(quotaMsg);
-          // Disable submit button - handled in render
+          
+          // Set special quota state (not generic error)
+          setError(null);
+          setAnalysisResult({
+            text: '',
+            quota_blocked: true,
+            quota_message: quotaMsg,
+            email_sent: errorData.email_sent || false,
+            request_id: errorData.request_id
+          });
+          
+          // Show toast with confirmation
+          toast.info(quotaMsg, { duration: 6000 });
+          
+          // Scroll to results section to show quota message
+          setTimeout(() => {
+            document.getElementById('results')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }, 200);
+          
           return;
         }
       }
@@ -112,6 +130,7 @@ const MiniAnalysis = () => {
     } finally {
       setLoading(false);
     }
+
   };
 
   const handleContactExpert = async () => {
@@ -516,10 +535,62 @@ const MiniAnalysis = () => {
         </section>
 
         {/* Results Section */}
-        {analysis && (
+        {analysisResult && (
           <section id="results" className="pb-20 px-4 sm:px-6 lg:px-8">
             <div className="max-w-4xl mx-auto">
               <div className="bg-white rounded-2xl shadow-xl p-8 sm:p-12">
+                {analysisResult.quota_blocked ? (
+                  /* MISSION: UX Propre pour Quota Gemini */
+                  <div className="text-center py-8">
+                    <div className="inline-flex items-center justify-center w-20 h-20 bg-orange-100 rounded-full mb-6">
+                      <svg className="w-10 h-10 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                    
+                    <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                      {currentLang === 'fr' ? 'Demande enregistrée' : currentLang === 'he' ? 'הבקשה נשמרה' : 'Request saved'}
+                    </h3>
+                    
+                    <div className="bg-orange-50 border-l-4 border-orange-500 p-6 rounded-lg mb-6 text-left max-w-2xl mx-auto">
+                      <p className="text-lg text-gray-800 whitespace-pre-wrap">
+                        {analysisResult.quota_message}
+                      </p>
+                    </div>
+                    
+                    {analysisResult.email_sent && (
+                      <div className="flex items-center justify-center gap-2 text-green-700 bg-green-50 py-3 px-6 rounded-lg max-w-md mx-auto mb-4">
+                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                        </svg>
+                        <span className="font-medium">
+                          {currentLang === 'fr' ? 'Email de confirmation envoyé' : currentLang === 'he' ? 'אימייל אישור נשלח' : 'Confirmation email sent'}
+                        </span>
+                      </div>
+                    )}
+                    
+                    <p className="text-sm text-gray-600 mb-6">
+                      {currentLang === 'fr' 
+                        ? `ID de demande: ${analysisResult.request_id || 'N/A'}` 
+                        : currentLang === 'he' 
+                          ? `מזהה בקשה: ${analysisResult.request_id || 'N/A'}` 
+                          : `Request ID: ${analysisResult.request_id || 'N/A'}`
+                      }
+                    </p>
+                    
+                    <button
+                      onClick={() => {
+                        setAnalysisResult(null);
+                        setError(null);
+                      }}
+                      className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-all"
+                    >
+                      {currentLang === 'fr' ? 'Nouvelle demande' : currentLang === 'he' ? 'בקשה חדשה' : 'New request'}
+                    </button>
+                  </div>
+                ) : (
+                  /* Normal Analysis Results */
+                  <>
                 {/* Header with Actions */}
                 <div className="mb-8">
                   <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
@@ -582,6 +653,8 @@ const MiniAnalysis = () => {
                     <ArrowRight className="w-5 h-5" />
                   </button>
                 </div>
+                </>
+                )}
               </div>
             </div>
           </section>

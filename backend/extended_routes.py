@@ -45,6 +45,156 @@ SMTP_PASSWORD = os.getenv('SMTP_PASSWORD')
 SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY')
 GOOGLE_CALENDAR_API_KEY = os.getenv('GOOGLE_CALENDAR_API_KEY')
 
+
+# MISSION: Send quota confirmation email
+async def send_quota_confirmation_email(email: str, brand_name: str, language: str, request_id: str):
+    """Send confirmation email when quota is reached"""
+    
+    if not EMAIL_LIBS_AVAILABLE:
+        raise Exception("Email libraries not available")
+    
+    if not SMTP_HOST or not SMTP_USER or not SMTP_PASSWORD:
+        raise Exception("SMTP not configured")
+    
+    # Email templates by language
+    email_templates = {
+        "fr": {
+            "subject": "Votre demande d'analyse IGV est enregistrée",
+            "body": f"""Bonjour,
+
+Capacité du jour atteinte.
+Votre demande est enregistrée ✅
+
+Marque: {brand_name}
+
+Vous recevrez votre mini-analyse par email dès réouverture des créneaux (généralement sous 24–48h).
+
+Merci de votre confiance,
+L'équipe Israel Growth Venture
+
+---
+Référence: {request_id}
+"""
+        },
+        "en": {
+            "subject": "Your IGV analysis request is saved",
+            "body": f"""Hello,
+
+Daily capacity reached.
+Your request is saved ✅
+
+Brand: {brand_name}
+
+You'll receive your mini-analysis by email as soon as capacity reopens (usually within 24–48 hours).
+
+Thank you for your trust,
+The Israel Growth Venture team
+
+---
+Reference: {request_id}
+"""
+        },
+        "he": {
+            "subject": "הבקשה שלכם לניתוח IGV נשמרה",
+            "body": f"""שלום,
+
+הגענו לקיבולת היומית.
+הבקשה נשמרה ✅
+
+מותג: {brand_name}
+
+תקבלו את המיני-אנליזה במייל ברגע שהקיבולת תיפתח מחדש (בדרך כלל תוך 24–48 שעות).
+
+תודה על האמון,
+צוות Israel Growth Venture
+
+---
+אסמכתא: {request_id}
+"""
+        }
+    }
+    
+    template = email_templates.get(language, email_templates["en"])
+    
+    # Create email
+    msg = MIMEMultipart()
+    msg['From'] = EMAIL_FROM
+    msg['To'] = email
+    msg['Subject'] = template["subject"]
+    
+    msg.attach(MIMEText(template["body"], 'plain', 'utf-8'))
+    
+    # Send via SMTP
+    async with aiosmtplib.SMTP(hostname=SMTP_HOST, port=SMTP_PORT) as smtp:
+        await smtp.starttls()
+        await smtp.login(SMTP_USER, SMTP_PASSWORD)
+        await smtp.send_message(msg)
+    
+    logging.info(f"[{request_id}] Quota confirmation email sent to {email}")
+
+
+async def send_analysis_email(email: str, brand_name: str, analysis_text: str, language: str = "fr", request_id: str = "unknown"):
+    """
+    Send mini-analysis results via email (for pending analyses retry)
+    """
+    if not SMTP_CONFIGURED:
+        logging.warning(f"[{request_id}] EMAIL_SEND_SKIP: SMTP not configured")
+        return
+    
+    templates = {
+        "fr": {
+            "subject": f"Votre Mini-Analyse pour {brand_name} - IGV",
+            "body": f"""Bonjour,
+
+Votre mini-analyse pour {brand_name} est maintenant prête !
+
+{analysis_text}
+
+Cordialement,
+L'équipe Israel Growth Venture"""
+        },
+        "en": {
+            "subject": f"Your Mini-Analysis for {brand_name} - IGV",
+            "body": f"""Hello,
+
+Your mini-analysis for {brand_name} is now ready!
+
+{analysis_text}
+
+Best regards,
+The Israel Growth Venture team"""
+        },
+        "he": {
+            "subject": f"המיני-אנליזה שלך עבור {brand_name} - IGV",
+            "body": f"""שלום,
+
+המיני-אנליזה שלך עבור {brand_name} מוכנה כעת!
+
+{analysis_text}
+
+בברכה,
+צוות Israel Growth Venture"""
+        }
+    }
+    
+    template = templates.get(language, templates["en"])
+    
+    msg = MIMEMultipart()
+    msg['From'] = EMAIL_FROM
+    msg['To'] = email
+    msg['Subject'] = template["subject"]
+    
+    msg.attach(MIMEText(template["body"], 'plain', 'utf-8'))
+    
+    # Send via SMTP
+    async with aiosmtplib.SMTP(hostname=SMTP_HOST, port=SMTP_PORT) as smtp:
+        await smtp.starttls()
+        await smtp.login(SMTP_USER, SMTP_PASSWORD)
+        await smtp.send_message(msg)
+    
+    logging.info(f"[{request_id}] Analysis email sent to {email}")
+
+
 # Models
 class ContactExpertRequest(BaseModel):
     email: EmailStr

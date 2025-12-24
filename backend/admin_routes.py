@@ -1,6 +1,7 @@
 """
 Admin Routes - Dashboard Statistics & Lead Management
 MISSION E: Admin endpoints for stats and lead viewing
+MISSION F: Quota Gemini - Process pending analyses with retry mechanism
 """
 
 from fastapi import APIRouter, HTTPException, Depends

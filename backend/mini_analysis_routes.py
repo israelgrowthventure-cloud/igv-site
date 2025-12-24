@@ -121,6 +121,7 @@ class MiniAnalysisRequest(BaseModel):
     differenciation: str = ""
     objectif_israel: str = ""
     contraintes: str = ""
+    language: str = "fr"  # LANGUAGE SUPPORT: fr/en/he
 
 
 def normalize_brand_slug(brand_name: str) -> str:
@@ -160,7 +161,7 @@ def load_igv_file(file_path: Path) -> str:
         raise HTTPException(status_code=500, detail=f"Erreur lecture fichier: {file_path.name}")
 
 
-def build_prompt(request: MiniAnalysisRequest) -> str:
+def build_prompt(request: MiniAnalysisRequest, language: str = "fr") -> str:
     """Build runtime prompt with master prompt + form data"""
     
     # Select master prompt based on sector
@@ -174,7 +175,7 @@ def build_prompt(request: MiniAnalysisRequest) -> str:
         prompt_file = PROMPT_SERVICES
         prompt_name = "MASTER_PROMPT_SERVICES_PARAMEDICAL"
     
-    logging.info(f"Using prompt: {prompt_name} for sector: {request.secteur}")
+    logging.info(f"Using prompt: {prompt_name} for sector: {request.secteur}, language: {language}")
     
     # Load master prompt
     master_prompt = load_igv_file(prompt_file)
@@ -225,10 +226,156 @@ def build_prompt(request: MiniAnalysisRequest) -> str:
 ---
 """
     
-    # Combine master prompt + form data
-    final_prompt = master_prompt + form_data_section
+    # Language enforcement instructions
+    language_instructions = {
+        "fr": """RÈGLE ABSOLUE DE LANGUE:
+Vous DEVEZ répondre UNIQUEMENT en français. N'utilisez AUCUNE autre langue.
+Si vous ne pouvez pas répondre en français, retournez: LANG_FAIL.
+
+""",
+        "en": """ABSOLUTE LANGUAGE RULE:
+You MUST answer ONLY in English. Do NOT use any other language.
+If you cannot answer in English, return: LANG_FAIL.
+
+""",
+        "he": """כלל שפה מוחלט:
+אתה חייב לענות רק בעברית. אל תשתמש בשום שפה אחרת.
+אם אתה לא יכול לענות בעברית, החזר: LANG_FAIL.
+
+"""
+    }
+    
+    lang_instruction = language_instructions.get(language, language_instructions["en"])
+    
+    # Combine: language instruction + master prompt + form data
+    final_prompt = lang_instruction + master_prompt + form_data_section
     
     return final_prompt
+
+
+@router.get("/mini-analysis/debug")
+async def debug_mini_analysis():
+    """Debug endpoint pour vérifier configuration mini-analysis"""
+    igv_files_status = {}
+    try:
+        for name, path in [
+            ("IGV_Types", TYPES_FILE),
+            ("Whitelist_Jewish", WHITELIST_JEWISH),
+            ("Whitelist_Arab", WHITELIST_ARAB),
+            ("Prompt_Restauration", PROMPT_RESTAURATION),
+            ("Prompt_Retail", PROMPT_RETAIL),
+            ("Prompt_Services", PROMPT_SERVICES)
+        ]:
+            file_exists = path.exists()
+            igv_files_status[name] = {
+                "exists": file_exists,
+                "path": str(path),
+                "size": path.stat().st_size if file_exists else 0
+            }
+    except Exception as e:
+        logging.error(f"Error checking IGV files: {str(e)}")
+        igv_files_status["error"] = str(e)
+    
+    return {
+        "gemini_api_key_configured": bool(GEMINI_API_KEY),
+        "gemini_api_key_length": len(GEMINI_API_KEY) if GEMINI_API_KEY else 0,
+        "gemini_model": GEMINI_MODEL,
+        "gemini_client_initialized": gemini_client is not None,
+        "mongodb_configured": bool(mongo_url),
+        "mongodb_db_name": db_name if mongo_url else None,
+        "igv_files": igv_files_status
+    }
+
+
+@router.post("/admin/test-gemini-multilang")
+async def test_gemini_multilang_admin(language: str):
+    """
+    MISSION A: Admin endpoint to test Gemini multilingual support
+    Usage: POST /api/admin/test-gemini-multilang?language=fr|en|he
+    """
+    
+    if language not in {"fr", "en", "he"}:
+        raise HTTPException(status_code=400, detail="Language must be fr, en, or he")
+    
+    if not GEMINI_API_KEY or not gemini_client:
+        raise HTTPException(status_code=500, detail="Gemini not configured")
+    
+    # Language-enforced test prompts
+    test_prompts = {
+        "fr": """RÈGLE ABSOLUE: Vous DEVEZ répondre UNIQUEMENT en français. Si vous utilisez une autre langue, retournez: LANG_FAIL.
+
+Analysez brièvement (3-4 lignes) les opportunités pour une marque de restauration française souhaitant s'implanter en Israël.
+
+Répondez UNIQUEMENT en français.""",
+        
+        "en": """ABSOLUTE RULE: You MUST answer ONLY in English. If you output any other language, return: LANG_FAIL.
+
+Briefly analyze (3-4 lines) the opportunities for a French restaurant brand wanting to expand to Israel.
+
+Answer ONLY in English.""",
+        
+        "he": """כלל מוחלט: אתה חייב לענות רק בעברית. אם אתה משתמש בשפה אחרת, החזר: LANG_FAIL.
+
+נתח בקצרה (3-4 שורות) את ההזדמנויות למותג מסעדה צרפתי המעוניין להתרחב לישראל.
+
+ענה רק בעברית."""
+    }
+    
+    prompt = test_prompts[language]
+    request_id = f"test_{language}_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}"
+    
+    try:
+        # Call Gemini
+        logging.info(f"[{request_id}] GEMINI_TEST: model={GEMINI_MODEL}, lang={language}")
+        
+        response = gemini_client.models.generate_content(
+            model=GEMINI_MODEL,
+            contents=[prompt]
+        )
+        
+        response_text = response.text if hasattr(response, 'text') else str(response)
+        
+        # Get token usage
+        tokens_in = getattr(response.usage_metadata, 'prompt_token_count', 0) if hasattr(response, 'usage_metadata') else 0
+        tokens_out = getattr(response.usage_metadata, 'candidates_token_count', 0) if hasattr(response, 'usage_metadata') else 0
+        
+        # Check for LANG_FAIL
+        lang_fail_detected = "LANG_FAIL" in response_text
+        
+        # Log results (MISSION A.4)
+        logging.info(f"[{request_id}] MODEL={GEMINI_MODEL}")
+        logging.info(f"[{request_id}] LANG_REQUESTED={language}")
+        logging.info(f"[{request_id}] STATUS={'LANG_FAIL' if lang_fail_detected else 'SUCCESS'}")
+        logging.info(f"[{request_id}] TOKENS=in:{tokens_in} out:{tokens_out}")
+        logging.info(f"[{request_id}] FIRST_200={response_text[:200]}")
+        
+        if lang_fail_detected:
+            logging.error(f"[{request_id}] ❌ LANG_FAIL detected in response")
+        
+        return {
+            "success": not lang_fail_detected,
+            "language": language,
+            "model": GEMINI_MODEL,
+            "tokens": {
+                "input": tokens_in,
+                "output": tokens_out
+            },
+            "response_length": len(response_text),
+            "first_200_chars": response_text[:200],
+            "full_response": response_text,
+            "lang_fail_detected": lang_fail_detected,
+            "request_id": request_id
+        }
+        
+    except Exception as e:
+        logging.error(f"[{request_id}] ❌ Error: {str(e)}")
+        import traceback
+        logging.error(traceback.format_exc())
+        
+        raise HTTPException(status_code=500, detail={
+            "error": str(e),
+            "request_id": request_id
+        })
 
 
 @router.get("/mini-analysis/debug")
@@ -280,6 +427,14 @@ async def generate_mini_analysis(request: MiniAnalysisRequest):
     if request.secteur == "Restauration / Food" and not request.statut_alimentaire:
         raise HTTPException(status_code=400, detail="Le statut alimentaire est obligatoire pour le secteur Restauration / Food")
     
+    # LANGUAGE VALIDATION AND LOGGING (MISSION B)
+    language = request.language if hasattr(request, 'language') else "fr"
+    if language not in {"fr", "en", "he"}:
+        logging.warning(f"Invalid language '{language}', falling back to 'en'")
+        language = "en"
+    
+    logging.info(f"LANG_REQUESTED={language} LANG_USED={language}")
+    
     # Check Gemini client
     if not GEMINI_API_KEY or not gemini_client:
         logging.error(f"❌ Gemini not configured: API_KEY={bool(GEMINI_API_KEY)}, client={gemini_client is not None}")
@@ -304,7 +459,7 @@ async def generate_mini_analysis(request: MiniAnalysisRequest):
     
     # Build prompt with IGV data
     try:
-        prompt = build_prompt(request)
+        prompt = build_prompt(request, language=language)
     except HTTPException:
         raise
     except Exception as e:
@@ -334,6 +489,30 @@ async def generate_mini_analysis(request: MiniAnalysisRequest):
         analysis_text = response.text if hasattr(response, 'text') else str(response)
         
         logging.info(f"[{request_id}] ✅ Gemini response received: {len(analysis_text)} characters")
+        
+        # LANG_FAIL DETECTION (MISSION A.5)
+        if "LANG_FAIL" in analysis_text:
+            logging.error(f"[{request_id}] ❌ LANG_FAIL detected - Gemini failed to respect language={language}")
+            logging.warning(f"[{request_id}] Retrying with stricter language instruction...")
+            
+            # Retry with stricter instruction
+            retry_prompts = {
+                "fr": f"CRITIQUE: Répondez UNIQUEMENT en français, pas en anglais, pas en hébreu.\n\n{prompt}",
+                "en": f"CRITICAL: Answer ONLY in English, not in French, not in Hebrew.\n\n{prompt}",
+                "he": f"קריטי: ענה רק בעברית, לא בצרפתית, לא באנגלית.\n\n{prompt}"
+            }
+            
+            retry_prompt = retry_prompts.get(language, prompt)
+            response = gemini_client.models.generate_content(
+                model=GEMINI_MODEL,
+                contents=[retry_prompt]
+            )
+            
+            analysis_text = response.text if hasattr(response, 'text') else str(response)
+            logging.info(f"[{request_id}] Retry response: {len(analysis_text)} characters")
+            
+            if "LANG_FAIL" in analysis_text:
+                logging.error(f"[{request_id}] ❌ LANG_FAIL persists after retry")
         
         if not analysis_text:
             raise HTTPException(

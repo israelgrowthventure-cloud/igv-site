@@ -116,26 +116,69 @@ async def contact_expert(request: ContactExpertRequest, background_tasks: Backgr
         logging.error(f"Error in contact_expert: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# Helper function to get database connection
+def get_db():
+    """Get MongoDB connection (imported from mini_analysis_routes pattern)"""
+    from motor.motor_asyncio import AsyncIOMotorClient
+    mongo_url = os.getenv('MONGODB_URI') or os.getenv('MONGO_URL')
+    db_name = os.getenv('DB_NAME', 'igv_production')
+    
+    if not mongo_url:
+        return None
+    
+    try:
+        client = AsyncIOMotorClient(
+            mongo_url,
+            serverSelectionTimeoutMS=5000,
+            connectTimeoutMS=5000
+        )
+        return client[db_name]
+    except:
+        return None
+
 # PDF Generation endpoint
 @router.post("/pdf/generate")
 async def generate_pdf(request: PDFGenerateRequest):
     """
-    Generate PDF for mini-analysis
-    Returns PDF URL or base64
+    Generate PDF for mini-analysis with header and multilingual support
+    MISSION C & D: PDF header integration + Hebrew RTL support
     """
     try:
-        # For now, return a simple message
-        # In production, use a PDF library like reportlab or weasyprint
-        
         # Simple implementation using reportlab
         try:
             from reportlab.lib.pagesizes import A4
             from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-            from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, PageBreak
+            from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
             from reportlab.lib.units import inch
-            from reportlab.lib.enums import TA_CENTER, TA_RIGHT, TA_JUSTIFY
+            from reportlab.lib.enums import TA_CENTER, TA_RIGHT, TA_JUSTIFY, TA_LEFT
             from reportlab.pdfbase import pdfmetrics
             from reportlab.pdfbase.ttfonts import TTFont
+            from PyPDF2 import PdfReader, PdfWriter
+            
+            # MISSION C.2: LOAD HEADER PDF WITH ROBUST PATH
+            header_path = Path(__file__).resolve().parent / "assets" / "entete_igv.pdf"
+            
+            # MISSION C.3: LOG HEADER STATUS
+            header_exists = header_path.exists()
+            header_size = header_path.stat().st_size if header_exists else 0
+            
+            logging.info(f"PDF_GENERATION: language={request.language}, brand={request.brandName}")
+            logging.info(f"HEADER_PATH={header_path}")
+            logging.info(f"HEADER_EXISTS={header_exists}")
+            logging.info(f"HEADER_SIZE={header_size} bytes")
+            
+            if not header_exists:
+                logging.error(f"❌ HEADER_MISSING: {header_path}")
+                raise HTTPException(status_code=500, detail="PDF header file missing")
+            
+            # MISSION D: HEBREW RTL SUPPORT
+            is_hebrew = request.language == 'he'
+            
+            if is_hebrew:
+                logging.info("HEBREW_PDF: RTL mode enabled")
+                # Note: For full Hebrew support, we need Hebrew fonts
+                # For now, we'll generate the PDF with RTL alignment
+                # and display a warning if Hebrew characters are present
             
             # Create PDF in memory
             buffer = io.BytesIO()
@@ -146,7 +189,7 @@ async def generate_pdf(request: PDFGenerateRequest):
                 pagesize=A4,
                 rightMargin=72,
                 leftMargin=72,
-                topMargin=72,
+                topMargin=120,  # Extra space for merged header
                 bottomMargin=18
             )
             
@@ -156,14 +199,16 @@ async def generate_pdf(request: PDFGenerateRequest):
             # Styles
             styles = getSampleStyleSheet()
             
-            # Title style
+            # Title style (RTL for Hebrew)
+            title_alignment = TA_RIGHT if is_hebrew else TA_CENTER
+            
             title_style = ParagraphStyle(
                 'CustomTitle',
                 parent=styles['Heading1'],
                 fontSize=24,
                 textColor='#1e40af',
                 spaceAfter=30,
-                alignment=TA_CENTER
+                alignment=title_alignment
             )
             
             # Brand style
@@ -172,28 +217,28 @@ async def generate_pdf(request: PDFGenerateRequest):
                 parent=styles['Heading2'],
                 fontSize=18,
                 spaceAfter=20,
-                alignment=TA_CENTER
+                alignment=title_alignment
             )
             
-            # Body style
+            # Body style (RTL for Hebrew)
+            body_alignment = TA_RIGHT if is_hebrew else TA_JUSTIFY
+            
             body_style = ParagraphStyle(
                 'BodyStyle',
                 parent=styles['BodyText'],
                 fontSize=11,
                 leading=16,
-                alignment=TA_JUSTIFY if request.language != 'he' else TA_RIGHT,
+                alignment=body_alignment,
                 spaceAfter=12
             )
             
-            # Header
+            # Header (multilingual)
             title_text = {
                 'fr': 'Mini-Analyse IGV',
                 'en': 'IGV Mini-Analysis',
-                'he': 'IGV מיני-אנליזה'
+                'he': 'מיני-אנליזה IGV'
             }.get(request.language, 'Mini-Analyse IGV')
             
-            elements.append(Paragraph("Israel Growth Venture", title_style))
-            elements.append(Spacer(1, 0.2*inch))
             elements.append(Paragraph(title_text, brand_style))
             elements.append(Spacer(1, 0.2*inch))
             elements.append(Paragraph(f"<b>{request.brandName}</b>", brand_style))
@@ -230,9 +275,45 @@ async def generate_pdf(request: PDFGenerateRequest):
             # Build PDF
             doc.build(elements)
             
-            # Get PDF bytes
-            pdf_bytes = buffer.getvalue()
+            # Get content PDF bytes
+            content_pdf_bytes = buffer.getvalue()
             buffer.close()
+            
+            # MISSION C.4 & C.5: MERGE HEADER WITH CONTENT PDF
+            try:
+                # Read header PDF
+                header_reader = PdfReader(str(header_path))
+                header_page = header_reader.pages[0]
+                
+                # Read content PDF
+                content_reader = PdfReader(io.BytesIO(content_pdf_bytes))
+                
+                # Create writer for final PDF
+                writer = PdfWriter()
+                
+                # Merge header with each page of content
+                for page_num, content_page in enumerate(content_reader.pages):
+                    # Merge header onto content page
+                    content_page.merge_page(header_page)
+                    writer.add_page(content_page)
+                
+                # Write final PDF to buffer
+                final_buffer = io.BytesIO()
+                writer.write(final_buffer)
+                pdf_bytes = final_buffer.getvalue()
+                final_buffer.close()
+                
+                # MISSION C.4: LOG MERGE SUCCESS
+                logging.info(f"HEADER_MERGE_OK pages={len(content_reader.pages)}")
+                
+            except Exception as merge_error:
+                # MISSION C.5: EXPLICIT ERROR IF MERGE FAILS
+                logging.error(f"❌ HEADER_MERGE_FAILED: {str(merge_error)}")
+                raise HTTPException(
+                    status_code=500,
+                    detail=f"PDF header merge failed: {str(merge_error)}"
+                )
+
             
             # Encode to base64
             pdf_base64 = base64.b64encode(pdf_bytes).decode('utf-8')

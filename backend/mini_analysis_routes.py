@@ -18,9 +18,8 @@ router = APIRouter(prefix="/api")
 
 # Gemini API configuration
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
-# For google-genai 0.2.2, use format: models/gemini-1.5-flash (without prefix)
-# Or try: gemini-1.5-flash-002, gemini-1.5-pro, etc.
-GEMINI_MODEL = os.getenv('GEMINI_MODEL', 'models/gemini-1.5-flash')
+# PRODUCTION MODEL: gemini-2.5-flash (verified working with google-genai 0.2.2)
+GEMINI_MODEL = os.getenv('GEMINI_MODEL', 'gemini-2.5-flash')
 
 gemini_client = None
 
@@ -28,7 +27,8 @@ if GEMINI_API_KEY:
     try:
         gemini_client = genai.Client(api_key=GEMINI_API_KEY)
         key_length = len(GEMINI_API_KEY)
-        logging.info(f"✅ Gemini client initialized with model: {GEMINI_MODEL}")
+        logging.info(f"✅ Gemini client initialized successfully")
+        logging.info(f"✅ Gemini model used: {GEMINI_MODEL}")
         logging.info(f"✅ GEMINI_API_KEY present: yes, length: {key_length}")
     except Exception as e:
         logging.error(f"❌ Gemini client initialization failed: {str(e)}")
@@ -39,46 +39,40 @@ else:
 # Diagnostic endpoint for Gemini API (defined AFTER configuration)
 @router.get("/diag-gemini")
 async def diagnose_gemini():
-    """Diagnostic endpoint to test Gemini API key"""
+    """Quick diagnostic endpoint to test Gemini API (10 seconds max)"""
     
     if not GEMINI_API_KEY:
         return {
-            "status": "error",
-            "message": "GEMINI_API_KEY not configured",
-            "key_present": False
+            "ok": False,
+            "model": None,
+            "error": "GEMINI_API_KEY not configured"
         }
     
-    if not gemini_client:
+    if gemini_client is None:
         return {
-            "status": "error",
-            "message": "Gemini client not initialized",
-            "key_present": True,
-            "key_length": len(GEMINI_API_KEY)
+            "ok": False,
+            "model": GEMINI_MODEL,
+            "error": "Gemini client not initialized"
         }
     
-    # Test API call
+    # Quick test API call
     try:
         response = gemini_client.models.generate_content(
             model=GEMINI_MODEL,
-            contents=['Say hello in one word']
+            contents=['Hello']
         )
         result_text = response.text if hasattr(response, 'text') else str(response)
         
         return {
-            "status": "success",
-            "message": "Gemini API working",
+            "ok": True,
             "model": GEMINI_MODEL,
-            "test_response": result_text[:100],
-            "key_length": len(GEMINI_API_KEY)
+            "test_response": result_text[:50]
         }
     except Exception as e:
         return {
-            "status": "error",
-            "message": "Gemini API call failed",
-            "error": str(e),
-            "error_type": type(e).__name__,
-            "traceback": traceback.format_exc(),
-            "key_length": len(GEMINI_API_KEY)
+            "ok": False,
+            "model": GEMINI_MODEL,
+            "error": str(e)
         }
 
 # MongoDB connection (from server.py)

@@ -14,11 +14,21 @@
     "language": "Langue"
   },
   "hero": {
-    "title": "Israël Growth Venture",
+    "title": "Israel Growth Venture",
     "subtitle": "Votre partenaire stratégique pour une expansion réussie en Israël",
     "description": "Nous sommes spécialisés dans l'accompagnement des marques pour leur expansion réussie sur le marché israélien. Avec notre expertise et notre réseau, nous proposons des solutions sur mesure pour aider les entreprises à s'implanter, se développer et prospérer dans l'un des marchés les plus dynamiques et innovants du monde.",
     "cta": "En savoir plus",
     "bookAppointment": "Réserver un rendez-vous"
+  },
+  "home": {
+    "howItWorks": {
+      "title": "Comment ça marche ?",
+      "subtitle": "Un processus simple et efficace en 3 étapes"
+    },
+    "cta": {
+      "title": "Prêt à commencer votre expansion ?",
+      "subtitle": "Contactez-nous aujourd'hui pour une consultation gratuite"
+    }
   },
   "about": {
     "title": "Qui sommes-nous ?",

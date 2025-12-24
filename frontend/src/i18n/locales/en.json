@@ -9,7 +9,9 @@
     "contact": "Contact",
     "terms": "Terms",
     "appointment": "Appointment",
-    "cart": "Cart"
+    "cart": "Cart",
+    "miniAnalysis": "Free Mini-Analysis",
+    "language": "Language"
   },
   "hero": {
     "title": "Israel Growth Venture",
@@ -17,6 +19,16 @@
     "description": "We specialize in supporting brands for their successful expansion into the Israeli market. With our expertise and network, we offer tailored solutions to help businesses establish, grow, and thrive in one of the most dynamic and innovative markets in the world.",
     "cta": "Learn More",
     "bookAppointment": "Book an Appointment"
+  },
+  "home": {
+    "howItWorks": {
+      "title": "How it works?",
+      "subtitle": "A simple and effective 3-step process"
+    },
+    "cta": {
+      "title": "Ready to start your expansion?",
+      "subtitle": "Contact us today for a free consultation"
+    }
   },
   "about": {
     "title": "Who are we?",

@@ -166,10 +166,10 @@ const Home = () => {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-              Comment ça marche ?
+              {t('home.howItWorks.title')}
             </h2>
             <p className="text-lg text-gray-600">
-              Un processus simple et efficace en 3 étapes
+              {t('home.howItWorks.subtitle')}
             </p>
           </div>
 
@@ -197,7 +197,22 @@ const Home = () => {
                       <Icon className="w-8 h-8 text-blue-600" />
                     </div>
                     <h3 className="text-lg font-bold text-gray-900 mb-2">{step.title}</h3>
-                    <p className="text-sm text-gray-600">{step.description}</p>
+                    <p className="text-sm text-gray-600 mb-4">{step.description}</p>
+                    {index === 0 && (
+                      <Link to="/appointment" className="inline-flex items-center text-blue-600 hover:text-blue-700 font-medium text-sm">
+                        {t('hero.bookAppointment')} <ArrowRight className="ml-1 w-4 h-4" />
+                      </Link>
+                    )}
+                    {index === 1 && (
+                      <Link to="/mini-analyse" className="inline-flex items-center text-blue-600 hover:text-blue-700 font-medium text-sm">
+                        {t('nav.miniAnalysis')} <ArrowRight className="ml-1 w-4 h-4" />
+                      </Link>
+                    )}
+                    {index === 2 && (
+                      <Link to="/packs" className="inline-flex items-center text-blue-600 hover:text-blue-700 font-medium text-sm">
+                        {t('nav.packs')} <ArrowRight className="ml-1 w-4 h-4" />
+                      </Link>
+                    )}
                   </div>
                 </div>
               );
@@ -210,10 +225,10 @@ const Home = () => {
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-blue-600">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl sm:text-4xl font-bold text-white mb-6">
-            Prêt à commencer votre expansion ?
+            {t('home.cta.title')}
           </h2>
           <p className="text-lg text-blue-100 mb-8">
-            Contactez-nous aujourd'hui pour une consultation gratuite
+            {t('home.cta.subtitle')}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link

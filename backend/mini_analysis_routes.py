@@ -11,7 +11,7 @@ import logging
 import re
 from datetime import datetime, timezone
 from pathlib import Path
-from google import genai
+import google.genai as genai
 from google.genai import types
 
 router = APIRouter(prefix="/api")

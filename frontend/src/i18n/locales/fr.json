@@ -9,7 +9,9 @@
     "contact": "Contact",
     "terms": "CGUV",
     "appointment": "Rendez-vous",
-    "cart": "Panier"
+    "cart": "Panier",
+    "miniAnalysis": "Mini-Analyse Gratuite",
+    "language": "Langue"
   },
   "hero": {
     "title": "Israël Growth Venture",
@@ -198,5 +200,83 @@
   "pricing": {
     "region": "Prix selon votre région",
     "detecting": "Détection en cours..."
+  },
+  "miniAnalysis": {
+    "hero": {
+      "title": "Mini-Analyse IA Gratuite",
+      "subtitle": "Découvrez le potentiel de votre marque sur le marché israélien en 2 minutes",
+      "description": "Notre IA analyse votre concept et vous fournit une évaluation préliminaire personnalisée de vos opportunités d'expansion en Israël."
+    },
+    "form": {
+      "title": "Parlez-nous de votre marque",
+      "email": "Email professionnel",
+      "emailPlaceholder": "votre@email.com",
+      "brandName": "Nom de marque",
+      "brandNamePlaceholder": "Ex: Ma Boutique",
+      "sector": "Secteur d'activité",
+      "sectorPlaceholder": "Sélectionnez votre secteur",
+      "foodStatus": "Statut alimentaire",
+      "foodStatusPlaceholder": "Casher, Halal, Vegan...",
+      "seniority": "Ancienneté de la marque",
+      "seniorityPlaceholder": "Depuis combien de temps existez-vous ?",
+      "originCountry": "Pays d'origine",
+      "originCountryPlaceholder": "Ex: France",
+      "concept": "Concept de la marque",
+      "conceptPlaceholder": "Décrivez votre concept en quelques mots",
+      "positioning": "Positionnement",
+      "positioningPlaceholder": "Haut de gamme, accessible, premium...",
+      "currentModel": "Modèle actuel",
+      "currentModelPlaceholder": "Franchise, succursales, indépendant...",
+      "differentiation": "Différenciation concurrentielle",
+      "differentiationPlaceholder": "Qu'est-ce qui vous rend unique ?",
+      "israelObjective": "Objectif en Israël",
+      "israelObjectivePlaceholder": "Ouverture de boutiques, franchise, test marché...",
+      "constraints": "Contraintes et préoccupations",
+      "constraintsPlaceholder": "Budget, timing, exigences spécifiques...",
+      "submit": "Générer ma mini-analyse gratuite",
+      "submitting": "Génération en cours...",
+      "required": "Champ obligatoire",
+      "requiredForFood": "Obligatoire pour la restauration"
+    },
+    "sectors": [
+      "Restauration / Food",
+      "Retail (hors food)",
+      "Services",
+      "Paramédical / Santé"
+    ],
+    "foodStatuses": [
+      "Casher",
+      "Halal",
+      "Healthy",
+      "Vegan/Végétarien",
+      "Aucun",
+      "À définir"
+    ],
+    "seniorities": [
+      "Moins de 1 an",
+      "1-3 ans",
+      "3-5 ans",
+      "5-10 ans",
+      "Plus de 10 ans"
+    ],
+    "results": {
+      "title": "Votre Mini-Analyse IGV",
+      "subtitle": "Analyse IA personnalisée pour",
+      "copy": "Copier l'analyse",
+      "copied": "Analyse copiée dans le presse-papiers",
+      "download": "Télécharger en PDF",
+      "nextSteps": "Étapes suivantes",
+      "nextStepsDescription": "Cette mini-analyse gratuite est une première évaluation. Pour un accompagnement complet et une analyse approfondie de votre projet, nos experts sont à votre disposition.",
+      "bookCall": "Réserver un appel de 30 minutes",
+      "viewPacks": "Découvrir nos packs d'accompagnement"
+    },
+    "toast": {
+      "fieldsRequired": "Veuillez remplir tous les champs obligatoires",
+      "foodStatusRequired": "Le statut alimentaire est obligatoire pour la restauration",
+      "success": "Votre mini-analyse IGV a été générée!",
+      "duplicate": "Une analyse a déjà été générée pour cette enseigne",
+      "error": "Erreur lors de la génération de l'analyse. Veuillez réessayer.",
+      "networkError": "Erreur réseau. Vérifiez votre connexion."
+    }
   }
 }

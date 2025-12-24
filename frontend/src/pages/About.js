@@ -120,6 +120,36 @@ const About = () => {
             </div>
           </section>
 
+          {/* Team Section */}
+          <section className="mb-16">
+            <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Our Team</h2>
+            <div className="flex flex-col items-center">
+              <div className="max-w-2xl w-full bg-white rounded-2xl shadow-lg overflow-hidden">
+                <div className="md:flex">
+                  <div className="md:flex-shrink-0 md:w-64">
+                    <img 
+                      src="/mickael-portrait.png" 
+                      alt="Mickael - Founder of Israel Growth Venture" 
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                  <div className="p-8">
+                    <div className="uppercase tracking-wide text-sm text-blue-600 font-semibold">Founder & CEO</div>
+                    <h3 className="mt-2 text-2xl font-bold text-gray-900">Mickael</h3>
+                    <p className="mt-4 text-gray-600 leading-relaxed">
+                      With extensive experience in international brand development and deep knowledge of the Israeli market, 
+                      Mickael founded Israel Growth Venture to help international brands successfully navigate their entry into Israel.
+                    </p>
+                    <p className="mt-3 text-gray-600 leading-relaxed">
+                      His approach combines data-driven market analysis with practical implementation strategies, 
+                      ensuring brands make informed decisions backed by local market expertise.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
           {/* Contact CTA */}
           <section className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-8 text-center text-white">
             <h2 className="text-2xl font-bold mb-4">Ready to explore Israel as a market?</h2>

@@ -198,5 +198,83 @@
   "pricing": {
     "region": "Price according to your region",
     "detecting": "Detecting..."
+  },
+  "miniAnalysis": {
+    "hero": {
+      "title": "Free AI Mini-Analysis",
+      "subtitle": "Discover your brand's potential in the Israeli market in 2 minutes",
+      "description": "Our AI analyzes your concept and provides you with a personalized preliminary assessment of your expansion opportunities in Israel."
+    },
+    "form": {
+      "title": "Tell us about your brand",
+      "email": "Professional email",
+      "emailPlaceholder": "your@email.com",
+      "brandName": "Brand name",
+      "brandNamePlaceholder": "Ex: My Store",
+      "sector": "Business sector",
+      "sectorPlaceholder": "Select your sector",
+      "foodStatus": "Food status",
+      "foodStatusPlaceholder": "Kosher, Halal, Vegan...",
+      "seniority": "Brand seniority",
+      "seniorityPlaceholder": "How long have you been in business?",
+      "originCountry": "Country of origin",
+      "originCountryPlaceholder": "Ex: France",
+      "concept": "Brand concept",
+      "conceptPlaceholder": "Describe your concept in a few words",
+      "positioning": "Positioning",
+      "positioningPlaceholder": "Premium, accessible, luxury...",
+      "currentModel": "Current model",
+      "currentModelPlaceholder": "Franchise, branches, independent...",
+      "differentiation": "Competitive differentiation",
+      "differentiationPlaceholder": "What makes you unique?",
+      "israelObjective": "Objective in Israel",
+      "israelObjectivePlaceholder": "Store openings, franchise, market test...",
+      "constraints": "Constraints and concerns",
+      "constraintsPlaceholder": "Budget, timing, specific requirements...",
+      "submit": "Generate my free mini-analysis",
+      "submitting": "Generating...",
+      "required": "Required field",
+      "requiredForFood": "Required for food businesses"
+    },
+    "sectors": [
+      "Restaurant / Food",
+      "Retail (non-food)",
+      "Services",
+      "Healthcare / Paramedical"
+    ],
+    "foodStatuses": [
+      "Kosher",
+      "Halal",
+      "Healthy",
+      "Vegan/Vegetarian",
+      "None",
+      "To be defined"
+    ],
+    "seniorities": [
+      "Less than 1 year",
+      "1-3 years",
+      "3-5 years",
+      "5-10 years",
+      "More than 10 years"
+    ],
+    "results": {
+      "title": "Your IGV Mini-Analysis",
+      "subtitle": "Personalized AI analysis for",
+      "copy": "Copy analysis",
+      "copied": "Analysis copied to clipboard",
+      "download": "Download as PDF",
+      "nextSteps": "Next steps",
+      "nextStepsDescription": "This free mini-analysis is a first assessment. For complete support and in-depth analysis of your project, our experts are at your disposal.",
+      "bookCall": "Book a 30-minute call",
+      "viewPacks": "Discover our support packages"
+    },
+    "toast": {
+      "fieldsRequired": "Please fill in all required fields",
+      "foodStatusRequired": "Food status is required for food businesses",
+      "success": "Your IGV mini-analysis has been generated!",
+      "duplicate": "An analysis has already been generated for this brand",
+      "error": "Error generating analysis. Please try again.",
+      "networkError": "Network error. Check your connection."
+    }
   }
 }

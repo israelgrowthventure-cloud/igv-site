@@ -20,27 +20,26 @@ router = APIRouter(prefix="/api")
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
 GEMINI_MODEL = os.getenv('GEMINI_MODEL', 'gemini-1.5-flash')
 
-client = None
+gemini_client = None
 if GEMINI_API_KEY:
     try:
-        client = genai.Client(api_key=GEMINI_API_KEY)
+        gemini_client = genai.Client(api_key=GEMINI_API_KEY)
         logging.info(f"✅ Gemini client configured successfully with model: {GEMINI_MODEL}")
     except Exception as e:
         logging.error(f"❌ Gemini configuration error: {str(e)}")
-        client = None
+        gemini_client = None
 else:
     logging.warning("⚠️ GEMINI_API_KEY not configured - mini-analysis endpoint will fail")
-    model = None
 
 # MongoDB connection (from server.py)
 mongo_url = os.getenv('MONGODB_URI') or os.getenv('MONGO_URL')
 db_name = os.getenv('DB_NAME', 'igv_production')
 
-client = None
+mongo_client = None
 db = None
 if mongo_url:
-    client = AsyncIOMotorClient(mongo_url)
-    db = client[db_name]
+    mongo_client = AsyncIOMotorClient(mongo_url)
+    db = mongo_client[db_name]
 
 # IGV internal data paths
 IGV_INTERNAL_DIR = Path(__file__).parent / 'igv_internal'
@@ -205,7 +204,7 @@ async def debug_mini_analysis():
         "gemini_api_key_configured": bool(GEMINI_API_KEY),
         "gemini_api_key_length": len(GEMINI_API_KEY) if GEMINI_API_KEY else 0,
         "gemini_model": GEMINI_MODEL,
-        "gemini_client_initialized": client is not None,
+        "gemini_client_initialized": gemini_client is not None,
         "mongodb_configured": db is not None,
         "mongodb_db_name": db_name if db else None,
         "igv_files": igv_files_status
@@ -228,8 +227,8 @@ async def generate_mini_analysis(request: MiniAnalysisRequest):
         raise HTTPException(status_code=400, detail="Le statut alimentaire est obligatoire pour le secteur Restauration / Food")
     
     # Check Gemini client
-    if not GEMINI_API_KEY or not client:
-        logging.error(f"❌ Gemini not configured: API_KEY={bool(GEMINI_API_KEY)}, client={client is not None}")
+    if not GEMINI_API_KEY or not gemini_client:
+        logging.error(f"❌ Gemini not configured: API_KEY={bool(GEMINI_API_KEY)}, client={gemini_client is not None}")
         raise HTTPException(status_code=500, detail="GEMINI_API_KEY non configurée - contactez l'administrateur")
     
     # Check MongoDB connection
@@ -261,7 +260,7 @@ async def generate_mini_analysis(request: MiniAnalysisRequest):
     try:
         logging.info(f"Calling Gemini API for brand: {request.nom_de_marque} (model: {GEMINI_MODEL})")
         
-        response = client.models.generate_content(
+        response = gemini_client.models.generate_content(
             model=GEMINI_MODEL,
             contents=prompt
         )

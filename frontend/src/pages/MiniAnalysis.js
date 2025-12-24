@@ -87,6 +87,18 @@ const MiniAnalysis = () => {
       console.error('Error:', error);
       toast.dismiss(loadingToastId);
       
+      // MISSION A: Handle 429 Quota Error (no page blanche)
+      if (error.response?.status === 429) {
+        const errorData = error.response?.data;
+        if (errorData?.error_code === 'GEMINI_QUOTA_DAILY') {
+          const quotaMsg = errorData.message?.[currentLang] || errorData.message?.en || 'Quota limit reached. Please try again tomorrow.';
+          toast.error(quotaMsg);
+          setError(quotaMsg);
+          // Disable submit button - handled in render
+          return;
+        }
+      }
+      
       // Handle 409 Conflict (duplicate brand)
       if (error.response?.status === 409) {
         const errorMsg = error.response?.data?.detail || t('miniAnalysis.toast.duplicate');
@@ -471,13 +483,18 @@ const MiniAnalysis = () => {
                 {error && (
                   <div className="bg-red-50 border-l-4 border-red-600 p-4 rounded-lg">
                     <p className="text-sm text-red-700">{error}</p>
+                    {error.includes('quota') || error.includes('Quota') || error.includes('limit') ? (
+                      <p className="text-xs text-red-600 mt-2">
+                        ⏰ {currentLang === 'fr' ? 'Réessayez demain' : currentLang === 'he' ? 'נסו שוב מחר' : 'Try again tomorrow'}
+                      </p>
+                    ) : null}
                   </div>
                 )}
 
                 {/* Submit Button */}
                 <button
                   type="submit"
-                  disabled={loading}
+                  disabled={loading || (error && (error.includes('quota') || error.includes('Quota') || error.includes('limit')))}
                   className="w-full flex items-center justify-center gap-3 px-8 py-4 bg-blue-600 text-white text-lg font-semibold rounded-xl hover:bg-blue-700 transition-all shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? (

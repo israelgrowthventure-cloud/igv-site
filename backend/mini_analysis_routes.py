@@ -3,7 +3,7 @@ Mini-Analysis Routes for Israel Growth Venture
 Handles brand analysis requests with Gemini AI + IGV internal data
 """
 
-from fastapi import APIRouter, HTTPException, Response
+from fastapi import APIRouter, HTTPException, Response, Request
 from pydantic import BaseModel, EmailStr
 from motor.motor_asyncio import AsyncIOMotorClient
 import os
@@ -413,10 +413,10 @@ async def debug_mini_analysis():
 
 
 @router.post("/mini-analysis")
-async def generate_mini_analysis(request: MiniAnalysisRequest, response: Response):
+async def generate_mini_analysis(request: MiniAnalysisRequest, response: Response, http_request: Request):
     """
     Generate AI-powered mini-analysis for Israel market entry
-    Includes anti-duplicate check + MongoDB persistence
+    Includes anti-duplicate check + MongoDB persistence + AUTOMATIC LEAD CREATION (MISSION C)
     Adds debug headers: X-IGV-Lang-Requested, X-IGV-Lang-Used, X-IGV-Cache-Hit
     """
     
@@ -438,11 +438,51 @@ async def generate_mini_analysis(request: MiniAnalysisRequest, response: Respons
     response.headers["X-IGV-Lang-Requested"] = language
     response.headers["X-IGV-Lang-Used"] = language
     
-    logging.info(f"LANG_REQUESTED={language} LANG_USED={language}")
+    request_id = f"req_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}"
+    logging.info(f"[{request_id}] LANG_REQUESTED={language} LANG_USED={language}")
+    
+    # MISSION C: CREATE LEAD AUTOMATICALLY (BEFORE checking quota/duplicate)
+    try:
+        from crm_routes import create_lead_in_crm
+        
+        # Extract client metadata
+        client_ip = http_request.client.host if http_request.client else None
+        user_agent = http_request.headers.get("User-Agent")
+        referrer = http_request.headers.get("Referer")
+        
+        lead_data = {
+            "email": request.email,
+            "brand_name": request.nom_de_marque,
+            "sector": request.secteur,
+            "language": language,
+            "status": "NEW",  # Will be updated later
+            "ip_address": client_ip,
+            "user_agent": user_agent,
+            "referrer": referrer,
+            "utm_source": http_request.query_params.get("utm_source"),
+            "utm_medium": http_request.query_params.get("utm_medium"),
+            "utm_campaign": http_request.query_params.get("utm_campaign")
+        }
+        
+        lead_result = await create_lead_in_crm(lead_data, request_id)
+        logging.info(f"[{request_id}] Lead creation result: {lead_result}")
+        
+    except Exception as lead_error:
+        # Don't fail the request if lead creation fails
+        logging.error(f"[{request_id}] Lead creation error (non-blocking): {str(lead_error)}")
     
     # Check Gemini client
     if not GEMINI_API_KEY or not gemini_client:
         logging.error(f"❌ Gemini not configured: API_KEY={bool(GEMINI_API_KEY)}, client={gemini_client is not None}")
+        
+        # Update lead status to ERROR
+        try:
+            from crm_routes import create_lead_in_crm
+            lead_data["status"] = "ERROR"
+            await create_lead_in_crm(lead_data, request_id)
+        except:
+            pass
+        
         raise HTTPException(status_code=500, detail="GEMINI_API_KEY non configurée - contactez l'administrateur")
     
     # Check MongoDB connection
@@ -550,6 +590,40 @@ async def generate_mini_analysis(request: MiniAnalysisRequest, response: Respons
     except Exception as e:
         import traceback
         error_trace = traceback.format_exc()
+        error_str = str(e).lower()
+        
+        # MISSION A: DETECT QUOTA/RESOURCE_EXHAUSTED ERRORS
+        if "resource_exhausted" in error_str or "quota" in error_str:
+            logging.error(f"[{request_id}] ❌ GEMINI_QUOTA_EXCEEDED: {str(e)}")
+            
+            # MISSION C: Update lead status to QUOTA_BLOCKED
+            try:
+                from crm_routes import create_lead_in_crm
+                lead_data["status"] = "QUOTA_BLOCKED"
+                await create_lead_in_crm(lead_data, request_id)
+            except:
+                pass
+            
+            # Multilingual error messages
+            quota_messages = {
+                "fr": "Quota quotidien Gemini atteint. Veuillez réessayer demain.",
+                "en": "Daily Gemini quota reached. Please try again tomorrow.",
+                "he": "הגעתם למכסה היומית של Gemini. נסו שוב מחר."
+            }
+            
+            response.headers["Retry-After"] = "86400"  # 24 hours
+            
+            raise HTTPException(
+                status_code=429,  # Too Many Requests
+                detail={
+                    "error_code": "GEMINI_QUOTA_DAILY",
+                    "message": quota_messages,
+                    "retry_after_seconds": 86400,
+                    "request_id": request_id
+                }
+            )
+        
+        # Other errors: 500
         logging.error(f"[{request_id}] ❌ Gemini API error: {str(e)}")
         logging.error(f"[{request_id}] Error type: {type(e).__name__}")
         logging.error(f"[{request_id}] Traceback:\n{error_trace}")
@@ -578,6 +652,14 @@ async def generate_mini_analysis(request: MiniAnalysisRequest, response: Respons
         
         result = await current_db.mini_analyses.insert_one(analysis_record)
         logging.info(f"Analysis saved to MongoDB with ID: {result.inserted_id}")
+        
+        # MISSION C: Update lead status to GENERATED (successful generation)
+        try:
+            from crm_routes import create_lead_in_crm
+            lead_data["status"] = "GENERATED"
+            await create_lead_in_crm(lead_data, request_id)
+        except Exception as lead_update_error:
+            logging.error(f"[{request_id}] Lead status update error (non-blocking): {str(lead_update_error)}")
         
     except Exception as e:
         logging.error(f"MongoDB save error: {str(e)}")

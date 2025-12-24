@@ -32,6 +32,9 @@ except ImportError as e:
 from ai_routes import router as ai_router
 from mini_analysis_routes import router as mini_analysis_router
 from extended_routes import router as extended_router
+from crm_routes import router as crm_router
+from tracking_routes import router as tracking_router
+from admin_routes import router as admin_router
 
 
 ROOT_DIR = Path(__file__).parent
@@ -282,12 +285,18 @@ class AdminUser(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     email: EmailStr
     password_hash: str
-    role: str = 'admin'  # 'admin', 'editor', 'viewer'
+    role: str = 'admin'  # 'admin', 'sales', 'viewer'
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    is_active: bool = True
 
 class AdminLoginRequest(BaseModel):
     email: EmailStr
     password: str
+
+class AdminUserCreate(BaseModel):
+    email: EmailStr
+    password: str
+    role: str = 'viewer'  # Default to lowest privilege
 
 class MoneticopaymentRequest(BaseModel):
     pack_type: str  # 'analyse'
@@ -653,21 +662,115 @@ async def get_all_contacts(user: Dict = Depends(get_current_user)):
 
 @api_router.get("/admin/stats")
 async def get_stats(user: Dict = Depends(get_current_user)):
-    """Get dashboard statistics (admin)"""
+    """Get dashboard statistics (admin/sales/viewer)"""
     if db is None:
         raise HTTPException(status_code=503, detail="Database not configured")
     
-    if user['role'] not in ['admin', 'editor', 'viewer']:
+    if user['role'] not in ['admin', 'sales', 'viewer']:
         raise HTTPException(status_code=403, detail="Insufficient permissions")
     
-    total_contacts = await db.contacts.count_documents({})
-    total_carts = await db.cart.count_documents({})
+    try:
+        total_contacts = await db.contacts.count_documents({})
+        total_carts = await db.cart.count_documents({})
+        total_leads = await db.leads.count_documents({})
+        total_analyses = await db.mini_analyses.count_documents({})
+        
+        # Calculate conversion rate (leads that became analyses)
+        conversion_rate = round((total_analyses / total_leads * 100) if total_leads > 0 else 0, 1)
+        
+        return {
+            "total_contacts": total_contacts,
+            "total_carts": total_carts,
+            "total_leads": total_leads,
+            "total_analyses": total_analyses,
+            "conversion_rate": conversion_rate,
+            "last_updated": datetime.now(timezone.utc).isoformat()
+        }
+    except Exception as e:
+        logging.error(f"Error getting stats: {str(e)}")
+        return {
+            "total_contacts": 0,
+            "total_carts": 0,
+            "total_leads": 0,
+            "total_analyses": 0,
+            "conversion_rate": 0,
+            "last_updated": datetime.now(timezone.utc).isoformat()
+        }
+
+
+@api_router.post("/admin/users")
+async def create_admin_user(user_data: AdminUserCreate, current_user: Dict = Depends(get_current_user)):
+    """Create new admin user (admin only)"""
+    if db is None:
+        raise HTTPException(status_code=503, detail="Database not configured")
+    
+    if current_user['role'] != 'admin':
+        raise HTTPException(status_code=403, detail="Only admins can create users")
+    
+    # Validate role
+    if user_data.role not in ['admin', 'sales', 'viewer']:
+        raise HTTPException(status_code=400, detail="Invalid role")
+    
+    # Check if user already exists
+    existing = await db.users.find_one({"email": user_data.email})
+    if existing:
+        raise HTTPException(status_code=409, detail="User already exists")
+    
+    # Create user
+    new_user = AdminUser(
+        email=user_data.email,
+        password_hash=hash_password(user_data.password),
+        role=user_data.role
+    )
+    
+    await db.users.insert_one(new_user.model_dump())
     
     return {
-        "total_contacts": total_contacts,
-        "total_carts": total_carts,
-        "last_updated": datetime.now(timezone.utc).isoformat()
+        "message": "User created successfully",
+        "email": new_user.email,
+        "role": new_user.role
     }
+
+
+@api_router.get("/admin/users")
+async def list_admin_users(current_user: Dict = Depends(get_current_user)):
+    """List all admin users (admin only)"""
+    if db is None:
+        raise HTTPException(status_code=503, detail="Database not configured")
+    
+    if current_user['role'] != 'admin':
+        raise HTTPException(status_code=403, detail="Only admins can view users")
+    
+    users = await db.users.find(
+        {},
+        {"password_hash": 0, "_id": 0}
+    ).sort("created_at", -1).to_list(100)
+    
+    return {"users": users}
+
+
+@api_router.delete("/admin/users/{email}")
+async def delete_admin_user(email: str, current_user: Dict = Depends(get_current_user)):
+    """Delete/deactivate admin user (admin only)"""
+    if db is None:
+        raise HTTPException(status_code=503, detail="Database not configured")
+    
+    if current_user['role'] != 'admin':
+        raise HTTPException(status_code=403, detail="Only admins can delete users")
+    
+    if email == current_user['email']:
+        raise HTTPException(status_code=400, detail="Cannot delete yourself")
+    
+    # Deactivate instead of delete
+    result = await db.users.update_one(
+        {"email": email},
+        {"$set": {"is_active": False}}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    return {"message": "User deactivated successfully"}
 
 
 # ============================================================
@@ -753,6 +856,9 @@ app.include_router(api_router)
 app.include_router(ai_router)  # AI Insight generation
 app.include_router(mini_analysis_router)  # Mini-Analysis with Gemini
 app.include_router(extended_router)  # Extended features: PDF, Calendar, Contact Expert
+app.include_router(crm_router)  # CRM & Lead Management
+app.include_router(tracking_router)  # Tracking & Analytics
+app.include_router(admin_router)  # Admin Dashboard & Stats
 
 # Configure logging
 logging.basicConfig(

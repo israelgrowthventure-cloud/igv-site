@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Lock, Mail, Loader2, Shield } from 'lucide-react';
 import { toast } from 'sonner';
-import { api } from '../../utils/api';
+import api from '../utils/api';
 
 const AdminLogin = () => {
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -15,7 +17,7 @@ const AdminLogin = () => {
     e.preventDefault();
     
     if (!email || !password) {
-      toast.error('Email et mot de passe requis');
+      toast.error(t('admin.login.errors.fieldsRequired'));
       return;
     }
 
@@ -27,18 +29,18 @@ const AdminLogin = () => {
       if (data.access_token) {
         localStorage.setItem('admin_token', data.access_token);
         localStorage.setItem('admin_role', data.role);
-        toast.success('Connexion réussie');
+        toast.success(t('admin.login.success'));
         navigate('/admin/dashboard');
       } else {
-        toast.error('Identifiants invalides');
+        toast.error(t('admin.login.errors.invalidCredentials'));
       }
     } catch (error) {
       console.error('Login error:', error);
       
       if (error.response?.status === 401) {
-        toast.error('Identifiants invalides');
+        toast.error(t('admin.login.errors.invalidCredentials'));
       } else {
-        toast.error('Erreur serveur');
+        toast.error(t('admin.login.errors.serverError'));
       }
     } finally {
       setLoading(false);
@@ -48,7 +50,7 @@ const AdminLogin = () => {
   return (
     <>
       <Helmet>
-        <title>Admin Login | IGV</title>
+        <title>{t('admin.login.title')} | IGV Admin</title>
       </Helmet>
 
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center px-4">
@@ -59,20 +61,36 @@ const AdminLogin = () => {
               <Shield className="w-8 h-8 text-white" />
             </div>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              Admin Login
+              {t('admin.login.title')}
             </h1>
             <p className="text-gray-600">
-              IGV Site Management
+              {t('admin.login.subtitle')}
             </p>
           </div>
 
           {/* Login Form */}
           <div className="bg-white rounded-2xl shadow-xl p-8">
+            {/* Language Selector */}
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                {t('admin.login.language')}
+              </label>
+              <select
+                value={i18n.language}
+                onChange={(e) => i18n.changeLanguage(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option value="fr">Français</option>
+                <option value="en">English</option>
+                <option value="he">עברית</option>
+              </select>
+            </div>
+
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Email */}
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                  Email
+                  {t('admin.login.email')}
                 </label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -82,7 +100,7 @@ const AdminLogin = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="admin@israelgrowthventure.com"
+                    placeholder={t('admin.login.emailPlaceholder')}
                     required
                     disabled={loading}
                   />
@@ -92,7 +110,7 @@ const AdminLogin = () => {
               {/* Password */}
               <div>
                 <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-                  Password
+                  {t('admin.login.password')}
                 </label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -102,7 +120,7 @@ const AdminLogin = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="••••••••"
+                    placeholder={t('admin.login.passwordPlaceholder')}
                     required
                     disabled={loading}
                   />
@@ -118,12 +136,12 @@ const AdminLogin = () => {
                 {loading ? (
                   <>
                     <Loader2 className="w-5 h-5 animate-spin" />
-                    Connexion en cours...
+                    {t('admin.login.signing')}
                   </>
                 ) : (
                   <>
                     <Shield className="w-5 h-5" />
-                    Se connecter
+                    {t('admin.login.submit')}
                   </>
                 )}
               </button>
@@ -131,7 +149,7 @@ const AdminLogin = () => {
 
             {/* Security Notice */}
             <p className="mt-6 text-xs text-center text-gray-500">
-              Accès sécurisé réservé aux administrateurs IGV
+              {t('admin.login.securityNotice')}
             </p>
           </div>
 
@@ -142,37 +160,6 @@ const AdminLogin = () => {
         </div>
       </div>
     </>
-  );
-};
-
-export default AdminLogin;
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              <Lock className="inline h-4 w-4 mr-1" />
-              Password
-            </label>
-            <input
-              type="password"
-              required
-              value={credentials.password}
-              onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50"
-          >
-            {loading ? 'Connexion...' : 'Se connecter'}
-          </button>
-        </form>
-      </div>
-    </div>
   );
 };
 

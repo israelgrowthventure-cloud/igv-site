@@ -96,6 +96,71 @@ export const api = {
   createCalendarEvent: async (data) => {
     const response = await axios.post(`${API}/calendar/create-event`, data);
     return response.data;
+  },
+
+  // Admin Authentication
+  adminLogin: async (credentials) => {
+    const response = await axios.post(`${API}/admin/login`, credentials);
+    return response.data;
+  },
+
+  adminVerifyToken: async () => {
+    const token = localStorage.getItem('admin_token');
+    const response = await axios.get(`${API}/admin/verify`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  },
+
+  // Admin Dashboard
+  getAdminStats: async () => {
+    const token = localStorage.getItem('admin_token');
+    const response = await axios.get(`${API}/admin/stats`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  },
+
+  getLeads: async (params = {}) => {
+    const token = localStorage.getItem('admin_token');
+    const response = await axios.get(`${API}/admin/leads`, {
+      headers: { Authorization: `Bearer ${token}` },
+      params
+    });
+    return response.data;
+  },
+
+  getAdminContacts: async () => {
+    const token = localStorage.getItem('admin_token');
+    const response = await axios.get(`${API}/admin/contacts`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  },
+
+  // Admin User Management
+  createAdminUser: async (userData) => {
+    const token = localStorage.getItem('admin_token');
+    const response = await axios.post(`${API}/admin/users`, userData, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  },
+
+  getAdminUsers: async () => {
+    const token = localStorage.getItem('admin_token');
+    const response = await axios.get(`${API}/admin/users`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  },
+
+  deleteAdminUser: async (email) => {
+    const token = localStorage.getItem('admin_token');
+    const response = await axios.delete(`${API}/admin/users/${email}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
   }
 };
 

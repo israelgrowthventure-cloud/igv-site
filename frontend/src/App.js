@@ -11,6 +11,7 @@ import './styles/rtl.css';
 // Layout Components
 import Header from './components/Header';
 import Footer from './components/Footer';
+import CookieConsent from './components/CookieConsent';
 
 // Pages
 import NewHome from './pages/NewHome';  // NOUVELLE landing page
@@ -44,6 +45,7 @@ function App() {
         <BrowserRouter>
           <div className="App">
             <Toaster position="top-right" richColors />
+            <CookieConsent />
             <Header />
             <main>
               <Routes>

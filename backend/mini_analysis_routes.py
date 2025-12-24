@@ -660,11 +660,6 @@ async def generate_mini_analysis(request: MiniAnalysisRequest, response: Respons
                     "request_id": request_id
                 }
             )
-                    "message": quota_messages,
-                    "retry_after_seconds": 86400,
-                    "request_id": request_id
-                }
-            )
         
         # Other errors: 500
         logging.error(f"[{request_id}] ❌ Gemini API error: {str(e)}")

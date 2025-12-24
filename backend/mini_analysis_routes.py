@@ -18,7 +18,9 @@ router = APIRouter(prefix="/api")
 
 # Gemini API configuration
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
-GEMINI_MODEL = os.getenv('GEMINI_MODEL', 'gemini-1.5-flash-latest')  # Use -latest suffix for google-genai 0.2.2
+# For google-genai 0.2.2, use format: models/gemini-1.5-flash (without prefix)
+# Or try: gemini-1.5-flash-002, gemini-1.5-pro, etc.
+GEMINI_MODEL = os.getenv('GEMINI_MODEL', 'models/gemini-1.5-flash')
 
 gemini_client = None
 

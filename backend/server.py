@@ -614,7 +614,12 @@ async def bootstrap_admin(token: str):
     # Check if admin already exists
     existing_admin = await db.users.find_one({"email": ADMIN_EMAIL})
     if existing_admin:
-        return {"message": "Admin already exists", "email": ADMIN_EMAIL}
+        # Update password hash if it exists (allows password reset)
+        await db.users.update_one(
+            {"email": ADMIN_EMAIL},
+            {"$set": {"password_hash": hash_password(ADMIN_PASSWORD)}}
+        )
+        return {"message": "Admin password updated", "email": ADMIN_EMAIL}
     
     # Create admin user
     admin_user = AdminUser(

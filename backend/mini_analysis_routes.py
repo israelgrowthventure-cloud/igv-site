@@ -606,29 +606,35 @@ async def generate_mini_analysis(request: MiniAnalysisRequest, response: Respons
                 except:
                     pass
             
-            # SAVE TO pending_analyses
+            # SAVE TO pending_analyses (UPDATED SCHEMA)
+            lead_id_for_queue = None
+            if lead_data:
+                try:
+                    from crm_routes import create_lead_in_crm
+                    lead_result = await create_lead_in_crm(lead_data, request_id)
+                    lead_id_for_queue = lead_result.get("lead_id")
+                except:
+                    pass
+            
             try:
                 pending_record = {
-                    "created_at": datetime.now(timezone.utc),
-                    "brand": request.nom_de_marque,
+                    "lead_id": lead_id_for_queue or "unknown",
+                    "email": request.email,
+                    "brand_name": request.nom_de_marque,
+                    "sector": request.secteur,
                     "language": language,
-                    "user_email": request.email,
-                    "form_payload": request.dict(),
-                    "ip_address": http_request.client.host if http_request.client else None,
-                    "user_agent": http_request.headers.get("User-Agent"),
-                    "referrer": http_request.headers.get("Referer"),
-                    "utm_source": http_request.query_params.get("utm_source"),
-                    "utm_medium": http_request.query_params.get("utm_medium"),
-                    "utm_campaign": http_request.query_params.get("utm_campaign"),
-                    "status": "queued",
-                    "error_code": "429",
-                    "request_id": request_id,
-                    "retry_count": 0
+                    "status": "pending",
+                    "attempts": 0,
+                    "request_data": request.dict(),
+                    "created_at": datetime.now(timezone.utc),
+                    "updated_at": datetime.now(timezone.utc)
                 }
-                await current_db.pending_analyses.insert_one(pending_record)
-                logging.info(f"[{request_id}] QUEUED_OK: Saved to pending_analyses")
+                result = await current_db.pending_analyses.insert_one(pending_record)
+                queue_id = str(result.inserted_id)
+                logging.info(f"[{request_id}] QUEUED_OK: queue_id={queue_id}")
             except Exception as db_error:
                 logging.error(f"[{request_id}] QUEUE_FAIL: {str(db_error)}")
+                queue_id = None
             
             # SEND CONFIRMATION EMAIL
             email_sent = False
@@ -640,11 +646,11 @@ async def generate_mini_analysis(request: MiniAnalysisRequest, response: Respons
             except Exception as email_error:
                 logging.error(f"[{request_id}] EMAIL_SEND_FAIL: {str(email_error)}")
             
-            # Multilingual confirmation messages
+            # Multilingual confirmation messages (EXACT SPEC)
             quota_messages = {
-                "fr": "Capacité du jour atteinte.\\nVotre demande est enregistrée ✅\\nVous recevrez votre mini-analyse par email dès réouverture des créneaux (généralement sous 24–48h).",
-                "en": "Daily capacity reached.\\nYour request is saved ✅\\nYou'll receive your mini-analysis by email as soon as capacity reopens (usually within 24–48 hours).",
-                "he": "הגענו לקיבולת היומית.\\nהבקשה נשמרה ✅\\nתקבלו את המיני-אנליזה במייל ברגע שהקיבולת תיפתח מחדש (בדרך כלל תוך 24–48 שעות)."
+                "fr": "Capacité du jour atteinte.\nVotre demande est enregistrée ✅\nVous recevrez votre mini-analyse par email dès réouverture des créneaux (généralement sous 24–48h).",
+                "en": "Daily capacity reached.\nYour request is saved ✅\nYou'll receive your mini-analysis by email as soon as capacity reopens (usually within 24–48 hours).",
+                "he": "הגענו לקיבולת היומית.\nהבקשה נשמרה ✅\nתקבלו את המיני-אנליזה במייל ברגע שהקיבולת תיפתח מחדש (בדרך כלל תוך 24–48 שעות)."
             }
             
             response.headers["Retry-After"] = "86400"

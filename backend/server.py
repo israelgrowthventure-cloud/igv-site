@@ -35,6 +35,9 @@ from extended_routes import router as extended_router
 from crm_routes import router as crm_router
 from tracking_routes import router as tracking_router
 from admin_routes import router as admin_router
+from crm_complete_routes import router as crm_complete_router
+from gdpr_routes import router as gdpr_router
+from quota_queue_routes import router as quota_router
 
 
 ROOT_DIR = Path(__file__).parent
@@ -869,7 +872,10 @@ app.include_router(api_router)
 app.include_router(ai_router)  # AI Insight generation
 app.include_router(mini_analysis_router)  # Mini-Analysis with Gemini
 app.include_router(extended_router)  # Extended features: PDF, Calendar, Contact Expert
-app.include_router(crm_router)  # CRM & Lead Management
+app.include_router(crm_router)  # CRM & Lead Management (basic)
+app.include_router(crm_complete_router)  # CRM Complete (MVP)
+app.include_router(gdpr_router)  # GDPR Consent & Privacy
+app.include_router(quota_router)  # Gemini Quota Queue
 app.include_router(tracking_router)  # Tracking & Analytics
 app.include_router(admin_router)  # Admin Dashboard & Stats
 

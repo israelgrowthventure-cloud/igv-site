@@ -653,6 +653,14 @@ async def admin_login(credentials: AdminLoginRequest):
         "role": user['role']
     }
 
+@api_router.get("/admin/verify")
+async def verify_admin_token(user: Dict = Depends(get_current_user)):
+    """Verify admin JWT token and return user info"""
+    return {
+        "email": user['email'],
+        "role": user['role']
+    }
+
 @api_router.get("/admin/contacts")
 async def get_all_contacts(user: Dict = Depends(get_current_user)):
     """Get all contacts (admin only)"""

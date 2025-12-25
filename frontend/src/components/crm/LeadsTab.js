@@ -8,6 +8,40 @@ const LeadsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTerm, 
   const [noteText, setNoteText] = useState('');
   const [editingLead, setEditingLead] = useState(null);
   const [loadingAction, setLoadingAction] = useState(false);
+  const [showNewLeadForm, setShowNewLeadForm] = useState(false);
+  const [newLeadData, setNewLeadData] = useState({
+    email: '',
+    contact_name: '',
+    brand_name: '',
+    sector: '',
+    phone: '',
+    status: 'NEW',
+    priority: 'C'
+  });
+
+  const handleCreateLead = async (e) => {
+    e.preventDefault();
+    try {
+      setLoadingAction(true);
+      await api.post('/api/crm/leads', newLeadData);
+      toast.success(t('admin.crm.leads.created') || 'Lead created successfully');
+      setShowNewLeadForm(false);
+      setNewLeadData({
+        email: '',
+        contact_name: '',
+        brand_name: '',
+        sector: '',
+        phone: '',
+        status: 'NEW',
+        priority: 'C'
+      });
+      await onRefresh();
+    } catch (error) {
+      toast.error(t('admin.crm.errors.create_failed') || 'Failed to create lead');
+    } finally {
+      setLoadingAction(false);
+    }
+  };
 
   const handleExportCSV = async () => {
     try {
@@ -99,6 +133,10 @@ const LeadsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTerm, 
             <Download className="w-4 h-4" />
             {t('admin.crm.leads.export') || 'Export CSV'}
           </button>
+          <button onClick={() => setShowNewLeadForm(true)} className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+            <Plus className="w-4 h-4" />
+            {t('admin.crm.leads.new_lead') || 'New Lead'}
+          </button>
         </div>
 
         {showFilters && (
@@ -118,7 +156,95 @@ const LeadsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTerm, 
       </div>
 
       {/* List or Detail View */}
-      {!selectedItem ? (
+      {showNewLeadForm ? (
+        <div className="bg-white rounded-lg shadow border p-6">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-2xl font-bold">{t('admin.crm.leads.new_lead') || 'New Lead'}</h2>
+            <button onClick={() => setShowNewLeadForm(false)} className="p-2 hover:bg-gray-100 rounded-lg">
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+          <form onSubmit={handleCreateLead} className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">{t('admin.crm.leads.columns.email') || 'Email'} *</label>
+                <input
+                  type="email"
+                  required
+                  value={newLeadData.email}
+                  onChange={(e) => setNewLeadData({...newLeadData, email: e.target.value})}
+                  className="w-full px-3 py-2 border rounded-lg"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">{t('admin.crm.leads.columns.name') || 'Name'}</label>
+                <input
+                  type="text"
+                  value={newLeadData.contact_name}
+                  onChange={(e) => setNewLeadData({...newLeadData, contact_name: e.target.value})}
+                  className="w-full px-3 py-2 border rounded-lg"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">{t('admin.crm.leads.columns.brand') || 'Brand'}</label>
+                <input
+                  type="text"
+                  value={newLeadData.brand_name}
+                  onChange={(e) => setNewLeadData({...newLeadData, brand_name: e.target.value})}
+                  className="w-full px-3 py-2 border rounded-lg"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">{t('admin.crm.leads.columns.sector') || 'Sector'}</label>
+                <input
+                  type="text"
+                  value={newLeadData.sector}
+                  onChange={(e) => setNewLeadData({...newLeadData, sector: e.target.value})}
+                  className="w-full px-3 py-2 border rounded-lg"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">{t('admin.crm.leads.phone') || 'Phone'}</label>
+                <input
+                  type="text"
+                  value={newLeadData.phone}
+                  onChange={(e) => setNewLeadData({...newLeadData, phone: e.target.value})}
+                  className="w-full px-3 py-2 border rounded-lg"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">{t('admin.crm.leads.columns.priority') || 'Priority'}</label>
+                <select
+                  value={newLeadData.priority}
+                  onChange={(e) => setNewLeadData({...newLeadData, priority: e.target.value})}
+                  className="w-full px-3 py-2 border rounded-lg"
+                >
+                  <option value="A">{t('admin.crm.priorities.A') || 'Priority A (High)'}</option>
+                  <option value="B">{t('admin.crm.priorities.B') || 'Priority B (Medium)'}</option>
+                  <option value="C">{t('admin.crm.priorities.C') || 'Priority C (Low)'}</option>
+                </select>
+              </div>
+            </div>
+            <div className="flex gap-3 pt-4">
+              <button
+                type="submit"
+                disabled={loadingAction}
+                className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 flex items-center gap-2"
+              >
+                {loadingAction ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                {t('admin.crm.common.save') || 'Save'}
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowNewLeadForm(false)}
+                className="px-6 py-2 border rounded-lg hover:bg-gray-50"
+              >
+                {t('admin.crm.common.cancel') || 'Cancel'}
+              </button>
+            </div>
+          </form>
+        </div>
+      ) : !selectedItem ? (
         <div className="bg-white rounded-lg shadow border overflow-hidden">
           <table className="w-full">
             <thead className="bg-gray-50 border-b">

@@ -13,6 +13,7 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import CookieConsent from './components/CookieConsent';
 import CookieConsentBanner from './components/CookieConsentBanner';
+import PrivateRoute from './components/PrivateRoute';
 
 // Pages
 import NewHome from './pages/NewHome';  // NOUVELLE landing page
@@ -73,10 +74,10 @@ function App() {
                 <Route path="/terms" element={<Terms />} />
                 <Route path="/old-home" element={<Home />} />
                 
-                {/* Admin Routes */}
+                {/* Admin Routes - PROTECTED */}
                 <Route path="/admin/login" element={<AdminLogin />} />
-                <Route path="/admin/dashboard" element={<AdminDashboard />} />
-                <Route path="/admin/crm" element={<AdminCRMComplete />} />
+                <Route path="/admin/dashboard" element={<PrivateRoute><AdminDashboard /></PrivateRoute>} />
+                <Route path="/admin/crm" element={<PrivateRoute><AdminCRMComplete /></PrivateRoute>} />
                 
                 <Route path="*" element={<Home />} />
               </Routes>

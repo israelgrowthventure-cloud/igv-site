@@ -327,5 +327,302 @@
     "search": "Rechercher",
     "filter": "Filtrer",
     "brandName": "Israel Growth Venture"
+  },
+  "admin": {
+    "crm": {
+      "title": "CRM IGV",
+      "tabs": {
+        "dashboard": "Tableau de bord",
+        "leads": "Prospects",
+        "pipeline": "Pipeline",
+        "contacts": "Contacts",
+        "settings": "Paramètres"
+      },
+      "dashboard": {
+        "leads_today": "Prospects aujourd'hui",
+        "leads_7d": "7 derniers jours",
+        "pipeline_value": "Valeur du pipeline",
+        "tasks_overdue": "Tâches en retard",
+        "top_sources": "Principales sources",
+        "stage_distribution": "Distribution par étapes"
+      },
+      "leads": {
+        "search": "Rechercher des prospects...",
+        "export": "Exporter CSV",
+        "export_success": "Prospects exportés",
+        "note_added": "Note ajoutée",
+        "status_updated": "Statut mis à jour",
+        "converted": "Prospect converti en contact",
+        "convert_to_contact": "Convertir en contact",
+        "add_note_placeholder": "Ajouter une note...",
+        "columns": {
+          "name": "Nom",
+          "email": "Email",
+          "brand": "Marque",
+          "sector": "Secteur",
+          "status": "Statut",
+          "priority": "Priorité",
+          "created": "Créé le"
+        },
+        "details": {
+          "email": "Email",
+          "phone": "Téléphone",
+          "sector": "Secteur",
+          "city": "Ville cible",
+          "status": "Statut",
+          "priority": "Priorité",
+          "focus_notes": "Notes prioritaires",
+          "notes": "Notes"
+        },
+        "filter_sector": "Secteur"
+      },
+      "pipeline": {
+        "total_opps": "Opportunités totales",
+        "total_value": "Valeur totale",
+        "avg_deal": "Deal moyen",
+        "close_rate": "Taux de conversion",
+        "opportunities": "opportunités",
+        "stage_updated": "Étape mise à jour",
+        "current_stage": "Étape actuelle",
+        "estimated_value": "Valeur estimée",
+        "description": "Description",
+        "stage_history": "Historique des étapes",
+        "stages": {
+          "initial_interest": "Intérêt initial",
+          "info_requested": "Info demandée",
+          "first_call": "Premier appel planifié",
+          "pitch_delivered": "Pitch délivré",
+          "proposal_sent": "Proposition envoyée",
+          "negotiation": "Négociation",
+          "verbal_commitment": "Engagement verbal",
+          "won": "Gagné"
+        }
+      },
+      "contacts": {
+        "search": "Rechercher des contacts...",
+        "columns": {
+          "name": "Nom",
+          "email": "Email",
+          "phone": "Téléphone",
+          "company": "Entreprise",
+          "created": "Créé le"
+        },
+        "details": {
+          "email": "Email",
+          "phone": "Téléphone",
+          "position": "Poste",
+          "location": "Localisation",
+          "tags": "Tags"
+        },
+        "converted_from_lead": "Converti depuis un prospect",
+        "lead_id": "ID Prospect",
+        "recent_activities": "Activités récentes"
+      },
+      "settings": {
+        "crm_users": "Utilisateurs CRM",
+        "add_user": "Ajouter un utilisateur",
+        "user_created": "Utilisateur créé",
+        "user_deleted": "Utilisateur supprimé",
+        "confirm_delete_user": "Supprimer cet utilisateur ?",
+        "user_name": "Nom",
+        "user_email": "Email",
+        "add_tag": "Ajouter un tag",
+        "tag_added": "Tag ajouté",
+        "tag_name": "Nom du tag",
+        "tags_title": "Tags",
+        "pipeline_stages": "Étapes du pipeline",
+        "stages_description": "Configurez les étapes de votre pipeline de vente",
+        "active": "Actif",
+        "inactive": "Inactif",
+        "sections": {
+          "users": "Utilisateurs",
+          "tags": "Tags",
+          "stages": "Étapes du pipeline"
+        },
+        "columns": {
+          "name": "Nom",
+          "email": "Email",
+          "role": "Rôle",
+          "status": "Statut"
+        }
+      },
+      "common": {
+        "filters": "Filtres",
+        "all_statuses": "Tous les statuts",
+        "all_priorities": "Toutes les priorités",
+        "reset": "Réinitialiser",
+        "view": "Voir",
+        "no_data": "Aucune donnée",
+        "no_notes": "Aucune note",
+        "no_history": "Aucun historique",
+        "no_activities": "Aucune activité",
+        "no_users": "Aucun utilisateur",
+        "no_tags": "Aucun tag",
+        "no_stages": "Aucune étape configurée",
+        "add": "Ajouter",
+        "save": "Enregistrer",
+        "cancel": "Annuler"
+      },
+      "statuses": {
+        "NEW": "Nouveau",
+        "CONTACTED": "Contacté",
+        "QUALIFIED": "Qualifié",
+        "CONVERTED": "Converti",
+        "LOST": "Perdu",
+        "PENDING_QUOTA": "En attente (quota)"
+      },
+      "priorities": {
+        "A": "Priorité A (Haute)",
+        "B": "Priorité B (Moyenne)",
+        "C": "Priorité C (Basse)"
+      },
+      "errors": {
+        "load_failed": "Échec du chargement",
+        "export_failed": "Échec de l'export",
+        "note_failed": "Échec de l'ajout de la note",
+        "status_failed": "Échec de la mise à jour du statut",
+        "convert_failed": "Échec de la conversion",
+        "stage_failed": "Échec de la mise à jour de l'étape",
+        "user_create_failed": "Échec de la création de l'utilisateur",
+        "user_delete_failed": "Échec de la suppression de l'utilisateur",
+        "tag_add_failed": "Échec de l'ajout du tag"
+      }
+    },
+    "roles": {
+      "admin": "Administrateur",
+      "sales": "Commercial",
+      "viewer": "Lecteur"
+    },
+    "logout": {
+      "button": "Déconnexion",
+      "success": "Déconnecté avec succès"
+    }
+  },
+  "gdpr": {
+    "cookie_banner": {
+      "title": "Gestion des cookies",
+      "description": "Nous utilisons des cookies pour améliorer votre expérience. Vous pouvez choisir les types de cookies que vous acceptez.",
+      "essential": "Cookies essentiels",
+      "essential_desc": "Nécessaires au fonctionnement du site. Toujours activés.",
+      "analytics": "Cookies analytiques",
+      "analytics_desc": "Nous permettent de comprendre comment les visiteurs utilisent notre site.",
+      "marketing": "Cookies marketing",
+      "marketing_desc": "Utilisés pour vous envoyer des communications personnalisées.",
+      "accept_all": "Tout accepter",
+      "save_preferences": "Enregistrer mes préférences",
+      "refuse_all": "Tout refuser",
+      "learn_more": "En savoir plus"
+    },
+    "privacy": {
+      "page_title": "Politique de confidentialité - IGV",
+      "title": "Politique de confidentialité",
+      "intro": "Dernière mise à jour : Décembre 2024. Cette politique décrit comment Israel Growth Venture collecte, utilise et protège vos données personnelles.",
+      "section1": {
+        "title": "1. Données collectées",
+        "p1": "Nous collectons uniquement les données nécessaires pour vous fournir nos services :",
+        "data1": "Informations de contact : nom, email, téléphone, entreprise",
+        "data2": "Données de navigation : adresse IP (anonymisée), pages visitées, durée",
+        "data3": "Préférences : langue, consentement cookies",
+        "important": "Important : Aucune donnée de navigation n'est collectée sans votre consentement explicite."
+      },
+      "section2": {
+        "title": "2. Utilisation des données",
+        "p1": "Vos données sont utilisées pour :",
+        "use1": "Répondre à vos demandes de renseignements",
+        "use2": "Générer des analyses personnalisées (mini-analyses)",
+        "use3": "Améliorer nos services (avec consentement analytique)",
+        "use4": "Vous envoyer notre newsletter (opt-in explicite uniquement)",
+        "important": "Nous ne vendons jamais vos données à des tiers."
+      },
+      "section3": {
+        "title": "3. Protection des données",
+        "p1": "Nous prenons la sécurité de vos données très au sérieux :",
+        "security1": "Chiffrement SSL/TLS pour toutes les communications",
+        "security2": "Stockage sécurisé sur serveurs conformes RGPD",
+        "security3": "Accès restreint aux données (équipe autorisée uniquement)",
+        "security4": "Anonymisation des adresses IP"
+      },
+      "section4": {
+        "title": "4. Newsletter et marketing",
+        "p1": "Nous n'envoyons la newsletter qu'aux personnes ayant explicitement accepté de la recevoir via une case à cocher dédiée.",
+        "p2": "Vous pouvez vous désinscrire à tout moment en cliquant sur le lien de désinscription dans chaque email ou en nous contactant."
+      },
+      "section5": {
+        "title": "5. Vos droits",
+        "p1": "Conformément au RGPD, vous avez le droit de :",
+        "right1": "Accéder à vos données personnelles",
+        "right2": "Rectifier des données inexactes",
+        "right3": "Demander l'effacement de vos données",
+        "right4": "Limiter le traitement de vos données",
+        "right5": "Porter réclamation auprès de la CNIL",
+        "contact": "Pour exercer ces droits, contactez-nous à :"
+      },
+      "section6": {
+        "title": "Contact",
+        "p1": "Pour toute question sur cette politique ou vos données personnelles :"
+      }
+    },
+    "cookies": {
+      "page_title": "Politique des cookies - IGV",
+      "title": "Politique des cookies",
+      "intro": "Cette page explique quels cookies nous utilisons, pourquoi, et comment vous pouvez les gérer.",
+      "section1": {
+        "title": "1. Qu'est-ce qu'un cookie ?",
+        "p1": "Un cookie est un petit fichier texte déposé sur votre ordinateur ou appareil mobile lors de votre visite sur un site web. Les cookies permettent au site de mémoriser vos actions et préférences."
+      },
+      "section2": {
+        "title": "2. Types de cookies utilisés"
+      },
+      "essential": {
+        "title": "Cookies essentiels",
+        "desc": "Ces cookies sont nécessaires au fonctionnement du site. Ils ne peuvent pas être désactivés.",
+        "cookie1": "Session utilisateur (authentification admin)",
+        "cookie2": "Préférences de langue",
+        "cookie3": "Consentement cookies",
+        "status": "✓ Toujours activés"
+      },
+      "analytics": {
+        "title": "Cookies analytiques",
+        "desc": "Ces cookies nous aident à comprendre comment les visiteurs utilisent notre site.",
+        "cookie1": "Suivi des pages visitées",
+        "cookie2": "Durée de visite",
+        "cookie3": "Source de trafic",
+        "status": "⚠ Nécessite votre consentement",
+        "note": "Note : Les adresses IP sont anonymisées. Aucune donnée personnellement identifiable n'est collectée."
+      },
+      "marketing": {
+        "title": "Cookies marketing",
+        "desc": "Ces cookies permettent de personnaliser les communications que vous recevez.",
+        "cookie1": "Préférences de newsletter",
+        "cookie2": "Historique d'interaction avec emails",
+        "status": "⚠ Nécessite votre consentement explicite"
+      },
+      "section3": {
+        "title": "3. Comment gérer vos cookies ?",
+        "p1": "Vous pouvez gérer vos préférences de cookies de plusieurs manières :",
+        "method1": {
+          "title": "Via notre bannière de consentement",
+          "desc": "Lors de votre première visite, vous pouvez choisir les types de cookies à accepter."
+        },
+        "method2": {
+          "title": "Via les paramètres de votre navigateur",
+          "desc": "Vous pouvez configurer votre navigateur pour bloquer ou supprimer les cookies. Attention : certaines fonctionnalités du site pourraient ne plus fonctionner."
+        }
+      },
+      "section4": {
+        "title": "4. Durée de conservation",
+        "essential": "Cookies essentiels :",
+        "essential_duration": "Session + 30 jours",
+        "analytics": "Cookies analytiques :",
+        "analytics_duration": "13 mois maximum",
+        "marketing": "Cookies marketing :",
+        "marketing_duration": "13 mois maximum"
+      },
+      "section5": {
+        "title": "Questions ?",
+        "p1": "Pour toute question sur notre utilisation des cookies, contactez-nous à :"
+      }
+    }
   }
 }
+

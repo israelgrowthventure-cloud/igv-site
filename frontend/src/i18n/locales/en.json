@@ -323,5 +323,301 @@
     "search": "Search",
     "filter": "Filter",
     "brandName": "Israel Growth Venture"
+  },
+  "admin": {
+    "crm": {
+      "title": "IGV CRM",
+      "tabs": {
+        "dashboard": "Dashboard",
+        "leads": "Leads",
+        "pipeline": "Pipeline",
+        "contacts": "Contacts",
+        "settings": "Settings"
+      },
+      "dashboard": {
+        "leads_today": "Leads Today",
+        "leads_7d": "Last 7 Days",
+        "pipeline_value": "Pipeline Value",
+        "tasks_overdue": "Tasks Overdue",
+        "top_sources": "Top Sources",
+        "stage_distribution": "Stage Distribution"
+      },
+      "leads": {
+        "search": "Search leads...",
+        "export": "Export CSV",
+        "export_success": "Leads exported",
+        "note_added": "Note added",
+        "status_updated": "Status updated",
+        "converted": "Lead converted to contact",
+        "convert_to_contact": "Convert to Contact",
+        "add_note_placeholder": "Add a note...",
+        "columns": {
+          "name": "Name",
+          "email": "Email",
+          "brand": "Brand",
+          "sector": "Sector",
+          "status": "Status",
+          "priority": "Priority",
+          "created": "Created"
+        },
+        "details": {
+          "email": "Email",
+          "phone": "Phone",
+          "sector": "Sector",
+          "city": "Target City",
+          "status": "Status",
+          "priority": "Priority",
+          "focus_notes": "Focus Notes",
+          "notes": "Notes"
+        },
+        "filter_sector": "Sector"
+      },
+      "pipeline": {
+        "total_opps": "Total Opportunities",
+        "total_value": "Total Value",
+        "avg_deal": "Avg Deal Size",
+        "close_rate": "Close Rate",
+        "opportunities": "opportunities",
+        "stage_updated": "Stage updated",
+        "current_stage": "Current Stage",
+        "estimated_value": "Estimated Value",
+        "description": "Description",
+        "stage_history": "Stage History",
+        "stages": {
+          "initial_interest": "Initial Interest",
+          "info_requested": "Info Requested",
+          "first_call": "First Call Scheduled",
+          "pitch_delivered": "Pitch Delivered",
+          "proposal_sent": "Proposal Sent",
+          "negotiation": "Negotiation",
+          "verbal_commitment": "Verbal Commitment",
+          "won": "Won"
+        }
+      },
+      "contacts": {
+        "search": "Search contacts...",
+        "columns": {
+          "name": "Name",
+          "email": "Email",
+          "phone": "Phone",
+          "company": "Company",
+          "created": "Created"
+        },
+        "details": {
+          "email": "Email",
+          "phone": "Phone",
+          "position": "Position",
+          "location": "Location",
+          "tags": "Tags"
+        },
+        "converted_from_lead": "Converted from Lead",
+        "lead_id": "Lead ID",
+        "recent_activities": "Recent Activities"
+      },
+      "settings": {
+        "crm_users": "CRM Users",
+        "add_user": "Add User",
+        "user_created": "User created",
+        "user_deleted": "User deleted",
+        "confirm_delete_user": "Delete this user?",
+        "user_name": "Name",
+        "user_email": "Email",
+        "add_tag": "Add Tag",
+        "tag_added": "Tag added",
+        "tag_name": "Tag name",
+        "tags_title": "Tags",
+        "pipeline_stages": "Pipeline Stages",
+        "stages_description": "Configure your sales pipeline stages",
+        "active": "Active",
+        "inactive": "Inactive",
+        "sections": {
+          "users": "Users",
+          "tags": "Tags",
+          "stages": "Pipeline Stages"
+        },
+        "columns": {
+          "name": "Name",
+          "email": "Email",
+          "role": "Role",
+          "status": "Status"
+        }
+      },
+      "common": {
+        "filters": "Filters",
+        "all_statuses": "All Statuses",
+        "all_priorities": "All Priorities",
+        "reset": "Reset",
+        "view": "View",
+        "no_data": "No data",
+        "no_notes": "No notes",
+        "no_history": "No history",
+        "no_activities": "No activities",
+        "no_users": "No users",
+        "no_tags": "No tags",
+        "no_stages": "No stages configured",
+        "add": "Add",
+        "save": "Save",
+        "cancel": "Cancel"
+      },
+      "statuses": {
+        "NEW": "New",
+        "CONTACTED": "Contacted",
+        "QUALIFIED": "Qualified",
+        "CONVERTED": "Converted",
+        "LOST": "Lost",
+        "PENDING_QUOTA": "Pending (Quota)"
+      },
+      "priorities": {
+        "A": "Priority A (High)",
+        "B": "Priority B (Medium)",
+        "C": "Priority C (Low)"
+      },
+      "errors": {
+        "load_failed": "Failed to load",
+        "export_failed": "Export failed",
+        "note_failed": "Failed to add note",
+        "status_failed": "Failed to update status",
+        "convert_failed": "Conversion failed",
+        "stage_failed": "Failed to update stage",
+        "user_create_failed": "Failed to create user",
+        "user_delete_failed": "Failed to delete user",
+        "tag_add_failed": "Failed to add tag"
+      }
+    },
+    "roles": {
+      "admin": "Administrator",
+      "sales": "Sales",
+      "viewer": "Viewer"
+    },
+    "logout": {
+      "button": "Logout",
+      "success": "Logged out successfully"
+    }
+  },
+  "gdpr": {
+    "cookie_banner": {
+      "title": "Cookie Management",
+      "description": "We use cookies to improve your experience. You can choose which types of cookies you accept.",
+      "essential": "Essential Cookies",
+      "essential_desc": "Required for the site to function. Always enabled.",
+      "analytics": "Analytics Cookies",
+      "analytics_desc": "Help us understand how visitors use our site.",
+      "marketing": "Marketing Cookies",
+      "marketing_desc": "Used to send you personalized communications.",
+      "accept_all": "Accept All",
+      "save_preferences": "Save My Preferences",
+      "refuse_all": "Refuse All",
+      "learn_more": "Learn More"
+    },
+    "privacy": {
+      "page_title": "Privacy Policy - IGV",
+      "title": "Privacy Policy",
+      "intro": "Last updated: December 2024. This policy describes how Israel Growth Venture collects, uses, and protects your personal data.",
+      "section1": {
+        "title": "1. Data Collected",
+        "p1": "We only collect data necessary to provide you with our services:",
+        "data1": "Contact information: name, email, phone, company",
+        "data2": "Browsing data: IP address (anonymized), pages visited, duration",
+        "data3": "Preferences: language, cookie consent",
+        "important": "Important: No browsing data is collected without your explicit consent."
+      },
+      "section2": {
+        "title": "2. Data Usage",
+        "p1": "Your data is used to:",
+        "use1": "Respond to your inquiries",
+        "use2": "Generate personalized analyses (mini-analyses)",
+        "use3": "Improve our services (with analytics consent)",
+        "use4": "Send you our newsletter (explicit opt-in only)",
+        "important": "We never sell your data to third parties."
+      },
+      "section3": {
+        "title": "3. Data Protection",
+        "p1": "We take data security very seriously:",
+        "security1": "SSL/TLS encryption for all communications",
+        "security2": "Secure storage on GDPR-compliant servers",
+        "security3": "Restricted data access (authorized team only)",
+        "security4": "IP address anonymization"
+      },
+      "section4": {
+        "title": "4. Newsletter and Marketing",
+        "p1": "We only send newsletters to people who have explicitly agreed to receive them via a dedicated checkbox.",
+        "p2": "You can unsubscribe at any time by clicking the unsubscribe link in each email or by contacting us."
+      },
+      "section5": {
+        "title": "5. Your Rights",
+        "p1": "Under GDPR, you have the right to:",
+        "right1": "Access your personal data",
+        "right2": "Rectify inaccurate data",
+        "right3": "Request deletion of your data",
+        "right4": "Limit processing of your data",
+        "right5": "File a complaint with the supervisory authority",
+        "contact": "To exercise these rights, contact us at:"
+      },
+      "section6": {
+        "title": "Contact",
+        "p1": "For any questions about this policy or your personal data:"
+      }
+    },
+    "cookies": {
+      "page_title": "Cookie Policy - IGV",
+      "title": "Cookie Policy",
+      "intro": "This page explains what cookies we use, why, and how you can manage them.",
+      "section1": {
+        "title": "1. What is a cookie?",
+        "p1": "A cookie is a small text file placed on your computer or mobile device when you visit a website. Cookies allow the site to remember your actions and preferences."
+      },
+      "section2": {
+        "title": "2. Types of Cookies Used"
+      },
+      "essential": {
+        "title": "Essential Cookies",
+        "desc": "These cookies are necessary for the site to function. They cannot be disabled.",
+        "cookie1": "User session (admin authentication)",
+        "cookie2": "Language preferences",
+        "cookie3": "Cookie consent",
+        "status": "✓ Always enabled"
+      },
+      "analytics": {
+        "title": "Analytics Cookies",
+        "desc": "These cookies help us understand how visitors use our site.",
+        "cookie1": "Tracking pages visited",
+        "cookie2": "Visit duration",
+        "cookie3": "Traffic source",
+        "status": "⚠ Requires your consent",
+        "note": "Note: IP addresses are anonymized. No personally identifiable data is collected."
+      },
+      "marketing": {
+        "title": "Marketing Cookies",
+        "desc": "These cookies allow us to personalize the communications you receive.",
+        "cookie1": "Newsletter preferences",
+        "cookie2": "Email interaction history",
+        "status": "⚠ Requires your explicit consent"
+      },
+      "section3": {
+        "title": "3. How to Manage Cookies?",
+        "p1": "You can manage your cookie preferences in several ways:",
+        "method1": {
+          "title": "Via our consent banner",
+          "desc": "On your first visit, you can choose which types of cookies to accept."
+        },
+        "method2": {
+          "title": "Via your browser settings",
+          "desc": "You can configure your browser to block or delete cookies. Note: some site features may stop working."
+        }
+      },
+      "section4": {
+        "title": "4. Retention Period",
+        "essential": "Essential cookies:",
+        "essential_duration": "Session + 30 days",
+        "analytics": "Analytics cookies:",
+        "analytics_duration": "13 months maximum",
+        "marketing": "Marketing cookies:",
+        "marketing_duration": "13 months maximum"
+      },
+      "section5": {
+        "title": "Questions?",
+        "p1": "For any questions about our use of cookies, contact us at:"
+      }
+    }
   }
 }

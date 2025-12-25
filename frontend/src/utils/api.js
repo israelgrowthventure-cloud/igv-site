@@ -161,6 +161,55 @@ export const api = {
       headers: { Authorization: `Bearer ${token}` }
     });
     return response.data;
+  },
+
+  // CRM Complete API
+  get: async (endpoint, config = {}) => {
+    const token = localStorage.getItem('admin_token');
+    const response = await axios.get(`${BACKEND_URL}${endpoint}`, {
+      ...config,
+      headers: { 
+        Authorization: token ? `Bearer ${token}` : '',
+        ...config.headers 
+      }
+    });
+    return response.data;
+  },
+
+  post: async (endpoint, data, config = {}) => {
+    const token = localStorage.getItem('admin_token');
+    const response = await axios.post(`${BACKEND_URL}${endpoint}`, data, {
+      ...config,
+      headers: { 
+        Authorization: token ? `Bearer ${token}` : '',
+        ...config.headers 
+      }
+    });
+    return response.data;
+  },
+
+  put: async (endpoint, data, config = {}) => {
+    const token = localStorage.getItem('admin_token');
+    const response = await axios.put(`${BACKEND_URL}${endpoint}`, data, {
+      ...config,
+      headers: { 
+        Authorization: token ? `Bearer ${token}` : '',
+        ...config.headers 
+      }
+    });
+    return response.data;
+  },
+
+  delete: async (endpoint, config = {}) => {
+    const token = localStorage.getItem('admin_token');
+    const response = await axios.delete(`${BACKEND_URL}${endpoint}`, {
+      ...config,
+      headers: { 
+        Authorization: token ? `Bearer ${token}` : '',
+        ...config.headers 
+      }
+    });
+    return response.data;
   }
 };
 

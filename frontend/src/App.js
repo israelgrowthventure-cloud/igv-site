@@ -12,6 +12,7 @@ import './styles/rtl.css';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import CookieConsent from './components/CookieConsent';
+import CookieConsentBanner from './components/CookieConsentBanner';
 
 // Pages
 import NewHome from './pages/NewHome';  // NOUVELLE landing page
@@ -23,10 +24,13 @@ import FutureCommerce from './pages/FutureCommerce';
 import Contact from './pages/Contact';
 import Appointment from './pages/Appointment';
 import Terms from './pages/Terms';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import CookiesPolicy from './pages/CookiesPolicy';
 
 // Admin Pages
 import AdminLogin from './pages/admin/Login';
 import AdminDashboard from './pages/admin/Dashboard';
+import AdminCRMComplete from './pages/admin/AdminCRMComplete';
 
 // Loading component
 const Loading = () => (
@@ -45,7 +49,7 @@ function App() {
         <BrowserRouter>
           <div className="App">
             <Toaster position="top-right" richColors />
-            <CookieConsent />
+            <CookieConsentBanner />
             <Header />
             <main>
               <Routes>
@@ -60,6 +64,8 @@ function App() {
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/legal" element={<Terms />} />
                 <Route path="/appointment" element={<Appointment />} />
+                <Route path="/privacy" element={<PrivacyPolicy />} />
+                <Route path="/cookies" element={<CookiesPolicy />} />
                 
                 {/* Anciennes pages CONSERVÉES */}
                 <Route path="/packs" element={<Packs />} />
@@ -70,6 +76,7 @@ function App() {
                 {/* Admin Routes */}
                 <Route path="/admin/login" element={<AdminLogin />} />
                 <Route path="/admin/dashboard" element={<AdminDashboard />} />
+                <Route path="/admin/crm" element={<AdminCRMComplete />} />
                 
                 <Route path="*" element={<Home />} />
               </Routes>

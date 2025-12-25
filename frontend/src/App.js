@@ -51,38 +51,36 @@ function App() {
           <div className="App">
             <Toaster position="top-right" richColors />
             <CookieConsentBanner />
-            <Header />
-            <main>
-              <Routes>
-                {/* Homepage complète */}
-                <Route path="/" element={<Home />} />
-                
-                {/* Mini-Analyse (NEW - i18n ready) */}
-                <Route path="/mini-analyse" element={<MiniAnalysis />} />
-                
-                {/* Pages essentielles ACTIVES */}
-                <Route path="/about" element={<About />} />
-                <Route path="/contact" element={<Contact />} />
-                <Route path="/legal" element={<Terms />} />
-                <Route path="/appointment" element={<Appointment />} />
-                <Route path="/privacy" element={<PrivacyPolicy />} />
-                <Route path="/cookies" element={<CookiesPolicy />} />
-                
-                {/* Anciennes pages CONSERVÉES */}
-                <Route path="/packs" element={<Packs />} />
-                <Route path="/future-commerce" element={<FutureCommerce />} />
-                <Route path="/terms" element={<Terms />} />
-                <Route path="/old-home" element={<Home />} />
-                
-                {/* Admin Routes - PROTECTED */}
-                <Route path="/admin/login" element={<AdminLogin />} />
-                <Route path="/admin/dashboard" element={<PrivateRoute><AdminDashboard /></PrivateRoute>} />
-                <Route path="/admin/crm" element={<PrivateRoute><AdminCRMComplete /></PrivateRoute>} />
-                
-                <Route path="*" element={<Home />} />
-              </Routes>
-            </main>
-            <Footer />
+            <Routes>
+              {/* Admin Routes - NO LAYOUT */}
+              <Route path="/admin/login" element={<AdminLogin />} />
+              <Route path="/admin/dashboard" element={<PrivateRoute><AdminDashboard /></PrivateRoute>} />
+              <Route path="/admin/crm" element={<PrivateRoute><AdminCRMComplete /></PrivateRoute>} />
+              
+              {/* Public Routes - WITH LAYOUT */}
+              <Route path="/*" element={
+                <>
+                  <Header />
+                  <main>
+                    <Routes>
+                      <Route path="/" element={<Home />} />
+                      <Route path="/mini-analyse" element={<MiniAnalysis />} />
+                      <Route path="/about" element={<About />} />
+                      <Route path="/contact" element={<Contact />} />
+                      <Route path="/legal" element={<Terms />} />
+                      <Route path="/appointment" element={<Appointment />} />
+                      <Route path="/privacy" element={<PrivacyPolicy />} />
+                      <Route path="/cookies" element={<CookiesPolicy />} />
+                      <Route path="/packs" element={<Packs />} />
+                      <Route path="/future-commerce" element={<FutureCommerce />} />
+                      <Route path="/terms" element={<Terms />} />
+                      <Route path="*" element={<Home />} />
+                    </Routes>
+                  </main>
+                  <Footer />
+                </>
+              } />
+            </Routes>
           </div>
         </BrowserRouter>
       </Suspense>

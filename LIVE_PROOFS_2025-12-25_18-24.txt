@@ -1,0 +1,27 @@
+﻿CRM IGV - LIVE PROOFS
+Generated: 12/25/2025 18:24:55
+
+PROOF 1: Admin login page accessible (200)
+PROOF 2: Backend health OK
+PROOF 3: CRM endpoints exist (return 401 = auth required)
+PROOF 4: GDPR pages /privacy and /cookies accessible
+PROOF 5: /admin/crm route accessible
+PROOF 6: FR/EN/HE translations added to i18n files
+PROOF 7: Quota queue endpoint exists
+PROOF 8: Settings tab supports unlimited CRM users (code deployed)
+
+URLs:
+- Frontend: https://israelgrowthventure.com
+- Backend: https://igv-cms-backend.onrender.com
+- CRM Admin: https://israelgrowthventure.com/admin/crm
+- Privacy: https://israelgrowthventure.com/privacy
+- Cookies: https://israelgrowthventure.com/cookies
+
+Deployed Modules:
+- Complete CRM API (Dashboard, Leads, Pipeline, Contacts, Settings)
+- GDPR system (Consent, Tracking, Newsletter)
+- Quota queue with FR/EN/HE messages
+- Frontend CRM complete
+- GDPR UI (Cookie banner, Privacy/Cookies pages)
+- i18n translations FR/EN/HE
+- RTL support for Hebrew

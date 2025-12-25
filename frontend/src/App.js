@@ -1,12 +1,12 @@
 import React, { Suspense } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import { Toaster } from 'sonner';
 import './i18n/config';
 import './App.css';
 import './styles/rtl.css';
 
-// Build trigger: 2025-12-26-production-routing-fix
+// Build trigger: 2025-12-26-routing-fix-v2
 
 // Layout Components
 import Header from './components/Header';
@@ -43,45 +43,45 @@ const Loading = () => (
   </div>
 );
 
+function AppContent() {
+  const location = useLocation();
+  const isAdminRoute = location.pathname.startsWith('/admin');
+
+  return (
+    <div className="App">
+      <Toaster position="top-right" richColors />
+      <CookieConsentBanner />
+      {!isAdminRoute && <Header />}
+      <main>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/mini-analyse" element={<MiniAnalysis />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/legal" element={<Terms />} />
+          <Route path="/appointment" element={<Appointment />} />
+          <Route path="/privacy" element={<PrivacyPolicy />} />
+          <Route path="/cookies" element={<CookiesPolicy />} />
+          <Route path="/packs" element={<Packs />} />
+          <Route path="/future-commerce" element={<FutureCommerce />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin/dashboard" element={<PrivateRoute><AdminDashboard /></PrivateRoute>} />
+          <Route path="/admin/crm" element={<PrivateRoute><AdminCRMComplete /></PrivateRoute>} />
+          <Route path="*" element={<Home />} />
+        </Routes>
+      </main>
+      {!isAdminRoute && <Footer />}
+    </div>
+  );
+}
+
 function App() {
   return (
     <HelmetProvider>
       <Suspense fallback={<Loading />}>
         <BrowserRouter>
-          <div className="App">
-            <Toaster position="top-right" richColors />
-            <CookieConsentBanner />
-            <Routes>
-              {/* Admin Routes - NO LAYOUT */}
-              <Route path="/admin/login" element={<AdminLogin />} />
-              <Route path="/admin/dashboard" element={<PrivateRoute><AdminDashboard /></PrivateRoute>} />
-              <Route path="/admin/crm" element={<PrivateRoute><AdminCRMComplete /></PrivateRoute>} />
-              
-              {/* Public Routes - WITH LAYOUT */}
-              <Route path="/*" element={
-                <>
-                  <Header />
-                  <main>
-                    <Routes>
-                      <Route path="/" element={<Home />} />
-                      <Route path="/mini-analyse" element={<MiniAnalysis />} />
-                      <Route path="/about" element={<About />} />
-                      <Route path="/contact" element={<Contact />} />
-                      <Route path="/legal" element={<Terms />} />
-                      <Route path="/appointment" element={<Appointment />} />
-                      <Route path="/privacy" element={<PrivacyPolicy />} />
-                      <Route path="/cookies" element={<CookiesPolicy />} />
-                      <Route path="/packs" element={<Packs />} />
-                      <Route path="/future-commerce" element={<FutureCommerce />} />
-                      <Route path="/terms" element={<Terms />} />
-                      <Route path="*" element={<Home />} />
-                    </Routes>
-                  </main>
-                  <Footer />
-                </>
-              } />
-            </Routes>
-          </div>
+          <AppContent />
         </BrowserRouter>
       </Suspense>
     </HelmetProvider>

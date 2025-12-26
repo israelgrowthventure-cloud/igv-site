@@ -68,7 +68,6 @@ function AppContent() {
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin/dashboard" element={<PrivateRoute><AdminDashboard /></PrivateRoute>} />
           <Route path="/admin/crm" element={<PrivateRoute><AdminCRMComplete /></PrivateRoute>} />
-          <Route path="*" element={<Home />} />
         </Routes>
       </main>
       {!isAdminRoute && <Footer />}

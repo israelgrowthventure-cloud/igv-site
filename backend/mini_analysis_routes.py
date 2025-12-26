@@ -228,19 +228,43 @@ def build_prompt(request: MiniAnalysisRequest, language: str = "fr") -> str:
     
     # Language enforcement instructions
     language_instructions = {
-        "fr": """RÈGLE ABSOLUE DE LANGUE:
-Vous DEVEZ répondre UNIQUEMENT en français. N'utilisez AUCUNE autre langue.
-Si vous ne pouvez pas répondre en français, retournez: LANG_FAIL.
+        "fr": """━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+RÈGLE ABSOLUE DE LANGUE - FRANÇAIS OBLIGATOIRE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Vous DEVEZ répondre UNIQUEMENT en français.
+AUCUNE phrase en anglais, hébreu ou autre langue.
+Chaque mot, chaque titre, chaque section doit être en français.
+
+Si vous ne pouvez pas répondre en français, retournez exactement: LANG_FAIL
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 """,
-        "en": """ABSOLUTE LANGUAGE RULE:
-You MUST answer ONLY in English. Do NOT use any other language.
-If you cannot answer in English, return: LANG_FAIL.
+        "en": """━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ABSOLUTE LANGUAGE RULE - ENGLISH ONLY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+You MUST answer ONLY in English.
+NO sentences in French, Hebrew, or any other language.
+Every word, every title, every section must be in English.
+
+If you cannot answer in English, return exactly: LANG_FAIL
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 """,
-        "he": """כלל שפה מוחלט:
-אתה חייב לענות רק בעברית. אל תשתמש בשום שפה אחרת.
-אם אתה לא יכול לענות בעברית, החזר: LANG_FAIL.
+        "he": """━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+כלל שפה מוחלט - עברית בלבד
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+אתה חייב לענות רק בעברית.
+אף משפט בצרפתית, אנגלית או כל שפה אחרת.
+כל מילה, כל כותרת, כל קטע חייבים להיות בעברית.
+
+אם אתה לא יכול לענות בעברית, החזר בדיוק: LANG_FAIL
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 """
     }

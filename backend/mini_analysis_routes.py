@@ -226,53 +226,93 @@ def build_prompt(request: MiniAnalysisRequest, language: str = "fr") -> str:
 ---
 """
     
-    # Language enforcement instructions
+    # Language enforcement instructions (ULTRA STRICT FOR GEMINI)
     language_instructions = {
-        "fr": """━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-RÈGLE ABSOLUE DE LANGUE - FRANÇAIS OBLIGATOIRE
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        "fr": """╔═══════════════════════════════════════════════════════════════╗
+║  INSTRUCTION CRITIQUE : LANGUE FRANÇAISE OBLIGATOIRE          ║
+╚═══════════════════════════════════════════════════════════════╝
 
-Vous DEVEZ répondre UNIQUEMENT en français.
-AUCUNE phrase en anglais, hébreu ou autre langue.
-Chaque mot, chaque titre, chaque section doit être en français.
+🚨 RÈGLE ABSOLUE 🚨
+Vous devez écrire votre réponse ENTIÈREMENT en FRANÇAIS.
 
-Si vous ne pouvez pas répondre en français, retournez exactement: LANG_FAIL
+✅ AUTORISÉ : français uniquement
+❌ INTERDIT : anglais, hébreu, espagnol, ou toute autre langue
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+EXEMPLES CONCRETS :
+✅ CORRECT : "Votre entreprise a un fort potentiel sur le marché israélien."
+❌ FAUX : "Your company has strong potential in the Israeli market."
+❌ FAUX : "החברה שלך..."
 
-""",
-        "en": """━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-ABSOLUTE LANGUAGE RULE - ENGLISH ONLY
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Si vous ne pouvez PAS respecter cette règle, retournez EXACTEMENT ce texte :
+LANG_FAIL
 
-You MUST answer ONLY in English.
-NO sentences in French, Hebrew, or any other language.
-Every word, every title, every section must be in English.
+Sinon, générez TOUTE votre analyse en français du début à la fin.
 
-If you cannot answer in English, return exactly: LANG_FAIL
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+════════════════════════════════════════════════════════════════
 
 """,
-        "he": """━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-כלל שפה מוחלט - עברית בלבד
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        "en": """╔═══════════════════════════════════════════════════════════════╗
+║  CRITICAL INSTRUCTION: ENGLISH LANGUAGE MANDATORY             ║
+╚═══════════════════════════════════════════════════════════════╝
 
-אתה חייב לענות רק בעברית.
-אף משפט בצרפתית, אנגלית או כל שפה אחרת.
-כל מילה, כל כותרת, כל קטע חייבים להיות בעברית.
+🚨 ABSOLUTE RULE 🚨
+You must write your response ENTIRELY in ENGLISH.
 
-אם אתה לא יכול לענות בעברית, החזר בדיוק: LANG_FAIL
+✅ ALLOWED: English only
+❌ FORBIDDEN: French, Hebrew, Spanish, or any other language
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CONCRETE EXAMPLES:
+✅ CORRECT: "Your company has strong potential in the Israeli market."
+❌ WRONG: "Votre entreprise a un fort potentiel sur le marché israélien."
+❌ WRONG: "החברה שלך..."
+
+If you CANNOT follow this rule, return EXACTLY this text:
+LANG_FAIL
+
+Otherwise, generate your ENTIRE analysis in English from start to finish.
+
+════════════════════════════════════════════════════════════════
+
+""",
+        "he": """╔═══════════════════════════════════════════════════════════════╗
+║  הוראה קריטית: שפה עברית חובה                                ║
+╚═══════════════════════════════════════════════════════════════╝
+
+🚨 כלל מוחלט 🚨
+אתה חייב לכתוב את התשובה שלך כולה בעברית.
+
+✅ מותר: עברית בלבד
+❌ אסור: צרפתית, אנגלית, ספרדית, או כל שפה אחרת
+
+דוגמאות קונקרטיות:
+✅ נכון: "החברה שלך בעלת פוטנציאל חזק בשוק הישראלי."
+❌ שגוי: "Your company has strong potential in the Israeli market."
+❌ שגוי: "Votre entreprise a un fort potentiel..."
+
+אם אתה לא יכול לעקוב אחר הכלל הזה, החזר בדיוק את הטקסט הזה:
+LANG_FAIL
+
+אחרת, צור את כל הניתוח שלך בעברית מתחילה ועד סוף.
+
+════════════════════════════════════════════════════════════════
 
 """
     }
     
     lang_instruction = language_instructions.get(language, language_instructions["en"])
     
-    # Combine: language instruction + master prompt + form data
-    final_prompt = lang_instruction + master_prompt + form_data_section
+    # RÉPÉTITION DE L'INSTRUCTION : avant ET après le master prompt
+    # pour maximiser les chances que Gemini la respecte
+    language_reminder = {
+        "fr": "\n\n⚠️ RAPPEL FINAL : Écrivez TOUTE votre réponse en FRANÇAIS UNIQUEMENT. ⚠️\n\n",
+        "en": "\n\n⚠️ FINAL REMINDER: Write your ENTIRE response in ENGLISH ONLY. ⚠️\n\n",
+        "he": "\n\n⚠️ תזכורת סופית: כתוב את כל התשובה שלך בעברית בלבד. ⚠️\n\n"
+    }
+    
+    reminder = language_reminder.get(language, language_reminder["en"])
+    
+    # Combine: language instruction BEFORE + master prompt + form data + language reminder AFTER
+    final_prompt = lang_instruction + master_prompt + form_data_section + reminder
     
     return final_prompt
 

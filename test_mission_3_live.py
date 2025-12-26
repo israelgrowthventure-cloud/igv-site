@@ -1,34 +1,51 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """Test LIVE pour MISSION 3 : Multilangue + PDF + Packs"""
 
 import requests
 import json
 import time
 import base64
+import sys
+import io
 
-BASE_URL = "https://israelgrowthventure.com"
+# Force UTF-8 encoding for console output
+if sys.platform == 'win32':
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+
+# Le backend est sur Render, pas sur le domaine principal
+BACKEND_URL = "https://igv-cms-backend.onrender.com"
+FRONTEND_URL = "https://israelgrowthventure.com"
 
 def test_mini_analysis_multilang():
     """TEST 1 : Mini-analyse en FR/EN/HE"""
     print("🌍 TEST 1 : Mini-analyse multilingue sur LIVE")
     print("=" * 70)
     
+    import time
+    brand_name = f"TestCo_{int(time.time())}"
+    
     test_data = {
-        "companyName": "TechCo",
-        "sector": "Technology",
-        "currentLocation": "France",
-        "targetMarket": "Israel",
-        "revenue": "500000",
         "email": "test@test.com",
-        "phone": "+33612345678"
+        "nom_de_marque": brand_name,
+        "secteur": "Technology",
+        "statut_alimentaire": "",
+        "anciennete": "5 ans",
+        "pays_dorigine": "France",
+        "concept": "Innovation",
+        "positionnement": "Premium",
+        "modele_actuel": "B2B",
+        "differenciation": "AI powered",
+        "objectif_israel": "Expansion",
+        "contraintes": "Budget limité"
     }
     
     for lang in ["fr", "en", "he"]:
         print(f"\n📝 Génération en {lang.upper()}...")
         response = requests.post(
-            f"{BASE_URL}/api/mini-analysis",
+            f"{BACKEND_URL}/api/mini-analysis",
             json={**test_data, "language": lang},
-            timeout=60
+            timeout=120  # 2 minutes pour Gemini
         )
         
         if response.status_code == 200:
@@ -67,17 +84,16 @@ def test_pdf_download():
     print("=" * 70)
     
     payload = {
-        "companyName": "TechCo",
+        "brandName": "TestCoPDF",
         "sector": "Technology",
-        "currentLocation": "France",
-        "targetMarket": "Israel",
-        "revenue": "500000",
-        "analysis": "Analyse de test pour PDF...",
+        "origin": "France",
+        "email": "test@test.com",
+        "analysis": "Analyse de test pour PDF : Votre entreprise TestCoPDF dans le secteur Technology présente un potentiel intéressant pour le marché israélien. Opportunités: Écosystème tech, innovation, R&D. Défis: Concurrence locale forte.",
         "language": "fr"
     }
     
     response = requests.post(
-        f"{BASE_URL}/api/pdf/generate",
+        f"{BACKEND_URL}/api/pdf/generate",
         json=payload,
         timeout=30
     )
@@ -109,7 +125,7 @@ def test_packs_pricing():
     print("\n\n💰 TEST 3 : Affichage prix sur /packs")
     print("=" * 70)
     
-    response = requests.get(f"{BASE_URL}/packs")
+    response = requests.get(f"{FRONTEND_URL}/packs")
     
     if response.status_code == 200:
         print(f"   ✅ Page /packs accessible (status 200)")

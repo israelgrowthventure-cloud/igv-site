@@ -208,16 +208,16 @@ class PDFGenerateRequest(BaseModel):
     email: EmailStr
     brandName: str
     sector: str
-    country: Optional[str] = None
-    analysisText: str
+    origin: Optional[str] = None  # Changed from country
+    analysis: str  # Changed from analysisText to match frontend
     language: str = 'fr'
 
 class EmailPDFRequest(BaseModel):
     email: EmailStr
     brandName: str
     sector: str
-    country: Optional[str] = None
-    analysisText: str
+    origin: Optional[str] = None  # Changed from country
+    analysis: str  # Changed from analysisText
     language: str = 'fr'
 
 class CalendarEventRequest(BaseModel):
@@ -474,7 +474,7 @@ async def generate_pdf(request: PDFGenerateRequest, response: Response):
             
             # Analysis content
             # Split analysis into paragraphs
-            paragraphs = request.analysisText.split('\n\n')
+            paragraphs = request.analysis.split('\n\n')
             for para in paragraphs:
                 if para.strip():
                     # Escape HTML special characters
@@ -553,7 +553,7 @@ async def generate_pdf(request: PDFGenerateRequest, response: Response):
                         pdf_base64=pdf_base64,
                         filename=f"{request.brandName}_IGV_Analysis.pdf",
                         language=request.language,
-                        analysis_preview=request.analysisText[:200]
+                        analysis_preview=request.analysis[:200]
                     )
                     logging.info(f"✅ PDF auto-sent to {igv_email}")
                 else:
@@ -610,7 +610,7 @@ async def email_pdf(request: EmailPDFRequest, background_tasks: BackgroundTasks)
             brandName=request.brandName,
             sector=request.sector,
             country=request.country,
-            analysisText=request.analysisText,
+            analysisText=request.analysis,
             language=request.language
         )
         

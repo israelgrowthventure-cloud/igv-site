@@ -16,6 +16,13 @@ const CookieConsentBanner = () => {
   }, []);
 
   const checkConsent = async () => {
+    // Check localStorage first
+    const localConsent = localStorage.getItem('cookie_consent');
+    if (localConsent) {
+      setShow(false);
+      return;
+    }
+
     try {
       const response = await api.get('/api/gdpr/consent');
       if (!response.consent_given) {
@@ -43,9 +50,12 @@ const CookieConsentBanner = () => {
   const saveConsent = async (prefs) => {
     try {
       await api.post('/api/gdpr/consent', prefs);
-      setShow(false);
     } catch (error) {
-      console.error('Failed to save consent:', error);
+      console.error('Failed to save consent to backend:', error);
+    } finally {
+      // Always save to localStorage and close banner
+      localStorage.setItem('cookie_consent', JSON.stringify(prefs));
+      setShow(false);
     }
   };
 

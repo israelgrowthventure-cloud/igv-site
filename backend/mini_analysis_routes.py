@@ -295,14 +295,14 @@ def build_prompt(request: MiniAnalysisRequest, language: str = "fr") -> str:
 ---
 """
     
-    # Language instructions (SIMPLE: let Gemini respond in the language of the prompt)
+    # Language instructions (TRANSLATE OUTPUT to target language)
     language_instructions = {
         "fr": """
 ════════════════════════════════════════════════════════════════
 
-GÉNÉRATION DE L'ANALYSE:
+GÉNÉRATION DE L'ANALYSE (FRANÇAIS):
 
-Rédigez une mini-analyse complète et détaillée en français pour le client.
+Suivez les instructions du master prompt ci-dessous et générez l'analyse ENTIÈREMENT EN FRANÇAIS.
 
 ════════════════════════════════════════════════════════════════
 
@@ -310,9 +310,16 @@ Rédigez une mini-analyse complète et détaillée en français pour le client.
         "en": """
 ════════════════════════════════════════════════════════════════
 
-ANALYSIS GENERATION:
+ANALYSIS GENERATION (ENGLISH):
 
-Write a complete and detailed mini-analysis in English for the client.
+Follow the master prompt instructions below and generate the ENTIRE analysis in ENGLISH.
+Translate ALL sections, titles, and content to English.
+
+Examples:
+- "Mini-analyse IGV" → "IGV Mini-Analysis"
+- "Verdict" → "Verdict" 
+- "Potentiel en Israël" → "Potential in Israel"
+- "Recommandations" → "Recommendations"
 
 ════════════════════════════════════════════════════════════════
 
@@ -320,9 +327,16 @@ Write a complete and detailed mini-analysis in English for the client.
         "he": """
 ════════════════════════════════════════════════════════════════
 
-יצירת הניתוח:
+יצירת הניתוח (עברית):
 
-כתוב ניתוח מיני מלא ומפורט בעברית עבור הלקוח.
+עקוב אחר הוראות ה-master prompt למטה וצור את כל הניתוח בעברית.
+תרגם את כל הסעיפים, הכותרות והתוכן לעברית.
+
+דוגמאות:
+- "Mini-analyse IGV" → "ניתוח מיני IGV"
+- "Verdict" → "פסק דין"
+- "Potentiel en Israël" → "פוטנציאל בישראל"
+- "Recommandations" → "המלצות"
 
 ════════════════════════════════════════════════════════════════
 

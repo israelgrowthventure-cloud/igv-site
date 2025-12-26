@@ -19,7 +19,7 @@ headers = {
 url = f"https://api.render.com/v1/services/{SERVICE_ID}/deploys"
 
 payload = {
-    "clearCache": "do_not_clear"
+    "clearCache": "clear"
 }
 
 try:

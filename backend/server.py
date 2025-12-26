@@ -201,6 +201,21 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 api_router = APIRouter(prefix="/api")
 
 
+# Debug endpoint to see all headers
+@api_router.get("/debug/headers")
+async def debug_headers(request: Request):
+    """Debug endpoint to see all request headers and IP detection"""
+    return {
+        "headers": dict(request.headers),
+        "client_host": request.client.host if request.client else None,
+        "client_port": request.client.port if request.client else None,
+        "x_forwarded_for": request.headers.get('X-Forwarded-For'),
+        "x_real_ip": request.headers.get('X-Real-IP'),
+        "cf_connecting_ip": request.headers.get('CF-Connecting-IP'),
+        "true_client_ip": request.headers.get('True-Client-IP'),
+    }
+
+
 # Health check endpoint (REQUIRED for Render)
 @api_router.get("/health")
 async def health_check():
@@ -502,23 +517,54 @@ async def get_cart():
 
 @api_router.get("/detect-location")
 async def detect_location(request: Request):
-    """Detect user location based on IP using ipapi.co"""
+    """Detect user location based on IP using ipapi.co with fallback to IP2Location"""
     try:
-        # Get client IP from request headers (Render/CloudFlare forward the real IP)
-        client_ip = request.headers.get('X-Forwarded-For', '').split(',')[0].strip()
-        if not client_ip:
-            client_ip = request.headers.get('X-Real-IP', '')
+        # Get client IP from multiple possible headers (Render/CloudFlare/etc.)
+        client_ip = None
         
+        # Try different headers in order of preference
+        if request.headers.get('CF-Connecting-IP'):
+            client_ip = request.headers.get('CF-Connecting-IP')
+        elif request.headers.get('True-Client-IP'):
+            client_ip = request.headers.get('True-Client-IP')
+        elif request.headers.get('X-Real-IP'):
+            client_ip = request.headers.get('X-Real-IP')
+        elif request.headers.get('X-Forwarded-For'):
+            # X-Forwarded-For can have multiple IPs, take the LAST one (client's real IP)
+            forwarded = request.headers.get('X-Forwarded-For')
+            client_ip = forwarded.split(',')[-1].strip()
+        elif request.client:
+            client_ip = request.client.host
+        
+        logging.info(f"🌍 Geolocation request for IP: {client_ip}")
+        logging.info(f"📋 Headers: X-Forwarded-For={request.headers.get('X-Forwarded-For')}, X-Real-IP={request.headers.get('X-Real-IP')}, CF-Connecting-IP={request.headers.get('CF-Connecting-IP')}")
+        
+        # Try ipapi.co first
         async with httpx.AsyncClient() as client:
-            # Get location from client IP
-            if client_ip:
-                response = await client.get(f'https://ipapi.co/{client_ip}/json/', timeout=5.0)
-            else:
-                response = await client.get('https://ipapi.co/json/', timeout=5.0)
-            data = response.json()
-            
-            country_code = data.get('country_code', 'FR')
-            country_name = data.get('country_name', 'France')
+            try:
+                if client_ip:
+                    response = await client.get(f'https://ipapi.co/{client_ip}/json/', timeout=5.0)
+                else:
+                    response = await client.get('https://ipapi.co/json/', timeout=5.0)
+                data = response.json()
+                
+                country_code = data.get('country_code', 'FR')
+                country_name = data.get('country_name', 'France')
+                
+                logging.info(f"📍 ipapi.co result: {country_code} - {country_name}")
+            except Exception as e:
+                logging.warning(f"ipapi.co failed: {e}, trying ip-api.com")
+                # Fallback to ip-api.com
+                if client_ip:
+                    response = await client.get(f'http://ip-api.com/json/{client_ip}', timeout=5.0)
+                else:
+                    response = await client.get('http://ip-api.com/json/', timeout=5.0)
+                data = response.json()
+                
+                country_code = data.get('countryCode', 'FR')
+                country_name = data.get('country', 'France')
+                
+                logging.info(f"📍 ip-api.com result: {country_code} - {country_name}")
             
             # Determine region based on country
             if country_code in ['FR', 'BE', 'CH', 'LU', 'MC', 'DE', 'IT', 'ES', 'PT', 'NL', 'GB', 'IE']:
@@ -534,13 +580,15 @@ async def detect_location(request: Request):
                 region = 'other'
                 currency = '$'
             
+            logging.info(f"✅ Final location: {region} - {country_name} ({currency})")
+            
             return IPLocationResponse(
                 region=region,
                 country=country_name,
                 currency=currency
             )
     except Exception as e:
-        logging.error(f"Error detecting location: {str(e)}")
+        logging.error(f"❌ Error detecting location: {str(e)}")
         # Default to Europe if detection fails
         return IPLocationResponse(
             region='europe',

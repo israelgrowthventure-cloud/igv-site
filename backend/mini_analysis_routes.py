@@ -554,9 +554,17 @@ async def generate_mini_analysis(request: MiniAnalysisRequest, response: Respons
     if existing:
         logging.info(f"CACHE_HIT=true CACHE_KEY={cache_key}")
         response.headers["X-IGV-Cache-Hit"] = "true"
+        
+        # Translate error message
+        error_messages = {
+            "fr": f"Une mini-analyse a déjà été générée pour cette enseigne ({request.nom_de_marque})",
+            "en": f"A mini-analysis has already been generated for this brand ({request.nom_de_marque})",
+            "he": f"כבר נוצר ניתוח מיני עבור המותג הזה ({request.nom_de_marque})"
+        }
+        
         raise HTTPException(
             status_code=409,
-            detail=f"Une mini-analyse a déjà été générée pour cette enseigne ({request.nom_de_marque})"
+            detail=error_messages.get(language, error_messages["en"])
         )
     else:
         logging.info(f"CACHE_HIT=false CACHE_KEY={cache_key}")

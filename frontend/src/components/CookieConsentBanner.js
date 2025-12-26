@@ -15,20 +15,10 @@ const CookieConsentBanner = () => {
     checkConsent();
   }, []);
 
-  const checkConsent = async () => {
-    // Check localStorage first
+  const checkConsent = () => {
+    // Check localStorage ONLY - instant display
     const localConsent = localStorage.getItem('cookie_consent');
-    if (localConsent) {
-      setShow(false);
-      return;
-    }
-
-    try {
-      const response = await api.get('/api/gdpr/consent');
-      if (!response.consent_given) {
-        setShow(true);
-      }
-    } catch (error) {
+    if (!localConsent) {
       setShow(true);
     }
   };

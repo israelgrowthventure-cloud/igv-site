@@ -20,8 +20,8 @@ brand_name = f"FinalTest_{int(time.time())}"
 payload_analysis = {
     "email": "test@igv.com",
     "nom_de_marque": brand_name,
-    "secteur": "Technology",
-    "statut_alimentaire": "",
+    "secteur": "Restauration / Food",  # Use RESTAURATION which has EN/HE prompts
+    "statut_alimentaire": "Healthy",
     "anciennete": "3 years",
     "pays_dorigine": "France",
     "concept": "AI Solutions",

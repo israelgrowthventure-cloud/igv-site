@@ -191,8 +191,77 @@ def build_prompt(request: MiniAnalysisRequest, language: str = "fr") -> str:
         whitelist_data = load_igv_file(WHITELIST_JEWISH)
         whitelist_name = "Whitelist_1_Jewish_incl_Mixed"
     
-    # Build form data section
-    form_data_section = f"""
+    # Build form data section (TRANSLATED based on language)
+    if language == "en":
+        form_data_section = f"""
+
+---
+
+**CLIENT FORM DATA:**
+
+- **Brand Name:** {request.nom_de_marque}
+- **Email:** {request.email}
+- **Sector:** {request.secteur}
+- **Food Status:** {request.statut_alimentaire or "Not specified"}
+- **Company Age:** {request.anciennete or "Not specified"}
+- **Country of Origin:** {request.pays_dorigine or "Not specified"}
+- **Concept:** {request.concept or "Not specified"}
+- **Positioning:** {request.positionnement or "Not specified"}
+- **Current Business Model:** {request.modele_actuel or "Not specified"}
+- **Differentiation:** {request.differenciation or "Not specified"}
+- **Israel Objective:** {request.objectif_israel or "Not specified"}
+- **Constraints:** {request.contraintes or "Not specified"}
+
+---
+
+**REFERENCE DOCUMENT 1: Location Types and Activities**
+
+{types_data}
+
+---
+
+**REFERENCE DOCUMENT 2: {whitelist_name} (AUTHORIZED LOCATIONS)**
+
+{whitelist_data}
+
+---
+"""
+    elif language == "he":
+        form_data_section = f"""
+
+---
+
+**נתוני טופס הלקוח:**
+
+- **שם המותג:** {request.nom_de_marque}
+- **אימייל:** {request.email}
+- **תחום:** {request.secteur}
+- **סטטוס מזון:** {request.statut_alimentaire or "לא צוין"}
+- **ותק החברה:** {request.anciennete or "לא צוין"}
+- **מדינת מוצא:** {request.pays_dorigine or "לא צוין"}
+- **קונספט:** {request.concept or "לא צוין"}
+- **מיצוב:** {request.positionnement or "לא צוין"}
+- **מודל עסקי נוכחי:** {request.modele_actuel or "לא צוין"}
+- **בידול:** {request.differenciation or "לא צוין"}
+- **יעד בישראל:** {request.objectif_israel or "לא צוין"}
+- **אילוצים:** {request.contraintes or "לא צוין"}
+
+---
+
+**מסמך עזר 1: סוגי מיקומים ופעילויות**
+
+{types_data}
+
+---
+
+**מסמך עזר 2: {whitelist_name} (מיקומים מורשים)**
+
+{whitelist_data}
+
+---
+"""
+    else:  # French (default)
+        form_data_section = f"""
 
 ---
 
@@ -226,73 +295,34 @@ def build_prompt(request: MiniAnalysisRequest, language: str = "fr") -> str:
 ---
 """
     
-    # Language enforcement instructions (ULTRA STRICT FOR GEMINI)
+    # Language instructions (SIMPLE: let Gemini respond in the language of the prompt)
     language_instructions = {
-        "fr": """╔═══════════════════════════════════════════════════════════════╗
-║  INSTRUCTION CRITIQUE : LANGUE FRANÇAISE OBLIGATOIRE          ║
-╚═══════════════════════════════════════════════════════════════╝
+        "fr": """
+════════════════════════════════════════════════════════════════
 
-🚨 RÈGLE ABSOLUE 🚨
-Vous devez écrire votre réponse ENTIÈREMENT en FRANÇAIS.
+GÉNÉRATION DE L'ANALYSE:
 
-✅ AUTORISÉ : français uniquement
-❌ INTERDIT : anglais, hébreu, espagnol, ou toute autre langue
-
-EXEMPLES CONCRETS :
-✅ CORRECT : "Votre entreprise a un fort potentiel sur le marché israélien."
-❌ FAUX : "Your company has strong potential in the Israeli market."
-❌ FAUX : "החברה שלך..."
-
-Si vous ne pouvez PAS respecter cette règle, retournez EXACTEMENT ce texte :
-LANG_FAIL
-
-Sinon, générez TOUTE votre analyse en français du début à la fin.
+Rédigez une mini-analyse complète et détaillée en français pour le client.
 
 ════════════════════════════════════════════════════════════════
 
 """,
-        "en": """╔═══════════════════════════════════════════════════════════════╗
-║  CRITICAL INSTRUCTION: ENGLISH LANGUAGE MANDATORY             ║
-╚═══════════════════════════════════════════════════════════════╝
+        "en": """
+════════════════════════════════════════════════════════════════
 
-🚨 ABSOLUTE RULE 🚨
-You must write your response ENTIRELY in ENGLISH.
+ANALYSIS GENERATION:
 
-✅ ALLOWED: English only
-❌ FORBIDDEN: French, Hebrew, Spanish, or any other language
-
-CONCRETE EXAMPLES:
-✅ CORRECT: "Your company has strong potential in the Israeli market."
-❌ WRONG: "Votre entreprise a un fort potentiel sur le marché israélien."
-❌ WRONG: "החברה שלך..."
-
-If you CANNOT follow this rule, return EXACTLY this text:
-LANG_FAIL
-
-Otherwise, generate your ENTIRE analysis in English from start to finish.
+Write a complete and detailed mini-analysis in English for the client.
 
 ════════════════════════════════════════════════════════════════
 
 """,
-        "he": """╔═══════════════════════════════════════════════════════════════╗
-║  הוראה קריטית: שפה עברית חובה                                ║
-╚═══════════════════════════════════════════════════════════════╝
+        "he": """
+════════════════════════════════════════════════════════════════
 
-🚨 כלל מוחלט 🚨
-אתה חייב לכתוב את התשובה שלך כולה בעברית.
+יצירת הניתוח:
 
-✅ מותר: עברית בלבד
-❌ אסור: צרפתית, אנגלית, ספרדית, או כל שפה אחרת
-
-דוגמאות קונקרטיות:
-✅ נכון: "החברה שלך בעלת פוטנציאל חזק בשוק הישראלי."
-❌ שגוי: "Your company has strong potential in the Israeli market."
-❌ שגוי: "Votre entreprise a un fort potentiel..."
-
-אם אתה לא יכול לעקוב אחר הכלל הזה, החזר בדיוק את הטקסט הזה:
-LANG_FAIL
-
-אחרת, צור את כל הניתוח שלך בעברית מתחילה ועד סוף.
+כתוב ניתוח מיני מלא ומפורט בעברית עבור הלקוח.
 
 ════════════════════════════════════════════════════════════════
 
@@ -301,18 +331,8 @@ LANG_FAIL
     
     lang_instruction = language_instructions.get(language, language_instructions["en"])
     
-    # RÉPÉTITION DE L'INSTRUCTION : avant ET après le master prompt
-    # pour maximiser les chances que Gemini la respecte
-    language_reminder = {
-        "fr": "\n\n⚠️ RAPPEL FINAL : Écrivez TOUTE votre réponse en FRANÇAIS UNIQUEMENT. ⚠️\n\n",
-        "en": "\n\n⚠️ FINAL REMINDER: Write your ENTIRE response in ENGLISH ONLY. ⚠️\n\n",
-        "he": "\n\n⚠️ תזכורת סופית: כתוב את כל התשובה שלך בעברית בלבד. ⚠️\n\n"
-    }
-    
-    reminder = language_reminder.get(language, language_reminder["en"])
-    
-    # Combine: language instruction BEFORE + master prompt + form data + language reminder AFTER
-    final_prompt = lang_instruction + master_prompt + form_data_section + reminder
+    # Combine: language instruction + master prompt + form data
+    final_prompt = lang_instruction + master_prompt + form_data_section
     
     return final_prompt
 

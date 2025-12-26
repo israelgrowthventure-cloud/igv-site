@@ -164,16 +164,18 @@ def load_igv_file(file_path: Path) -> str:
 def build_prompt(request: MiniAnalysisRequest, language: str = "fr") -> str:
     """Build runtime prompt with master prompt + form data"""
     
-    # Select master prompt based on sector
+    # Select master prompt based on sector AND language
+    lang_suffix = f"_{language.upper()}" if language != "fr" else ""
+    
     if request.secteur == "Restauration / Food":
-        prompt_file = PROMPT_RESTAURATION
-        prompt_name = "MASTER_PROMPT_RESTAURATION"
+        prompt_file = PROMPTS_DIR / f'MASTER_PROMPT_RESTAURATION{lang_suffix}.txt'
+        prompt_name = f"MASTER_PROMPT_RESTAURATION{lang_suffix}"
     elif request.secteur == "Retail (hors food)":
-        prompt_file = PROMPT_RETAIL
-        prompt_name = "MASTER_PROMPT_RETAIL_NON_FOOD"
+        prompt_file = PROMPTS_DIR / f'MASTER_PROMPT_RETAIL_NON_FOOD{lang_suffix}.txt'
+        prompt_name = f"MASTER_PROMPT_RETAIL_NON_FOOD{lang_suffix}"
     else:  # Services or Paramédical / Santé
-        prompt_file = PROMPT_SERVICES
-        prompt_name = "MASTER_PROMPT_SERVICES_PARAMEDICAL"
+        prompt_file = PROMPTS_DIR / f'MASTER_PROMPT_SERVICES_PARAMEDICAL{lang_suffix}.txt'
+        prompt_name = f"MASTER_PROMPT_SERVICES_PARAMEDICAL{lang_suffix}"
     
     logging.info(f"Using prompt: {prompt_name} for sector: {request.secteur}, language: {language}")
     
@@ -295,58 +297,11 @@ def build_prompt(request: MiniAnalysisRequest, language: str = "fr") -> str:
 ---
 """
     
-    # Language instructions (TRANSLATE OUTPUT to target language)
-    language_instructions = {
-        "fr": """
-════════════════════════════════════════════════════════════════
-
-GÉNÉRATION DE L'ANALYSE (FRANÇAIS):
-
-Suivez les instructions du master prompt ci-dessous et générez l'analyse ENTIÈREMENT EN FRANÇAIS.
-
-════════════════════════════════════════════════════════════════
-
-""",
-        "en": """
-════════════════════════════════════════════════════════════════
-
-ANALYSIS GENERATION (ENGLISH):
-
-Follow the master prompt instructions below and generate the ENTIRE analysis in ENGLISH.
-Translate ALL sections, titles, and content to English.
-
-Examples:
-- "Mini-analyse IGV" → "IGV Mini-Analysis"
-- "Verdict" → "Verdict" 
-- "Potentiel en Israël" → "Potential in Israel"
-- "Recommandations" → "Recommendations"
-
-════════════════════════════════════════════════════════════════
-
-""",
-        "he": """
-════════════════════════════════════════════════════════════════
-
-יצירת הניתוח (עברית):
-
-עקוב אחר הוראות ה-master prompt למטה וצור את כל הניתוח בעברית.
-תרגם את כל הסעיפים, הכותרות והתוכן לעברית.
-
-דוגמאות:
-- "Mini-analyse IGV" → "ניתוח מיני IGV"
-- "Verdict" → "פסק דין"
-- "Potentiel en Israël" → "פוטנציאל בישראל"
-- "Recommandations" → "המלצות"
-
-════════════════════════════════════════════════════════════════
-
-"""
-    }
+    # NO NEED for translation instructions - the master_prompt is ALREADY in the target language
+    # Gemini will naturally respond in the same language as the prompt
     
-    lang_instruction = language_instructions.get(language, language_instructions["en"])
-    
-    # Combine: language instruction + master prompt + form data
-    final_prompt = lang_instruction + master_prompt + form_data_section
+    # Combine: master prompt (already in target language) + form data (already in target language)
+    final_prompt = master_prompt + form_data_section
     
     return final_prompt
 

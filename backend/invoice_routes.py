@@ -68,12 +68,12 @@ def get_db():
 JWT_SECRET = os.getenv('JWT_SECRET')
 JWT_ALGORITHM = 'HS256'
 
-# SMTP Config
-SMTP_SERVER = os.getenv('SMTP_SERVER', 'smtp.gmail.com')
+# SMTP Config - Support both naming conventions
+SMTP_SERVER = os.getenv('SMTP_SERVER') or os.getenv('SMTP_HOST', 'smtp.gmail.com')
 SMTP_PORT = int(os.getenv('SMTP_PORT', '587'))
-SMTP_USERNAME = os.getenv('SMTP_USERNAME')
+SMTP_USERNAME = os.getenv('SMTP_USERNAME') or os.getenv('SMTP_USER')
 SMTP_PASSWORD = os.getenv('SMTP_PASSWORD')
-SMTP_FROM_EMAIL = os.getenv('SMTP_FROM_EMAIL', 'israel.growth.venture@gmail.com')
+SMTP_FROM_EMAIL = os.getenv('SMTP_FROM_EMAIL') or os.getenv('SMTP_FROM', 'israel.growth.venture@gmail.com')
 SMTP_FROM_NAME = os.getenv('SMTP_FROM_NAME', 'Israel Growth Venture')
 
 # Company info

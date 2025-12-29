@@ -97,7 +97,13 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
         if not current_db:
             raise HTTPException(status_code=500, detail="Database not configured")
         
-        user = await current_db.crm_users.find_one({"email": payload.get("email")})
+        email = payload.get("email")
+        
+        # First try crm_users, then fallback to users collection
+        user = await current_db.crm_users.find_one({"email": email})
+        if not user:
+            user = await current_db.users.find_one({"email": email})
+        
         if not user:
             raise HTTPException(status_code=401, detail="User not found")
         
@@ -107,8 +113,8 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
         return {
             "id": str(user["_id"]),
             "email": user["email"],
-            "name": user.get("name", ""),
-            "role": user.get("role", "viewer")
+            "name": user.get("name", email.split("@")[0]),
+            "role": user.get("role", "admin")  # Default to admin for main users
         }
     except jwt.ExpiredSignatureError:
         raise HTTPException(status_code=401, detail="Token expired")

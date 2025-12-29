@@ -684,38 +684,7 @@ Answer ONLY in English.""",
         })
 
 
-@router.get("/mini-analysis/debug")
-async def debug_mini_analysis():
-    """Debug endpoint pour vérifier configuration mini-analysis"""
-    igv_files_status = {}
-    try:
-        for name, path in [
-            ("IGV_Types", TYPES_FILE),
-            ("Whitelist_Jewish", WHITELIST_JEWISH),
-            ("Whitelist_Arab", WHITELIST_ARAB),
-            ("Prompt_Restauration", PROMPT_RESTAURATION),
-            ("Prompt_Retail", PROMPT_RETAIL),
-            ("Prompt_Services", PROMPT_SERVICES)
-        ]:
-            file_exists = path.exists()
-            igv_files_status[name] = {
-                "exists": file_exists,
-                "path": str(path),
-                "size": path.stat().st_size if file_exists else 0
-            }
-    except Exception as e:
-        logging.error(f"Error checking IGV files: {str(e)}")
-        igv_files_status["error"] = str(e)
-    
-    return {
-        "gemini_api_key_configured": bool(GEMINI_API_KEY),
-        "gemini_api_key_length": len(GEMINI_API_KEY) if GEMINI_API_KEY else 0,
-        "gemini_model": GEMINI_MODEL,
-        "gemini_client_initialized": gemini_client is not None,
-        "mongodb_configured": bool(mongo_url),
-        "mongodb_db_name": db_name if mongo_url else None,
-        "igv_files": igv_files_status
-    }
+# Second debug endpoint removed - duplicate
 
 
 @router.post("/mini-analysis")

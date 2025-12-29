@@ -54,7 +54,7 @@ services:
         sync: false
       - key: AWS_SECRET_ACCESS_KEY
         sync: false
-    healthCheckPath: /api/health
+    healthCheckPath: /health
     autoDeploy: true
 
   # Frontend (React 19 + TailwindCSS + shadcn/ui)

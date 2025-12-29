@@ -345,10 +345,10 @@ https://israelgrowthventure.com/packs
 
 
 class MiniAnalysisRequest(BaseModel):
-    # CORE FIELDS
+    # CORE FIELDS - FIXED 2025-12-29-17-25 (build 647212f)
     email: EmailStr
     nom_de_marque: str = ""  # Will be filled from aliases if empty
-    secteur: str = ""
+    secteur: str = ""  # Optional field
     
     # ALIASES for compatibility (accept company_name OR brand_name as alternatives)
     company_name: str | None = None

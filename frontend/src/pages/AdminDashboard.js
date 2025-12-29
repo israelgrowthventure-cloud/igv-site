@@ -120,7 +120,7 @@ const AdminDashboard = () => {
         {/* Navigation Tabs */}
         <div className="bg-white border-b border-gray-200">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <nav className="flex gap-6">
+            <nav className="flex gap-6 items-center">
               {[
                 { id: 'overview', icon: TrendingUp, label: t('admin.tabs.overview') },
                 { id: 'leads', icon: Users, label: t('admin.tabs.leads') },
@@ -140,13 +140,22 @@ const AdminDashboard = () => {
                   {tab.label}
                 </button>
               ))}
+              
+              {/* CRM Full Link */}
+              <button
+                onClick={() => navigate('/admin/crm')}
+                className="ml-auto flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+              >
+                <Settings className="w-4 h-4" />
+                {t('admin.tabs.fullCRM') || 'CRM Complet'}
+              </button>
             </nav>
           </div>
         </div>
 
         {/* Main Content */}
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {activeTab === 'overview' && <OverviewTab stats={stats} t={t} />}
+          {activeTab === 'overview' && <OverviewTab stats={stats} t={t} navigate={navigate} />}
           {activeTab === 'leads' && <LeadsTab leads={leads} t={t} />}
           {activeTab === 'contacts' && <ContactsTab t={t} />}
           {activeTab === 'users' && user?.role === 'admin' && <UsersTab t={t} />}
@@ -157,32 +166,62 @@ const AdminDashboard = () => {
 };
 
 // Overview Tab Component
-const OverviewTab = ({ stats, t }) => (
-  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-    <StatCard
-      icon={Users}
-      label={t('admin.stats.totalLeads')}
-      value={stats?.total_leads || 0}
-      color="blue"
-    />
-    <StatCard
-      icon={Mail}
-      label={t('admin.stats.totalContacts')}
-      value={stats?.total_contacts || 0}
-      color="green"
-    />
-    <StatCard
-      icon={FileText}
-      label={t('admin.stats.analyses')}
-      value={stats?.total_analyses || 0}
-      color="purple"
-    />
-    <StatCard
-      icon={TrendingUp}
-      label={t('admin.stats.conversionRate')}
-      value={`${stats?.conversion_rate || 0}%`}
-      color="orange"
-    />
+const OverviewTab = ({ stats, t, navigate }) => (
+  <div className="space-y-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <StatCard
+        icon={Users}
+        label={t('admin.stats.totalLeads')}
+        value={stats?.total_leads || 0}
+        color="blue"
+      />
+      <StatCard
+        icon={Mail}
+        label={t('admin.stats.totalContacts')}
+        value={stats?.total_contacts || 0}
+        color="green"
+      />
+      <StatCard
+        icon={FileText}
+        label={t('admin.stats.analyses')}
+        value={stats?.total_analyses || 0}
+        color="purple"
+      />
+      <StatCard
+        icon={TrendingUp}
+        label={t('admin.stats.conversionRate')}
+        value={`${stats?.conversion_rate || 0}%`}
+        color="orange"
+      />
+    </div>
+    
+    {/* Quick Actions */}
+    <div className="bg-white rounded-xl shadow-sm p-6">
+      <h3 className="text-lg font-semibold mb-4">{t('admin.quickActions') || 'Actions rapides'}</h3>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <button
+          onClick={() => navigate('/admin/crm')}
+          className="flex items-center gap-3 p-4 border rounded-lg hover:bg-blue-50 hover:border-blue-300 transition"
+        >
+          <Users className="w-5 h-5 text-blue-600" />
+          <span>{t('admin.actions.manageCRM') || 'Gérer le CRM'}</span>
+        </button>
+        <button
+          onClick={() => navigate('/admin/crm?tab=leads')}
+          className="flex items-center gap-3 p-4 border rounded-lg hover:bg-green-50 hover:border-green-300 transition"
+        >
+          <TrendingUp className="w-5 h-5 text-green-600" />
+          <span>{t('admin.actions.viewLeads') || 'Voir les prospects'}</span>
+        </button>
+        <button
+          onClick={() => navigate('/admin/crm?tab=pipeline')}
+          className="flex items-center gap-3 p-4 border rounded-lg hover:bg-purple-50 hover:border-purple-300 transition"
+        >
+          <FileText className="w-5 h-5 text-purple-600" />
+          <span>{t('admin.actions.viewPipeline') || 'Pipeline des ventes'}</span>
+        </button>
+      </div>
+    </div>
   </div>
 );
 

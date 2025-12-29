@@ -9,9 +9,9 @@ const Footer = () => {
 
   // FOOTER MINIMAL - Pages essentielles uniquement
   const footerLinks = [
-    { path: '/about', label: 'About' },
-    { path: '/contact', label: 'Contact' },
-    { path: '/legal', label: 'Legal' }
+    { path: '/about', label: t('footer.about') },
+    { path: '/contact', label: t('footer.contact') },
+    { path: '/legal', label: t('footer.legal') }
   ];
 
   return (
@@ -24,16 +24,16 @@ const Footer = () => {
               <img src="/igv-logo.png" alt="Israel Growth Venture" className="h-10" />
             </div>
             <p className="text-sm text-gray-400">
-              Israel Growth Venture
+              {t('footer.company')}
             </p>
             <p className="text-sm text-gray-500 mt-2">
-              ייעוץ בנושא התרחבות ופיתוח פעילות בישראל
+              {t('footer.description')}
             </p>
           </div>
 
           {/* Links */}
           <div>
-            <h3 className="text-white font-semibold mb-4">Links</h3>
+            <h3 className="text-white font-semibold mb-4">{t('footer.links')}</h3>
             <ul className="space-y-2">
               {footerLinks.map((link) => (
                 <li key={link.path}>
@@ -50,7 +50,7 @@ const Footer = () => {
 
           {/* Contact */}
           <div>
-            <h3 className="text-white font-semibold mb-4">Contact</h3>
+            <h3 className="text-white font-semibold mb-4">{t('footer.contact')}</h3>
             <div className="space-y-2">
               <a href="mailto:israel.growth.venture@gmail.com" className="text-sm hover:text-blue-400 transition-colors block">
                 israel.growth.venture@gmail.com
@@ -65,7 +65,7 @@ const Footer = () => {
         {/* Bottom Bar */}
         <div className="border-t border-gray-800 mt-12 pt-8 text-center">
           <p className="text-sm text-gray-500">
-            © {currentYear} Israel Growth Venture. All rights reserved.
+            © {currentYear} {t('footer.company')}. {t('footer.rights')}
           </p>
         </div>
       </div>

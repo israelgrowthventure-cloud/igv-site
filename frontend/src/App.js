@@ -32,6 +32,10 @@ import CookiesPolicy from './pages/CookiesPolicy';
 import AdminLogin from './pages/admin/Login';
 import AdminDashboard from './pages/admin/Dashboard';
 import AdminCRMComplete from './pages/admin/AdminCRMComplete';
+import AdminInvoices from './pages/AdminInvoices';
+import AdminPayments from './pages/AdminPayments';
+import AdminTasks from './pages/AdminTasks';
+import PaymentReturn from './pages/PaymentReturn';
 
 // Loading component
 const Loading = () => (
@@ -65,9 +69,13 @@ function AppContent() {
           <Route path="/packs" element={<Packs />} />
           <Route path="/future-commerce" element={<FutureCommerce />} />
           <Route path="/terms" element={<Terms />} />
+          <Route path="/payment/return" element={<PaymentReturn />} />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin/dashboard" element={<PrivateRoute><AdminDashboard /></PrivateRoute>} />
           <Route path="/admin/crm" element={<PrivateRoute><AdminCRMComplete /></PrivateRoute>} />
+          <Route path="/admin/invoices" element={<PrivateRoute><AdminInvoices /></PrivateRoute>} />
+          <Route path="/admin/payments" element={<PrivateRoute><AdminPayments /></PrivateRoute>} />
+          <Route path="/admin/tasks" element={<PrivateRoute><AdminTasks /></PrivateRoute>} />
           <Route path="*" element={
             <div className="min-h-screen flex items-center justify-center bg-gray-50">
               <div className="text-center">

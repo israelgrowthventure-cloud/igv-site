@@ -176,6 +176,26 @@ class UserUpdate(BaseModel):
     is_active: Optional[bool] = None
 
 
+class TaskCreate(BaseModel):
+    title: str
+    description: Optional[str] = None
+    assigned_to_email: Optional[str] = None
+    lead_id: Optional[str] = None
+    contact_id: Optional[str] = None
+    opportunity_id: Optional[str] = None
+    due_date: Optional[datetime] = None
+    priority: str = "B"
+
+
+class TaskUpdate(BaseModel):
+    title: Optional[str] = None
+    description: Optional[str] = None
+    assigned_to_email: Optional[str] = None
+    due_date: Optional[datetime] = None
+    priority: Optional[str] = None
+    is_completed: Optional[bool] = None
+
+
 # ==========================================
 # DASHBOARD
 # ==========================================
@@ -952,6 +972,271 @@ async def add_tag(tag: str = Body(..., embed=True), user: Dict = Depends(get_cur
 
 
 @router.get("/settings/pipeline-stages")
+async def get_pipeline_stages(user: Dict = Depends(get_current_user)):
+    """Get pipeline stages configuration"""
+    current_db = get_db()
+    if not current_db:
+        raise HTTPException(status_code=500, detail="Database not configured")
+    
+    settings = await current_db.crm_settings.find_one({}) or {}
+    stages = settings.get("pipeline_stages", [
+        "initial_interest",
+        "info_requested",
+        "first_call",
+        "pitch_delivered",
+        "proposal_sent",
+        "negotiation",
+        "verbal_commitment",
+        "won"
+    ])
+    
+    return {"stages": stages}
+
+
+# ==========================================
+# TASKS MODULE (COMPLETE)
+# ==========================================
+
+@router.get("/tasks")
+async def get_tasks(
+    user: Dict = Depends(get_current_user),
+    status: Optional[str] = None,
+    assigned_to: Optional[str] = None,
+    lead_id: Optional[str] = None,
+    contact_id: Optional[str] = None,
+    opportunity_id: Optional[str] = None,
+    skip: int = 0,
+    limit: int = 100
+):
+    """Get all tasks with filters"""
+    current_db = get_db()
+    if not current_db:
+        raise HTTPException(status_code=500, detail="Database not configured")
+    
+    query = {}
+    
+    # Filter by completion status
+    if status == "open":
+        query["is_completed"] = False
+    elif status == "done":
+        query["is_completed"] = True
+    
+    # Filter by assignee
+    if assigned_to:
+        query["assigned_to_email"] = assigned_to
+    
+    # Filter by entity
+    if lead_id:
+        query["lead_id"] = lead_id
+    if contact_id:
+        query["contact_id"] = contact_id
+    if opportunity_id:
+        query["opportunity_id"] = opportunity_id
+    
+    tasks = await current_db.tasks.find(query).skip(skip).limit(limit).sort("due_date", 1).to_list(limit)
+    
+    for task in tasks:
+        task["_id"] = str(task["_id"])
+    
+    total = await current_db.tasks.count_documents(query)
+    
+    # Count overdue tasks
+    now = datetime.now(timezone.utc)
+    overdue_count = await current_db.tasks.count_documents({
+        "is_completed": False,
+        "due_date": {"$lt": now}
+    })
+    
+    return {
+        "tasks": tasks,
+        "total": total,
+        "overdue_count": overdue_count,
+        "skip": skip,
+        "limit": limit
+    }
+
+
+@router.post("/tasks")
+async def create_task(task_create: TaskCreate, user: Dict = Depends(get_current_user)):
+    """Create new task"""
+    current_db = get_db()
+    if not current_db:
+        raise HTTPException(status_code=500, detail="Database not configured")
+    
+    task_data = {
+        **task_create.dict(),
+        "created_by_email": user["email"],
+        "created_by_id": user["id"],
+        "is_completed": False,
+        "completed_at": None,
+        "created_at": datetime.now(timezone.utc),
+        "updated_at": datetime.now(timezone.utc)
+    }
+    
+    result = await current_db.tasks.insert_one(task_data)
+    task_id = str(result.inserted_id)
+    
+    # Timeline event
+    await current_db.timeline_events.insert_one({
+        "entity_type": "task",
+        "entity_id": task_id,
+        "event_type": "task_created",
+        "description": f"Task created: {task_create.title}",
+        "user_email": user["email"],
+        "lead_id": task_create.lead_id,
+        "contact_id": task_create.contact_id,
+        "opportunity_id": task_create.opportunity_id,
+        "created_at": datetime.now(timezone.utc)
+    })
+    
+    task_data["_id"] = task_id
+    
+    return {
+        "success": True,
+        "task_id": task_id,
+        "task": task_data
+    }
+
+
+@router.get("/tasks/{task_id}")
+async def get_task(task_id: str, user: Dict = Depends(get_current_user)):
+    """Get task by ID"""
+    current_db = get_db()
+    if not current_db:
+        raise HTTPException(status_code=500, detail="Database not configured")
+    
+    try:
+        task = await current_db.tasks.find_one({"_id": ObjectId(task_id)})
+    except:
+        raise HTTPException(status_code=400, detail="Invalid task ID")
+    
+    if not task:
+        raise HTTPException(status_code=404, detail="Task not found")
+    
+    task["_id"] = str(task["_id"])
+    
+    return task
+
+
+@router.patch("/tasks/{task_id}")
+async def update_task(
+    task_id: str,
+    task_update: TaskUpdate,
+    user: Dict = Depends(get_current_user)
+):
+    """Update task"""
+    current_db = get_db()
+    if not current_db:
+        raise HTTPException(status_code=500, detail="Database not configured")
+    
+    try:
+        task = await current_db.tasks.find_one({"_id": ObjectId(task_id)})
+    except:
+        raise HTTPException(status_code=400, detail="Invalid task ID")
+    
+    if not task:
+        raise HTTPException(status_code=404, detail="Task not found")
+    
+    update_data = {k: v for k, v in task_update.dict().items() if v is not None}
+    update_data["updated_at"] = datetime.now(timezone.utc)
+    
+    # Mark completion timestamp
+    if task_update.is_completed and not task.get("is_completed"):
+        update_data["completed_at"] = datetime.now(timezone.utc)
+    
+    await current_db.tasks.update_one(
+        {"_id": ObjectId(task_id)},
+        {"$set": update_data}
+    )
+    
+    # Timeline event
+    event_type = "task_completed" if update_data.get("is_completed") else "task_updated"
+    await current_db.timeline_events.insert_one({
+        "entity_type": "task",
+        "entity_id": task_id,
+        "event_type": event_type,
+        "description": f"Task {'completed' if update_data.get('is_completed') else 'updated'}: {task['title']}",
+        "user_email": user["email"],
+        "lead_id": task.get("lead_id"),
+        "contact_id": task.get("contact_id"),
+        "opportunity_id": task.get("opportunity_id"),
+        "created_at": datetime.now(timezone.utc)
+    })
+    
+    return {"success": True, "message": "Task updated"}
+
+
+@router.delete("/tasks/{task_id}")
+async def delete_task(task_id: str, user: Dict = Depends(get_current_user)):
+    """Delete task"""
+    await require_role(user, ["admin", "sales"])
+    
+    current_db = get_db()
+    if not current_db:
+        raise HTTPException(status_code=500, detail="Database not configured")
+    
+    try:
+        result = await current_db.tasks.delete_one({"_id": ObjectId(task_id)})
+    except:
+        raise HTTPException(status_code=400, detail="Invalid task ID")
+    
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Task not found")
+    
+    return {"success": True, "message": "Task deleted"}
+
+
+@router.get("/tasks/export/csv")
+async def export_tasks_csv(user: Dict = Depends(get_current_user)):
+    """Export tasks to CSV"""
+    current_db = get_db()
+    if not current_db:
+        raise HTTPException(status_code=500, detail="Database not configured")
+    
+    tasks = await current_db.tasks.find({}).to_list(1000)
+    
+    import csv
+    from io import StringIO
+    
+    output = StringIO()
+    writer = csv.writer(output)
+    
+    # Header
+    writer.writerow([
+        "ID", "Title", "Description", "Assigned To", "Created By",
+        "Priority", "Status", "Due Date", "Created At", "Completed At",
+        "Lead ID", "Contact ID", "Opportunity ID"
+    ])
+    
+    # Data
+    for task in tasks:
+        writer.writerow([
+            str(task["_id"]),
+            task.get("title", ""),
+            task.get("description", ""),
+            task.get("assigned_to_email", ""),
+            task.get("created_by_email", ""),
+            task.get("priority", ""),
+            "Done" if task.get("is_completed") else "Open",
+            task.get("due_date", ""),
+            task.get("created_at", ""),
+            task.get("completed_at", ""),
+            task.get("lead_id", ""),
+            task.get("contact_id", ""),
+            task.get("opportunity_id", "")
+        ])
+    
+    csv_content = output.getvalue()
+    output.close()
+    
+    from fastapi.responses import Response
+    return Response(
+        content=csv_content,
+        media_type="text/csv",
+        headers={"Content-Disposition": "attachment; filename=tasks_export.csv"}
+    )
+
+
 async def get_pipeline_stages(user: Dict = Depends(get_current_user)):
     """Get pipeline stages configuration"""
     current_db = get_db()

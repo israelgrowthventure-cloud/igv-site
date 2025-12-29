@@ -137,9 +137,17 @@ const Packs = () => {
                         }`}>
                           {packPrice.label}
                         </div>
+                        <div className={`text-xs mt-1 ${
+                          pack.highlighted ? 'text-blue-100' : 'text-gray-500'
+                        }`}>
+                          {location?.country || 'International'}
+                        </div>
                       </div>
                     ) : (
-                      <div className="text-xl font-bold">Prix sur demande</div>
+                      <div>
+                        <div className="text-xl font-bold">Prix sur demande</div>
+                        <div className="text-xs mt-1 text-gray-500">International</div>
+                      </div>
                     )}
                   </div>
 

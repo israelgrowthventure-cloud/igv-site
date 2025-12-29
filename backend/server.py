@@ -38,6 +38,8 @@ from admin_routes import router as admin_router
 from crm_complete_routes import router as crm_complete_router
 from gdpr_routes import router as gdpr_router
 from quota_queue_routes import router as quota_router
+from invoice_routes import router as invoice_router
+from monetico_routes import router as monetico_router
 
 
 ROOT_DIR = Path(__file__).parent
@@ -926,6 +928,8 @@ app.include_router(gdpr_router)  # GDPR Consent & Privacy
 app.include_router(quota_router)  # Gemini Quota Queue
 app.include_router(tracking_router)  # Tracking & Analytics
 app.include_router(admin_router)  # Admin Dashboard & Stats
+app.include_router(invoice_router)  # Invoice & Billing
+app.include_router(monetico_router)  # Monetico Payment Integration
 
 # Configure logging
 logging.basicConfig(

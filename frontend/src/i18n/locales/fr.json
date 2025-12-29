@@ -207,8 +207,9 @@
     "email": "Email",
     "address": "Adresse",
     "addressValue": "21 Rue Gefen, Harish, Israël",
-    "links": "Liens rapides",
-    "legal": "Légal",
+    "links": "Liens",
+    "about": "À propos",
+    "legal": "Mentions légales",
     "rights": "Tous droits réservés."
   },
   "pricing": {

@@ -14,6 +14,33 @@ from pathlib import Path
 import google.genai as genai
 import traceback
 
+# PDF generation
+try:
+    from reportlab.lib.pagesizes import A4
+    from reportlab.lib import colors
+    from reportlab.lib.units import cm
+    from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+    from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+    from reportlab.lib.enums import TA_CENTER, TA_LEFT
+    from io import BytesIO
+    import base64
+    PDF_AVAILABLE = True
+except ImportError:
+    logging.warning("reportlab not available - PDF generation will fail")
+    PDF_AVAILABLE = False
+
+# Email
+try:
+    import aiosmtplib
+    from email.mime.text import MIMEText
+    from email.mime.multipart import MIMEMultipart
+    from email.mime.base import MIMEBase
+    from email import encoders
+    EMAIL_AVAILABLE = True
+except ImportError:
+    logging.warning("Email libraries not available")
+    EMAIL_AVAILABLE = False
+
 router = APIRouter(prefix="/api")
 
 # Gemini API configuration
@@ -79,6 +106,19 @@ async def diagnose_gemini():
 mongo_url = os.getenv('MONGODB_URI') or os.getenv('MONGO_URL')
 db_name = os.getenv('DB_NAME', 'igv_production')
 
+# SMTP Config
+SMTP_SERVER = os.getenv('SMTP_SERVER', 'smtp.gmail.com')
+SMTP_PORT = int(os.getenv('SMTP_PORT', '587'))
+SMTP_USERNAME = os.getenv('SMTP_USERNAME')
+SMTP_PASSWORD = os.getenv('SMTP_PASSWORD')
+SMTP_FROM_EMAIL = os.getenv('SMTP_FROM_EMAIL', 'israel.growth.venture@gmail.com')
+SMTP_FROM_NAME = os.getenv('SMTP_FROM_NAME', 'Israel Growth Venture')
+
+# Company info
+COMPANY_NAME = "Israel Growth Venture"
+COMPANY_EMAIL = "israel.growth.venture@gmail.com"
+COMPANY_WEBSITE = "israelgrowthventure.com"
+
 # MongoDB client et db seront initialisés à la demande
 mongo_client = None
 db = None
@@ -106,6 +146,202 @@ PROMPTS_DIR = Path(__file__).parent / 'prompts'
 PROMPT_RESTAURATION = PROMPTS_DIR / 'MASTER_PROMPT_RESTAURATION.txt'
 PROMPT_RETAIL = PROMPTS_DIR / 'MASTER_PROMPT_RETAIL_NON_FOOD.txt'
 PROMPT_SERVICES = PROMPTS_DIR / 'MASTER_PROMPT_SERVICES_PARAMEDICAL.txt'
+
+
+def generate_mini_analysis_pdf(brand_name: str, analysis_text: str, language: str = "fr") -> bytes:
+    """Generate mini-analysis PDF with IGV header"""
+    if not PDF_AVAILABLE:
+        raise Exception("PDF generation not available - reportlab not installed")
+    
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=A4, topMargin=2*cm, bottomMargin=2*cm, leftMargin=2*cm, rightMargin=2*cm)
+    story = []
+    styles = getSampleStyleSheet()
+    
+    # Custom styles
+    title_style = ParagraphStyle(
+        'CustomTitle',
+        parent=styles['Heading1'],
+        fontSize=20,
+        textColor=colors.HexColor('#1e40af'),
+        spaceAfter=20,
+        alignment=TA_CENTER
+    )
+    
+    header_style = ParagraphStyle(
+        'Header',
+        parent=styles['Normal'],
+        fontSize=9,
+        textColor=colors.HexColor('#4b5563'),
+        alignment=TA_CENTER
+    )
+    
+    # IGV Header
+    story.append(Paragraph(COMPANY_NAME, title_style))
+    story.append(Paragraph(f"{COMPANY_EMAIL} | {COMPANY_WEBSITE}", header_style))
+    story.append(Spacer(1, 1*cm))
+    
+    # Title
+    title_text = {
+        "fr": f"Mini-Analyse de Marché - {brand_name}",
+        "en": f"Market Mini-Analysis - {brand_name}",
+        "he": f"מיני-אנליזה שוק - {brand_name}"
+    }.get(language, f"Mini-Analyse de Marché - {brand_name}")
+    
+    story.append(Paragraph(title_text, styles['Heading2']))
+    story.append(Spacer(1, 0.5*cm))
+    
+    # Date
+    date_label = {
+        "fr": "Généré le:",
+        "en": "Generated on:",
+        "he": "נוצר בתאריך:"
+    }.get(language, "Généré le:")
+    
+    story.append(Paragraph(f"<i>{date_label} {datetime.now(timezone.utc).strftime('%d/%m/%Y')}</i>", styles['Normal']))
+    story.append(Spacer(1, 1*cm))
+    
+    # Analysis content - split into paragraphs
+    paragraphs = analysis_text.split('\n\n')
+    for para in paragraphs:
+        if para.strip():
+            # Handle bullet points
+            if para.strip().startswith('-') or para.strip().startswith('•'):
+                lines = para.split('\n')
+                for line in lines:
+                    if line.strip():
+                        story.append(Paragraph(line.strip(), styles['Normal']))
+                story.append(Spacer(1, 0.3*cm))
+            else:
+                story.append(Paragraph(para.strip(), styles['Normal']))
+                story.append(Spacer(1, 0.5*cm))
+    
+    # Footer
+    story.append(Spacer(1, 1*cm))
+    footer_text = {
+        "fr": "Ce document est une analyse préliminaire générée par IA. Pour un accompagnement complet, contactez-nous.",
+        "en": "This document is a preliminary AI-generated analysis. For complete support, contact us.",
+        "he": "מסמך זה הוא ניתוח ראשוני שנוצר על ידי AI. לליווי מלא, צור איתנו קשר."
+    }.get(language, "Ce document est une analyse préliminaire générée par IA.")
+    
+    story.append(Paragraph(f"<i>{footer_text}</i>", header_style))
+    
+    # Build PDF
+    doc.build(story)
+    pdf_bytes = buffer.getvalue()
+    buffer.close()
+    
+    return pdf_bytes
+
+
+async def send_mini_analysis_email(email: str, brand_name: str, pdf_bytes: bytes, language: str = "fr") -> dict:
+    """Send mini-analysis email with PDF attachment"""
+    if not EMAIL_AVAILABLE or not SMTP_USERNAME or not SMTP_PASSWORD:
+        logging.warning("Email not configured - skipping email send")
+        return {"success": False, "error": "Email not configured"}
+    
+    try:
+        # Create message
+        message = MIMEMultipart()
+        message['From'] = f"{SMTP_FROM_NAME} <{SMTP_FROM_EMAIL}>"
+        message['To'] = email
+        message['Bcc'] = COMPANY_EMAIL  # Copy to company
+        message['Subject'] = {
+            "fr": f"Votre Mini-Analyse IGV - {brand_name}",
+            "en": f"Your IGV Mini-Analysis - {brand_name}",
+            "he": f"המיני-אנליזה שלך מ-IGV - {brand_name}"
+        }.get(language, f"Votre Mini-Analyse IGV - {brand_name}")
+        
+        # Email body
+        body_template = {
+            "fr": f"""Bonjour,
+
+Merci d'avoir utilisé notre service de mini-analyse gratuite !
+
+Vous trouverez ci-joint votre analyse de marché personnalisée pour {brand_name}.
+
+Cette analyse est un premier aperçu des opportunités d'expansion de votre marque en Israël. Pour un accompagnement complet et une étude approfondie, nos experts sont à votre disposition.
+
+📞 Réservez un appel gratuit de 30 minutes :
+https://israelgrowthventure.com/appointment
+
+📦 Découvrez nos packs d'accompagnement :
+https://israelgrowthventure.com/packs
+
+Cordialement,
+L'équipe Israel Growth Venture
+
+{COMPANY_EMAIL}
+{COMPANY_WEBSITE}
+""",
+            "en": f"""Hello,
+
+Thank you for using our free mini-analysis service!
+
+Please find attached your personalized market analysis for {brand_name}.
+
+This analysis is a first overview of your brand's expansion opportunities in Israel. For complete support and an in-depth study, our experts are at your disposal.
+
+📞 Book a free 30-minute call:
+https://israelgrowthventure.com/appointment
+
+📦 Discover our support packages:
+https://israelgrowthventure.com/packs
+
+Best regards,
+Israel Growth Venture Team
+
+{COMPANY_EMAIL}
+{COMPANY_WEBSITE}
+""",
+            "he": f"""שלום,
+
+תודה שהשתמשת בשירות המיני-אנליזה החינמי שלנו!
+
+בצרוף תמצא את הניתוח האישי שלך עבור {brand_name}.
+
+ניתוח זה הוא סקירה ראשונית של הזדמנויות ההתרחבות של המותג שלך בישראל. לליווי מלא ומחקר מעמיק, המומחים שלנו לרשותך.
+
+📞 קבע שיחה חינמית של 30 דקות:
+https://israelgrowthventure.com/appointment
+
+📦 גלה את חבילות הליווי שלנו:
+https://israelgrowthventure.com/packs
+
+בברכה,
+צוות Israel Growth Venture
+
+{COMPANY_EMAIL}
+{COMPANY_WEBSITE}
+"""
+        }.get(language, body_template["fr"])
+        
+        message.attach(MIMEText(body_template, 'plain', 'utf-8'))
+        
+        # Attach PDF
+        pdf_attachment = MIMEBase('application', 'pdf')
+        pdf_attachment.set_payload(pdf_bytes)
+        encoders.encode_base64(pdf_attachment)
+        filename = f"IGV_Mini_Analysis_{brand_name.replace(' ', '_')}.pdf"
+        pdf_attachment.add_header(
+            'Content-Disposition',
+            f'attachment; filename={filename}'
+        )
+        message.attach(pdf_attachment)
+        
+        # Send
+        async with aiosmtplib.SMTP(hostname=SMTP_SERVER, port=SMTP_PORT) as smtp:
+            await smtp.starttls()
+            await smtp.login(SMTP_USERNAME, SMTP_PASSWORD)
+            await smtp.send_message(message)
+        
+        logging.info(f"Mini-analysis email sent to {email}")
+        
+        return {"success": True, "sent_at": datetime.now(timezone.utc).isoformat()}
+        
+    except Exception as e:
+        logging.error(f"Failed to send mini-analysis email: {str(e)}")
+        return {"success": False, "error": str(e)}
 
 
 class MiniAnalysisRequest(BaseModel):
@@ -748,23 +984,120 @@ async def generate_mini_analysis(request: MiniAnalysisRequest, response: Respons
             "brand_slug": brand_slug,
             "brand_name": request.nom_de_marque,
             "email": request.email,
+            "language": language,
             "payload_form": request.dict(),
             "created_at": datetime.now(timezone.utc),
             "provider": "gemini",
             "model": GEMINI_MODEL,
-            "response_text": analysis_text
+            "response_text": analysis_text,
+            "pdf_url": None,
+            "email_sent": False,
+            "email_status": None
         }
         
         result = await current_db.mini_analyses.insert_one(analysis_record)
-        logging.info(f"Analysis saved to MongoDB with ID: {result.inserted_id}")
+        analysis_id = str(result.inserted_id)
+        logging.info(f"Analysis saved to MongoDB with ID: {analysis_id}")
         
         # MISSION C: Update lead status to GENERATED (successful generation)
+        lead_id = None
         try:
             from crm_routes import create_lead_in_crm
             lead_data["status"] = "GENERATED"
-            await create_lead_in_crm(lead_data, request_id)
+            lead_result = await create_lead_in_crm(lead_data, request_id)
+            lead_id = lead_result.get("lead_id")
         except Exception as lead_update_error:
             logging.error(f"[{request_id}] Lead status update error (non-blocking): {str(lead_update_error)}")
+        
+        # GENERATE PDF AUTOMATICALLY
+        pdf_url = None
+        pdf_base64 = None
+        try:
+            logging.info(f"[{request_id}] Generating PDF for {request.nom_de_marque}")
+            pdf_bytes = generate_mini_analysis_pdf(request.nom_de_marque, analysis_text, language)
+            pdf_base64 = base64.b64encode(pdf_bytes).decode('utf-8')
+            pdf_url = f"data:application/pdf;base64,{pdf_base64}"  # Inline PDF for now
+            
+            # Update analysis record
+            await current_db.mini_analyses.update_one(
+                {"_id": result.inserted_id},
+                {"$set": {"pdf_url": pdf_url, "pdf_generated_at": datetime.now(timezone.utc)}}
+            )
+            
+            # Update lead
+            if lead_id:
+                await current_db.leads.update_one(
+                    {"_id": lead_id},
+                    {"$set": {"pdf_url": pdf_url}}
+                )
+            
+            # Timeline event
+            await current_db.timeline_events.insert_one({
+                "entity_type": "mini_analysis",
+                "entity_id": analysis_id,
+                "lead_id": lead_id,
+                "event_type": "pdf_generated",
+                "description": f"PDF generated for {request.nom_de_marque}",
+                "created_at": datetime.now(timezone.utc)
+            })
+            
+            logging.info(f"[{request_id}] PDF generated successfully")
+            
+        except Exception as pdf_error:
+            logging.error(f"[{request_id}] PDF generation failed: {str(pdf_error)}")
+        
+        # SEND EMAIL AUTOMATICALLY
+        email_sent = False
+        email_error = None
+        try:
+            if pdf_bytes:
+                logging.info(f"[{request_id}] Sending email to {request.email}")
+                email_result = await send_mini_analysis_email(request.email, request.nom_de_marque, pdf_bytes, language)
+                email_sent = email_result["success"]
+                email_error = email_result.get("error")
+                
+                # Update analysis record
+                await current_db.mini_analyses.update_one(
+                    {"_id": result.inserted_id},
+                    {
+                        "$set": {
+                            "email_sent": email_sent,
+                            "email_status": "sent" if email_sent else "failed",
+                            "email_sent_at": datetime.now(timezone.utc) if email_sent else None,
+                            "email_error": email_error
+                        }
+                    }
+                )
+                
+                # Create EmailEvent
+                await current_db.email_events.insert_one({
+                    "email_type": "mini_analysis",
+                    "to_email": request.email,
+                    "bcc": [COMPANY_EMAIL],
+                    "subject": f"Mini-Analysis - {request.nom_de_marque}",
+                    "language": language,
+                    "status": "sent" if email_sent else "failed",
+                    "error_message": email_error,
+                    "lead_id": lead_id,
+                    "created_at": datetime.now(timezone.utc),
+                    "sent_at": datetime.now(timezone.utc) if email_sent else None
+                })
+                
+                # Timeline event
+                await current_db.timeline_events.insert_one({
+                    "entity_type": "mini_analysis",
+                    "entity_id": analysis_id,
+                    "lead_id": lead_id,
+                    "event_type": "email_sent" if email_sent else "email_failed",
+                    "description": f"Email {'sent to' if email_sent else 'failed for'} {request.email}",
+                    "created_at": datetime.now(timezone.utc)
+                })
+                
+                logging.info(f"[{request_id}] Email {'sent' if email_sent else 'failed'}")
+            
+        except Exception as email_send_error:
+            logging.error(f"[{request_id}] Email send failed: {str(email_send_error)}")
+            email_error = str(email_send_error)
         
     except Exception as e:
         logging.error(f"MongoDB save error: {str(e)}")
@@ -775,5 +1108,11 @@ async def generate_mini_analysis(request: MiniAnalysisRequest, response: Respons
         "analysis": analysis_text,
         "brand_name": request.nom_de_marque,
         "secteur": request.secteur,
-        "statut_alimentaire": request.statut_alimentaire
+        "statut_alimentaire": request.statut_alimentaire,
+        "language": language,
+        "pdf_url": pdf_url,
+        "pdf_base64": pdf_base64,
+        "email_sent": email_sent,
+        "email_status": "sent" if email_sent else "failed" if email_error else "pending",
+        "lead_id": lead_id
     }

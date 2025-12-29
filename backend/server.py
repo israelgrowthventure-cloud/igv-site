@@ -124,7 +124,8 @@ async def debug_routers():
         "gemini_api_key_length": len(os.getenv('GEMINI_API_KEY', '')),
         "mongodb_uri_set": bool(mongo_url),
         "db_name": db_name,
-        "mongodb_status": mongodb_status
+        "mongodb_status": mongodb_status,
+        "build_timestamp": "2025-12-29T15:45:00Z"
     }
 
 # Ultra-light health check at root (no MongoDB dependency)

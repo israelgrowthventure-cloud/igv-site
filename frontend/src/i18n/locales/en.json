@@ -326,6 +326,49 @@
     "brandName": "Israel Growth Venture"
   },
   "admin": {
+    "dashboard": {
+      "title": "Admin Dashboard"
+    },
+    "welcome": "Welcome",
+    "tabs": {
+      "overview": "Overview",
+      "leads": "Leads",
+      "contacts": "Contacts",
+      "users": "Users"
+    },
+    "stats": {
+      "totalLeads": "Total Leads",
+      "totalContacts": "Total Contacts",
+      "analyses": "Analyses",
+      "conversionRate": "Conversion Rate"
+    },
+    "leads": {
+      "title": "Recent Leads",
+      "email": "Email",
+      "brand": "Brand",
+      "status": "Status",
+      "date": "Date"
+    },
+    "contacts": {
+      "title": "Contacts",
+      "comingSoon": "Contact management coming soon"
+    },
+    "users": {
+      "title": "Users",
+      "comingSoon": "User management coming soon"
+    },
+    "logout": {
+      "button": "Logout",
+      "success": "Logged out successfully"
+    },
+    "errors": {
+      "loadFailed": "Failed to load data"
+    },
+    "roles": {
+      "admin": "Administrator",
+      "user": "User",
+      "undefined": "Undefined"
+    },
     "crm": {
       "title": "IGV CRM",
       "tabs": {

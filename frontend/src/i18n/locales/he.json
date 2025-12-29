@@ -315,6 +315,49 @@
     "brandName": "Israel Growth Venture"
   },
   "admin": {
+    "dashboard": {
+      "title": "לוח בקרה ניהולי"
+    },
+    "welcome": "ברוך הבא",
+    "tabs": {
+      "overview": "סקירה כללית",
+      "leads": "לידים",
+      "contacts": "אנשי קשר",
+      "users": "משתמשים"
+    },
+    "stats": {
+      "totalLeads": "סה\"כ לידים",
+      "totalContacts": "סה\"כ אנשי קשר",
+      "analyses": "ניתוחים",
+      "conversionRate": "שיעור המרה"
+    },
+    "leads": {
+      "title": "לידים אחרונים",
+      "email": "אימייל",
+      "brand": "מותג",
+      "status": "סטטוס",
+      "date": "תאריך"
+    },
+    "contacts": {
+      "title": "אנשי קשר",
+      "comingSoon": "ניהול אנשי קשר בקרוב"
+    },
+    "users": {
+      "title": "משתמשים",
+      "comingSoon": "ניהול משתמשים בקרוב"
+    },
+    "logout": {
+      "button": "התנתק",
+      "success": "התנתקת בהצלחה"
+    },
+    "errors": {
+      "loadFailed": "טעינת הנתונים נכשלה"
+    },
+    "roles": {
+      "admin": "מנהל",
+      "user": "משתמש",
+      "undefined": "לא מוגדר"
+    },
     "crm": {
       "title": "CRM IGV",
       "tabs": {

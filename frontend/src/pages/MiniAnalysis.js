@@ -163,8 +163,8 @@ const MiniAnalysis = () => {
         email: formData.email,
         brandName: formData.nom_de_marque,
         sector: formData.secteur,
-        country: formData.pays_dorigine,
-        analysisText: analysis,
+        origin: formData.pays_dorigine,
+        analysis: analysis,
         language: currentLang
       });
       
@@ -207,8 +207,8 @@ const MiniAnalysis = () => {
         email: formData.email,
         brandName: formData.nom_de_marque,
         sector: formData.secteur,
-        country: formData.pays_dorigine,
-        analysisText: analysis,
+        origin: formData.pays_dorigine,
+        analysis: analysis,
         language: currentLang
       });
       

@@ -13,7 +13,7 @@ const AdminPayments = () => {
   }, []);
 
   const loadPayments = async () => {
-    try:
+    try {
       setLoading(true);
       const token = localStorage.getItem('admin_token');
       const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://igv-backend.onrender.com'}/api/monetico/payments`, {

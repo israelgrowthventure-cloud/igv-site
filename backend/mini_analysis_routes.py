@@ -345,9 +345,16 @@ https://israelgrowthventure.com/packs
 
 
 class MiniAnalysisRequest(BaseModel):
+    # CORE FIELDS
     email: EmailStr
-    nom_de_marque: str
-    secteur: str
+    nom_de_marque: str = ""  # Will be filled from aliases if empty
+    secteur: str = ""
+    
+    # ALIASES for compatibility (accept company_name OR brand_name as alternatives)
+    company_name: str | None = None
+    brand_name: str | None = None
+    
+    # OPTIONAL FIELDS
     statut_alimentaire: str = ""
     anciennete: str = ""
     pays_dorigine: str = ""
@@ -358,6 +365,16 @@ class MiniAnalysisRequest(BaseModel):
     objectif_israel: str = ""
     contraintes: str = ""
     language: str = "fr"  # LANGUAGE SUPPORT: fr/en/he
+    
+    def model_post_init(self, __context):
+        """Handle aliases - populate nom_de_marque from company_name or brand_name"""
+        if not self.nom_de_marque:
+            if self.company_name:
+                self.nom_de_marque = self.company_name
+            elif self.brand_name:
+                self.nom_de_marque = self.brand_name
+            else:
+                raise ValueError("nom_de_marque, company_name, or brand_name required")
 
 
 def normalize_brand_slug(brand_name: str) -> str:

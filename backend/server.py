@@ -1,4 +1,4 @@
-# IGV Backend - FastAPI Server - Build 20251229-1700
+# IGV Backend - FastAPI Server - Build 20251229-1720
 from fastapi import FastAPI, APIRouter, HTTPException, Depends, status, Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.responses import JSONResponse
@@ -125,7 +125,7 @@ async def debug_routers():
         "mongodb_uri_set": bool(mongo_url),
         "db_name": db_name,
         "mongodb_status": mongodb_status,
-        "build_timestamp": "2025-12-29T17:00:00Z"
+        "build_timestamp": "2025-12-29T17:20:00Z"
     }
 
 # Ultra-light health check at root (no MongoDB dependency)

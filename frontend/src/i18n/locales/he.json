@@ -482,6 +482,41 @@
     "logout": {
       "button": "התנתק",
       "success": "התנתקת בהצלחה"
+    },
+    "welcome": "ברוך הבא",
+    "dashboard": {
+      "title": "לוח בקרה"
+    },
+    "tabs": {
+      "overview": "סקירה",
+      "leads": "לידים",
+      "contacts": "אנשי קשר",
+      "users": "משתמשים"
+    },
+    "stats": {
+      "totalLeads": "סה״כ לידים",
+      "totalContacts": "סה״כ אנשי קשר",
+      "analyses": "ניתוחים שנוצרו",
+      "conversionRate": "אחוז המרה"
+    },
+    "leads": {
+      "title": "רשימת לידים",
+      "email": "אימייל",
+      "brand": "מותג",
+      "status": "סטטוס",
+      "date": "תאריך"
+    },
+    "contacts": {
+      "title": "רשימת אנשי קשר",
+      "comingSoon": "ניהול אנשי קשר בקרוב"
+    },
+    "users": {
+      "title": "ניהול משתמשים",
+      "createUser": "צור משתמש",
+      "comingSoon": "ניהול משתמשים בקרוב"
+    },
+    "errors": {
+      "loadFailed": "שגיאה בטעינת נתונים"
     }
   },
   "gdpr": {

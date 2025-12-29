@@ -497,6 +497,41 @@
     "logout": {
       "button": "Déconnexion",
       "success": "Déconnecté avec succès"
+    },
+    "welcome": "Bienvenue",
+    "dashboard": {
+      "title": "Tableau de bord Admin"
+    },
+    "tabs": {
+      "overview": "Vue d'ensemble",
+      "leads": "Prospects",
+      "contacts": "Contacts",
+      "users": "Utilisateurs"
+    },
+    "stats": {
+      "totalLeads": "Total Prospects",
+      "totalContacts": "Total Contacts",
+      "analyses": "Analyses générées",
+      "conversionRate": "Taux de conversion"
+    },
+    "leads": {
+      "title": "Liste des prospects",
+      "email": "Email",
+      "brand": "Marque",
+      "status": "Statut",
+      "date": "Date"
+    },
+    "contacts": {
+      "title": "Liste des contacts",
+      "comingSoon": "Gestion des contacts bientôt disponible"
+    },
+    "users": {
+      "title": "Gestion des utilisateurs",
+      "createUser": "Créer un utilisateur",
+      "comingSoon": "Gestion des utilisateurs bientôt disponible"
+    },
+    "errors": {
+      "loadFailed": "Erreur de chargement des données"
     }
   },
   "gdpr": {

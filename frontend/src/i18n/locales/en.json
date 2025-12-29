@@ -493,6 +493,41 @@
     "logout": {
       "button": "Logout",
       "success": "Logged out successfully"
+    },
+    "welcome": "Welcome",
+    "dashboard": {
+      "title": "Admin Dashboard"
+    },
+    "tabs": {
+      "overview": "Overview",
+      "leads": "Leads",
+      "contacts": "Contacts",
+      "users": "Users"
+    },
+    "stats": {
+      "totalLeads": "Total Leads",
+      "totalContacts": "Total Contacts",
+      "analyses": "Generated Analyses",
+      "conversionRate": "Conversion Rate"
+    },
+    "leads": {
+      "title": "Leads List",
+      "email": "Email",
+      "brand": "Brand",
+      "status": "Status",
+      "date": "Date"
+    },
+    "contacts": {
+      "title": "Contacts List",
+      "comingSoon": "Contact management coming soon"
+    },
+    "users": {
+      "title": "User Management",
+      "createUser": "Create User",
+      "comingSoon": "User management coming soon"
+    },
+    "errors": {
+      "loadFailed": "Failed to load data"
     }
   },
   "gdpr": {

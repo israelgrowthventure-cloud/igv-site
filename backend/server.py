@@ -39,8 +39,25 @@ from admin_routes import router as admin_router
 from crm_complete_routes import router as crm_complete_router
 from gdpr_routes import router as gdpr_router
 from quota_queue_routes import router as quota_router
-from invoice_routes import router as invoice_router
-from monetico_routes import router as monetico_router
+
+# New routers with error handling
+try:
+    from invoice_routes import router as invoice_router
+    INVOICE_ROUTER_LOADED = True
+    logging.info("✓ Invoice router loaded successfully")
+except Exception as e:
+    logging.error(f"✗ Failed to load invoice_routes: {str(e)}")
+    INVOICE_ROUTER_LOADED = False
+    invoice_router = None
+
+try:
+    from monetico_routes import router as monetico_router
+    MONETICO_ROUTER_LOADED = True
+    logging.info("✓ Monetico router loaded successfully")
+except Exception as e:
+    logging.error(f"✗ Failed to load monetico_routes: {str(e)}")
+    MONETICO_ROUTER_LOADED = False
+    monetico_router = None
 
 
 ROOT_DIR = Path(__file__).parent
@@ -94,6 +111,8 @@ async def debug_routers():
     return {
         "ai_router_loaded": 'ai_routes' in sys.modules,
         "mini_analysis_router_loaded": 'mini_analysis_routes' in sys.modules,
+        "invoice_router_loaded": INVOICE_ROUTER_LOADED,
+        "monetico_router_loaded": MONETICO_ROUTER_LOADED,
         "gemini_api_key_set": bool(os.getenv('GEMINI_API_KEY')),
         "gemini_api_key_length": len(os.getenv('GEMINI_API_KEY', '')),
         "mongodb_uri_set": bool(mongo_url),
@@ -929,8 +948,19 @@ app.include_router(gdpr_router)  # GDPR Consent & Privacy
 app.include_router(quota_router)  # Gemini Quota Queue
 app.include_router(tracking_router)  # Tracking & Analytics
 app.include_router(admin_router)  # Admin Dashboard & Stats
-app.include_router(invoice_router)  # Invoice & Billing
-app.include_router(monetico_router)  # Monetico Payment Integration
+
+# Include new routers only if loaded successfully
+if INVOICE_ROUTER_LOADED and invoice_router:
+    app.include_router(invoice_router)  # Invoice & Billing
+    logging.info("✓ Invoice router registered")
+else:
+    logging.warning("✗ Invoice router not registered (import failed)")
+
+if MONETICO_ROUTER_LOADED and monetico_router:
+    app.include_router(monetico_router)  # Monetico Payment Integration
+    logging.info("✓ Monetico router registered")
+else:
+    logging.warning("✗ Monetico router not registered (import failed)")
 
 # Configure logging
 logging.basicConfig(

@@ -218,16 +218,20 @@ async def debug_crm(credentials: HTTPAuthorizationCredentials = Depends(security
         payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
         
         current_db = get_db()
-        db_status = "connected" if current_db else "not_connected"
+        db_status = "connected" if current_db is not None else "not_connected"
         
         email = payload.get("email")
         
         # Check both collections
         crm_user = None
         main_user = None
-        if current_db:
+        if current_db is not None:
             crm_user = await current_db.crm_users.find_one({"email": email})
             main_user = await current_db.users.find_one({"email": email})
+        
+        collections_list = []
+        if current_db is not None:
+            collections_list = list(await current_db.list_collection_names())
         
         return {
             "db_status": db_status,
@@ -235,7 +239,7 @@ async def debug_crm(credentials: HTTPAuthorizationCredentials = Depends(security
             "jwt_role": payload.get("role"),
             "crm_user_found": bool(crm_user),
             "main_user_found": bool(main_user),
-            "collections": list(await current_db.list_collection_names()) if current_db else []
+            "collections": collections_list
         }
     except Exception as e:
         return {"error": str(e), "type": type(e).__name__}

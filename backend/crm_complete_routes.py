@@ -37,6 +37,10 @@ def get_db():
         db = mongo_client[db_name]
     return db
 
+def is_db_configured():
+    """Check if database is configured without truth testing the db object"""
+    return mongo_url is not None and db is not None
+
 # JWT
 JWT_SECRET = os.getenv('JWT_SECRET')
 JWT_ALGORITHM = 'HS256'
@@ -53,7 +57,7 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
         payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
         
         current_db = get_db()
-        if not current_db:
+        if current_db is None:
             raise HTTPException(status_code=500, detail="Database not configured")
         
         email = payload.get("email")
@@ -245,7 +249,7 @@ async def debug_crm(credentials: HTTPAuthorizationCredentials = Depends(security
 async def get_dashboard_stats(user: Dict = Depends(get_current_user)):
     """Get dashboard KPIs"""
     current_db = get_db()
-    if not current_db:
+    if current_db is None:
         raise HTTPException(status_code=500, detail="Database not configured")
     
     now = datetime.now(timezone.utc)
@@ -327,7 +331,7 @@ async def get_leads(
 ):
     """Get leads with filters and pagination"""
     current_db = get_db()
-    if not current_db:
+    if current_db is None:
         raise HTTPException(status_code=500, detail="Database not configured")
     
     # Build filter
@@ -372,7 +376,7 @@ async def get_leads(
 async def get_lead(lead_id: str, user: Dict = Depends(get_current_user)):
     """Get single lead with full details"""
     current_db = get_db()
-    if not current_db:
+    if current_db is None:
         raise HTTPException(status_code=500, detail="Database not configured")
     
     try:
@@ -407,7 +411,7 @@ async def get_lead(lead_id: str, user: Dict = Depends(get_current_user)):
 async def create_lead(lead_data: LeadCreate, user: Dict = Depends(get_current_user)):
     """Create new lead"""
     current_db = get_db()
-    if not current_db:
+    if current_db is None:
         raise HTTPException(status_code=500, detail="Database not configured")
     
     # Check for duplicate
@@ -454,7 +458,7 @@ async def create_lead(lead_data: LeadCreate, user: Dict = Depends(get_current_us
 async def update_lead(lead_id: str, update_data: LeadUpdate, user: Dict = Depends(get_current_user)):
     """Update lead"""
     current_db = get_db()
-    if not current_db:
+    if current_db is None:
         raise HTTPException(status_code=500, detail="Database not configured")
     
     try:
@@ -495,7 +499,7 @@ async def update_lead(lead_id: str, update_data: LeadUpdate, user: Dict = Depend
 async def add_note_to_lead(lead_id: str, note: NoteCreate, user: Dict = Depends(get_current_user)):
     """Add note to lead"""
     current_db = get_db()
-    if not current_db:
+    if current_db is None:
         raise HTTPException(status_code=500, detail="Database not configured")
     
     await current_db.activities.insert_one({
@@ -516,7 +520,7 @@ async def add_note_to_lead(lead_id: str, note: NoteCreate, user: Dict = Depends(
 async def convert_lead_to_contact(lead_id: str, user: Dict = Depends(get_current_user)):
     """Convert lead to contact"""
     current_db = get_db()
-    if not current_db:
+    if current_db is None:
         raise HTTPException(status_code=500, detail="Database not configured")
     
     try:
@@ -579,7 +583,7 @@ async def convert_lead_to_contact(lead_id: str, user: Dict = Depends(get_current
 async def export_leads_csv(user: Dict = Depends(get_current_user)):
     """Export leads to CSV"""
     current_db = get_db()
-    if not current_db:
+    if current_db is None:
         raise HTTPException(status_code=500, detail="Database not configured")
     
     leads = await current_db.leads.find({}).sort("created_at", -1).to_list(None)
@@ -633,7 +637,7 @@ async def export_leads_csv(user: Dict = Depends(get_current_user)):
 async def get_pipeline(user: Dict = Depends(get_current_user)):
     """Get opportunities grouped by stage (Kanban view)"""
     current_db = get_db()
-    if not current_db:
+    if current_db is None:
         raise HTTPException(status_code=500, detail="Database not configured")
     
     stages = [
@@ -672,7 +676,7 @@ async def get_pipeline(user: Dict = Depends(get_current_user)):
 async def create_opportunity(opp_data: OpportunityCreate, user: Dict = Depends(get_current_user)):
     """Create new opportunity"""
     current_db = get_db()
-    if not current_db:
+    if current_db is None:
         raise HTTPException(status_code=500, detail="Database not configured")
     
     opp_doc = {
@@ -702,7 +706,7 @@ async def create_opportunity(opp_data: OpportunityCreate, user: Dict = Depends(g
 async def update_opportunity(opp_id: str, update_data: OpportunityUpdate, user: Dict = Depends(get_current_user)):
     """Update opportunity (including stage change)"""
     current_db = get_db()
-    if not current_db:
+    if current_db is None:
         raise HTTPException(status_code=500, detail="Database not configured")
     
     try:
@@ -758,7 +762,7 @@ async def get_contacts(
 ):
     """Get contacts with pagination"""
     current_db = get_db()
-    if not current_db:
+    if current_db is None:
         raise HTTPException(status_code=500, detail="Database not configured")
     
     filter_query = {}
@@ -789,7 +793,7 @@ async def get_contacts(
 async def get_contact(contact_id: str, user: Dict = Depends(get_current_user)):
     """Get single contact with details"""
     current_db = get_db()
-    if not current_db:
+    if current_db is None:
         raise HTTPException(status_code=500, detail="Database not configured")
     
     try:
@@ -821,7 +825,7 @@ async def get_contact(contact_id: str, user: Dict = Depends(get_current_user)):
 async def create_contact(contact_data: ContactCreate, user: Dict = Depends(get_current_user)):
     """Create new contact"""
     current_db = get_db()
-    if not current_db:
+    if current_db is None:
         raise HTTPException(status_code=500, detail="Database not configured")
     
     existing = await current_db.contacts.find_one({"email": contact_data.email})
@@ -847,7 +851,7 @@ async def create_contact(contact_data: ContactCreate, user: Dict = Depends(get_c
 async def update_contact(contact_id: str, update_data: ContactUpdate, user: Dict = Depends(get_current_user)):
     """Update contact"""
     current_db = get_db()
-    if not current_db:
+    if current_db is None:
         raise HTTPException(status_code=500, detail="Database not configured")
     
     try:
@@ -879,7 +883,7 @@ async def get_crm_users(user: Dict = Depends(get_current_user)):
     await require_role(user, ["admin"])
     
     current_db = get_db()
-    if not current_db:
+    if current_db is None:
         raise HTTPException(status_code=500, detail="Database not configured")
     
     users = await current_db.crm_users.find({}).sort("created_at", -1).to_list(None)
@@ -899,7 +903,7 @@ async def create_crm_user(user_data: UserCreate, user: Dict = Depends(get_curren
     await require_role(user, ["admin"])
     
     current_db = get_db()
-    if not current_db:
+    if current_db is None:
         raise HTTPException(status_code=500, detail="Database not configured")
     
     # Check if user exists
@@ -947,7 +951,7 @@ async def update_crm_user(user_id: str, update_data: UserUpdate, user: Dict = De
     await require_role(user, ["admin"])
     
     current_db = get_db()
-    if not current_db:
+    if current_db is None:
         raise HTTPException(status_code=500, detail="Database not configured")
     
     try:
@@ -985,7 +989,7 @@ async def update_crm_user(user_id: str, update_data: UserUpdate, user: Dict = De
 async def get_tags(user: Dict = Depends(get_current_user)):
     """Get all available tags"""
     current_db = get_db()
-    if not current_db:
+    if current_db is None:
         raise HTTPException(status_code=500, detail="Database not configured")
     
     settings = await current_db.crm_settings.find_one({}) or {}
@@ -1000,7 +1004,7 @@ async def add_tag(tag: str = Body(..., embed=True), user: Dict = Depends(get_cur
     await require_role(user, ["admin"])
     
     current_db = get_db()
-    if not current_db:
+    if current_db is None:
         raise HTTPException(status_code=500, detail="Database not configured")
     
     await current_db.crm_settings.update_one(
@@ -1016,7 +1020,7 @@ async def add_tag(tag: str = Body(..., embed=True), user: Dict = Depends(get_cur
 async def get_pipeline_stages(user: Dict = Depends(get_current_user)):
     """Get pipeline stages configuration"""
     current_db = get_db()
-    if not current_db:
+    if current_db is None:
         raise HTTPException(status_code=500, detail="Database not configured")
     
     settings = await current_db.crm_settings.find_one({}) or {}
@@ -1051,7 +1055,7 @@ async def get_tasks(
 ):
     """Get all tasks with filters"""
     current_db = get_db()
-    if not current_db:
+    if current_db is None:
         raise HTTPException(status_code=500, detail="Database not configured")
     
     query = {}
@@ -1101,7 +1105,7 @@ async def get_tasks(
 async def create_task(task_create: TaskCreate, user: Dict = Depends(get_current_user)):
     """Create new task"""
     current_db = get_db()
-    if not current_db:
+    if current_db is None:
         raise HTTPException(status_code=500, detail="Database not configured")
     
     task_data = {
@@ -1143,7 +1147,7 @@ async def create_task(task_create: TaskCreate, user: Dict = Depends(get_current_
 async def get_task(task_id: str, user: Dict = Depends(get_current_user)):
     """Get task by ID"""
     current_db = get_db()
-    if not current_db:
+    if current_db is None:
         raise HTTPException(status_code=500, detail="Database not configured")
     
     try:
@@ -1167,7 +1171,7 @@ async def update_task(
 ):
     """Update task"""
     current_db = get_db()
-    if not current_db:
+    if current_db is None:
         raise HTTPException(status_code=500, detail="Database not configured")
     
     try:
@@ -1213,7 +1217,7 @@ async def delete_task(task_id: str, user: Dict = Depends(get_current_user)):
     await require_role(user, ["admin", "sales"])
     
     current_db = get_db()
-    if not current_db:
+    if current_db is None:
         raise HTTPException(status_code=500, detail="Database not configured")
     
     try:
@@ -1231,7 +1235,7 @@ async def delete_task(task_id: str, user: Dict = Depends(get_current_user)):
 async def export_tasks_csv(user: Dict = Depends(get_current_user)):
     """Export tasks to CSV"""
     current_db = get_db()
-    if not current_db:
+    if current_db is None:
         raise HTTPException(status_code=500, detail="Database not configured")
     
     tasks = await current_db.tasks.find({}).to_list(1000)
@@ -1281,7 +1285,7 @@ async def export_tasks_csv(user: Dict = Depends(get_current_user)):
 async def get_pipeline_stages(user: Dict = Depends(get_current_user)):
     """Get pipeline stages configuration"""
     current_db = get_db()
-    if not current_db:
+    if current_db is None:
         raise HTTPException(status_code=500, detail="Database not configured")
     
     settings = await current_db.crm_settings.find_one({}) or {}

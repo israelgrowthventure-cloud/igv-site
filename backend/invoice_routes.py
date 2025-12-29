@@ -94,7 +94,7 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
         payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
         
         current_db = get_db()
-        if not current_db:
+        if current_db is None:
             raise HTTPException(status_code=500, detail="Database not configured")
         
         email = payload.get("email")
@@ -135,7 +135,7 @@ async def require_role(user: Dict[str, Any], required_roles: List[str]):
 async def generate_invoice_number() -> str:
     """Generate unique invoice number: INV-2025-00001"""
     current_db = get_db()
-    if not current_db:
+    if current_db is None:
         raise HTTPException(status_code=500, detail="Database not configured")
     
     now = datetime.now(timezone.utc)
@@ -463,7 +463,7 @@ async def list_invoices(
 ):
     """List all invoices"""
     current_db = get_db()
-    if not current_db:
+    if current_db is None:
         raise HTTPException(status_code=500, detail="Database not configured")
     
     query = {}
@@ -494,7 +494,7 @@ async def create_invoice(
     await require_role(user, ["admin", "sales"])
     
     current_db = get_db()
-    if not current_db:
+    if current_db is None:
         raise HTTPException(status_code=500, detail="Database not configured")
     
     # Generate invoice number
@@ -567,7 +567,7 @@ async def get_invoice(
 ):
     """Get invoice by ID"""
     current_db = get_db()
-    if not current_db:
+    if current_db is None:
         raise HTTPException(status_code=500, detail="Database not configured")
     
     try:
@@ -591,7 +591,7 @@ async def generate_pdf_for_invoice(
     await require_role(user, ["admin", "sales"])
     
     current_db = get_db()
-    if not current_db:
+    if current_db is None:
         raise HTTPException(status_code=500, detail="Database not configured")
     
     try:
@@ -645,7 +645,7 @@ async def send_invoice(
     await require_role(user, ["admin", "sales"])
     
     current_db = get_db()
-    if not current_db:
+    if current_db is None:
         raise HTTPException(status_code=500, detail="Database not configured")
     
     try:
@@ -721,7 +721,7 @@ async def update_invoice(
     await require_role(user, ["admin", "sales"])
     
     current_db = get_db()
-    if not current_db:
+    if current_db is None:
         raise HTTPException(status_code=500, detail="Database not configured")
     
     update_data = invoice_update.dict(exclude_unset=True)
@@ -764,7 +764,7 @@ async def delete_invoice(
     await require_role(user, ["admin"])
     
     current_db = get_db()
-    if not current_db:
+    if current_db is None:
         raise HTTPException(status_code=500, detail="Database not configured")
     
     try:
@@ -790,7 +790,7 @@ async def delete_invoice(
 async def get_invoice_stats(user: Dict = Depends(get_current_user)):
     """Get invoice statistics"""
     current_db = get_db()
-    if not current_db:
+    if current_db is None:
         raise HTTPException(status_code=500, detail="Database not configured")
     
     # Aggregate stats

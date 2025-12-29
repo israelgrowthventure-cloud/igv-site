@@ -41,12 +41,16 @@ from gdpr_routes import router as gdpr_router
 from quota_queue_routes import router as quota_router
 
 # New routers with error handling
+INVOICE_ROUTER_ERROR = None
+MONETICO_ROUTER_ERROR = None
+
 try:
     from invoice_routes import router as invoice_router
     INVOICE_ROUTER_LOADED = True
     logging.info("✓ Invoice router loaded successfully")
 except Exception as e:
-    logging.error(f"✗ Failed to load invoice_routes: {str(e)}")
+    INVOICE_ROUTER_ERROR = f"{type(e).__name__}: {str(e)}"
+    logging.error(f"✗ Failed to load invoice_routes: {INVOICE_ROUTER_ERROR}")
     INVOICE_ROUTER_LOADED = False
     invoice_router = None
 
@@ -55,7 +59,8 @@ try:
     MONETICO_ROUTER_LOADED = True
     logging.info("✓ Monetico router loaded successfully")
 except Exception as e:
-    logging.error(f"✗ Failed to load monetico_routes: {str(e)}")
+    MONETICO_ROUTER_ERROR = f"{type(e).__name__}: {str(e)}"
+    logging.error(f"✗ Failed to load monetico_routes: {MONETICO_ROUTER_ERROR}")
     MONETICO_ROUTER_LOADED = False
     monetico_router = None
 
@@ -112,7 +117,9 @@ async def debug_routers():
         "ai_router_loaded": 'ai_routes' in sys.modules,
         "mini_analysis_router_loaded": 'mini_analysis_routes' in sys.modules,
         "invoice_router_loaded": INVOICE_ROUTER_LOADED,
+        "invoice_router_error": INVOICE_ROUTER_ERROR,
         "monetico_router_loaded": MONETICO_ROUTER_LOADED,
+        "monetico_router_error": MONETICO_ROUTER_ERROR,
         "gemini_api_key_set": bool(os.getenv('GEMINI_API_KEY')),
         "gemini_api_key_length": len(os.getenv('GEMINI_API_KEY', '')),
         "mongodb_uri_set": bool(mongo_url),

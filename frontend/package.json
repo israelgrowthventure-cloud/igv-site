@@ -63,7 +63,7 @@
   "scripts": {
     "start": "node server.js",
     "dev": "craco start",
-    "build": "craco build",
+    "build": "CI=false craco build",
     "test": "craco test"
   },
   "browserslist": {

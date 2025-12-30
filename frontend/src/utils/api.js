@@ -123,7 +123,7 @@ export const api = {
 
   getLeads: async (params = {}) => {
     const token = localStorage.getItem('admin_token');
-    const response = await axios.get(`${API}/admin/leads`, {
+    const response = await axios.get(`${API}/crm/leads`, {
       headers: { Authorization: `Bearer ${token}` },
       params
     });
@@ -132,7 +132,7 @@ export const api = {
 
   getAdminContacts: async () => {
     const token = localStorage.getItem('admin_token');
-    const response = await axios.get(`${API}/admin/contacts`, {
+    const response = await axios.get(`${API}/crm/contacts`, {
       headers: { Authorization: `Bearer ${token}` }
     });
     return response.data;

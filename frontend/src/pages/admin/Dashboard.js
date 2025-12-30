@@ -46,16 +46,32 @@ const AdminDashboard = () => {
 
   const loadDashboardData = async () => {
     try {
-      const [statsData, leadsData] = await Promise.all([
-        api.getAdminStats(),
-        api.getLeads({ limit: 10 })
+      // Use CRM API endpoints
+      const token = localStorage.getItem('admin_token');
+      const headers = { Authorization: `Bearer ${token}` };
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || 'https://igv-cms-backend.onrender.com';
+      
+      const [dashboardRes, leadsRes, contactsRes] = await Promise.all([
+        fetch(`${backendUrl}/api/crm/dashboard/stats`, { headers }).then(r => r.json()),
+        fetch(`${backendUrl}/api/crm/leads?limit=10`, { headers }).then(r => r.json()),
+        fetch(`${backendUrl}/api/crm/contacts?limit=1`, { headers }).then(r => r.json()).catch(() => ({ total: 0 }))
       ]);
       
-      setStats(statsData);
-      setLeads(leadsData.leads || []);
+      // Map CRM dashboard stats to expected format
+      const leadsData = dashboardRes.leads || {};
+      const totalContacts = contactsRes.total || 0;
+      const conversionRate = leadsData.total > 0 ? Math.round((totalContacts / leadsData.total) * 100) : 0;
+      
+      setStats({
+        total_leads: leadsData.total || 0,
+        total_contacts: totalContacts,
+        total_analyses: leadsData.last_30_days || 0,
+        conversion_rate: conversionRate
+      });
+      setLeads(leadsRes.leads || []);
     } catch (error) {
       console.error('Error loading dashboard:', error);
-      toast.error(t('admin.errors.loadFailed'));
+      toast.error(t('admin.errors.loadFailed') || 'Failed to load data');
     }
   };
 
@@ -89,7 +105,7 @@ const AdminDashboard = () => {
                   {t('admin.dashboard.title')}
                 </h1>
                 <p className="text-sm text-gray-600">
-                  {t('admin.welcome')}, <strong>{user?.email}</strong> ({t(`admin.roles.${user?.role}`)})
+                  {t('admin.welcome')}, <strong>{user?.email}</strong> ({user?.role ? (t(`admin.roles.${user.role}`) || user.role) : 'Admin'})
                 </p>
               </div>
               

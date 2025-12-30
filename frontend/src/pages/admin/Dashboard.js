@@ -163,8 +163,8 @@ const AdminDashboard = () => {
         {/* Main Content */}
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {activeTab === 'overview' && <OverviewTab stats={stats} t={t} />}
-          {activeTab === 'leads' && <LeadsTab leads={leads} t={t} />}
-          {activeTab === 'contacts' && <ContactsTab t={t} />}
+          {activeTab === 'leads' && <LeadsTab leads={leads} t={t} navigate={navigate} />}
+          {activeTab === 'contacts' && <ContactsTab t={t} navigate={navigate} />}
           {activeTab === 'users' && user?.role === 'admin' && <UsersTab t={t} />}
         </main>
       </div>
@@ -222,38 +222,53 @@ const StatCard = ({ icon: Icon, label, value, color }) => {
 };
 
 // Leads Tab Component
-const LeadsTab = ({ leads, t }) => (
+const LeadsTab = ({ leads, t, navigate }) => (
   <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-    <div className="p-6 border-b border-gray-200">
-      <h2 className="text-xl font-bold text-gray-900">{t('admin.leads.title')}</h2>
+    <div className="p-6 border-b border-gray-200 flex justify-between items-center">
+      <h2 className="text-xl font-bold text-gray-900">{t('admin.leads.title') || 'Liste des prospects'}</h2>
+      <button 
+        onClick={() => navigate('/admin/crm')}
+        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm"
+      >
+        {t('admin.leads.viewAll') || 'Voir tout le CRM'}
+      </button>
     </div>
     <div className="overflow-x-auto">
       <table className="w-full">
         <thead className="bg-gray-50">
           <tr>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-              {t('admin.leads.email')}
+              {t('admin.leads.email') || 'Email'}
             </th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-              {t('admin.leads.brand')}
+              {t('admin.leads.brand') || 'Marque'}
             </th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-              {t('admin.leads.status')}
+              {t('admin.leads.status') || 'Statut'}
             </th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-              {t('admin.leads.date')}
+              {t('admin.leads.date') || 'Date'}
+            </th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+              {t('admin.leads.actions') || 'Actions'}
             </th>
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-200">
           {leads.map((lead, idx) => (
-            <tr key={idx} className="hover:bg-gray-50">
+            <tr 
+              key={idx} 
+              className="hover:bg-blue-50 cursor-pointer transition-colors"
+              onClick={() => navigate(`/admin/crm/leads/${lead._id}`)}
+            >
               <td className="px-6 py-4 text-sm text-gray-900">{lead.email}</td>
               <td className="px-6 py-4 text-sm text-gray-900">{lead.brand_name}</td>
               <td className="px-6 py-4">
                 <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                   lead.status === 'GENERATED' ? 'bg-green-100 text-green-800' :
                   lead.status === 'NEW' ? 'bg-blue-100 text-blue-800' :
+                  lead.status === 'QUALIFIED' ? 'bg-purple-100 text-purple-800' :
+                  lead.status === 'QUOTA_BLOCKED' ? 'bg-red-100 text-red-800' :
                   'bg-gray-100 text-gray-800'
                 }`}>
                   {lead.status}
@@ -261,6 +276,11 @@ const LeadsTab = ({ leads, t }) => (
               </td>
               <td className="px-6 py-4 text-sm text-gray-600">
                 {new Date(lead.created_at).toLocaleDateString()}
+              </td>
+              <td className="px-6 py-4">
+                <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                  {t('admin.leads.view') || 'Voir →'}
+                </button>
               </td>
             </tr>
           ))}
@@ -270,11 +290,19 @@ const LeadsTab = ({ leads, t }) => (
   </div>
 );
 
-// Contacts Tab (placeholder)
-const ContactsTab = ({ t }) => (
+// Contacts Tab
+const ContactsTab = ({ t, navigate }) => (
   <div className="bg-white rounded-xl shadow-sm p-6">
-    <h2 className="text-xl font-bold text-gray-900 mb-4">{t('admin.contacts.title')}</h2>
-    <p className="text-gray-600">{t('admin.contacts.comingSoon')}</p>
+    <div className="flex justify-between items-center mb-4">
+      <h2 className="text-xl font-bold text-gray-900">{t('admin.contacts.title') || 'Contacts'}</h2>
+      <button 
+        onClick={() => navigate('/admin/crm')}
+        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm"
+      >
+        {t('admin.contacts.viewAll') || 'Gérer les contacts'}
+      </button>
+    </div>
+    <p className="text-gray-600">{t('admin.contacts.comingSoon') || 'Accédez au CRM complet pour gérer vos contacts.'}</p>
   </div>
 );
 

@@ -499,6 +499,27 @@ async def update_lead(lead_id: str, update_data: LeadUpdate, user: Dict = Depend
     return {"message": "Lead updated successfully"}
 
 
+@router.delete("/leads/{lead_id}")
+async def delete_lead(lead_id: str, user: Dict = Depends(get_current_user)):
+    """Delete lead (admin only)"""
+    current_db = get_db()
+    if current_db is None:
+        raise HTTPException(status_code=500, detail="Database not configured")
+    
+    # Check lead exists
+    lead = await current_db.leads.find_one({"_id": ObjectId(lead_id)})
+    if not lead:
+        raise HTTPException(status_code=404, detail="Lead not found")
+    
+    # Delete associated activities
+    await current_db.activities.delete_many({"lead_id": lead_id})
+    
+    # Delete lead
+    await current_db.leads.delete_one({"_id": ObjectId(lead_id)})
+    
+    return {"message": "Lead deleted successfully"}
+
+
 @router.post("/leads/{lead_id}/notes")
 async def add_note_to_lead(lead_id: str, note: NoteCreate, user: Dict = Depends(get_current_user)):
     """Add note to lead"""
@@ -875,6 +896,30 @@ async def update_contact(contact_id: str, update_data: ContactUpdate, user: Dict
     )
     
     return {"message": "Contact updated successfully"}
+
+
+@router.delete("/contacts/{contact_id}")
+async def delete_contact(contact_id: str, user: Dict = Depends(get_current_user)):
+    """Delete contact (admin only)"""
+    current_db = get_db()
+    if current_db is None:
+        raise HTTPException(status_code=500, detail="Database not configured")
+    
+    try:
+        contact = await current_db.contacts.find_one({"_id": ObjectId(contact_id)})
+    except:
+        raise HTTPException(status_code=400, detail="Invalid contact ID")
+    
+    if not contact:
+        raise HTTPException(status_code=404, detail="Contact not found")
+    
+    # Delete associated activities
+    await current_db.activities.delete_many({"contact_id": contact_id})
+    
+    # Delete contact
+    await current_db.contacts.delete_one({"_id": ObjectId(contact_id)})
+    
+    return {"message": "Contact deleted successfully"}
 
 
 # ==========================================

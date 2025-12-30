@@ -1,5 +1,0 @@
-# Force Render rebuild
-Timestamp: 2025-12-26T18:30:00Z
-Commit: ae2cde3
-Issue: SPA routing not working - all routes return homepage
-Fix: Switched from staticPublishPath to Node.js server mode

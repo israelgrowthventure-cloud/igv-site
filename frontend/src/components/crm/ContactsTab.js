@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import { Search, Mail, Phone, Building, MapPin, X, Loader2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Search, Mail, Phone, Building, MapPin, X, Loader2, Plus, Users } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '../../utils/api';
 
 const ContactsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTerm, setSearchTerm, t }) => {
   const [loadingAction, setLoadingAction] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <div className="space-y-4">
@@ -35,8 +37,8 @@ const ContactsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTer
               </tr>
             </thead>
             <tbody>
-              {data.contacts?.map(contact => (
-                <tr key={contact.contact_id} className="border-b hover:bg-gray-50 cursor-pointer" onClick={() => setSelectedItem(contact)}>
+              {data.contacts?.length > 0 ? data.contacts.map(contact => (
+                <tr key={contact.contact_id} className="border-b hover:bg-gray-50 cursor-pointer" onClick={() => navigate(`/admin/crm/contacts/${contact.contact_id}`)}>
                   <td className="px-4 py-3">{contact.name}</td>
                   <td className="px-4 py-3">{contact.email}</td>
                   <td className="px-4 py-3">{contact.phone || '-'}</td>
@@ -44,8 +46,14 @@ const ContactsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTer
                   <td className="px-4 py-3 text-sm text-gray-600">{new Date(contact.created_at).toLocaleDateString()}</td>
                   <td className="px-4 py-3"><button className="text-blue-600 hover:underline text-sm">{t('admin.crm.common.view') || 'View'}</button></td>
                 </tr>
-              )) || (
-                <tr><td colSpan="6" className="px-4 py-8 text-center text-gray-500">{t('admin.crm.common.no_data') || 'No contacts found'}</td></tr>
+              )) : (
+                <tr><td colSpan="6" className="px-4 py-12 text-center">
+                  <div className="text-gray-500">
+                    <Users className="w-12 h-12 mx-auto mb-3 text-gray-300" />
+                    <p className="font-medium">{t('admin.crm.contacts.empty_title') || 'No contacts yet'}</p>
+                    <p className="text-sm mt-1">{t('admin.crm.contacts.empty_subtitle') || 'Contacts appear here when you convert leads'}</p>
+                  </div>
+                </td></tr>
               )}
             </tbody>
           </table>

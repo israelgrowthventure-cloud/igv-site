@@ -112,7 +112,7 @@ const AdminCRMComplete = () => {
               <div>
                 <h1 className="text-2xl font-bold">IGV CRM</h1>
                 <p className="text-sm text-gray-600">
-                  {user?.name || user?.email} • {t(`admin.roles.${user?.role}`) || user?.role}
+                  {user?.name || user?.email} • {user?.role ? (t(`admin.roles.${user.role}`) || user.role) : 'Admin'}
                 </p>
               </div>
               <div className="flex items-center gap-4">

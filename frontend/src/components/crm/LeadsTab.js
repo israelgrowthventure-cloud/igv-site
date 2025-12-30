@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { Search, Filter, Download, Plus, Eye, X, Save, Loader2, Mail, Phone, Building, MapPin } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Search, Filter, Download, Plus, Eye, X, Save, Loader2, Mail, Phone, Building, MapPin, ExternalLink } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '../../utils/api';
 
 const LeadsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTerm, setSearchTerm, filters, setFilters, t }) => {
+  const navigate = useNavigate();
   const [showFilters, setShowFilters] = useState(false);
   const [noteText, setNoteText] = useState('');
   const [editingLead, setEditingLead] = useState(null);
@@ -260,8 +262,8 @@ const LeadsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTerm, 
               </tr>
             </thead>
             <tbody>
-              {data.leads?.map(lead => (
-                <tr key={lead.lead_id} className="border-b hover:bg-gray-50 cursor-pointer" onClick={() => setSelectedItem(lead)}>
+              {data.leads?.length > 0 ? data.leads.map(lead => (
+                <tr key={lead.lead_id} className="border-b hover:bg-gray-50 cursor-pointer" onClick={() => navigate(`/admin/crm/leads/${lead.lead_id}`)}>
                   <td className="px-4 py-3">{lead.contact_name || '-'}</td>
                   <td className="px-4 py-3">{lead.email}</td>
                   <td className="px-4 py-3">{lead.brand_name || '-'}</td>
@@ -269,10 +271,20 @@ const LeadsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTerm, 
                   <td className="px-4 py-3"><StatusBadge status={lead.status} /></td>
                   <td className="px-4 py-3"><span className={`px-2 py-1 rounded text-xs font-semibold ${lead.priority === 'A' ? 'bg-red-100 text-red-800' : lead.priority === 'B' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'}`}>{lead.priority || 'C'}</span></td>
                   <td className="px-4 py-3 text-sm text-gray-600">{new Date(lead.created_at).toLocaleDateString()}</td>
-                  <td className="px-4 py-3"><Eye className="w-4 h-4 text-gray-400" /></td>
+                  <td className="px-4 py-3"><ExternalLink className="w-4 h-4 text-blue-500" /></td>
                 </tr>
-              )) || (
-                <tr><td colSpan="8" className="px-4 py-8 text-center text-gray-500">{t('admin.crm.common.no_data') || 'No leads found'}</td></tr>
+              )) : (
+                <tr><td colSpan="8" className="px-4 py-12 text-center">
+                  <div className="text-gray-500">
+                    <Users className="w-12 h-12 mx-auto mb-3 text-gray-300" />
+                    <p className="font-medium">{t('admin.crm.leads.empty_title') || 'No leads yet'}</p>
+                    <p className="text-sm mt-1">{t('admin.crm.leads.empty_subtitle') || 'Create your first lead to get started'}</p>
+                    <button onClick={() => setShowNewLeadForm(true)} className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 inline-flex items-center gap-2">
+                      <Plus className="w-4 h-4" />
+                      {t('admin.crm.leads.new_lead') || 'New Lead'}
+                    </button>
+                  </div>
+                </td></tr>
               )}
             </tbody>
           </table>

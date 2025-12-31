@@ -26,7 +26,7 @@ const AdminTasks = () => {
       setLoading(true);
       const token = localStorage.getItem('admin_token');
       const statusParam = filter === 'all' ? '' : `?status=${filter}`;
-      const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://igv-backend.onrender.com'}/api/crm/tasks${statusParam}`, {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL || 'https://igv-cms-backend.onrender.com'}/api/crm/tasks${statusParam}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -49,7 +49,7 @@ const AdminTasks = () => {
     
     try {
       const token = localStorage.getItem('admin_token');
-      const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://igv-backend.onrender.com'}/api/crm/tasks`, {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL || 'https://igv-cms-backend.onrender.com'}/api/crm/tasks`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -82,7 +82,7 @@ const AdminTasks = () => {
   const handleToggleComplete = async (taskId, isCompleted) => {
     try {
       const token = localStorage.getItem('admin_token');
-      const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://igv-backend.onrender.com'}/api/crm/tasks/${taskId}`, {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL || 'https://igv-cms-backend.onrender.com'}/api/crm/tasks/${taskId}`, {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -106,7 +106,7 @@ const AdminTasks = () => {
     
     try {
       const token = localStorage.getItem('admin_token');
-      const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://igv-backend.onrender.com'}/api/crm/tasks/${taskId}`, {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL || 'https://igv-cms-backend.onrender.com'}/api/crm/tasks/${taskId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`

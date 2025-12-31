@@ -16,7 +16,7 @@ const AdminPayments = () => {
     try {
       setLoading(true);
       const token = localStorage.getItem('admin_token');
-      const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://igv-backend.onrender.com'}/api/monetico/payments`, {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL || 'https://igv-cms-backend.onrender.com'}/api/monetico/payments`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }

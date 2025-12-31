@@ -21,7 +21,7 @@ const AdminInvoices = () => {
     try {
       setLoading(true);
       const token = localStorage.getItem('admin_token');
-      const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://igv-backend.onrender.com'}/api/invoices/`, {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL || 'https://igv-cms-backend.onrender.com'}/api/invoices/`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -43,7 +43,7 @@ const AdminInvoices = () => {
     try {
       setPdfLoading(true);
       const token = localStorage.getItem('admin_token');
-      const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://igv-backend.onrender.com'}/api/invoices/${invoiceId}/generate-pdf`, {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL || 'https://igv-cms-backend.onrender.com'}/api/invoices/${invoiceId}/generate-pdf`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -74,7 +74,7 @@ const AdminInvoices = () => {
     try {
       setSendLoading(true);
       const token = localStorage.getItem('admin_token');
-      const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://igv-backend.onrender.com'}/api/invoices/${invoiceId}/send`, {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL || 'https://igv-cms-backend.onrender.com'}/api/invoices/${invoiceId}/send`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`

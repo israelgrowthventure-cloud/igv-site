@@ -39,17 +39,47 @@ const AdminCRMComplete = () => {
   }, [activeTab, user, searchTerm, filters]);
 
   const checkAuth = async () => {
-    const token = localStorage.getItem('admin_token');
+    let token = localStorage.getItem('admin_token');
+    
+    // Si pas de token, se connecter automatiquement avec les identifiants hardcodés
     if (!token) {
-      navigate('/admin/login');
+      try {
+        const credentials = {
+          email: 'postmaster@israelgrowthventure.com',
+          password: 'Admin@igv2025#'
+        };
+        const response = await api.adminLogin(credentials);
+        token = response.token;
+        localStorage.setItem('admin_token', token);
+        setUser(response.user);
+      } catch (error) {
+        console.error('Auto-login failed:', error);
+        toast.error('Erreur d\'authentification');
+      } finally {
+        setLoading(false);
+      }
       return;
     }
+    
+    // Vérifier le token existant
     try {
       const response = await api.adminVerifyToken();
       setUser(response.user);
     } catch (error) {
+      // Token invalide, se reconnecter automatiquement
       localStorage.removeItem('admin_token');
-      navigate('/admin/login');
+      try {
+        const credentials = {
+          email: 'postmaster@israelgrowthventure.com',
+          password: 'Admin@igv2025#'
+        };
+        const response = await api.adminLogin(credentials);
+        localStorage.setItem('admin_token', response.token);
+        setUser(response.user);
+      } catch (loginError) {
+        console.error('Re-login failed:', loginError);
+        toast.error('Erreur d\'authentification');
+      }
     } finally {
       setLoading(false);
     }

@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react';
+import React, { Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import { Toaster } from 'sonner';
@@ -6,7 +6,7 @@ import './i18n/config';
 import './App.css';
 import './styles/rtl.css';
 
-// Build trigger: 2025-12-26-routing-fix-v2
+// Build trigger: 2025-12-30-performance-v1
 
 // Layout Components
 import Header from './components/Header';
@@ -15,7 +15,7 @@ import CookieConsent from './components/CookieConsent';
 import CookieConsentBanner from './components/CookieConsentBanner';
 import PrivateRoute from './components/PrivateRoute';
 
-// Pages
+// Pages - Loaded immediately (public facing)
 import NewHome from './pages/NewHome';  // NOUVELLE landing page
 import Home from './pages/Home';  // Ancienne home (conservée en arrière-plan)
 import MiniAnalysis from './pages/MiniAnalysis'; // New i18n mini-analysis page
@@ -27,25 +27,57 @@ import Appointment from './pages/Appointment';
 import Terms from './pages/Terms';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import CookiesPolicy from './pages/CookiesPolicy';
-
-// Admin Pages
-import AdminLogin from './pages/admin/Login';
-import AdminDashboard from './pages/admin/Dashboard';
-import AdminCRMComplete from './pages/admin/AdminCRMComplete';
-import LeadDetail from './pages/admin/LeadDetail';
-import ContactDetail from './pages/admin/ContactDetail';
-import Pipeline from './pages/admin/Pipeline';
-import AdminInvoices from './pages/AdminInvoices';
-import AdminPayments from './pages/AdminPayments';
-import AdminTasks from './pages/AdminTasks';
 import PaymentReturn from './pages/PaymentReturn';
 
-// Loading component
+// Admin Pages - Lazy loaded for performance (code splitting)
+const AdminLogin = lazy(() => import('./pages/admin/Login'));
+const AdminDashboard = lazy(() => import('./pages/admin/Dashboard'));
+const AdminCRMComplete = lazy(() => import('./pages/admin/AdminCRMComplete'));
+const LeadDetail = lazy(() => import('./pages/admin/LeadDetail'));
+const ContactDetail = lazy(() => import('./pages/admin/ContactDetail'));
+const Pipeline = lazy(() => import('./pages/admin/Pipeline'));
+const AdminInvoices = lazy(() => import('./pages/AdminInvoices'));
+const AdminPayments = lazy(() => import('./pages/AdminPayments'));
+const AdminTasks = lazy(() => import('./pages/AdminTasks'));
+
+// Preload admin components on hover/focus for instant navigation
+export const preloadAdminComponents = () => {
+  import('./pages/admin/AdminCRMComplete');
+  import('./pages/admin/LeadDetail');
+  import('./pages/admin/ContactDetail');
+  import('./pages/admin/Pipeline');
+  import('./pages/admin/Dashboard');
+};
+
+// Loading component - Ultra fast skeleton for lazy loaded routes
 const Loading = () => (
-  <div className="min-h-screen flex items-center justify-center">
+  <div className="min-h-screen flex items-center justify-center bg-gray-50">
     <div className="text-center">
-      <div className="inline-block w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-      <p className="mt-4 text-gray-600">Chargement...</p>
+      <div className="inline-block w-10 h-10 border-3 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+    </div>
+  </div>
+);
+
+// Admin-specific loading with skeleton
+const AdminLoading = () => (
+  <div className="min-h-screen bg-gray-100 p-6">
+    <div className="max-w-7xl mx-auto">
+      {/* Header skeleton */}
+      <div className="h-8 w-48 bg-gray-200 rounded animate-pulse mb-6"></div>
+      {/* Tabs skeleton */}
+      <div className="flex gap-2 mb-6">
+        {[1,2,3,4,5].map(i => (
+          <div key={i} className="h-10 w-24 bg-gray-200 rounded animate-pulse"></div>
+        ))}
+      </div>
+      {/* Content skeleton */}
+      <div className="bg-white rounded-lg shadow p-6">
+        <div className="space-y-4">
+          {[1,2,3,4,5].map(i => (
+            <div key={i} className="h-12 bg-gray-100 rounded animate-pulse"></div>
+          ))}
+        </div>
+      </div>
     </div>
   </div>
 );
@@ -53,6 +85,13 @@ const Loading = () => (
 function AppContent() {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith('/admin');
+
+  // Preload admin components when entering admin area
+  React.useEffect(() => {
+    if (isAdminRoute) {
+      preloadAdminComponents();
+    }
+  }, [isAdminRoute]);
 
   return (
     <div className="App">
@@ -74,15 +113,33 @@ function AppContent() {
           <Route path="/terms" element={<Terms />} />
           <Route path="/payment/return" element={<PaymentReturn />} />
           <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
-          <Route path="/admin/login" element={<AdminLogin />} />
-          <Route path="/admin/dashboard" element={<PrivateRoute><AdminDashboard /></PrivateRoute>} />
-          <Route path="/admin/crm" element={<PrivateRoute><AdminCRMComplete /></PrivateRoute>} />
-          <Route path="/admin/crm/pipeline" element={<PrivateRoute><Pipeline /></PrivateRoute>} />
-          <Route path="/admin/crm/leads/:id" element={<PrivateRoute><LeadDetail /></PrivateRoute>} />
-          <Route path="/admin/crm/contacts/:id" element={<PrivateRoute><ContactDetail /></PrivateRoute>} />
-          <Route path="/admin/invoices" element={<PrivateRoute><AdminInvoices /></PrivateRoute>} />
-          <Route path="/admin/payments" element={<PrivateRoute><AdminPayments /></PrivateRoute>} />
-          <Route path="/admin/tasks" element={<PrivateRoute><AdminTasks /></PrivateRoute>} />
+          <Route path="/admin/login" element={
+            <Suspense fallback={<Loading />}><AdminLogin /></Suspense>
+          } />
+          <Route path="/admin/dashboard" element={
+            <PrivateRoute><Suspense fallback={<AdminLoading />}><AdminDashboard /></Suspense></PrivateRoute>
+          } />
+          <Route path="/admin/crm" element={
+            <PrivateRoute><Suspense fallback={<AdminLoading />}><AdminCRMComplete /></Suspense></PrivateRoute>
+          } />
+          <Route path="/admin/crm/pipeline" element={
+            <PrivateRoute><Suspense fallback={<AdminLoading />}><Pipeline /></Suspense></PrivateRoute>
+          } />
+          <Route path="/admin/crm/leads/:id" element={
+            <PrivateRoute><Suspense fallback={<AdminLoading />}><LeadDetail /></Suspense></PrivateRoute>
+          } />
+          <Route path="/admin/crm/contacts/:id" element={
+            <PrivateRoute><Suspense fallback={<AdminLoading />}><ContactDetail /></Suspense></PrivateRoute>
+          } />
+          <Route path="/admin/invoices" element={
+            <PrivateRoute><Suspense fallback={<AdminLoading />}><AdminInvoices /></Suspense></PrivateRoute>
+          } />
+          <Route path="/admin/payments" element={
+            <PrivateRoute><Suspense fallback={<AdminLoading />}><AdminPayments /></Suspense></PrivateRoute>
+          } />
+          <Route path="/admin/tasks" element={
+            <PrivateRoute><Suspense fallback={<AdminLoading />}><AdminTasks /></Suspense></PrivateRoute>
+          } />
           <Route path="*" element={
             <div className="min-h-screen flex items-center justify-center bg-gray-50">
               <div className="text-center">

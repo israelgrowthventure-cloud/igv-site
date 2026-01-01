@@ -3,7 +3,10 @@ import axios from 'axios';
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'https://igv-cms-backend.onrender.com';
 const API = `${BACKEND_URL}/api`;
 
-// Configure axios with retry logic
+// Global axios defaults for fast responses
+axios.defaults.timeout = 8000; // 8s default timeout
+
+// Configure axios with retry logic (reduced retries for faster feedback)
 axios.interceptors.response.use(
   response => response,
   async error => {
@@ -12,12 +15,14 @@ axios.interceptors.response.use(
       config.retry = 0;
     }
     
-    if (config.retry >= 3) {
+    // Only retry once for CRM endpoints (faster feedback)
+    const maxRetries = config.url?.includes('/crm/') ? 1 : 2;
+    if (config.retry >= maxRetries) {
       return Promise.reject(error);
     }
     
     config.retry += 1;
-    const delay = 2000 * config.retry;
+    const delay = 1000 * config.retry; // Reduced delay
     await new Promise(resolve => setTimeout(resolve, delay));
     
     return axios(config);
@@ -163,11 +168,13 @@ export const api = {
     return response.data;
   },
 
-  // CRM Complete API
+  // CRM Complete API - with fast timeouts
   get: async (endpoint, config = {}) => {
     const token = localStorage.getItem('admin_token');
+    const isCRM = endpoint.includes('/crm/');
     const response = await axios.get(`${BACKEND_URL}${endpoint}`, {
       ...config,
+      timeout: isCRM ? 5000 : 8000, // 5s for CRM, 8s for others
       headers: { 
         Authorization: token ? `Bearer ${token}` : '',
         ...config.headers 
@@ -180,6 +187,7 @@ export const api = {
     const token = localStorage.getItem('admin_token');
     const response = await axios.post(`${BACKEND_URL}${endpoint}`, data, {
       ...config,
+      timeout: config.timeout || 8000,
       headers: { 
         Authorization: token ? `Bearer ${token}` : '',
         ...config.headers 
@@ -192,6 +200,7 @@ export const api = {
     const token = localStorage.getItem('admin_token');
     const response = await axios.put(`${BACKEND_URL}${endpoint}`, data, {
       ...config,
+      timeout: config.timeout || 8000,
       headers: { 
         Authorization: token ? `Bearer ${token}` : '',
         ...config.headers 
@@ -204,6 +213,7 @@ export const api = {
     const token = localStorage.getItem('admin_token');
     const response = await axios.delete(`${BACKEND_URL}${endpoint}`, {
       ...config,
+      timeout: config.timeout || 8000,
       headers: { 
         Authorization: token ? `Bearer ${token}` : '',
         ...config.headers 

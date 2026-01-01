@@ -58,7 +58,7 @@ const AdminCRMComplete = () => {
   const loadTabData = async () => {
     setTabLoading(true);
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
+    const timeoutId = setTimeout(() => controller.abort(), 5000); // 5s timeout (reduced from 10s)
     
     try {
       switch (activeTab) {
@@ -67,7 +67,7 @@ const AdminCRMComplete = () => {
           setData(prev => ({ ...prev, stats }));
           break;
         case 'leads':
-          const leads = await api.get('/api/crm/leads', { params: { search: searchTerm, ...filters, limit: 100 } });
+          const leads = await api.get('/api/crm/leads', { params: { search: searchTerm, ...filters, limit: 50 } });
           setData(prev => ({ ...prev, leads: leads.leads || [], total: leads.total }));
           break;
         case 'pipeline':
@@ -75,7 +75,7 @@ const AdminCRMComplete = () => {
           setData(prev => ({ ...prev, pipeline: pipeline.pipeline || pipeline || {} }));
           break;
         case 'contacts':
-          const contacts = await api.get('/api/crm/contacts', { params: { search: searchTerm, limit: 100 } });
+          const contacts = await api.get('/api/crm/contacts', { params: { search: searchTerm, limit: 50 } });
           setData(prev => ({ ...prev, contacts: contacts.contacts || [], total: contacts.total }));
           break;
         case 'settings':
@@ -91,12 +91,31 @@ const AdminCRMComplete = () => {
       }
     } catch (error) {
       console.error('Error loading data:', error);
-      if (error.name !== 'AbortError') {
-        toast.error(t('admin.crm.errors.load_failed') || 'Chargement lent - données en cache affichées');
-      }
+      // Keep showing previous data on timeout - no error toast for better UX
     } finally {
       clearTimeout(timeoutId);
       setTabLoading(false);
+    }
+  };
+
+  // Preload tab data on hover for instant transitions
+  const preloadTab = (tabId) => {
+    // Silently preload data in background
+    switch(tabId) {
+      case 'leads':
+        api.get('/api/crm/leads', { params: { limit: 50 } }).catch(() => {});
+        break;
+      case 'contacts':
+        api.get('/api/crm/contacts', { params: { limit: 50 } }).catch(() => {});
+        break;
+      case 'pipeline':
+        api.get('/api/crm/pipeline').catch(() => {});
+        break;
+      case 'dashboard':
+        api.get('/api/crm/dashboard/stats').catch(() => {});
+        break;
+      default:
+        break;
     }
   };
 
@@ -166,8 +185,9 @@ const AdminCRMComplete = () => {
                 <button
                   key={tab.id}
                   onClick={() => { setActiveTab(tab.id); setSelectedItem(null); }}
-                  className={`flex items-center gap-2 px-4 py-3 border-b-2 whitespace-nowrap ${
-                    activeTab === tab.id ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-600'
+                  onMouseEnter={() => preloadTab(tab.id)}
+                  className={`flex items-center gap-2 px-4 py-3 border-b-2 whitespace-nowrap transition-colors ${
+                    activeTab === tab.id ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-600 hover:text-blue-500'
                   }`}
                 >
                   <tab.icon className="w-4 h-4" />

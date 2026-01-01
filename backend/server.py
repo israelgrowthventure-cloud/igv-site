@@ -977,6 +977,31 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+@app.on_event("startup")
+async def startup_db_init():
+    """Create MongoDB indexes for performance on startup"""
+    if db is not None:
+        try:
+            # Leads indexes
+            await db.leads.create_index("created_at", background=True)
+            await db.leads.create_index("status", background=True)
+            await db.leads.create_index("email", background=True)
+            await db.leads.create_index("stage", background=True)
+            # Contacts indexes
+            await db.contacts.create_index("email", background=True)
+            await db.contacts.create_index("name", background=True)
+            await db.contacts.create_index("created_at", background=True)
+            # Opportunities indexes  
+            await db.opportunities.create_index("stage", background=True)
+            await db.opportunities.create_index("contact_id", background=True)
+            await db.opportunities.create_index("created_at", background=True)
+            # Activities index
+            await db.activities.create_index("lead_id", background=True)
+            await db.activities.create_index("created_at", background=True)
+            logging.info("✓ MongoDB indexes created/verified")
+        except Exception as e:
+            logging.warning(f"Index creation skipped: {e}")
+
 @app.on_event("shutdown")
 async def shutdown_db_client():
     if client:

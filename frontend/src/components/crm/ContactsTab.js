@@ -1,26 +1,177 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Mail, Phone, Building, MapPin, X, Loader2, Plus, Users } from 'lucide-react';
+import { Search, Mail, Phone, Building, MapPin, X, Loader2, Plus, Users, Edit, Trash2, Save } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '../../utils/api';
 
 const ContactsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTerm, setSearchTerm, t }) => {
   const [loadingAction, setLoadingAction] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editingContact, setEditingContact] = useState(null);
+  const [formData, setFormData] = useState({ name: '', email: '', phone: '', position: '', language: 'fr' });
   const navigate = useNavigate();
+
+  const handleCreate = async (e) => {
+    e.preventDefault();
+    try {
+      setLoadingAction(true);
+      await api.post('/api/crm/contacts', formData);
+      toast.success(t('admin.crm.contacts.created') || 'Contact créé');
+      setShowCreateModal(false);
+      setFormData({ name: '', email: '', phone: '', position: '', language: 'fr' });
+      await onRefresh();
+    } catch (error) {
+      toast.error(t('admin.crm.errors.create_failed') || 'Échec de la création');
+    } finally {
+      setLoadingAction(false);
+    }
+  };
+
+  const handleEdit = async (e) => {
+    e.preventDefault();
+    try {
+      setLoadingAction(true);
+      await api.put(`/api/crm/contacts/${editingContact._id || editingContact.contact_id}`, formData);
+      toast.success(t('admin.crm.contacts.updated') || 'Contact mis à jour');
+      setShowEditModal(false);
+      setEditingContact(null);
+      setFormData({ name: '', email: '', phone: '', position: '', language: 'fr' });
+      await onRefresh();
+    } catch (error) {
+      toast.error(t('admin.crm.errors.update_failed') || 'Échec de la mise à jour');
+    } finally {
+      setLoadingAction(false);
+    }
+  };
+
+  const handleDelete = async (contactId) => {
+    if (!window.confirm(t('admin.crm.common.confirm_delete') || 'Êtes-vous sûr de vouloir supprimer ?')) return;
+    try {
+      setLoadingAction(true);
+      await api.delete(`/api/crm/contacts/${contactId}`);
+      toast.success(t('admin.crm.contacts.deleted') || 'Contact supprimé');
+      await onRefresh();
+    } catch (error) {
+      toast.error(t('admin.crm.errors.delete_failed') || 'Échec de la suppression');
+    } finally {
+      setLoadingAction(false);
+    }
+  };
+
+  const openEditModal = (contact) => {
+    setEditingContact(contact);
+    setFormData({
+      name: contact.name || '',
+      email: contact.email || '',
+      phone: contact.phone || '',
+      position: contact.position || '',
+      language: contact.language || 'fr'
+    });
+    setShowEditModal(true);
+  };
+
+  const ContactModal = ({ isEdit, onSubmit, onClose }) => (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-lg font-semibold">
+            {isEdit ? (t('admin.crm.contacts.edit_contact') || 'Modifier le contact') : (t('admin.crm.contacts.new_contact') || 'Nouveau contact')}
+          </h3>
+          <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+        <form onSubmit={onSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              {t('admin.crm.contacts.columns.name') || 'Nom'} *
+            </label>
+            <input
+              type="text"
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              required
+              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              {t('admin.crm.contacts.columns.email') || 'Email'} *
+            </label>
+            <input
+              type="email"
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              required
+              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              {t('admin.crm.contacts.columns.phone') || 'Téléphone'}
+            </label>
+            <input
+              type="tel"
+              value={formData.phone}
+              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              {t('admin.crm.contacts.details.position') || 'Poste'}
+            </label>
+            <input
+              type="text"
+              value={formData.position}
+              onChange={(e) => setFormData({ ...formData, position: e.target.value })}
+              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div className="flex gap-3 pt-4">
+            <button
+              type="submit"
+              disabled={loadingAction}
+              className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+            >
+              {loadingAction ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+              {t('common.save') || 'Enregistrer'}
+            </button>
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 border rounded-lg hover:bg-gray-100"
+            >
+              {t('common.cancel') || 'Annuler'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
 
   return (
     <div className="space-y-4">
-      <div className="bg-white p-4 rounded-lg shadow border">
-        <div className="relative">
+      {/* Search and Create */}
+      <div className="bg-white p-4 rounded-lg shadow border flex flex-col sm:flex-row gap-4 justify-between">
+        <div className="relative flex-1">
           <Search className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
           <input
             type="text"
-            placeholder={t('admin.crm.contacts.search') || 'Search contacts...'}
+            placeholder={t('admin.crm.contacts.search') || 'Rechercher des contacts...'}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full pl-10 pr-4 py-2 border rounded-lg"
           />
         </div>
+        <button
+          onClick={() => { setFormData({ name: '', email: '', phone: '', position: '', language: 'fr' }); setShowCreateModal(true); }}
+          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+        >
+          <Plus className="w-4 h-4" />
+          {t('admin.crm.contacts.new_contact') || 'Nouveau contact'}
+        </button>
       </div>
 
       {!selectedItem ? (
@@ -28,30 +179,69 @@ const ContactsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTer
           <table className="w-full">
             <thead className="bg-gray-50 border-b">
               <tr>
-                <th className="px-4 py-3 text-left text-sm font-semibold">{t('admin.crm.contacts.columns.name') || 'Name'}</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold">{t('admin.crm.contacts.columns.name') || 'Nom'}</th>
                 <th className="px-4 py-3 text-left text-sm font-semibold">{t('admin.crm.contacts.columns.email') || 'Email'}</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">{t('admin.crm.contacts.columns.phone') || 'Phone'}</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">{t('admin.crm.contacts.columns.company') || 'Company'}</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">{t('admin.crm.contacts.columns.created') || 'Created'}</th>
-                <th className="px-4 py-3"></th>
+                <th className="px-4 py-3 text-left text-sm font-semibold">{t('admin.crm.contacts.columns.phone') || 'Téléphone'}</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold">{t('admin.crm.contacts.details.tags') || 'Tags'}</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold">{t('admin.crm.contacts.columns.created') || 'Créé le'}</th>
+                <th className="px-4 py-3 text-right text-sm font-semibold">{t('admin.crm.common.actions') || 'Actions'}</th>
               </tr>
             </thead>
             <tbody>
               {data.contacts?.length > 0 ? data.contacts.map(contact => (
-                <tr key={contact.contact_id} className="border-b hover:bg-gray-50 cursor-pointer" onClick={() => navigate(`/admin/crm/contacts/${contact.contact_id}`)}>
-                  <td className="px-4 py-3">{contact.name}</td>
+                <tr key={contact._id || contact.contact_id} className="border-b hover:bg-gray-50">
+                  <td 
+                    className="px-4 py-3 cursor-pointer hover:text-blue-600"
+                    onClick={() => navigate(`/admin/crm/contacts/${contact._id || contact.contact_id}`)}
+                  >
+                    {contact.name}
+                  </td>
                   <td className="px-4 py-3">{contact.email}</td>
                   <td className="px-4 py-3">{contact.phone || '-'}</td>
-                  <td className="px-4 py-3">{contact.company_name || '-'}</td>
+                  <td className="px-4 py-3">
+                    <div className="flex flex-wrap gap-1">
+                      {contact.tags?.slice(0, 2).map(tag => (
+                        <span key={tag} className="px-2 py-0.5 bg-blue-100 text-blue-800 rounded text-xs">{tag}</span>
+                      ))}
+                      {contact.tags?.length > 2 && (
+                        <span className="px-2 py-0.5 bg-gray-100 text-gray-600 rounded text-xs">+{contact.tags.length - 2}</span>
+                      )}
+                    </div>
+                  </td>
                   <td className="px-4 py-3 text-sm text-gray-600">{new Date(contact.created_at).toLocaleDateString()}</td>
-                  <td className="px-4 py-3"><button className="text-blue-600 hover:underline text-sm">{t('admin.crm.common.view') || 'View'}</button></td>
+                  <td className="px-4 py-3">
+                    <div className="flex gap-2 justify-end">
+                      <button
+                        onClick={(e) => { e.stopPropagation(); openEditModal(contact); }}
+                        className="p-1.5 text-blue-600 hover:bg-blue-50 rounded"
+                        title={t('common.edit') || 'Modifier'}
+                      >
+                        <Edit className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); handleDelete(contact._id || contact.contact_id); }}
+                        disabled={loadingAction}
+                        className="p-1.5 text-red-600 hover:bg-red-50 rounded disabled:opacity-50"
+                        title={t('common.delete') || 'Supprimer'}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </td>
                 </tr>
               )) : (
                 <tr><td colSpan="6" className="px-4 py-12 text-center">
                   <div className="text-gray-500">
                     <Users className="w-12 h-12 mx-auto mb-3 text-gray-300" />
-                    <p className="font-medium">{t('admin.crm.contacts.empty_title') || 'No contacts yet'}</p>
-                    <p className="text-sm mt-1">{t('admin.crm.contacts.empty_subtitle') || 'Contacts appear here when you convert leads'}</p>
+                    <p className="font-medium">{t('admin.crm.contacts.empty_title') || 'Aucun contact'}</p>
+                    <p className="text-sm mt-1">{t('admin.crm.contacts.empty_subtitle') || 'Les contacts apparaissent ici quand vous convertissez des prospects'}</p>
+                    <button
+                      onClick={() => { setFormData({ name: '', email: '', phone: '', position: '', language: 'fr' }); setShowCreateModal(true); }}
+                      className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                    >
+                      <Plus className="w-4 h-4" />
+                      {t('admin.crm.contacts.new_contact') || 'Créer un contact'}
+                    </button>
                   </div>
                 </td></tr>
               )}
@@ -63,11 +253,16 @@ const ContactsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTer
           <div className="flex justify-between items-start mb-6">
             <div>
               <h2 className="text-2xl font-bold">{selectedItem.name}</h2>
-              <p className="text-gray-600">{selectedItem.company_name}</p>
+              <p className="text-gray-600">{selectedItem.company_name || selectedItem.position}</p>
             </div>
-            <button onClick={() => setSelectedItem(null)} className="p-2 hover:bg-gray-100 rounded-lg">
-              <X className="w-5 h-5" />
-            </button>
+            <div className="flex gap-2">
+              <button onClick={() => openEditModal(selectedItem)} className="p-2 hover:bg-blue-50 rounded-lg text-blue-600">
+                <Edit className="w-5 h-5" />
+              </button>
+              <button onClick={() => setSelectedItem(null)} className="p-2 hover:bg-gray-100 rounded-lg">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -83,7 +278,7 @@ const ContactsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTer
                 <div className="flex items-start gap-3">
                   <Phone className="w-5 h-5 text-gray-400 mt-1" />
                   <div>
-                    <p className="text-sm text-gray-600">{t('admin.crm.contacts.details.phone') || 'Phone'}</p>
+                    <p className="text-sm text-gray-600">{t('admin.crm.contacts.details.phone') || 'Téléphone'}</p>
                     <p className="font-medium">{selectedItem.phone}</p>
                   </div>
                 </div>
@@ -92,7 +287,7 @@ const ContactsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTer
                 <div className="flex items-start gap-3">
                   <Building className="w-5 h-5 text-gray-400 mt-1" />
                   <div>
-                    <p className="text-sm text-gray-600">{t('admin.crm.contacts.details.position') || 'Position'}</p>
+                    <p className="text-sm text-gray-600">{t('admin.crm.contacts.details.position') || 'Poste'}</p>
                     <p className="font-medium">{selectedItem.position}</p>
                   </div>
                 </div>
@@ -101,7 +296,7 @@ const ContactsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTer
                 <div className="flex items-start gap-3">
                   <MapPin className="w-5 h-5 text-gray-400 mt-1" />
                   <div>
-                    <p className="text-sm text-gray-600">{t('admin.crm.contacts.details.location') || 'Location'}</p>
+                    <p className="text-sm text-gray-600">{t('admin.crm.contacts.details.location') || 'Localisation'}</p>
                     <p className="font-medium">{selectedItem.location}</p>
                   </div>
                 </div>
@@ -124,13 +319,13 @@ const ContactsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTer
 
           {selectedItem.converted_from_lead_id && (
             <div className="mt-6 p-4 bg-green-50 rounded-lg">
-              <p className="text-sm font-semibold text-green-900">{t('admin.crm.contacts.converted_from_lead') || 'Converted from Lead'}</p>
-              <p className="text-sm text-green-800 mt-1">{t('admin.crm.contacts.lead_id') || 'Lead ID'}: {selectedItem.converted_from_lead_id}</p>
+              <p className="text-sm font-semibold text-green-900">{t('admin.crm.contacts.converted_from_lead') || 'Converti depuis un prospect'}</p>
+              <p className="text-sm text-green-800 mt-1">{t('admin.crm.contacts.lead_id') || 'ID Prospect'}: {selectedItem.converted_from_lead_id}</p>
             </div>
           )}
 
           <div className="mt-6 border-t pt-6">
-            <h3 className="font-semibold mb-4">{t('admin.crm.contacts.recent_activities') || 'Recent Activities'}</h3>
+            <h3 className="font-semibold mb-4">{t('admin.crm.contacts.recent_activities') || 'Activités récentes'}</h3>
             <div className="space-y-2">
               {selectedItem.activities?.slice(0, 5).map((activity, idx) => (
                 <div key={idx} className="p-3 bg-gray-50 rounded-lg">
@@ -138,10 +333,28 @@ const ContactsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTer
                   <p className="text-xs text-gray-600 mt-1">{activity.description}</p>
                   <p className="text-xs text-gray-500 mt-1">{new Date(activity.created_at).toLocaleString()}</p>
                 </div>
-              )) || <p className="text-gray-500 text-sm">{t('admin.crm.common.no_activities') || 'No activities yet'}</p>}
+              )) || <p className="text-gray-500 text-sm">{t('admin.crm.common.no_activities') || 'Aucune activité'}</p>}
             </div>
           </div>
         </div>
+      )}
+
+      {/* Create Modal */}
+      {showCreateModal && (
+        <ContactModal 
+          isEdit={false} 
+          onSubmit={handleCreate} 
+          onClose={() => setShowCreateModal(false)} 
+        />
+      )}
+
+      {/* Edit Modal */}
+      {showEditModal && (
+        <ContactModal 
+          isEdit={true} 
+          onSubmit={handleEdit} 
+          onClose={() => { setShowEditModal(false); setEditingContact(null); }} 
+        />
       )}
     </div>
   );

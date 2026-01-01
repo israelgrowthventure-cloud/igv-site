@@ -697,6 +697,46 @@ async def get_pipeline(user: Dict = Depends(get_current_user)):
     return {"pipeline": pipeline_data}
 
 
+@router.get("/opportunities")
+async def list_opportunities(
+    user: Dict = Depends(get_current_user),
+    search: str = Query(None),
+    stage: str = Query(None),
+    limit: int = Query(100, le=500),
+    skip: int = Query(0)
+):
+    """List all opportunities with optional filtering"""
+    current_db = get_db()
+    if current_db is None:
+        raise HTTPException(status_code=500, detail="Database not configured")
+    
+    query = {}
+    
+    if search:
+        query["$or"] = [
+            {"name": {"$regex": search, "$options": "i"}},
+            {"notes": {"$regex": search, "$options": "i"}}
+        ]
+    
+    if stage:
+        query["stage"] = stage
+    
+    opps = await current_db.opportunities.find(query).sort("created_at", -1).skip(skip).limit(limit).to_list(limit)
+    total = await current_db.opportunities.count_documents(query)
+    
+    # Convert ObjectIds
+    for opp in opps:
+        opp["_id"] = str(opp["_id"])
+        if "created_at" in opp and isinstance(opp["created_at"], datetime):
+            opp["created_at"] = opp["created_at"].isoformat()
+        if "updated_at" in opp and isinstance(opp["updated_at"], datetime):
+            opp["updated_at"] = opp["updated_at"].isoformat()
+        if "expected_close_date" in opp and isinstance(opp["expected_close_date"], datetime):
+            opp["expected_close_date"] = opp["expected_close_date"].isoformat()
+    
+    return {"opportunities": opps, "total": total}
+
+
 @router.post("/opportunities", status_code=status.HTTP_201_CREATED)
 async def create_opportunity(opp_data: OpportunityCreate, user: Dict = Depends(get_current_user)):
     """Create new opportunity"""
@@ -772,6 +812,35 @@ async def update_opportunity(opp_id: str, update_data: OpportunityUpdate, user: 
     })
     
     return {"message": "Opportunity updated successfully"}
+
+
+@router.delete("/opportunities/{opp_id}")
+async def delete_opportunity(opp_id: str, user: Dict = Depends(get_current_user)):
+    """Delete an opportunity"""
+    current_db = get_db()
+    if current_db is None:
+        raise HTTPException(status_code=500, detail="Database not configured")
+    
+    try:
+        result = await current_db.opportunities.delete_one({"_id": ObjectId(opp_id)})
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid opportunity ID")
+    
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Opportunity not found")
+    
+    # Log activity
+    await current_db.activities.insert_one({
+        "type": "opportunity_deleted",
+        "subject": "Opportunity deleted",
+        "description": f"Opportunity {opp_id} deleted",
+        "opportunity_id": opp_id,
+        "user_id": user["id"],
+        "user_email": user["email"],
+        "created_at": datetime.now(timezone.utc)
+    })
+    
+    return {"message": "Opportunity deleted successfully"}
 
 
 # ==========================================

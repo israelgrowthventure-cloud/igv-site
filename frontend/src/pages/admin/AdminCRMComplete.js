@@ -159,6 +159,7 @@ const AdminCRMComplete = () => {
                 { id: 'dashboard', icon: TrendingUp, label: t('admin.crm.tabs.dashboard') || 'Dashboard' },
                 { id: 'leads', icon: Users, label: t('admin.crm.tabs.leads') || 'Leads' },
                 { id: 'pipeline', icon: Target, label: t('admin.crm.tabs.pipeline') || 'Pipeline' },
+                { id: 'opportunities', icon: DollarSign, label: t('admin.crm.tabs.opportunities') || 'Opportunités' },
                 { id: 'contacts', icon: Mail, label: t('admin.crm.tabs.contacts') || 'Contacts' },
                 ...(user?.role === 'admin' ? [{ id: 'settings', icon: Settings, label: t('admin.crm.tabs.settings') || 'Settings' }] : [])
               ].map(tab => (
@@ -185,9 +186,10 @@ const AdminCRMComplete = () => {
               <span>Actualisation...</span>
             </div>
           )}
-          {activeTab === 'dashboard' && <DashboardTab data={data.stats} t={t} navigate={navigate} />}
+          {activeTab === 'dashboard' && <DashboardTab data={data.stats} t={t} navigate={navigate} setActiveTab={setActiveTab} />}
           {activeTab === 'leads' && <LeadsTab data={data} selectedItem={selectedItem} setSelectedItem={setSelectedItem} onRefresh={loadTabData} searchTerm={searchTerm} setSearchTerm={setSearchTerm} filters={filters} setFilters={setFilters} t={t} />}
           {activeTab === 'pipeline' && <PipelineTab data={data.pipeline} onRefresh={loadTabData} t={t} />}
+          {activeTab === 'opportunities' && <OpportunitiesTab data={data} onRefresh={loadTabData} searchTerm={searchTerm} setSearchTerm={setSearchTerm} t={t} />}
           {activeTab === 'contacts' && <ContactsTab data={data} selectedItem={selectedItem} setSelectedItem={setSelectedItem} onRefresh={loadTabData} searchTerm={searchTerm} setSearchTerm={setSearchTerm} t={t} />}
           {activeTab === 'settings' && user?.role === 'admin' && <SettingsTab data={data} onRefresh={loadTabData} t={t} />}
         </main>
@@ -197,14 +199,14 @@ const AdminCRMComplete = () => {
 };
 
 // Dashboard Component
-const DashboardTab = ({ data, t, navigate }) => {
+const DashboardTab = ({ data, t, navigate, setActiveTab }) => {
   // Always show content with default values - no loading spinner
   const stats = data || { leads: { today: 0, last_7_days: 0 }, opportunities: { pipeline_value: 0 }, tasks: { overdue: 0 } };
 
   return (
     <div className="space-y-6">
       {/* Quick Access Buttons */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <button
           onClick={() => navigate('/admin/crm/pipeline')}
           className="flex items-center justify-between p-4 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-xl hover:from-purple-600 hover:to-purple-700 transition shadow-lg"
@@ -212,6 +214,16 @@ const DashboardTab = ({ data, t, navigate }) => {
           <div className="flex items-center gap-3">
             <Target className="w-6 h-6" />
             <span className="font-semibold">{t('admin.crm.tabs.pipeline') || 'Pipeline'}</span>
+          </div>
+          <span className="text-sm opacity-80">→</span>
+        </button>
+        <button
+          onClick={() => setActiveTab('opportunities')}
+          className="flex items-center justify-between p-4 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl hover:from-green-600 hover:to-green-700 transition shadow-lg"
+        >
+          <div className="flex items-center gap-3">
+            <DollarSign className="w-6 h-6" />
+            <span className="font-semibold">{t('admin.crm.tabs.opportunities') || 'Opportunités'}</span>
           </div>
           <span className="text-sm opacity-80">→</span>
         </button>
@@ -227,9 +239,12 @@ const DashboardTab = ({ data, t, navigate }) => {
         </button>
       </div>
 
-      {/* Stats Cards */}
+      {/* Stats Cards - All Clickable */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="bg-white p-6 rounded-lg shadow border">
+        <button
+          onClick={() => setActiveTab('leads')}
+          className="bg-white p-6 rounded-lg shadow border hover:shadow-lg transition-shadow text-left"
+        >
           <div className="flex justify-between items-start">
             <div>
               <p className="text-sm text-gray-600">{t('admin.crm.dashboard.leads_today') || 'Leads Today'}</p>
@@ -237,8 +252,11 @@ const DashboardTab = ({ data, t, navigate }) => {
             </div>
             <Users className="w-8 h-8 text-blue-500" />
           </div>
-        </div>
-        <div className="bg-white p-6 rounded-lg shadow border">
+        </button>
+        <button
+          onClick={() => setActiveTab('leads')}
+          className="bg-white p-6 rounded-lg shadow border hover:shadow-lg transition-shadow text-left"
+        >
           <div className="flex justify-between items-start">
             <div>
               <p className="text-sm text-gray-600">{t('admin.crm.dashboard.leads_7d') || 'Last 7 Days'}</p>
@@ -246,8 +264,11 @@ const DashboardTab = ({ data, t, navigate }) => {
             </div>
             <TrendingUp className="w-8 h-8 text-green-500" />
           </div>
-        </div>
-        <div className="bg-white p-6 rounded-lg shadow border">
+        </button>
+        <button
+          onClick={() => setActiveTab('opportunities')}
+          className="bg-white p-6 rounded-lg shadow border hover:shadow-lg transition-shadow text-left"
+        >
           <div className="flex justify-between items-start">
             <div>
               <p className="text-sm text-gray-600">{t('admin.crm.dashboard.pipeline_value') || 'Pipeline Value'}</p>
@@ -255,8 +276,11 @@ const DashboardTab = ({ data, t, navigate }) => {
             </div>
             <DollarSign className="w-8 h-8 text-purple-500" />
           </div>
-        </div>
-        <div className="bg-white p-6 rounded-lg shadow border">
+        </button>
+        <button
+          onClick={() => setActiveTab('leads')}
+          className="bg-white p-6 rounded-lg shadow border hover:shadow-lg transition-shadow text-left"
+        >
           <div className="flex justify-between items-start">
             <div>
               <p className="text-sm text-gray-600">{t('admin.crm.dashboard.tasks_overdue') || 'Tasks Overdue'}</p>
@@ -264,7 +288,7 @@ const DashboardTab = ({ data, t, navigate }) => {
             </div>
             <AlertCircle className="w-8 h-8 text-red-500" />
           </div>
-        </div>
+        </button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -300,5 +324,6 @@ import LeadsTab from '../../components/crm/LeadsTab';
 import PipelineTab from '../../components/crm/PipelineTab';
 import ContactsTab from '../../components/crm/ContactsTab';
 import SettingsTab from '../../components/crm/SettingsTab';
+import OpportunitiesTab from '../../components/crm/OpportunitiesTab';
 
 export default AdminCRMComplete;

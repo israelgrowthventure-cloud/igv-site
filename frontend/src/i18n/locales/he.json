@@ -364,6 +364,7 @@
         "dashboard": "לוח בקרה",
         "leads": "לידים",
         "pipeline": "פייפליין",
+        "opportunities": "הזדמנויות",
         "contacts": "אנשי קשר",
         "settings": "הגדרות"
       },
@@ -466,6 +467,7 @@
         "confirm_delete_user": "למחוק משתמש זה?",
         "user_name": "שם",
         "user_email": "אימייל",
+        "user_password": "סיסמה",
         "add_tag": "הוסף תגית",
         "tag_added": "תגית נוספה",
         "tag_name": "שם תגית",
@@ -531,7 +533,66 @@
         "stage_failed": "עדכון שלב נכשל",
         "user_create_failed": "יצירת משתמש נכשלה",
         "user_delete_failed": "מחיקת משתמש נכשלה",
-        "tag_add_failed": "הוספת תגית נכשלה"
+        "tag_add_failed": "הוספת תגית נכשלה",
+        "create_failed": "יצירה נכשלה",
+        "update_failed": "עדכון נכשל",
+        "delete_failed": "מחיקה נכשלה"
+      },
+      "opportunities": {
+        "title": "הזדמנויות",
+        "search": "חפש הזדמנויות...",
+        "new": "הזדמנות חדשה",
+        "edit": "ערוך הזדמנות",
+        "name": "שם",
+        "value": "ערך",
+        "probability": "הסתברות",
+        "stage": "שלב",
+        "expected_close": "סגירה צפויה",
+        "notes": "הערות",
+        "total_count": "סה\"כ הזדמנויות",
+        "total_value": "ערך כולל",
+        "weighted_value": "ערך משוקלל",
+        "created": "הזדמנות נוצרה",
+        "updated": "הזדמנות עודכנה",
+        "deleted": "הזדמנות נמחקה",
+        "exported": "יוצא ל-CSV",
+        "empty_title": "אין הזדמנויות",
+        "empty_subtitle": "צור את ההזדמנות הראשונה שלך כדי להתחיל",
+        "stages": {
+          "qualification": "הכשרה",
+          "proposal": "הצעה",
+          "negotiation": "משא ומתן",
+          "closed_won": "נסגר בהצלחה",
+          "closed_lost": "אבד"
+        }
+      },
+      "contacts": {
+        "search": "חפש אנשי קשר...",
+        "new_contact": "איש קשר חדש",
+        "edit_contact": "ערוך איש קשר",
+        "empty_title": "אין אנשי קשר",
+        "empty_subtitle": "אנשי קשר יופיעו כאן כשתמיר לידים",
+        "not_found": "איש קשר לא נמצא",
+        "created": "איש קשר נוצר",
+        "updated": "איש קשר עודכן",
+        "deleted": "איש קשר נמחק",
+        "columns": {
+          "name": "שם",
+          "email": "אימייל",
+          "phone": "טלפון",
+          "company": "חברה",
+          "created": "נוצר"
+        },
+        "details": {
+          "email": "אימייל",
+          "phone": "טלפון",
+          "position": "תפקיד",
+          "location": "מיקום",
+          "tags": "תגיות"
+        },
+        "converted_from_lead": "הומר מליד",
+        "lead_id": "מזהה ליד",
+        "recent_activities": "פעילויות אחרונות"
       }
     },
     "roles": {

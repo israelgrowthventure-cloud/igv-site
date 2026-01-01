@@ -379,6 +379,7 @@
         "dashboard": "Tableau de bord",
         "leads": "Prospects",
         "pipeline": "Pipeline",
+        "opportunities": "Opportunités",
         "contacts": "Contacts",
         "settings": "Paramètres"
       },
@@ -481,6 +482,7 @@
         "confirm_delete_user": "Supprimer cet utilisateur ?",
         "user_name": "Nom",
         "user_email": "Email",
+        "user_password": "Mot de passe",
         "add_tag": "Ajouter un tag",
         "tag_added": "Tag ajouté",
         "tag_name": "Nom du tag",
@@ -546,7 +548,66 @@
         "stage_failed": "Échec de la mise à jour de l'étape",
         "user_create_failed": "Échec de la création de l'utilisateur",
         "user_delete_failed": "Échec de la suppression de l'utilisateur",
-        "tag_add_failed": "Échec de l'ajout du tag"
+        "tag_add_failed": "Échec de l'ajout du tag",
+        "create_failed": "Échec de la création",
+        "update_failed": "Échec de la mise à jour",
+        "delete_failed": "Échec de la suppression"
+      },
+      "opportunities": {
+        "title": "Opportunités",
+        "search": "Rechercher des opportunités...",
+        "new": "Nouvelle opportunité",
+        "edit": "Modifier l'opportunité",
+        "name": "Nom",
+        "value": "Valeur",
+        "probability": "Probabilité",
+        "stage": "Étape",
+        "expected_close": "Clôture prévue",
+        "notes": "Notes",
+        "total_count": "Total opportunités",
+        "total_value": "Valeur totale",
+        "weighted_value": "Valeur pondérée",
+        "created": "Opportunité créée",
+        "updated": "Opportunité mise à jour",
+        "deleted": "Opportunité supprimée",
+        "exported": "Exporté en CSV",
+        "empty_title": "Aucune opportunité",
+        "empty_subtitle": "Créez votre première opportunité pour commencer",
+        "stages": {
+          "qualification": "Qualification",
+          "proposal": "Proposition",
+          "negotiation": "Négociation",
+          "closed_won": "Gagné",
+          "closed_lost": "Perdu"
+        }
+      },
+      "contacts": {
+        "search": "Rechercher des contacts...",
+        "new_contact": "Nouveau contact",
+        "edit_contact": "Modifier le contact",
+        "empty_title": "Aucun contact",
+        "empty_subtitle": "Les contacts apparaissent ici quand vous convertissez des prospects",
+        "not_found": "Contact introuvable",
+        "created": "Contact créé",
+        "updated": "Contact mis à jour",
+        "deleted": "Contact supprimé",
+        "columns": {
+          "name": "Nom",
+          "email": "Email",
+          "phone": "Téléphone",
+          "company": "Entreprise",
+          "created": "Créé le"
+        },
+        "details": {
+          "email": "Email",
+          "phone": "Téléphone",
+          "position": "Poste",
+          "location": "Localisation",
+          "tags": "Tags"
+        },
+        "converted_from_lead": "Converti depuis un prospect",
+        "lead_id": "ID Prospect",
+        "recent_activities": "Activités récentes"
       }
     },
     "roles": {

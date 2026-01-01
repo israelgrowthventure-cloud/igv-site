@@ -88,15 +88,16 @@ const SettingsTab = ({ data, onRefresh, t }) => {
 
           {showForm && (
             <div className="p-6 border-b bg-gray-50">
-              <form onSubmit={handleCreateUser} className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <form onSubmit={handleCreateUser} className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <input type="text" placeholder={t('admin.crm.settings.user_name') || 'Name'} value={formData.name || ''} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required className="px-3 py-2 border rounded-lg" />
                 <input type="email" placeholder={t('admin.crm.settings.user_email') || 'Email'} value={formData.email || ''} onChange={(e) => setFormData({ ...formData, email: e.target.value })} required className="px-3 py-2 border rounded-lg" />
+                <input type="password" placeholder={t('admin.crm.settings.user_password') || 'Password'} value={formData.password || ''} onChange={(e) => setFormData({ ...formData, password: e.target.value })} required minLength={6} className="px-3 py-2 border rounded-lg" />
                 <select value={formData.role || 'sales'} onChange={(e) => setFormData({ ...formData, role: e.target.value })} className="px-3 py-2 border rounded-lg">
                   <option value="admin">{t('admin.roles.admin') || 'Admin'}</option>
                   <option value="sales">{t('admin.roles.sales') || 'Sales'}</option>
                   <option value="viewer">{t('admin.roles.viewer') || 'Viewer'}</option>
                 </select>
-                <div className="flex gap-2 md:col-span-3">
+                <div className="flex gap-2 md:col-span-2">
                   <button type="submit" disabled={loadingAction} className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50">
                     {loadingAction ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
                     {t('admin.crm.common.save') || 'Save'}

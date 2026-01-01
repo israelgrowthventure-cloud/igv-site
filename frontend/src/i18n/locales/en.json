@@ -375,6 +375,7 @@
         "dashboard": "Dashboard",
         "leads": "Leads",
         "pipeline": "Pipeline",
+        "opportunities": "Opportunities",
         "contacts": "Contacts",
         "settings": "Settings"
       },
@@ -477,6 +478,7 @@
         "confirm_delete_user": "Delete this user?",
         "user_name": "Name",
         "user_email": "Email",
+        "user_password": "Password",
         "add_tag": "Add Tag",
         "tag_added": "Tag added",
         "tag_name": "Tag name",
@@ -542,7 +544,66 @@
         "stage_failed": "Failed to update stage",
         "user_create_failed": "Failed to create user",
         "user_delete_failed": "Failed to delete user",
-        "tag_add_failed": "Failed to add tag"
+        "tag_add_failed": "Failed to add tag",
+        "create_failed": "Failed to create",
+        "update_failed": "Failed to update",
+        "delete_failed": "Failed to delete"
+      },
+      "opportunities": {
+        "title": "Opportunities",
+        "search": "Search opportunities...",
+        "new": "New Opportunity",
+        "edit": "Edit Opportunity",
+        "name": "Name",
+        "value": "Value",
+        "probability": "Probability",
+        "stage": "Stage",
+        "expected_close": "Expected Close",
+        "notes": "Notes",
+        "total_count": "Total Opportunities",
+        "total_value": "Total Value",
+        "weighted_value": "Weighted Value",
+        "created": "Opportunity created",
+        "updated": "Opportunity updated",
+        "deleted": "Opportunity deleted",
+        "exported": "Exported to CSV",
+        "empty_title": "No opportunities",
+        "empty_subtitle": "Create your first opportunity to get started",
+        "stages": {
+          "qualification": "Qualification",
+          "proposal": "Proposal",
+          "negotiation": "Negotiation",
+          "closed_won": "Won",
+          "closed_lost": "Lost"
+        }
+      },
+      "contacts": {
+        "search": "Search contacts...",
+        "new_contact": "New Contact",
+        "edit_contact": "Edit Contact",
+        "empty_title": "No contacts yet",
+        "empty_subtitle": "Contacts appear here when you convert leads",
+        "not_found": "Contact not found",
+        "created": "Contact created",
+        "updated": "Contact updated",
+        "deleted": "Contact deleted",
+        "columns": {
+          "name": "Name",
+          "email": "Email",
+          "phone": "Phone",
+          "company": "Company",
+          "created": "Created"
+        },
+        "details": {
+          "email": "Email",
+          "phone": "Phone",
+          "position": "Position",
+          "location": "Location",
+          "tags": "Tags"
+        },
+        "converted_from_lead": "Converted from Lead",
+        "lead_id": "Lead ID",
+        "recent_activities": "Recent Activities"
       }
     },
     "roles": {

@@ -51,18 +51,14 @@ const Packs = () => {
     }
   ];
 
-  const handleContactAboutPack = (packName) => {
-    window.location.href = `mailto:israel.growth.venture@gmail.com?subject=Demande d'information - ${packName}`;
+  const handleBuyPack = (packId) => {
+    // Redirect to payment page
+    navigate(`/payment?pack=${packId}`);
   };
 
-  const handleRequestInvoice = (packId, packName) => {
-    if (!pricing) {
-      toast.error('Pricing information not available');
-      return;
-    }
-
-    const packPrice = pricing.packs[packId];
-    window.location.href = `mailto:israel.growth.venture@gmail.com?subject=Demande de facture - ${packName}&body=Bonjour,%0D%0A%0D%0AJe souhaite obtenir une facture pour le ${packName}.%0D%0APrix: ${packPrice.label}%0D%0A%0D%0AMerci`;
+  const handleContactAboutPack = (packId, packName) => {
+    // Contact via email for questions
+    window.location.href = `mailto:israel.growth.venture@gmail.com?subject=${t('packs.email.subject')} - ${packName}`;
   };
 
   return (
@@ -180,18 +176,19 @@ const Packs = () => {
                   {/* CTAs */}
                   <div className="space-y-3">
                     <button
-                      onClick={() => handleRequestInvoice(pack.id, pack.name)}
-                      className={`w-full py-3 px-4 rounded-lg font-semibold transition-colors ${
+                      onClick={() => handleBuyPack(pack.id)}
+                      className={`w-full py-3 px-4 rounded-lg font-semibold transition-colors flex items-center justify-center space-x-2 ${
                         pack.highlighted
                           ? 'bg-white text-blue-600 hover:bg-gray-100'
                           : 'bg-blue-600 text-white hover:bg-blue-700'
                       }`}
-                      data-testid={`request-invoice-${pack.id}`}
+                      data-testid={`buy-${pack.id}`}
                     >
-                      {t('packs.cta')}
+                      <CreditCard className="w-4 h-4" />
+                      <span>{t('packs.cta')}</span>
                     </button>
                     <button
-                      onClick={() => handleContactAboutPack(pack.name)}
+                      onClick={() => handleContactAboutPack(pack.id, pack.name)}
                       className={`w-full py-3 px-4 rounded-lg font-semibold transition-colors flex items-center justify-center space-x-2 ${
                         pack.highlighted
                           ? 'border-2 border-white text-white hover:bg-white/10'

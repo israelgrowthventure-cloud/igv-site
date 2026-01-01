@@ -145,9 +145,26 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
 
 class PaymentInitRequest(BaseModel):
     """Request to initiate a payment"""
+    pack_id: str
+    pack_name: str
     amount: float
     currency: str = "EUR"
-    reference: str  # Unique reference (invoice number, order ID, etc.)
+    language: str = "fr"
+    email: Optional[EmailStr] = None
+    customer_name: Optional[str] = None
+
+
+class MoneticopaymentWebhookData(BaseModel):
+    """Webhook data from Monetico"""
+    reference: str
+    montant: str
+    code_retour: str
+    cvx: Optional[str] = None
+    vld: Optional[str] = None
+    brand: Optional[str] = None
+    numauto: Optional[str] = None
+    motifrefus: Optional[str] = None
+    MAC: str
     description: str
     client_email: EmailStr
     client_name: str
@@ -173,48 +190,43 @@ async def get_monetico_config():
     }
 
 
-@router.post("/init")
-async def init_payment(
-    payment_request: PaymentInitRequest,
-    user: Dict = Depends(get_current_user)
-):
+@router.post("/init-payment")
+async def init_payment_public(payment_request: PaymentInitRequest):
     """
-    Initiate a Monetico payment
-    Returns form data to redirect user to Monetico payment page
+    Public endpoint to initiate a Monetico payment (for pack purchases)
+    No authentication required
     """
     if not MONETICO_CONFIGURED:
         raise HTTPException(
-            status_code=503,
-            detail="Monetico payment not configured. Please set MONETICO_TPE and MONETICO_KEY environment variables."
+            status_code=500,
+            detail="Le paiement Monetico n'est pas encore configuré. Contactez-nous directement à israel.growth.venture@gmail.com"
         )
     
     current_db = get_db()
     if not current_db:
         raise HTTPException(status_code=500, detail="Database not configured")
     
-    # Generate payment ID
-    payment_id = f"PAY-{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}-{payment_request.reference}"
+    # Generate payment reference
+    payment_reference = f"{payment_request.pack_id.upper()}-{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}"
     
     # Create payment record
     payment_data = {
-        "payment_id": payment_id,
+        "payment_id": payment_reference,
         "payment_provider": "monetico",
         "amount": payment_request.amount,
         "currency": payment_request.currency,
-        "invoice_id": payment_request.invoice_id,
-        "contact_id": payment_request.contact_id,
-        "opportunity_id": payment_request.opportunity_id,
         "status": PaymentStatus.INITIATED,
-        "monetico_reference": payment_request.reference,
-        "client_email": payment_request.client_email,
-        "client_name": payment_request.client_name,
+        "monetico_reference": payment_reference,
+        "client_email": payment_request.email or "contact@israelgrowthventure.com",
+        "client_name": payment_request.customer_name or "Client IGV",
         "return_url": MONETICO_RETURN_URL,
         "notify_url": MONETICO_NOTIFY_URL,
         "initiated_at": datetime.now(timezone.utc),
         "created_at": datetime.now(timezone.utc),
         "updated_at": datetime.now(timezone.utc),
         "metadata": {
-            "description": payment_request.description,
+            "pack_id": payment_request.pack_id,
+            "pack_name": payment_request.pack_name,
             "language": payment_request.language
         }
     }
@@ -234,20 +246,52 @@ async def init_payment(
         "TPE": MONETICO_TPE,
         "date": payment_date,
         "montant": montant,
-        "reference": payment_request.reference,
-        "texte-libre": payment_request.description[:3000],  # Max 3000 chars
-        "mail": payment_request.client_email,
-        "lgue": payment_request.language.upper(),
+        "reference": payment_reference,
+        "texte-libre": f"{payment_request.pack_name}",
+        "mail": payment_request.email or "contact@israelgrowthventure.com",
+        "lgue": payment_request.language.upper() if payment_request.language else "FR",
         "societe": MONETICO_COMPANY_CODE,
         "url_retour": MONETICO_RETURN_URL,
-        "url_retour_ok": f"{MONETICO_RETURN_URL}?status=success",
-        "url_retour_err": f"{MONETICO_RETURN_URL}?status=error"
+        "url_retour_ok": f"{MONETICO_RETURN_URL}?status=success&ref={payment_reference}",
+        "url_retour_err": f"{MONETICO_RETURN_URL}?status=error&ref={payment_reference}"
     }
     
     # Compute MAC
     mac = compute_monetico_mac(form_data)
     form_data["MAC"] = mac
     form_data["version"] = MONETICO_VERSION
+    
+    logging.info(f"Payment initiated: {payment_reference} - {payment_request.pack_name} - {montant}")
+    
+    return {
+        "payment_id": payment_reference,
+        "form_action": MONETICO_ENDPOINT,
+        "form_data": form_data,
+        "payment_url": None  # Client will submit form via POST
+    }
+
+
+@router.post("/init")
+async def init_payment(
+    payment_request: PaymentInitRequest,
+    user: Dict = Depends(get_current_user)
+):
+    """
+    Initiate a Monetico payment (admin authenticated)
+    Returns form data to redirect user to Monetico payment page
+    """
+    if not MONETICO_CONFIGURED:
+        raise HTTPException(
+            status_code=503,
+            detail="Monetico payment not configured. Please set MONETICO_TPE and MONETICO_KEY environment variables."
+        )
+    
+    current_db = get_db()
+    if not current_db:
+        raise HTTPException(status_code=500, detail="Database not configured")
+    
+    # Use the public endpoint logic
+    return await init_payment_public(payment_request)
     
     # Timeline event
     await current_db.timeline_events.insert_one({

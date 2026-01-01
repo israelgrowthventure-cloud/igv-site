@@ -92,7 +92,7 @@
         "Support continu"
       ]
     },
-    "cta": "Demander une facture",
+    "cta": "Acheter ce pack",
     "ctaTalk": "Parler de ce pack",
     "popular": "POPULAIRE",
     "priceOnRequest": "Prix sur demande",
@@ -100,12 +100,40 @@
       "title": "Besoin d'un pack personnalisé ?",
       "description": "Chaque projet est unique. Contactez-nous pour discuter d'une solution sur mesure adaptée à vos besoins spécifiques.",
       "cta": "Nous contacter"
+    },
+    "email": {
+      "subject": "Demande d'information"
     }
   },
   "payment": {
+    "title": "Finaliser votre achat",
+    "subtitle": "Paiement sécurisé par carte bancaire",
     "pageTitle": "Retour paiement",
-    "processing": "Traitement du paiement...",
+    "processing": "Traitement en cours...",
     "pleaseWait": "Veuillez patienter pendant la vérification de votre paiement",
+    "cta": "Procéder au paiement",
+    "backToPacks": "Retour aux packs",
+    "redirectMessage": "Vous allez être redirigé vers notre plateforme de paiement sécurisée",
+    "security": {
+      "title": "Paiement 100% sécurisé",
+      "ssl": "Cryptage SSL/TLS",
+      "secure3d": "3D Secure activé",
+      "pciDss": "Conforme PCI-DSS"
+    },
+    "method": {
+      "title": "Mode de paiement",
+      "card": "Carte bancaire",
+      "cardSubtitle": "Visa, Mastercard, CB acceptées"
+    },
+    "support": {
+      "question": "Une question avant de payer ?"
+    },
+    "errors": {
+      "packNotSelected": "Aucun pack sélectionné",
+      "noPackSelected": "Aucun pack sélectionné",
+      "notConfigured": "Le paiement n'est pas encore configuré. Contactez-nous directement.",
+      "generic": "Une erreur est survenue. Veuillez réessayer."
+    },
     "successTitle": "Paiement réussi !",
     "successMessage": "Votre paiement a été traité avec succès.",
     "details": "Détails du paiement",

@@ -88,7 +88,7 @@
         "Ongoing support"
       ]
     },
-    "cta": "Request an Invoice",
+    "cta": "Buy this pack",
     "ctaTalk": "Talk about this pack",
     "popular": "POPULAR",
     "priceOnRequest": "Price on request",
@@ -96,12 +96,40 @@
       "title": "Need a custom pack?",
       "description": "Each project is unique. Contact us to discuss a tailor-made solution adapted to your specific needs.",
       "cta": "Contact us"
+    },
+    "email": {
+      "subject": "Information Request"
     }
   },
   "payment": {
+    "title": "Complete Your Purchase",
+    "subtitle": "Secure card payment",
     "pageTitle": "Payment Return",
-    "processing": "Processing payment...",
+    "processing": "Processing...",
     "pleaseWait": "Please wait while we verify your payment",
+    "cta": "Proceed to Payment",
+    "backToPacks": "Back to Packs",
+    "redirectMessage": "You will be redirected to our secure payment platform",
+    "security": {
+      "title": "100% Secure Payment",
+      "ssl": "SSL/TLS Encryption",
+      "secure3d": "3D Secure enabled",
+      "pciDss": "PCI-DSS Compliant"
+    },
+    "method": {
+      "title": "Payment Method",
+      "card": "Credit Card",
+      "cardSubtitle": "Visa, Mastercard, CB accepted"
+    },
+    "support": {
+      "question": "Question before paying?"
+    },
+    "errors": {
+      "packNotSelected": "No pack selected",
+      "noPackSelected": "No pack selected",
+      "notConfigured": "Payment is not yet configured. Contact us directly.",
+      "generic": "An error occurred. Please try again."
+    },
     "successTitle": "Payment Successful!",
     "successMessage": "Your payment has been processed successfully.",
     "details": "Payment Details",

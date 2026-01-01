@@ -402,6 +402,8 @@
         "status_updated": "Statut mis à jour",
         "converted": "Prospect converti en contact",
         "convert_to_contact": "Convertir en contact",
+        "create_opportunity": "Créer une opportunité",
+        "actions": "Actions",
         "add_note_placeholder": "Ajouter une note...",
         "new_lead": "Nouveau prospect",
         "empty_title": "Aucun prospect",
@@ -459,6 +461,8 @@
         "not_found": "Contact introuvable",
         "updated": "Contact mis à jour",
         "deleted": "Contact supprimé",
+        "opportunities": "Opportunités",
+        "new_contact": "Nouveau contact",
         "columns": {
           "name": "Nom",
           "email": "Email",
@@ -536,9 +540,11 @@
         "no_users": "Aucun utilisateur",
         "no_tags": "Aucun tag",
         "no_stages": "Aucune étape configurée",
+        "no_opportunities": "Aucune opportunité",
         "add": "Ajouter",
         "save": "Enregistrer",
         "cancel": "Annuler",
+        "create": "Créer",
         "confirm_delete": "Êtes-vous sûr de vouloir supprimer ?"
       },
       "statuses": {

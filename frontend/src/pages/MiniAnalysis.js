@@ -52,6 +52,12 @@ const MiniAnalysis = () => {
       return;
     }
 
+    // Phone is required
+    if (!formData.phone || formData.phone.trim().length < 6) {
+      toast.error(t('miniAnalysis.toast.phoneRequired') || 'Le numéro de téléphone est obligatoire');
+      return;
+    }
+
     if (formData.secteur === t('miniAnalysis.sectors.0') && !formData.statut_alimentaire) {
       toast.error(t('miniAnalysis.toast.foodStatusRequired'));
       return;

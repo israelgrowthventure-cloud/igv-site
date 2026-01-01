@@ -387,6 +387,8 @@
         "status_updated": "סטטוס עודכן",
         "converted": "ליד הומר לאיש קשר",
         "convert_to_contact": "המר לאיש קשר",
+        "create_opportunity": "צור הזדמנות",
+        "actions": "פעולות",
         "add_note_placeholder": "הוסף הערה...",
         "new_lead": "ליד חדש",
         "empty_title": "אין לידים",
@@ -444,6 +446,8 @@
         "not_found": "איש קשר לא נמצא",
         "updated": "איש קשר עודכן",
         "deleted": "איש קשר נמחק",
+        "opportunities": "הזדמנויות",
+        "new_contact": "איש קשר חדש",
         "columns": {
           "name": "שם",
           "email": "אימייל",
@@ -522,9 +526,11 @@
         "no_users": "אין משתמשים",
         "no_tags": "אין תגיות",
         "no_stages": "לא הוגדרו שלבים",
+        "no_opportunities": "אין הזדמנויות",
         "add": "הוסף",
         "save": "שמור",
-        "cancel": "ביטול"
+        "cancel": "ביטול",
+        "create": "צור"
       },
       "statuses": {
         "NEW": "חדש",

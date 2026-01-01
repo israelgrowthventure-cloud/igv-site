@@ -398,6 +398,8 @@
         "status_updated": "Status updated",
         "converted": "Lead converted to contact",
         "convert_to_contact": "Convert to Contact",
+        "create_opportunity": "Create Opportunity",
+        "actions": "Actions",
         "add_note_placeholder": "Add a note...",
         "new_lead": "New Lead",
         "empty_title": "No leads yet",
@@ -455,6 +457,8 @@
         "not_found": "Contact not found",
         "updated": "Contact updated",
         "deleted": "Contact deleted",
+        "opportunities": "Opportunities",
+        "new_contact": "New Contact",
         "columns": {
           "name": "Name",
           "email": "Email",
@@ -533,9 +537,11 @@
         "no_users": "No users",
         "no_tags": "No tags",
         "no_stages": "No stages configured",
+        "no_opportunities": "No opportunities",
         "add": "Add",
         "save": "Save",
-        "cancel": "Cancel"
+        "cancel": "Cancel",
+        "create": "Create"
       },
       "statuses": {
         "NEW": "New",

@@ -4,7 +4,7 @@ import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { 
   ArrowLeft, Mail, Phone, Building, MapPin, Save, Trash2, 
-  Loader2, Edit2, X, Tag, Calendar, User
+  Loader2, Edit2, X, Tag, Calendar, User, TrendingUp, Plus
 } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '../../utils/api';
@@ -19,6 +19,9 @@ const ContactDetail = () => {
   const [editing, setEditing] = useState(false);
   const [editData, setEditData] = useState({});
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showOppModal, setShowOppModal] = useState(false);
+  const [oppForm, setOppForm] = useState({ name: '', value: '', probability: 50, stage: 'qualification' });
+  const [opportunities, setOpportunities] = useState([]);
 
   const isRTL = i18n.language === 'he';
 
@@ -32,6 +35,14 @@ const ContactDetail = () => {
       const response = await api.get(`/api/crm/contacts/${id}`);
       setContact(response);
       setEditData(response);
+      // Load opportunities linked to this contact
+      try {
+        const oppsResponse = await api.get('/api/crm/opportunities');
+        const allOpps = oppsResponse.opportunities || oppsResponse.data?.opportunities || [];
+        setOpportunities(allOpps.filter(opp => opp.contact_id === id));
+      } catch (e) {
+        setOpportunities([]);
+      }
     } catch (error) {
       console.error('Error fetching contact:', error);
       toast.error(t('admin.crm.errors.load_failed') || 'Failed to load contact');
@@ -66,6 +77,28 @@ const ContactDetail = () => {
     } finally {
       setSaving(false);
       setShowDeleteConfirm(false);
+    }
+  };
+
+  const handleCreateOpportunity = async (e) => {
+    e.preventDefault();
+    try {
+      setSaving(true);
+      await api.post('/api/crm/opportunities', {
+        name: oppForm.name || `${contact.name} - Opportunity`,
+        contact_id: id,
+        value: parseFloat(oppForm.value) || 0,
+        probability: parseInt(oppForm.probability) || 50,
+        stage: oppForm.stage || 'qualification'
+      });
+      toast.success(t('admin.crm.opportunities.created') || 'Opportunity created');
+      setShowOppModal(false);
+      setOppForm({ name: '', value: '', probability: 50, stage: 'qualification' });
+      fetchContact(); // Reload to get updated opportunities
+    } catch (error) {
+      toast.error(t('admin.crm.errors.create_failed') || 'Failed to create opportunity');
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -296,6 +329,39 @@ const ContactDetail = () => {
             </div>
           )}
 
+          {/* Opportunities Section */}
+          <div className="bg-white rounded-lg shadow border p-6">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="font-semibold flex items-center gap-2">
+                <TrendingUp className="w-5 h-5" />
+                {t('admin.crm.contacts.opportunities') || 'Opportunities'} ({opportunities.length})
+              </h2>
+              <button 
+                onClick={() => setShowOppModal(true)}
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              >
+                <Plus className="w-4 h-4" />
+                {t('admin.crm.opportunities.new') || 'New Opportunity'}
+              </button>
+            </div>
+            <div className="space-y-3">
+              {opportunities.length > 0 ? opportunities.map((opp, idx) => (
+                <div key={opp._id || idx} className="p-4 bg-gray-50 rounded-lg flex justify-between items-center">
+                  <div>
+                    <p className="font-medium">{opp.name}</p>
+                    <p className="text-sm text-gray-600">{opp.stage}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-bold text-green-600">€{(opp.value || 0).toLocaleString()}</p>
+                    <p className="text-xs text-gray-500">{opp.probability}%</p>
+                  </div>
+                </div>
+              )) : (
+                <p className="text-gray-500 text-sm text-center py-4">{t('admin.crm.common.no_opportunities') || 'No opportunities yet'}</p>
+              )}
+            </div>
+          </div>
+
           {/* Recent Activities */}
           <div className="bg-white rounded-lg shadow border p-6">
             <h2 className="font-semibold mb-4 flex items-center gap-2">
@@ -360,6 +426,76 @@ const ContactDetail = () => {
                 {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : t('admin.crm.common.delete') || 'Delete'}
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Create Opportunity Modal */}
+      {showOppModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <h3 className="text-lg font-bold mb-4">{t('admin.crm.opportunities.new') || 'New Opportunity'}</h3>
+            <form onSubmit={handleCreateOpportunity} className="space-y-4">
+              <div>
+                <label className="block text-sm text-gray-600 mb-1">{t('admin.crm.opportunities.name') || 'Name'}</label>
+                <input 
+                  type="text" 
+                  value={oppForm.name} 
+                  onChange={(e) => setOppForm({...oppForm, name: e.target.value})}
+                  placeholder={contact?.name || 'Opportunity name'}
+                  className="w-full px-3 py-2 border rounded-lg"
+                />
+              </div>
+              <div>
+                <label className="block text-sm text-gray-600 mb-1">{t('admin.crm.opportunities.value') || 'Value (€)'}</label>
+                <input 
+                  type="number" 
+                  value={oppForm.value} 
+                  onChange={(e) => setOppForm({...oppForm, value: e.target.value})}
+                  placeholder="10000"
+                  min="0"
+                  className="w-full px-3 py-2 border rounded-lg"
+                />
+              </div>
+              <div>
+                <label className="block text-sm text-gray-600 mb-1">{t('admin.crm.opportunities.probability') || 'Probability (%)'}</label>
+                <input 
+                  type="number" 
+                  value={oppForm.probability} 
+                  onChange={(e) => setOppForm({...oppForm, probability: e.target.value})}
+                  min="0" max="100"
+                  className="w-full px-3 py-2 border rounded-lg"
+                />
+              </div>
+              <div>
+                <label className="block text-sm text-gray-600 mb-1">{t('admin.crm.opportunities.stage') || 'Stage'}</label>
+                <select 
+                  value={oppForm.stage} 
+                  onChange={(e) => setOppForm({...oppForm, stage: e.target.value})}
+                  className="w-full px-3 py-2 border rounded-lg"
+                >
+                  <option value="qualification">{t('admin.crm.opportunities.stages.qualification') || 'Qualification'}</option>
+                  <option value="proposal">{t('admin.crm.opportunities.stages.proposal') || 'Proposal'}</option>
+                  <option value="negotiation">{t('admin.crm.opportunities.stages.negotiation') || 'Negotiation'}</option>
+                </select>
+              </div>
+              <div className="flex gap-3 justify-end pt-2">
+                <button 
+                  type="button"
+                  onClick={() => setShowOppModal(false)} 
+                  className="px-4 py-2 border rounded-lg hover:bg-gray-50"
+                >
+                  {t('admin.crm.common.cancel') || 'Cancel'}
+                </button>
+                <button 
+                  type="submit"
+                  disabled={saving}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                >
+                  {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : t('admin.crm.common.create') || 'Create'}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

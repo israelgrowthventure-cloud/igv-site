@@ -49,7 +49,7 @@ const AdminCRMComplete = () => {
           password: 'Admin@igv2025#'
         };
         const response = await api.adminLogin(credentials);
-        token = response.token;
+        token = response.access_token; // Correction: utiliser access_token
         localStorage.setItem('admin_token', token);
         setUser(response.user);
       } catch (error) {
@@ -74,7 +74,7 @@ const AdminCRMComplete = () => {
           password: 'Admin@igv2025#'
         };
         const response = await api.adminLogin(credentials);
-        localStorage.setItem('admin_token', response.token);
+        localStorage.setItem('admin_token', response.access_token);
         setUser(response.user);
       } catch (loginError) {
         console.error('Re-login failed:', loginError);

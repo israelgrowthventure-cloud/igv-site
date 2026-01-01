@@ -89,7 +89,49 @@
       ]
     },
     "cta": "בקש חשבונית",
-    "ctaTalk": "דבר על החבילה הזו"
+    "ctaTalk": "דבר על החבילה הזו",
+    "popular": "פופולרי",
+    "priceOnRequest": "מחיר לפי בקשה",
+    "customPack": {
+      "title": "צריך חבילה מותאמת אישית?",
+      "description": "כל פרויקט הוא ייחודי. צור איתנו קשר כדי לדון בפתרון מותאם אישית לצרכים הספציפיים שלך.",
+      "cta": "צור קשר"
+    }
+  },
+  "payment": {
+    "pageTitle": "חזרה מתשלום",
+    "processing": "מעבד תשלום...",
+    "pleaseWait": "אנא המתן בזמן שאנחנו מאמתים את התשלום שלך",
+    "successTitle": "התשלום הצליח!",
+    "successMessage": "התשלום שלך עובד בהצלחה.",
+    "details": "פרטי תשלום",
+    "reference": "אסמכתא",
+    "amount": "סכום",
+    "confirmationEmail": "תקבל אימייל אישור בקרוב עם החשבונית שלך.",
+    "requestInvoice": "בקש חשבונית",
+    "failedTitle": "התשלום נכשל",
+    "failedMessage": "לא ניתן היה לעבד את התשלום שלך.",
+    "tryAgainMessage": "אנא נסה שוב או צור קשר עם צוות התמיכה שלנו לעזרה.",
+    "tryAgain": "נסה שוב",
+    "invalidTitle": "חזרת תשלום לא חוקית",
+    "invalidMessage": "נתוני החזרת התשלום אינם תקינים או חסרים.",
+    "invalidReturn": "חזרת תשלום לא חוקית",
+    "success": "התשלום הצליח!",
+    "cancelled": "התשלום בוטל על ידי המשתמש",
+    "cancelledToast": "התשלום בוטל",
+    "failed": "התשלום נכשל",
+    "failedToast": "התשלום נכשל"
+  },
+  "pricing": {
+    "detecting": "מזהה אזור...",
+    "region": "אזור",
+    "international": "בינלאומי"
+  },
+  "common": {
+    "backToHome": "חזרה לדף הבית"
+  },
+  "errors": {
+    "pageNotFound": "הדף לא נמצא"
   },
   "futureCommerce": {
     "title": "המסחר שאתה מתרגל מת.",

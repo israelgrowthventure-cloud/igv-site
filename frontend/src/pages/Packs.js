@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
-import { Check, Mail } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Check, Mail, CreditCard } from 'lucide-react';
 import { api } from '../utils/api';
 import { getPricing } from '../utils/pricing';
 import { toast } from 'sonner';
 
 const Packs = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const navigate = useNavigate();
   const [location, setLocation] = useState(null);
   const [pricing, setPricing] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -108,7 +110,7 @@ const Packs = () => {
                   {pack.highlighted && (
                     <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
                       <span className="inline-block px-4 py-1 bg-yellow-400 text-gray-900 text-xs font-bold rounded-full">
-                        POPULAIRE
+                        {t('packs.popular', 'POPULAIRE')}
                       </span>
                     </div>
                   )}
@@ -145,8 +147,8 @@ const Packs = () => {
                       </div>
                     ) : (
                       <div>
-                        <div className="text-xl font-bold">Prix sur demande</div>
-                        <div className="text-xs mt-1 text-gray-500">International</div>
+                        <div className="text-xl font-bold">{t('packs.priceOnRequest', 'Prix sur demande')}</div>
+                        <div className="text-xs mt-1 text-gray-500">{t('pricing.international', 'International')}</div>
                       </div>
                     )}
                   </div>
@@ -212,10 +214,10 @@ const Packs = () => {
       <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gray-50">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">
-            Besoin d'un pack personnalisé ?
+            {t('packs.customPack.title', 'Besoin d\'un pack personalisé ?')}
           </h2>
           <p className="text-base text-gray-600 mb-6">
-            Chaque projet est unique. Contactez-nous pour discuter d'une solution sur mesure adaptée à vos besoins spécifiques.
+            {t('packs.customPack.description', 'Chaque projet est unique. Contactez-nous pour discuter d\'une solution sur mesure adaptée à vos besoins spécifiques.')}
           </p>
           <a
             href="mailto:israel.growth.venture@gmail.com"
@@ -223,7 +225,7 @@ const Packs = () => {
             data-testid="custom-pack-contact"
           >
             <Mail className="w-5 h-5 mr-2" />
-            Nous contacter
+            {t('packs.customPack.cta', 'Nous contacter')}
           </a>
         </div>
       </section>

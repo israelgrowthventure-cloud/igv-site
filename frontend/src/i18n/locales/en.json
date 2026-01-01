@@ -89,7 +89,49 @@
       ]
     },
     "cta": "Request an Invoice",
-    "ctaTalk": "Talk about this pack"
+    "ctaTalk": "Talk about this pack",
+    "popular": "POPULAR",
+    "priceOnRequest": "Price on request",
+    "customPack": {
+      "title": "Need a custom pack?",
+      "description": "Each project is unique. Contact us to discuss a tailor-made solution adapted to your specific needs.",
+      "cta": "Contact us"
+    }
+  },
+  "payment": {
+    "pageTitle": "Payment Return",
+    "processing": "Processing payment...",
+    "pleaseWait": "Please wait while we verify your payment",
+    "successTitle": "Payment Successful!",
+    "successMessage": "Your payment has been processed successfully.",
+    "details": "Payment Details",
+    "reference": "Reference",
+    "amount": "Amount",
+    "confirmationEmail": "You will receive a confirmation email shortly with your invoice.",
+    "requestInvoice": "Request Invoice",
+    "failedTitle": "Payment Failed",
+    "failedMessage": "Your payment could not be processed.",
+    "tryAgainMessage": "Please try again or contact our support team for assistance.",
+    "tryAgain": "Try Again",
+    "invalidTitle": "Invalid Payment Return",
+    "invalidMessage": "The payment return data is invalid or missing.",
+    "invalidReturn": "Invalid payment return",
+    "success": "Payment successful!",
+    "cancelled": "Payment cancelled by user",
+    "cancelledToast": "Payment cancelled",
+    "failed": "Payment failed",
+    "failedToast": "Payment failed"
+  },
+  "pricing": {
+    "detecting": "Detecting region...",
+    "region": "Region",
+    "international": "International"
+  },
+  "common": {
+    "backToHome": "Back to Home"
+  },
+  "errors": {
+    "pageNotFound": "Page not found"
   },
   "futureCommerce": {
     "title": "The retail you practice is dead.",

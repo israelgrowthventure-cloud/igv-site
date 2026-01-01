@@ -49,6 +49,20 @@ export const preloadAdminComponents = () => {
   import('./pages/admin/Dashboard');
 };
 
+// 404 Page with i18n
+const NotFoundPage = () => {
+  const { t } = require('react-i18next').useTranslation();
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="text-center">
+        <h1 className="text-4xl font-bold text-gray-900 mb-4">404</h1>
+        <p className="text-gray-600 mb-4">{t('errors.pageNotFound', 'Page non trouvée')}</p>
+        <a href="/" className="text-blue-600 hover:underline">{t('common.backToHome', 'Retour à l\'accueil')}</a>
+      </div>
+    </div>
+  );
+};
+
 // Loading component - Ultra fast skeleton for lazy loaded routes
 const Loading = () => (
   <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -111,7 +125,9 @@ function AppContent() {
           <Route path="/packs" element={<Packs />} />
           <Route path="/future-commerce" element={<FutureCommerce />} />
           <Route path="/terms" element={<Terms />} />
+          <Route path="/payment" element={<Packs />} />
           <Route path="/payment/return" element={<PaymentReturn />} />
+          <Route path="/payment-success" element={<PaymentReturn />} />
           <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
           <Route path="/admin/login" element={
             <Suspense fallback={<Loading />}><AdminLogin /></Suspense>
@@ -122,8 +138,23 @@ function AppContent() {
           <Route path="/admin/crm" element={
             <PrivateRoute><Suspense fallback={<AdminLoading />}><AdminCRMComplete /></Suspense></PrivateRoute>
           } />
+          <Route path="/admin/crm/dashboard" element={
+            <PrivateRoute><Suspense fallback={<AdminLoading />}><AdminCRMComplete /></Suspense></PrivateRoute>
+          } />
+          <Route path="/admin/crm/leads" element={
+            <PrivateRoute><Suspense fallback={<AdminLoading />}><AdminCRMComplete /></Suspense></PrivateRoute>
+          } />
+          <Route path="/admin/crm/opportunities" element={
+            <PrivateRoute><Suspense fallback={<AdminLoading />}><AdminCRMComplete /></Suspense></PrivateRoute>
+          } />
+          <Route path="/admin/crm/contacts" element={
+            <PrivateRoute><Suspense fallback={<AdminLoading />}><AdminCRMComplete /></Suspense></PrivateRoute>
+          } />
+          <Route path="/admin/crm/settings" element={
+            <PrivateRoute><Suspense fallback={<AdminLoading />}><AdminCRMComplete /></Suspense></PrivateRoute>
+          } />
           <Route path="/admin/crm/pipeline" element={
-            <PrivateRoute><Suspense fallback={<AdminLoading />}><Pipeline /></Suspense></PrivateRoute>
+            <PrivateRoute><Suspense fallback={<AdminLoading />}><AdminCRMComplete /></Suspense></PrivateRoute>
           } />
           <Route path="/admin/crm/leads/:id" element={
             <PrivateRoute><Suspense fallback={<AdminLoading />}><LeadDetail /></Suspense></PrivateRoute>
@@ -140,15 +171,7 @@ function AppContent() {
           <Route path="/admin/tasks" element={
             <PrivateRoute><Suspense fallback={<AdminLoading />}><AdminTasks /></Suspense></PrivateRoute>
           } />
-          <Route path="*" element={
-            <div className="min-h-screen flex items-center justify-center bg-gray-50">
-              <div className="text-center">
-                <h1 className="text-4xl font-bold text-gray-900 mb-4">404</h1>
-                <p className="text-gray-600 mb-4">Page non trouvée</p>
-                <a href="/" className="text-blue-600 hover:underline">Retour à l'accueil</a>
-              </div>
-            </div>
-          } />
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </main>
       {!isAdminRoute && <Footer />}

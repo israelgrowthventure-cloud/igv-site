@@ -93,7 +93,49 @@
       ]
     },
     "cta": "Demander une facture",
-    "ctaTalk": "Parler de ce pack"
+    "ctaTalk": "Parler de ce pack",
+    "popular": "POPULAIRE",
+    "priceOnRequest": "Prix sur demande",
+    "customPack": {
+      "title": "Besoin d'un pack personnalisé ?",
+      "description": "Chaque projet est unique. Contactez-nous pour discuter d'une solution sur mesure adaptée à vos besoins spécifiques.",
+      "cta": "Nous contacter"
+    }
+  },
+  "payment": {
+    "pageTitle": "Retour paiement",
+    "processing": "Traitement du paiement...",
+    "pleaseWait": "Veuillez patienter pendant la vérification de votre paiement",
+    "successTitle": "Paiement réussi !",
+    "successMessage": "Votre paiement a été traité avec succès.",
+    "details": "Détails du paiement",
+    "reference": "Référence",
+    "amount": "Montant",
+    "confirmationEmail": "Vous recevrez un email de confirmation avec votre facture sous peu.",
+    "requestInvoice": "Demander une facture",
+    "failedTitle": "Échec du paiement",
+    "failedMessage": "Votre paiement n'a pas pu être traité.",
+    "tryAgainMessage": "Veuillez réessayer ou contacter notre équipe support pour assistance.",
+    "tryAgain": "Réessayer",
+    "invalidTitle": "Retour de paiement invalide",
+    "invalidMessage": "Les données de retour de paiement sont invalides ou manquantes.",
+    "invalidReturn": "Retour de paiement invalide",
+    "success": "Paiement réussi !",
+    "cancelled": "Paiement annulé par l'utilisateur",
+    "cancelledToast": "Paiement annulé",
+    "failed": "Échec du paiement",
+    "failedToast": "Échec du paiement"
+  },
+  "pricing": {
+    "detecting": "Détection de la région...",
+    "region": "Région",
+    "international": "International"
+  },
+  "common": {
+    "backToHome": "Retour à l'accueil"
+  },
+  "errors": {
+    "pageNotFound": "Page non trouvée"
   },
   "futureCommerce": {
     "title": "Le commerce tel que vous le pratiquez est mort.",

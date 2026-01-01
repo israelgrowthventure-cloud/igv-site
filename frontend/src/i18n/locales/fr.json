@@ -226,6 +226,9 @@
       "title": "Parlez-nous de votre marque",
       "email": "Email professionnel",
       "emailPlaceholder": "votre@email.com",
+      "phone": "Téléphone",
+      "phonePlaceholder": "+33 6 XX XX XX XX",
+      "phoneRequired": "Le téléphone est obligatoire",
       "brandName": "Nom de marque",
       "brandNamePlaceholder": "Ex: Ma Boutique",
       "sector": "Secteur d'activité",
@@ -491,7 +494,17 @@
         "stages_description": "Configurez les étapes de votre pipeline de vente",
         "active": "Actif",
         "inactive": "Inactif",
+        "change_password": "Changer le mot de passe",
+        "change_password_desc": "Mettez à jour le mot de passe de votre compte",
+        "current_password": "Mot de passe actuel",
+        "new_password": "Nouveau mot de passe",
+        "confirm_password": "Confirmer le nouveau mot de passe",
+        "save_password": "Mettre à jour le mot de passe",
+        "password_changed": "Mot de passe modifié avec succès",
+        "password_mismatch": "Les mots de passe ne correspondent pas",
+        "password_too_short": "Le mot de passe doit contenir au moins 6 caractères",
         "sections": {
+          "profile": "Mon profil",
           "users": "Utilisateurs",
           "tags": "Tags",
           "stages": "Étapes du pipeline"
@@ -511,6 +524,8 @@
         "view": "Voir",
         "edit": "Modifier",
         "delete": "Supprimer",
+        "actions": "Actions",
+        "export": "Exporter",
         "back": "Retour au CRM",
         "loading": "Chargement...",
         "error": "Une erreur est survenue",
@@ -551,7 +566,8 @@
         "tag_add_failed": "Échec de l'ajout du tag",
         "create_failed": "Échec de la création",
         "update_failed": "Échec de la mise à jour",
-        "delete_failed": "Échec de la suppression"
+        "delete_failed": "Échec de la suppression",
+        "password_change_failed": "Échec du changement de mot de passe"
       },
       "opportunities": {
         "title": "Opportunités",

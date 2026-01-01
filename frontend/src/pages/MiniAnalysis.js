@@ -12,6 +12,7 @@ const MiniAnalysis = () => {
   
   const [formData, setFormData] = useState({
     email: '',
+    phone: '',
     nom_de_marque: '',
     secteur: '',
     statut_alimentaire: '',
@@ -305,6 +306,23 @@ const MiniAnalysis = () => {
                     onChange={handleChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder={t('miniAnalysis.form.emailPlaceholder')}
+                  />
+                </div>
+
+                {/* Phone - REQUIRED */}
+                <div>
+                  <label htmlFor="phone" className="block text-sm font-semibold text-gray-700 mb-2">
+                    {t('miniAnalysis.form.phone') || t('contact.form.phone')} *
+                  </label>
+                  <input
+                    type="tel"
+                    id="phone"
+                    name="phone"
+                    required
+                    value={formData.phone}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder={t('miniAnalysis.form.phonePlaceholder') || '+33 6 XX XX XX XX'}
                   />
                 </div>
 

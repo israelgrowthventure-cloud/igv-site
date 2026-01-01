@@ -71,9 +71,12 @@ export const api = {
   },
 
   // Mini-analysis (uses absolute URL for Render backend)
+  // IMPORTANT: Gemini API needs up to 60s for analysis generation
   sendMiniAnalysis: async (data) => {
     const backendUrl = process.env.REACT_APP_BACKEND_URL || 'https://igv-cms-backend.onrender.com';
-    const response = await axios.post(`${backendUrl}/api/mini-analysis`, data);
+    const response = await axios.post(`${backendUrl}/api/mini-analysis`, data, {
+      timeout: 60000 // 60 second timeout for Gemini AI analysis
+    });
     return response.data;
   },
 

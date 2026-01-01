@@ -222,6 +222,9 @@
       "title": "ספר לנו על המותג שלך",
       "email": "אימייל עסקי",
       "emailPlaceholder": "your@email.com",
+      "phone": "טלפון",
+      "phonePlaceholder": "+972 XX XXX XXXX",
+      "phoneRequired": "טלפון הוא שדה חובה",
       "brandName": "שם המותג",
       "brandNamePlaceholder": "לדוגמה: החנות שלי",
       "sector": "סקטור עסקי",
@@ -476,7 +479,17 @@
         "stages_description": "הגדר את שלבי פייפליין המכירות",
         "active": "פעיל",
         "inactive": "לא פעיל",
+        "change_password": "שינוי סיסמה",
+        "change_password_desc": "עדכן את סיסמת החשבון שלך",
+        "current_password": "סיסמה נוכחית",
+        "new_password": "סיסמה חדשה",
+        "confirm_password": "אשר סיסמה חדשה",
+        "save_password": "עדכן סיסמה",
+        "password_changed": "הסיסמה שונתה בהצלחה",
+        "password_mismatch": "הסיסמאות לא תואמות",
+        "password_too_short": "הסיסמה חייבת להכיל לפחות 6 תווים",
         "sections": {
+          "profile": "הפרופיל שלי",
           "users": "משתמשים",
           "tags": "תגיות",
           "stages": "שלבי פייפליין"
@@ -496,6 +509,8 @@
         "view": "צפה",
         "edit": "ערוך",
         "delete": "מחק",
+        "actions": "פעולות",
+        "export": "ייצוא",
         "back": "חזרה ל-CRM",
         "loading": "טוען...",
         "error": "אירעה שגיאה",
@@ -536,7 +551,8 @@
         "tag_add_failed": "הוספת תגית נכשלה",
         "create_failed": "יצירה נכשלה",
         "update_failed": "עדכון נכשל",
-        "delete_failed": "מחיקה נכשלה"
+        "delete_failed": "מחיקה נכשלה",
+        "password_change_failed": "שינוי סיסמה נכשל"
       },
       "opportunities": {
         "title": "הזדמנויות",

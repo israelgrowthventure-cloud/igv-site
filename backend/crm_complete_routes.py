@@ -14,6 +14,7 @@ import logging
 import jwt
 import hashlib
 import re
+import bcrypt
 from bson import ObjectId
 
 router = APIRouter(prefix="/api/crm")
@@ -184,6 +185,11 @@ class UserUpdate(BaseModel):
     name: Optional[str] = None
     role: Optional[str] = None
     is_active: Optional[bool] = None
+
+
+class PasswordChange(BaseModel):
+    current_password: str
+    new_password: str
 
 
 class TaskCreate(BaseModel):
@@ -1101,6 +1107,52 @@ async def update_crm_user(user_id: str, update_data: UserUpdate, user: Dict = De
     })
     
     return {"message": "User updated successfully"}
+
+
+@router.post("/settings/users/change-password")
+async def change_password(password_data: PasswordChange, user: Dict = Depends(get_current_user)):
+    """Change current user's password"""
+    current_db = get_db()
+    if current_db is None:
+        raise HTTPException(status_code=500, detail="Database not configured")
+    
+    # Get current user from database
+    try:
+        current_user = await current_db.crm_users.find_one({"_id": ObjectId(user["id"])})
+    except:
+        raise HTTPException(status_code=400, detail="Invalid user ID")
+    
+    if not current_user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Verify current password
+    if not bcrypt.checkpw(password_data.current_password.encode('utf-8'), current_user["password_hash"].encode('utf-8')):
+        raise HTTPException(status_code=400, detail="Current password is incorrect")
+    
+    # Validate new password
+    if len(password_data.new_password) < 6:
+        raise HTTPException(status_code=400, detail="New password must be at least 6 characters")
+    
+    # Hash new password
+    new_hash = bcrypt.hashpw(password_data.new_password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+    
+    # Update password
+    await current_db.crm_users.update_one(
+        {"_id": ObjectId(user["id"])},
+        {"$set": {"password_hash": new_hash, "updated_at": datetime.now(timezone.utc)}}
+    )
+    
+    # Audit log
+    await current_db.audit_logs.insert_one({
+        "user_id": user["id"],
+        "user_email": user["email"],
+        "action": "password_change",
+        "entity_type": "crm_user",
+        "entity_id": user["id"],
+        "created_at": datetime.now(timezone.utc)
+    })
+    
+    return {"message": "Password changed successfully"}
 
 
 @router.get("/settings/tags")

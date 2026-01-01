@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
-import { Users, Tag, List, Plus, Trash2, Save, X, Loader2 } from 'lucide-react';
+import { Users, Tag, List, Plus, Trash2, Save, X, Loader2, Lock } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '../../utils/api';
 
 const SettingsTab = ({ data, onRefresh, t }) => {
-  const [activeSection, setActiveSection] = useState('users');
+  const [activeSection, setActiveSection] = useState('profile');
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({});
   const [loadingAction, setLoadingAction] = useState(false);
+  const [passwordForm, setPasswordForm] = useState({ current: '', new: '', confirm: '' });
+  const [showPasswordForm, setShowPasswordForm] = useState(false);
 
   const handleCreateUser = async (e) => {
     e.preventDefault();
@@ -39,6 +41,32 @@ const SettingsTab = ({ data, onRefresh, t }) => {
     }
   };
 
+  const handleChangePassword = async (e) => {
+    e.preventDefault();
+    if (passwordForm.new !== passwordForm.confirm) {
+      toast.error(t('admin.crm.settings.password_mismatch') || 'Passwords do not match');
+      return;
+    }
+    if (passwordForm.new.length < 6) {
+      toast.error(t('admin.crm.settings.password_too_short') || 'Password must be at least 6 characters');
+      return;
+    }
+    try {
+      setLoadingAction(true);
+      await api.post('/api/crm/settings/users/change-password', {
+        current_password: passwordForm.current,
+        new_password: passwordForm.new
+      });
+      toast.success(t('admin.crm.settings.password_changed') || 'Password changed successfully');
+      setShowPasswordForm(false);
+      setPasswordForm({ current: '', new: '', confirm: '' });
+    } catch (error) {
+      toast.error(error.response?.data?.detail || t('admin.crm.errors.password_change_failed') || 'Failed to change password');
+    } finally {
+      setLoadingAction(false);
+    }
+  };
+
   const handleAddTag = async (e) => {
     e.preventDefault();
     try {
@@ -60,6 +88,7 @@ const SettingsTab = ({ data, onRefresh, t }) => {
       <div className="bg-white border-b">
         <nav className="flex gap-6">
           {[
+            { id: 'profile', icon: Lock, label: t('admin.crm.settings.sections.profile') || 'My Profile' },
             { id: 'users', icon: Users, label: t('admin.crm.settings.sections.users') || 'Users' },
             { id: 'tags', icon: Tag, label: t('admin.crm.settings.sections.tags') || 'Tags' },
             { id: 'stages', icon: List, label: t('admin.crm.settings.sections.stages') || 'Pipeline Stages' }
@@ -75,6 +104,59 @@ const SettingsTab = ({ data, onRefresh, t }) => {
           ))}
         </nav>
       </div>
+
+      {activeSection === 'profile' && (
+        <div className="bg-white rounded-lg shadow border">
+          <div className="px-6 py-4 border-b">
+            <h3 className="font-semibold">{t('admin.crm.settings.change_password') || 'Change Password'}</h3>
+            <p className="text-sm text-gray-600 mt-1">{t('admin.crm.settings.change_password_desc') || 'Update your account password'}</p>
+          </div>
+          <div className="p-6">
+            <form onSubmit={handleChangePassword} className="max-w-md space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('admin.crm.settings.current_password') || 'Current Password'}</label>
+                <input 
+                  type="password" 
+                  value={passwordForm.current} 
+                  onChange={(e) => setPasswordForm({ ...passwordForm, current: e.target.value })} 
+                  required 
+                  className="w-full px-3 py-2 border rounded-lg" 
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('admin.crm.settings.new_password') || 'New Password'}</label>
+                <input 
+                  type="password" 
+                  value={passwordForm.new} 
+                  onChange={(e) => setPasswordForm({ ...passwordForm, new: e.target.value })} 
+                  required 
+                  minLength={6} 
+                  className="w-full px-3 py-2 border rounded-lg" 
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('admin.crm.settings.confirm_password') || 'Confirm New Password'}</label>
+                <input 
+                  type="password" 
+                  value={passwordForm.confirm} 
+                  onChange={(e) => setPasswordForm({ ...passwordForm, confirm: e.target.value })} 
+                  required 
+                  minLength={6} 
+                  className="w-full px-3 py-2 border rounded-lg" 
+                />
+              </div>
+              <button 
+                type="submit" 
+                disabled={loadingAction} 
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+              >
+                {loadingAction ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                {t('admin.crm.settings.save_password') || 'Update Password'}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
 
       {activeSection === 'users' && (
         <div className="bg-white rounded-lg shadow border">

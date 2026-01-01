@@ -222,6 +222,9 @@
       "title": "Tell us about your brand",
       "email": "Professional email",
       "emailPlaceholder": "your@email.com",
+      "phone": "Phone number",
+      "phonePlaceholder": "+1 XXX XXX XXXX",
+      "phoneRequired": "Phone number is required",
       "brandName": "Brand name",
       "brandNamePlaceholder": "Ex: My Store",
       "sector": "Business sector",
@@ -487,7 +490,17 @@
         "stages_description": "Configure your sales pipeline stages",
         "active": "Active",
         "inactive": "Inactive",
+        "change_password": "Change Password",
+        "change_password_desc": "Update your account password",
+        "current_password": "Current Password",
+        "new_password": "New Password",
+        "confirm_password": "Confirm New Password",
+        "save_password": "Update Password",
+        "password_changed": "Password changed successfully",
+        "password_mismatch": "Passwords do not match",
+        "password_too_short": "Password must be at least 6 characters",
         "sections": {
+          "profile": "My Profile",
           "users": "Users",
           "tags": "Tags",
           "stages": "Pipeline Stages"
@@ -507,6 +520,8 @@
         "view": "View",
         "edit": "Edit",
         "delete": "Delete",
+        "actions": "Actions",
+        "export": "Export",
         "back": "Back to CRM",
         "loading": "Loading...",
         "error": "An error occurred",
@@ -547,7 +562,8 @@
         "tag_add_failed": "Failed to add tag",
         "create_failed": "Failed to create",
         "update_failed": "Failed to update",
-        "delete_failed": "Failed to delete"
+        "delete_failed": "Failed to delete",
+        "password_change_failed": "Failed to change password"
       },
       "opportunities": {
         "title": "Opportunities",

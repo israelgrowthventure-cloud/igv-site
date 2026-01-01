@@ -36,7 +36,8 @@ const OpportunitiesTab = ({ data, onRefresh, searchTerm, setSearchTerm, t }) => 
     try {
       setLoading(true);
       const response = await api.get('/api/crm/opportunities');
-      setOpportunities(response.data?.opportunities || response.data || []);
+      // api.get already returns response.data, so response is the data object
+      setOpportunities(response.opportunities || response.data?.opportunities || []);
     } catch (error) {
       console.error('Failed to load opportunities:', error);
       setOpportunities([]);

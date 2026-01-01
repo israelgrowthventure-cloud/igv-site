@@ -347,6 +347,7 @@ https://israelgrowthventure.com/packs
 class MiniAnalysisRequest(BaseModel):
     # CORE FIELDS - FIXED 2025-12-29-17-25 (build 647212f)
     email: EmailStr
+    phone: str = ""  # REQUIRED FIELD - Added 2025-01-01
     nom_de_marque: str = ""  # Will be filled from aliases if empty
     secteur: str = ""  # Optional field
     
@@ -728,6 +729,7 @@ async def generate_mini_analysis(request: MiniAnalysisRequest, response: Respons
         
         lead_data = {
             "email": request.email,
+            "phone": request.phone,  # Added phone field
             "brand_name": request.nom_de_marque,
             "sector": request.secteur,
             "language": language,
@@ -970,6 +972,7 @@ async def generate_mini_analysis(request: MiniAnalysisRequest, response: Respons
             "brand_slug": brand_slug,
             "brand_name": request.nom_de_marque,
             "email": request.email,
+            "phone": request.phone,  # Added phone field
             "language": language,
             "payload_form": request.dict(),
             "created_at": datetime.now(timezone.utc),

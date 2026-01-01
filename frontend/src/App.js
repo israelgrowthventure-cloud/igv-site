@@ -34,6 +34,7 @@ import AdminDashboard from './pages/admin/Dashboard';
 import AdminCRMComplete from './pages/admin/AdminCRMComplete';
 import LeadDetail from './pages/admin/LeadDetail';
 import ContactDetail from './pages/admin/ContactDetail';
+import Pipeline from './pages/admin/Pipeline';
 import AdminInvoices from './pages/AdminInvoices';
 import AdminPayments from './pages/AdminPayments';
 import AdminTasks from './pages/AdminTasks';
@@ -75,6 +76,7 @@ function AppContent() {
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin/dashboard" element={<PrivateRoute><AdminDashboard /></PrivateRoute>} />
           <Route path="/admin/crm" element={<PrivateRoute><AdminCRMComplete /></PrivateRoute>} />
+          <Route path="/admin/crm/pipeline" element={<PrivateRoute><Pipeline /></PrivateRoute>} />
           <Route path="/admin/crm/leads/:id" element={<PrivateRoute><LeadDetail /></PrivateRoute>} />
           <Route path="/admin/crm/contacts/:id" element={<PrivateRoute><ContactDetail /></PrivateRoute>} />
           <Route path="/admin/invoices" element={<PrivateRoute><AdminInvoices /></PrivateRoute>} />

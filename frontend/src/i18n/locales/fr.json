@@ -496,6 +496,11 @@
         "all_priorities": "Toutes les priorités",
         "reset": "Réinitialiser",
         "view": "Voir",
+        "edit": "Modifier",
+        "delete": "Supprimer",
+        "back": "Retour au CRM",
+        "loading": "Chargement...",
+        "error": "Une erreur est survenue",
         "no_data": "Aucune donnée",
         "no_notes": "Aucune note",
         "no_history": "Aucun historique",
@@ -505,7 +510,8 @@
         "no_stages": "Aucune étape configurée",
         "add": "Ajouter",
         "save": "Enregistrer",
-        "cancel": "Annuler"
+        "cancel": "Annuler",
+        "confirm_delete": "Êtes-vous sûr de vouloir supprimer ?"
       },
       "statuses": {
         "NEW": "Nouveau",

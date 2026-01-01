@@ -57,9 +57,33 @@ services:
     healthCheckPath: /health
     autoDeploy: true
 
-  # Frontend (React 19 + TailwindCSS + shadcn/ui) - STATIC SITE (no cold start!)
+  # Frontend ANCIEN (Web Service) - NE PAS SUPPRIMER avant validation du Static Site
   - type: web
     name: igv-frontend
+    runtime: node
+    plan: free
+    buildCommand: npm ci && npm run build
+    startCommand: node server.js
+    rootDir: frontend
+    envVars:
+      - key: NODE_VERSION
+        value: 20.18.3
+      - key: NODE_ENV
+        value: production
+      - key: REACT_APP_API_URL
+        value: https://igv-cms-backend.onrender.com
+      - key: GENERATE_SOURCEMAP
+        value: false
+      - key: CI
+        value: false
+    customDomains:
+      - israelgrowthventure.com
+      - www.israelgrowthventure.com
+    autoDeploy: true
+
+  # Frontend NOUVEAU (Static Site) - ZERO COLD START
+  - type: web
+    name: igv-frontend-static
     runtime: static
     buildCommand: npm ci && npm run build
     staticPublishPath: build
@@ -85,7 +109,4 @@ services:
       - path: /static/*
         name: Cache-Control
         value: public, max-age=31536000
-    customDomains:
-      - israelgrowthventure.com
-      - www.israelgrowthventure.com
     autoDeploy: true

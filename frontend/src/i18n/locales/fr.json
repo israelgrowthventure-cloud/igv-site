@@ -802,6 +802,206 @@
         "p1": "Pour toute question sur notre utilisation des cookies, contactez-nous à :"
       }
     }
+  },
+  "admin": {
+    "crm": {
+      "title": "Gestion CRM",
+      "leads": {
+        "title": "Prospects",
+        "created": "Prospect créé avec succès",
+        "updated": "Prospect mis à jour avec succès",
+        "deleted": "Prospect supprimé avec succès",
+        "converted": "Prospect converti en contact",
+        "note_added": "Note ajoutée avec succès",
+        "status_updated": "Statut mis à jour avec succès",
+        "export_success": "Prospects exportés avec succès",
+        "new_lead": "Nouveau Prospect",
+        "search": "Rechercher des prospects...",
+        "export": "Exporter CSV",
+        "not_found": "Prospect introuvable",
+        "no_brand": "Aucune marque",
+        "filter_sector": "Filtrer par secteur",
+        "details": {
+          "status_priority": "Statut et Priorité"
+        },
+        "columns": {
+          "name": "Nom du Contact",
+          "company": "Entreprise",
+          "email": "Email",
+          "phone": "Téléphone",
+          "status": "Statut",
+          "priority": "Priorité",
+          "sector": "Secteur",
+          "created": "Créé",
+          "source": "Source"
+        }
+      },
+      "contacts": {
+        "title": "Contacts",
+        "created": "Contact créé avec succès",
+        "updated": "Contact mis à jour avec succès", 
+        "deleted": "Contact supprimé avec succès",
+        "note_added": "Note ajoutée avec succès",
+        "export_success": "Contacts exportés avec succès",
+        "new_contact": "Nouveau Contact",
+        "search": "Rechercher des contacts...",
+        "export": "Exporter CSV",
+        "not_found": "Contact introuvable",
+        "columns": {
+          "name": "Nom",
+          "company": "Entreprise",
+          "email": "Email", 
+          "phone": "Téléphone",
+          "status": "Statut",
+          "sector": "Secteur",
+          "created": "Créé",
+          "last_contact": "Dernier Contact"
+        }
+      },
+      "opportunities": {
+        "title": "Opportunités",
+        "created": "Opportunité créée avec succès",
+        "updated": "Opportunité mise à jour avec succès",
+        "deleted": "Opportunité supprimée avec succès", 
+        "closed": "Opportunité fermée",
+        "moved": "Opportunité déplacée avec succès",
+        "new_opportunity": "Nouvelle Opportunité",
+        "search": "Rechercher des opportunités...",
+        "export": "Exporter CSV",
+        "not_found": "Opportunité introuvable",
+        "no_opportunities": "Aucune opportunité trouvée",
+        "create_opportunity": "Créer une Opportunité",
+        "columns": {
+          "title": "Titre",
+          "contact": "Contact",
+          "value": "Valeur", 
+          "stage": "Étape",
+          "probability": "Probabilité",
+          "expected_close": "Fermeture Prévue",
+          "created": "Créé"
+        },
+        "form": {
+          "title": "Titre de l'Opportunité",
+          "description": "Description",
+          "value": "Valeur Estimée",
+          "stage": "Étape",
+          "probability": "Probabilité (%)",
+          "expected_close_date": "Date de Fermeture Prévue",
+          "contact_id": "Contact Associé"
+        }
+      },
+      "pipeline": {
+        "title": "Pipeline de Vente",
+        "total_value": "Valeur Totale du Pipeline",
+        "weighted_value": "Valeur Pondérée",
+        "move_to": "Déplacer vers",
+        "stages": {
+          "prospecting": "Prospection",
+          "qualification": "Qualification", 
+          "proposal": "Proposition",
+          "negotiation": "Négociation",
+          "closed_won": "Fermé Gagné",
+          "closed_lost": "Fermé Perdu"
+        }
+      },
+      "dashboard": {
+        "title": "Tableau de Bord",
+        "welcome": "Bienvenue sur le Tableau de Bord CRM",
+        "stats": {
+          "total_leads": "Total Prospects",
+          "total_contacts": "Total Contacts", 
+          "total_opportunities": "Total Opportunités",
+          "pipeline_value": "Valeur Pipeline",
+          "conversion_rate": "Taux de Conversion",
+          "active_deals": "Affaires Actives",
+          "this_month": "Ce Mois",
+          "vs_last_month": "vs. mois dernier"
+        },
+        "recent": {
+          "leads": "Prospects Récents",
+          "contacts": "Contacts Récents",
+          "opportunities": "Opportunités Récentes",
+          "activities": "Activités Récentes"
+        }
+      },
+      "settings": {
+        "title": "Paramètres CRM",
+        "user_created": "Utilisateur créé avec succès",
+        "user_deleted": "Utilisateur supprimé avec succès",
+        "password_changed": "Mot de passe changé avec succès",
+        "tag_added": "Tag ajouté avec succès",
+        "confirm_delete_user": "Êtes-vous sûr de vouloir supprimer cet utilisateur ?",
+        "password_mismatch": "Les mots de passe ne correspondent pas",
+        "password_too_short": "Le mot de passe doit contenir au moins 6 caractères",
+        "change_password": "Changer le Mot de Passe",
+        "change_password_desc": "Modifier le mot de passe de votre compte",
+        "current_password": "Mot de Passe Actuel",
+        "new_password": "Nouveau Mot de Passe",
+        "confirm_password": "Confirmer le Nouveau Mot de Passe",
+        "save_password": "Mettre à Jour le Mot de Passe",
+        "sections": {
+          "profile": "Mon Profil",
+          "users": "Gestion des Utilisateurs", 
+          "tags": "Gestion des Tags",
+          "stages": "Étapes du Pipeline"
+        }
+      },
+      "common": {
+        "filters": "Filtres",
+        "all_statuses": "Tous les Statuts",
+        "all_priorities": "Toutes les Priorités", 
+        "reset": "Réinitialiser",
+        "edit": "Modifier",
+        "delete": "Supprimer",
+        "save": "Enregistrer",
+        "cancel": "Annuler",
+        "back": "Retour au CRM",
+        "actions": "Actions",
+        "export": "Exporter",
+        "search": "Rechercher...",
+        "loading": "Chargement...",
+        "no_data": "Aucune donnée disponible",
+        "confirm": "Confirmer",
+        "close": "Fermer",
+        "add": "Ajouter",
+        "create": "Créer",
+        "update": "Mettre à jour",
+        "view": "Voir les Détails"
+      },
+      "errors": {
+        "load_failed": "Échec du chargement des données",
+        "create_failed": "Échec de la création",
+        "update_failed": "Échec de la mise à jour",
+        "delete_failed": "Échec de la suppression", 
+        "export_failed": "Échec de l'exportation des données",
+        "note_failed": "Échec de l'ajout de la note",
+        "status_failed": "Échec de la mise à jour du statut",
+        "convert_failed": "Échec de la conversion du prospect",
+        "user_create_failed": "Échec de la création de l'utilisateur",
+        "user_delete_failed": "Échec de la suppression de l'utilisateur",
+        "password_change_failed": "Échec du changement de mot de passe",
+        "tag_add_failed": "Échec de l'ajout du tag",
+        "network_error": "Erreur réseau",
+        "unauthorized": "Accès non autorisé",
+        "validation_error": "Erreur de validation"
+      },
+      "statuses": {
+        "new": "Nouveau",
+        "contacted": "Contacté",
+        "qualified": "Qualifié",
+        "proposal": "Proposition",
+        "negotiation": "Négociation", 
+        "closed": "Fermé",
+        "lost": "Perdu",
+        "active": "Actif",
+        "inactive": "Inactif"
+      },
+      "priorities": {
+        "low": "Faible",
+        "medium": "Moyen",
+        "high": "Élevé",
+        "urgent": "Urgent"
+      }
+    }
   }
 }
-

@@ -787,5 +787,206 @@
         "p1": "לכל שאלה לגבי השימוש שלנו בעוגיות, צור איתנו קשר:"
       }
     }
+  },
+  "admin": {
+    "crm": {
+      "title": "ניהול CRM",
+      "leads": {
+        "title": "לידים",
+        "created": "ליד נוצר בהצלחה",
+        "updated": "ליד עודכן בהצלחה",
+        "deleted": "ליד נמחק בהצלחה",
+        "converted": "ליד הומר לאיש קשר",
+        "note_added": "הערה נוספה בהצלחה",
+        "status_updated": "סטטוס עודכן בהצלחה",
+        "export_success": "לידים יוצאו בהצלחה",
+        "new_lead": "ליד חדש",
+        "search": "חיפוש לידים...",
+        "export": "ייצוא CSV",
+        "not_found": "ליד לא נמצא",
+        "no_brand": "אין שם מותג",
+        "filter_sector": "סינון לפי תחום",
+        "details": {
+          "status_priority": "סטטוס ועדיפות"
+        },
+        "columns": {
+          "name": "שם איש קשר",
+          "company": "חברה",
+          "email": "אימייל",
+          "phone": "טלפון",
+          "status": "סטטוס",
+          "priority": "עדיפות",
+          "sector": "תחום",
+          "created": "נוצר",
+          "source": "מקור"
+        }
+      },
+      "contacts": {
+        "title": "אנשי קשר",
+        "created": "איש קשר נוצר בהצלחה",
+        "updated": "איש קשר עודכן בהצלחה", 
+        "deleted": "איש קשר נמחק בהצלחה",
+        "note_added": "הערה נוספה בהצלחה",
+        "export_success": "אנשי קשר יוצאו בהצלחה",
+        "new_contact": "איש קשר חדש",
+        "search": "חיפוש אנשי קשר...",
+        "export": "ייצוא CSV",
+        "not_found": "איש קשר לא נמצא",
+        "columns": {
+          "name": "שם",
+          "company": "חברה",
+          "email": "אימייל", 
+          "phone": "טלפון",
+          "status": "סטטוס",
+          "sector": "תחום",
+          "created": "נוצר",
+          "last_contact": "קשר אחרון"
+        }
+      },
+      "opportunities": {
+        "title": "הזדמנויות",
+        "created": "הזדמנות נוצרה בהצלחה",
+        "updated": "הזדמנות עודכנה בהצלחה",
+        "deleted": "הזדמנות נמחקה בהצלחה", 
+        "closed": "הזדמנות נסגרה",
+        "moved": "הזדמנות הועברה בהצלחה",
+        "new_opportunity": "הזדמנות חדשה",
+        "search": "חיפוש הזדמנויות...",
+        "export": "ייצוא CSV",
+        "not_found": "הזדמנות לא נמצאה",
+        "no_opportunities": "לא נמצאו הזדמנויות",
+        "create_opportunity": "יצירת הזדמנות",
+        "columns": {
+          "title": "כותרת",
+          "contact": "איש קשר",
+          "value": "ערך", 
+          "stage": "שלב",
+          "probability": "הסתברות",
+          "expected_close": "סגירה צפויה",
+          "created": "נוצר"
+        },
+        "form": {
+          "title": "כותרת ההזדמנות",
+          "description": "תיאור",
+          "value": "ערך מוערך",
+          "stage": "שלב",
+          "probability": "הסתברות (%)",
+          "expected_close_date": "תאריך סגירה צפוי",
+          "contact_id": "איש קשר קשור"
+        }
+      },
+      "pipeline": {
+        "title": "צינור מכירות",
+        "total_value": "ערך כולל של הצינור",
+        "weighted_value": "ערך משוקלל",
+        "move_to": "העבר אל",
+        "stages": {
+          "prospecting": "חיפוש פרוספקטים",
+          "qualification": "הכשרה", 
+          "proposal": "הצעה",
+          "negotiation": "משא ומתן",
+          "closed_won": "נסגר בהצלחה",
+          "closed_lost": "נסגר בכישלון"
+        }
+      },
+      "dashboard": {
+        "title": "לוח בקרה",
+        "welcome": "ברוכים הבאים ללוח הבקרה של CRM",
+        "stats": {
+          "total_leads": "סך כל הלידים",
+          "total_contacts": "סך כל אנשי הקשר", 
+          "total_opportunities": "סך כל ההזדמנויות",
+          "pipeline_value": "ערך הצינור",
+          "conversion_rate": "שיעור המרה",
+          "active_deals": "עסקאות פעילות",
+          "this_month": "החודש",
+          "vs_last_month": "לעומת החודש הקודם"
+        },
+        "recent": {
+          "leads": "לידים אחרונים",
+          "contacts": "אנשי קשר אחרונים",
+          "opportunities": "הזדמנויות אחרונות",
+          "activities": "פעילויות אחרונות"
+        }
+      },
+      "settings": {
+        "title": "הגדרות CRM",
+        "user_created": "משתמש נוצר בהצלחה",
+        "user_deleted": "משתמש נמחק בהצלחה",
+        "password_changed": "סיסמה שונתה בהצלחה",
+        "tag_added": "תג נוסף בהצלחה",
+        "confirm_delete_user": "האם אתה בטוח שברצונך למחוק משתמש זה?",
+        "password_mismatch": "הסיסמאות אינן תואמות",
+        "password_too_short": "הסיסמה חייבת להכיל לפחות 6 תווים",
+        "change_password": "שינוי סיסמה",
+        "change_password_desc": "עדכון סיסמת החשבון שלך",
+        "current_password": "סיסמה נוכחית",
+        "new_password": "סיסמה חדשה",
+        "confirm_password": "אישור סיסמה חדשה",
+        "save_password": "עדכון סיסמה",
+        "sections": {
+          "profile": "הפרופיל שלי",
+          "users": "ניהול משתמשים", 
+          "tags": "ניהול תגים",
+          "stages": "שלבי הצינור"
+        }
+      },
+      "common": {
+        "filters": "מסננים",
+        "all_statuses": "כל הסטטוסים",
+        "all_priorities": "כל העדיפויות", 
+        "reset": "איפוס",
+        "edit": "עריכה",
+        "delete": "מחיקה",
+        "save": "שמירה",
+        "cancel": "ביטול",
+        "back": "חזרה ל-CRM",
+        "actions": "פעולות",
+        "export": "ייצוא",
+        "search": "חיפוש...",
+        "loading": "טוען...",
+        "no_data": "אין נתונים זמינים",
+        "confirm": "אישור",
+        "close": "סגירה",
+        "add": "הוספה",
+        "create": "יצירה",
+        "update": "עדכון",
+        "view": "צפייה בפרטים"
+      },
+      "errors": {
+        "load_failed": "נכשל בטעינת הנתונים",
+        "create_failed": "נכשלה יצירה",
+        "update_failed": "נכשל עדכון",
+        "delete_failed": "נכשלה מחיקה", 
+        "export_failed": "נכשל ייצוא הנתונים",
+        "note_failed": "נכשלה הוספת הערה",
+        "status_failed": "נכשל עדכון הסטטוס",
+        "convert_failed": "נכשלה המרת הליד",
+        "user_create_failed": "נכשלה יצירת המשתמש",
+        "user_delete_failed": "נכשלה מחיקת המשתמש",
+        "password_change_failed": "נכשל שינוי הסיסמה",
+        "tag_add_failed": "נכשלה הוספת התג",
+        "network_error": "שגיאת רשת",
+        "unauthorized": "גישה לא מורשית",
+        "validation_error": "שגיאת ולידציה"
+      },
+      "statuses": {
+        "new": "חדש",
+        "contacted": "יצר קשר",
+        "qualified": "מוכשר",
+        "proposal": "הצעה",
+        "negotiation": "משא ומתן", 
+        "closed": "נסגר",
+        "lost": "אבוד",
+        "active": "פעיל",
+        "inactive": "לא פעיל"
+      },
+      "priorities": {
+        "low": "נמוך",
+        "medium": "בינוני",
+        "high": "גבוה",
+        "urgent": "דחוף"
+      }
+    }
   }
 }

@@ -59,6 +59,36 @@ const ContactsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTer
     }
   };
 
+  const handleCreateOpportunity = async (contactId) => {
+    try {
+      setLoadingAction(true);
+      const contact = selectedItem;
+      const response = await api.post('/api/crm/opportunities', {
+        contact_id: contactId,
+        name: `Opportunité - ${contact.name || contact.email}`,
+        stage: 'qualification',
+        value: 0,
+        probability: 25,
+        expected_close_date: new Date(Date.now() + 30*24*60*60*1000).toISOString()
+      });
+      
+      toast.success(t('admin.crm.opportunities.created') || 'Opportunité créée avec succès !', {
+        duration: 5000,
+        action: {
+          label: t('admin.crm.common.view') || "Voir",
+          onClick: () => {
+            window.location.hash = '#opportunities';
+          }
+        }
+      });
+      await onRefresh();
+    } catch (error) {
+      toast.error(t('admin.crm.errors.create_failed') || 'Échec de la création');
+    } finally {
+      setLoadingAction(false);
+    }
+  };
+
   const openEditModal = (contact) => {
     setEditingContact(contact);
     setFormData({
@@ -256,6 +286,14 @@ const ContactsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTer
               <p className="text-gray-600">{selectedItem.company_name || selectedItem.position}</p>
             </div>
             <div className="flex gap-2">
+              <button 
+                onClick={() => handleCreateOpportunity(selectedItem._id || selectedItem.contact_id)} 
+                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-2"
+                disabled={loadingAction}
+              >
+                <Plus className="w-5 h-5" />
+                {t('admin.crm.contacts.new_opportunity') || 'Nouvelle Opportunité'}
+              </button>
               <button onClick={() => openEditModal(selectedItem)} className="p-2 hover:bg-blue-50 rounded-lg text-blue-600">
                 <Edit className="w-5 h-5" />
               </button>

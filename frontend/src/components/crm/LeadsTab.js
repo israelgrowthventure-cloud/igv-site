@@ -93,14 +93,65 @@ const LeadsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTerm, 
     }
   };
 
+  const handleCreateOpportunity = async (leadId) => {
+    try {
+      setLoadingAction(true);
+      const response = await api.post('/api/crm/opportunities', {
+        lead_id: leadId,
+        name: `Opportunité - ${selectedItem.brand_name || selectedItem.contact_name}`,
+        stage: 'qualification',
+        estimated_value: 0,
+        probability: 25,
+        description: `Opportunité créée depuis le lead ${leadId}`,
+        expected_close_date: new Date(Date.now() + 30*24*60*60*1000).toISOString().split('T')[0] // +30 jours
+      });
+      
+      toast.success('Opportunité créée avec succès !', {
+        duration: 5000,
+        action: {
+          label: "Voir l'opportunité",
+          onClick: () => {
+            // Switch vers l'onglet opportunities
+            window.location.hash = '#opportunities';
+            setTimeout(() => setSelectedItem({ type: 'opportunity', id: response.opportunity_id }), 100);
+          }
+        }
+      });
+      
+      await onRefresh();
+    } catch (error) {
+      console.error('Create opportunity error:', error);
+      toast.error('Erreur lors de la création de l\'opportunité');
+    } finally {
+      setLoadingAction(false);
+    }
+  };
+
   const handleConvertToContact = async (leadId) => {
     try {
       setLoadingAction(true);
-      await api.post(`/api/crm/leads/${leadId}/convert`);
+      const response = await api.post(`/api/crm/leads/${leadId}/convert-to-contact`);
       toast.success(t('admin.crm.leads.converted') || 'Lead converted to contact');
+      
+      // Afficher le contact créé avec un lien direct
+      if (response.contact_id) {
+        toast.success(`Contact créé avec ID: ${response.contact_id}`, {
+          duration: 5000,
+          action: {
+            label: "Voir le contact",
+            onClick: () => {
+              // Switch vers l'onglet contacts et chercher ce contact
+              window.location.hash = '#contacts';
+              setTimeout(() => setSelectedItem({ type: 'contact', id: response.contact_id }), 100);
+            }
+          }
+        });
+      }
+      
       await onRefresh();
       setSelectedItem(null);
     } catch (error) {
+      console.error('Convert error:', error);
       toast.error(t('admin.crm.errors.convert_failed') || 'Failed to convert lead');
     } finally {
       setLoadingAction(false);
@@ -263,15 +314,40 @@ const LeadsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTerm, 
             </thead>
             <tbody>
               {data.leads?.length > 0 ? data.leads.map(lead => (
-                <tr key={lead.lead_id} className="border-b hover:bg-gray-50 cursor-pointer" onClick={() => navigate(`/admin/crm/leads/${lead.lead_id}`)}>
-                  <td className="px-4 py-3">{lead.contact_name || '-'}</td>
+                <tr key={lead.lead_id} className={`border-b hover:bg-gray-50 cursor-pointer ${lead.status === 'CONVERTED' ? 'bg-green-50' : ''}`} onClick={() => setSelectedItem(lead)}>
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-2">
+                      {lead.contact_name || '-'}
+                      {lead.status === 'CONVERTED' && (
+                        <Users className="w-4 h-4 text-green-600" title="Converti en contact" />
+                      )}
+                    </div>
+                  </td>
                   <td className="px-4 py-3">{lead.email}</td>
                   <td className="px-4 py-3">{lead.brand_name || '-'}</td>
                   <td className="px-4 py-3">{lead.sector || '-'}</td>
                   <td className="px-4 py-3"><StatusBadge status={lead.status} /></td>
                   <td className="px-4 py-3"><span className={`px-2 py-1 rounded text-xs font-semibold ${lead.priority === 'A' ? 'bg-red-100 text-red-800' : lead.priority === 'B' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'}`}>{lead.priority || 'C'}</span></td>
                   <td className="px-4 py-3 text-sm text-gray-600">{new Date(lead.created_at).toLocaleDateString()}</td>
-                  <td className="px-4 py-3"><ExternalLink className="w-4 h-4 text-blue-500" /></td>
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-2">
+                      <ExternalLink className="w-4 h-4 text-blue-500" />
+                      {lead.status === 'CONVERTED' && lead.converted_to_contact_id && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            // Navigate to contact
+                            window.location.hash = '#contacts';
+                            setTimeout(() => setSelectedItem({ type: 'contact', id: lead.converted_to_contact_id }), 100);
+                          }}
+                          className="text-green-600 hover:text-green-800"
+                          title="Voir le contact créé"
+                        >
+                          <Users className="w-4 h-4" />
+                        </button>
+                      )}
+                    </div>
+                  </td>
                 </tr>
               )) : (
                 <tr><td colSpan="8" className="px-4 py-12 text-center">
@@ -367,8 +443,50 @@ const LeadsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTerm, 
           </div>
 
           <div className="mt-6 flex gap-3">
-            <button onClick={() => handleConvertToContact(selectedItem.lead_id)} disabled={loadingAction || selectedItem.status === 'CONVERTED'} className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50">
-              {t('admin.crm.leads.convert_to_contact') || 'Convert to Contact'}
+            {selectedItem.status === 'CONVERTED' ? (
+              <div className="flex items-center gap-2 px-6 py-2 bg-green-100 text-green-800 rounded-lg">
+                <Users className="w-4 h-4" />
+                <span className="font-medium">Lead déjà converti en contact</span>
+                {selectedItem.converted_to_contact_id && (
+                  <button
+                    onClick={() => {
+                      // Navigate to contacts tab and highlight the contact
+                      window.location.hash = '#contacts';
+                      setTimeout(() => setSelectedItem({ type: 'contact', id: selectedItem.converted_to_contact_id }), 100);
+                    }}
+                    className="ml-2 text-green-700 hover:text-green-900 underline text-sm"
+                  >
+                    Voir le contact
+                  </button>
+                )}
+              </div>
+            ) : (
+              <button 
+                onClick={() => handleConvertToContact(selectedItem.lead_id)} 
+                disabled={loadingAction} 
+                className="flex items-center gap-2 px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 transition-colors"
+              >
+                {loadingAction ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>Conversion...</span>
+                  </>
+                ) : (
+                  <>
+                    <Users className="w-4 h-4" />
+                    <span>{t('admin.crm.leads.convert_to_contact') || 'Convertir en Contact'}</span>
+                  </>
+                )}
+              </button>
+            )}
+            
+            <button
+              onClick={() => handleCreateOpportunity(selectedItem.lead_id)}
+              disabled={loadingAction}
+              className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
+            >
+              <ExternalLink className="w-4 h-4" />
+              <span>{t('admin.crm.leads.create_opportunity') || 'Créer une opportunité'}</span>
             </button>
           </div>
         </div>

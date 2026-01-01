@@ -399,6 +399,12 @@
         "converted": "Prospect converti en contact",
         "convert_to_contact": "Convertir en contact",
         "add_note_placeholder": "Ajouter une note...",
+        "new_lead": "Nouveau prospect",
+        "empty_title": "Aucun prospect",
+        "empty_subtitle": "Créez votre premier prospect pour commencer",
+        "updated": "Prospect mis à jour",
+        "deleted": "Prospect supprimé",
+        "phone": "Téléphone",
         "columns": {
           "name": "Nom",
           "email": "Email",
@@ -444,6 +450,11 @@
       },
       "contacts": {
         "search": "Rechercher des contacts...",
+        "empty_title": "Aucun contact",
+        "empty_subtitle": "Les contacts apparaissent ici quand vous convertissez des prospects",
+        "not_found": "Contact introuvable",
+        "updated": "Contact mis à jour",
+        "deleted": "Contact supprimé",
         "columns": {
           "name": "Nom",
           "email": "Email",

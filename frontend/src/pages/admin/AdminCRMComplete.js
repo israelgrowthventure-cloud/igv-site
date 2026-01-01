@@ -54,19 +54,19 @@ const AdminCRMComplete = () => {
       switch (activeTab) {
         case 'dashboard':
           const stats = await api.get('/api/crm/dashboard/stats');
-          setData({ stats });
+          setData(prev => ({ ...prev, stats }));
           break;
         case 'leads':
           const leads = await api.get('/api/crm/leads', { params: { search: searchTerm, ...filters, limit: 100 } });
-          setData({ leads: leads.leads || [], total: leads.total });
+          setData(prev => ({ ...prev, leads: leads.leads || [], total: leads.total }));
           break;
         case 'pipeline':
           const pipeline = await api.get('/api/crm/pipeline');
-          setData({ pipeline: pipeline.pipeline || {} });
+          setData(prev => ({ ...prev, pipeline: pipeline.pipeline || pipeline || {} }));
           break;
         case 'contacts':
           const contacts = await api.get('/api/crm/contacts', { params: { search: searchTerm, limit: 100 } });
-          setData({ contacts: contacts.contacts || [], total: contacts.total });
+          setData(prev => ({ ...prev, contacts: contacts.contacts || [], total: contacts.total }));
           break;
         case 'settings':
           const [users, tags, stages] = await Promise.all([
@@ -74,7 +74,9 @@ const AdminCRMComplete = () => {
             api.get('/api/crm/settings/tags'),
             api.get('/api/crm/settings/pipeline-stages')
           ]);
-          setData({ users: users.users || [], tags: tags.tags || [], stages: stages.stages || [] });
+          setData(prev => ({ ...prev, users: users.users || [], tags: tags.tags || [], stages: stages.stages || [] }));
+          break;
+        default:
           break;
       }
     } catch (error) {

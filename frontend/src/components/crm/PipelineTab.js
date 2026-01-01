@@ -43,7 +43,8 @@ const PipelineTab = ({ data, onRefresh, t }) => {
     WON: t('admin.crm.pipeline.stages.won') || 'Won'
   };
 
-  if (!data) return <div className="text-center py-8"><Loader2 className="w-8 h-8 animate-spin mx-auto" /></div>;
+  // Use default empty data instead of showing spinner
+  const pipelineData = data || { stages: {}, summary: {} };
 
   return (
     <div className="space-y-4">
@@ -52,25 +53,25 @@ const PipelineTab = ({ data, onRefresh, t }) => {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
             <div className="bg-white p-4 rounded-lg shadow border">
               <p className="text-sm text-gray-600">{t('admin.crm.pipeline.total_opps') || 'Total Opportunities'}</p>
-              <p className="text-2xl font-bold mt-1">{data.summary?.total_opportunities || 0}</p>
+              <p className="text-2xl font-bold mt-1">{pipelineData.summary?.total_opportunities || 0}</p>
             </div>
             <div className="bg-white p-4 rounded-lg shadow border">
               <p className="text-sm text-gray-600">{t('admin.crm.pipeline.total_value') || 'Total Value'}</p>
-              <p className="text-2xl font-bold mt-1">${(data.summary?.total_value || 0).toLocaleString()}</p>
+              <p className="text-2xl font-bold mt-1">${(pipelineData.summary?.total_value || 0).toLocaleString()}</p>
             </div>
             <div className="bg-white p-4 rounded-lg shadow border">
               <p className="text-sm text-gray-600">{t('admin.crm.pipeline.avg_deal') || 'Avg Deal Size'}</p>
-              <p className="text-2xl font-bold mt-1">${(data.summary?.average_deal_size || 0).toLocaleString()}</p>
+              <p className="text-2xl font-bold mt-1">${(pipelineData.summary?.average_deal_size || 0).toLocaleString()}</p>
             </div>
             <div className="bg-white p-4 rounded-lg shadow border">
               <p className="text-sm text-gray-600">{t('admin.crm.pipeline.close_rate') || 'Close Rate'}</p>
-              <p className="text-2xl font-bold mt-1">{data.summary?.win_rate || 0}%</p>
+              <p className="text-2xl font-bold mt-1">{pipelineData.summary?.win_rate || 0}%</p>
             </div>
           </div>
 
           <div className="space-y-6">
             {stages.map(stage => {
-              const opps = data.stages?.[stage] || [];
+              const opps = pipelineData.stages?.[stage] || [];
               const stageValue = opps.reduce((sum, opp) => sum + (opp.estimated_value || 0), 0);
               return (
                 <div key={stage} className="bg-white rounded-lg shadow border">

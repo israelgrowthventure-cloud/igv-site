@@ -73,7 +73,7 @@ function AppContent() {
           <Route path="/future-commerce" element={<FutureCommerce />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="/payment/return" element={<PaymentReturn />} />
-          <Route path="/admin" element={<Navigate to="/admin/crm" replace />} />
+          <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin/dashboard" element={<PrivateRoute><AdminDashboard /></PrivateRoute>} />
           <Route path="/admin/crm" element={<PrivateRoute><AdminCRMComplete /></PrivateRoute>} />

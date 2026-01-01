@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { 
   Users, TrendingUp, Mail, FileText, LogOut, Settings, 
-  Plus, Eye, Edit, Trash2, Shield, UserCheck, UserX, Loader2 
+  Plus, Eye, Edit, Trash2, Shield, UserCheck, UserX, Loader2, Target, ArrowRight 
 } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '../../utils/api';
@@ -162,7 +162,7 @@ const AdminDashboard = () => {
 
         {/* Main Content */}
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {activeTab === 'overview' && <OverviewTab stats={stats} t={t} />}
+          {activeTab === 'overview' && <OverviewTab stats={stats} t={t} navigate={navigate} />}
           {activeTab === 'leads' && <LeadsTab leads={leads} t={t} navigate={navigate} />}
           {activeTab === 'contacts' && <ContactsTab t={t} navigate={navigate} />}
           {activeTab === 'users' && user?.role === 'admin' && <UsersTab t={t} />}
@@ -173,32 +173,69 @@ const AdminDashboard = () => {
 };
 
 // Overview Tab Component
-const OverviewTab = ({ stats, t }) => (
-  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-    <StatCard
-      icon={Users}
-      label={t('admin.stats.totalLeads')}
-      value={stats?.total_leads || 0}
-      color="blue"
-    />
-    <StatCard
-      icon={Mail}
-      label={t('admin.stats.totalContacts')}
-      value={stats?.total_contacts || 0}
-      color="green"
-    />
-    <StatCard
-      icon={FileText}
-      label={t('admin.stats.analyses')}
-      value={stats?.total_analyses || 0}
-      color="purple"
-    />
-    <StatCard
-      icon={TrendingUp}
-      label={t('admin.stats.conversionRate')}
-      value={`${stats?.conversion_rate || 0}%`}
-      color="orange"
-    />
+const OverviewTab = ({ stats, t, navigate }) => (
+  <div className="space-y-6">
+    {/* Quick Access Buttons */}
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <button
+        onClick={() => navigate('/admin/crm/pipeline')}
+        className="flex items-center justify-between p-4 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-xl hover:from-purple-600 hover:to-purple-700 transition shadow-lg"
+      >
+        <div className="flex items-center gap-3">
+          <Target className="w-6 h-6" />
+          <span className="font-semibold">Pipeline</span>
+        </div>
+        <ArrowRight className="w-5 h-5" />
+      </button>
+      <button
+        onClick={() => navigate('/admin/crm')}
+        className="flex items-center justify-between p-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl hover:from-blue-600 hover:to-blue-700 transition shadow-lg"
+      >
+        <div className="flex items-center gap-3">
+          <Users className="w-6 h-6" />
+          <span className="font-semibold">CRM Complet</span>
+        </div>
+        <ArrowRight className="w-5 h-5" />
+      </button>
+      <button
+        onClick={() => navigate('/admin/crm?tab=contacts')}
+        className="flex items-center justify-between p-4 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl hover:from-green-600 hover:to-green-700 transition shadow-lg"
+      >
+        <div className="flex items-center gap-3">
+          <Mail className="w-6 h-6" />
+          <span className="font-semibold">Contacts</span>
+        </div>
+        <ArrowRight className="w-5 h-5" />
+      </button>
+    </div>
+
+    {/* Stats Cards */}
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <StatCard
+        icon={Users}
+        label={t('admin.stats.totalLeads')}
+        value={stats?.total_leads || 0}
+        color="blue"
+      />
+      <StatCard
+        icon={Mail}
+        label={t('admin.stats.totalContacts')}
+        value={stats?.total_contacts || 0}
+        color="green"
+      />
+      <StatCard
+        icon={FileText}
+        label={t('admin.stats.analyses')}
+        value={stats?.total_analyses || 0}
+        color="purple"
+      />
+      <StatCard
+        icon={TrendingUp}
+        label={t('admin.stats.conversionRate')}
+        value={`${stats?.conversion_rate || 0}%`}
+        color="orange"
+      />
+    </div>
   </div>
 );
 

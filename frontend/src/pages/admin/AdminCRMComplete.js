@@ -14,8 +14,14 @@ const AdminCRMComplete = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [tabLoading, setTabLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('dashboard');
-  const [data, setData] = useState({});
+  const [data, setData] = useState({
+    stats: { leads: { today: 0, last_7_days: 0, total: 0 }, opportunities: { pipeline_value: 0 }, tasks: { overdue: 0 } },
+    leads: [],
+    contacts: [],
+    pipeline: { stages: {}, summary: {} }
+  });
   const [selectedItem, setSelectedItem] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState({});
@@ -50,6 +56,10 @@ const AdminCRMComplete = () => {
   };
 
   const loadTabData = async () => {
+    setTabLoading(true);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
+    
     try {
       switch (activeTab) {
         case 'dashboard':
@@ -81,7 +91,12 @@ const AdminCRMComplete = () => {
       }
     } catch (error) {
       console.error('Error loading data:', error);
-      toast.error(t('admin.crm.errors.load_failed') || 'Failed to load data');
+      if (error.name !== 'AbortError') {
+        toast.error(t('admin.crm.errors.load_failed') || 'Chargement lent - données en cache affichées');
+      }
+    } finally {
+      clearTimeout(timeoutId);
+      setTabLoading(false);
     }
   };
 
@@ -163,8 +178,14 @@ const AdminCRMComplete = () => {
         </div>
 
         {/* Content */}
-        <main className="max-w-7xl mx-auto px-4 py-6">
-          {activeTab === 'dashboard' && <DashboardTab data={data.stats} t={t} />}
+        <main className="max-w-7xl mx-auto px-4 py-6 relative">
+          {tabLoading && (
+            <div className="absolute top-2 right-4 flex items-center gap-2 text-blue-600 text-sm">
+              <Loader2 className="w-4 h-4 animate-spin" />
+              <span>Actualisation...</span>
+            </div>
+          )}
+          {activeTab === 'dashboard' && <DashboardTab data={data.stats} t={t} navigate={navigate} />}
           {activeTab === 'leads' && <LeadsTab data={data} selectedItem={selectedItem} setSelectedItem={setSelectedItem} onRefresh={loadTabData} searchTerm={searchTerm} setSearchTerm={setSearchTerm} filters={filters} setFilters={setFilters} t={t} />}
           {activeTab === 'pipeline' && <PipelineTab data={data.pipeline} onRefresh={loadTabData} t={t} />}
           {activeTab === 'contacts' && <ContactsTab data={data} selectedItem={selectedItem} setSelectedItem={setSelectedItem} onRefresh={loadTabData} searchTerm={searchTerm} setSearchTerm={setSearchTerm} t={t} />}
@@ -176,17 +197,43 @@ const AdminCRMComplete = () => {
 };
 
 // Dashboard Component
-const DashboardTab = ({ data, t }) => {
-  if (!data) return <div className="text-center py-8"><Loader2 className="w-8 h-8 animate-spin mx-auto" /></div>;
+const DashboardTab = ({ data, t, navigate }) => {
+  // Always show content with default values - no loading spinner
+  const stats = data || { leads: { today: 0, last_7_days: 0 }, opportunities: { pipeline_value: 0 }, tasks: { overdue: 0 } };
 
   return (
     <div className="space-y-6">
+      {/* Quick Access Buttons */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <button
+          onClick={() => navigate('/admin/crm/pipeline')}
+          className="flex items-center justify-between p-4 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-xl hover:from-purple-600 hover:to-purple-700 transition shadow-lg"
+        >
+          <div className="flex items-center gap-3">
+            <Target className="w-6 h-6" />
+            <span className="font-semibold">{t('admin.crm.tabs.pipeline') || 'Pipeline'}</span>
+          </div>
+          <span className="text-sm opacity-80">→</span>
+        </button>
+        <button
+          onClick={() => navigate('/admin/dashboard')}
+          className="flex items-center justify-between p-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl hover:from-blue-600 hover:to-blue-700 transition shadow-lg"
+        >
+          <div className="flex items-center gap-3">
+            <TrendingUp className="w-6 h-6" />
+            <span className="font-semibold">{t('admin.dashboard.title') || 'Dashboard Admin'}</span>
+          </div>
+          <span className="text-sm opacity-80">→</span>
+        </button>
+      </div>
+
+      {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="bg-white p-6 rounded-lg shadow border">
           <div className="flex justify-between items-start">
             <div>
               <p className="text-sm text-gray-600">{t('admin.crm.dashboard.leads_today') || 'Leads Today'}</p>
-              <p className="text-3xl font-bold mt-1">{data.leads?.today || 0}</p>
+              <p className="text-3xl font-bold mt-1">{stats.leads?.today || 0}</p>
             </div>
             <Users className="w-8 h-8 text-blue-500" />
           </div>
@@ -195,7 +242,7 @@ const DashboardTab = ({ data, t }) => {
           <div className="flex justify-between items-start">
             <div>
               <p className="text-sm text-gray-600">{t('admin.crm.dashboard.leads_7d') || 'Last 7 Days'}</p>
-              <p className="text-3xl font-bold mt-1">{data.leads?.last_7_days || 0}</p>
+              <p className="text-3xl font-bold mt-1">{stats.leads?.last_7_days || 0}</p>
             </div>
             <TrendingUp className="w-8 h-8 text-green-500" />
           </div>
@@ -204,7 +251,7 @@ const DashboardTab = ({ data, t }) => {
           <div className="flex justify-between items-start">
             <div>
               <p className="text-sm text-gray-600">{t('admin.crm.dashboard.pipeline_value') || 'Pipeline Value'}</p>
-              <p className="text-3xl font-bold mt-1">${(data.opportunities?.pipeline_value || 0).toLocaleString()}</p>
+              <p className="text-3xl font-bold mt-1">${(stats.opportunities?.pipeline_value || 0).toLocaleString()}</p>
             </div>
             <DollarSign className="w-8 h-8 text-purple-500" />
           </div>
@@ -213,7 +260,7 @@ const DashboardTab = ({ data, t }) => {
           <div className="flex justify-between items-start">
             <div>
               <p className="text-sm text-gray-600">{t('admin.crm.dashboard.tasks_overdue') || 'Tasks Overdue'}</p>
-              <p className="text-3xl font-bold mt-1">{data.tasks?.overdue || 0}</p>
+              <p className="text-3xl font-bold mt-1">{stats.tasks?.overdue || 0}</p>
             </div>
             <AlertCircle className="w-8 h-8 text-red-500" />
           </div>
@@ -224,23 +271,23 @@ const DashboardTab = ({ data, t }) => {
         <div className="bg-white p-6 rounded-lg shadow border">
           <h3 className="font-semibold mb-4">{t('admin.crm.dashboard.top_sources') || 'Top Sources'}</h3>
           <div className="space-y-2">
-            {data.top_sources?.map((source, idx) => (
+            {stats.top_sources?.length > 0 ? stats.top_sources.map((source, idx) => (
               <div key={idx} className="flex justify-between py-2 border-b">
                 <span>{source.source || 'Direct'}</span>
                 <span className="font-semibold">{source.count}</span>
               </div>
-            )) || <p className="text-gray-500">No data</p>}
+            )) : <p className="text-gray-500 text-sm">{t('admin.crm.common.no_data') || 'Aucune donnée'}</p>}
           </div>
         </div>
         <div className="bg-white p-6 rounded-lg shadow border">
           <h3 className="font-semibold mb-4">{t('admin.crm.dashboard.stage_distribution') || 'Stage Distribution'}</h3>
           <div className="space-y-2">
-            {data.stage_distribution?.map((stage, idx) => (
+            {stats.stage_distribution?.length > 0 ? stats.stage_distribution.map((stage, idx) => (
               <div key={idx} className="flex justify-between py-2 border-b">
                 <span className="capitalize">{stage.stage?.replace(/_/g, ' ')}</span>
                 <span className="font-semibold">{stage.count}</span>
               </div>
-            )) || <p className="text-gray-500">No data</p>}
+            )) : <p className="text-gray-500 text-sm">{t('admin.crm.common.no_data') || 'Aucune donnée'}</p>}
           </div>
         </div>
       </div>

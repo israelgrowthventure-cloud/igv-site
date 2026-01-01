@@ -556,6 +556,21 @@
         "B": "Priority B (Medium)",
         "C": "Priority C (Low)"
       },
+      "emails": {
+        "compose": "New message",
+        "to": "To",
+        "subject": "Subject",
+        "subject_placeholder": "Email subject...",
+        "message": "Message",
+        "message_placeholder": "Write your message here...",
+        "select_template": "Choose a template",
+        "use": "Use",
+        "send": "Send",
+        "sending": "Sending...",
+        "sent_success": "Email sent successfully",
+        "send_failed": "Failed to send email",
+        "error_empty": "Please fill in the subject and message"
+      },
       "errors": {
         "load_failed": "Failed to load",
         "export_failed": "Export failed",

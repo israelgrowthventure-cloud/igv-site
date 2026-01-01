@@ -821,13 +821,37 @@
         "not_found": "Prospect introuvable",
         "no_brand": "Aucune marque",
         "filter_sector": "Filtrer par secteur",
+        "empty_title": "Aucun prospect",
+        "empty_subtitle": "Créez votre premier prospect pour commencer",
+        "convert_to_contact": "Convertir en Contact",
+        "create_opportunity": "Créer une opportunité",
+        "add_note_placeholder": "Ajouter une note...",
         "details": {
-          "status_priority": "Statut et Priorité"
+          "status_priority": "Statut et Priorité",
+          "email": "Email",
+          "phone": "Téléphone",
+          "sector": "Secteur",
+          "city": "Ville cible",
+          "status": "Statut",
+          "priority": "Priorité",
+          "notes": "Notes",
+          "focus_notes": "Notes Focus"
+        },
+        "form": {
+          "email": "Email",
+          "contact_name": "Nom du Contact",
+          "brand_name": "Nom de Marque",
+          "sector": "Secteur",
+          "phone": "Téléphone",
+          "status": "Statut",
+          "priority": "Priorité",
+          "target_city": "Ville Cible"
         },
         "columns": {
           "name": "Nom du Contact",
           "company": "Entreprise",
           "email": "Email",
+          "brand": "Marque",
           "phone": "Téléphone",
           "status": "Statut",
           "priority": "Priorité",
@@ -844,14 +868,23 @@
         "note_added": "Note ajoutée avec succès",
         "export_success": "Contacts exportés avec succès",
         "new_contact": "Nouveau Contact",
+        "edit_contact": "Modifier le Contact",
         "search": "Rechercher des contacts...",
         "export": "Exporter CSV",
         "not_found": "Contact introuvable",
+        "empty_title": "Aucun contact",
+        "empty_subtitle": "Créez votre premier contact pour commencer",
+        "create_opportunity": "Créer une Opportunité",
+        "details": {
+          "position": "Poste",
+          "language": "Langue"
+        },
         "columns": {
           "name": "Nom",
           "company": "Entreprise",
           "email": "Email", 
           "phone": "Téléphone",
+          "position": "Poste",
           "status": "Statut",
           "sector": "Secteur",
           "created": "Créé",
@@ -871,8 +904,14 @@
         "not_found": "Opportunité introuvable",
         "no_opportunities": "Aucune opportunité trouvée",
         "create_opportunity": "Créer une Opportunité",
+        "value": "Valeur",
+        "weighted_value": "Valeur pondérée",
+        "probability": "Probabilité",
+        "expected_close": "Date de clôture prévue",
+        "notes": "Notes",
         "columns": {
           "title": "Titre",
+          "name": "Nom",
           "contact": "Contact",
           "value": "Valeur", 
           "stage": "Étape",
@@ -882,12 +921,21 @@
         },
         "form": {
           "title": "Titre de l'Opportunité",
+          "name": "Nom de l'opportunité",
           "description": "Description",
           "value": "Valeur Estimée",
           "stage": "Étape",
           "probability": "Probabilité (%)",
           "expected_close_date": "Date de Fermeture Prévue",
-          "contact_id": "Contact Associé"
+          "contact_id": "Contact Associé",
+          "notes": "Notes"
+        },
+        "stages": {
+          "qualification": "Qualification",
+          "proposal": "Proposition",
+          "negotiation": "Négociation",
+          "closed_won": "Fermé Gagné",
+          "closed_lost": "Fermé Perdu"
         }
       },
       "pipeline": {
@@ -907,6 +955,8 @@
       "dashboard": {
         "title": "Tableau de Bord",
         "welcome": "Bienvenue sur le Tableau de Bord CRM",
+        "top_sources": "Sources Principales",
+        "stage_distribution": "Distribution par Étape",
         "stats": {
           "total_leads": "Total Prospects",
           "total_contacts": "Total Contacts", 
@@ -939,11 +989,29 @@
         "new_password": "Nouveau Mot de Passe",
         "confirm_password": "Confirmer le Nouveau Mot de Passe",
         "save_password": "Mettre à Jour le Mot de Passe",
+        "crm_users": "Utilisateurs CRM",
+        "add_user": "Ajouter Utilisateur",
+        "user_name": "Nom",
+        "user_email": "Email",
+        "user_password": "Mot de passe",
+        "tags_title": "Tags",
+        "add_tag": "Ajouter Tag",
+        "tag_name": "Nom du tag",
+        "pipeline_stages": "Étapes du Pipeline",
+        "stages_description": "Configurez les étapes de votre pipeline de vente",
+        "active": "Actif",
+        "inactive": "Inactif",
         "sections": {
           "profile": "Mon Profil",
-          "users": "Gestion des Utilisateurs", 
-          "tags": "Gestion des Tags",
+          "users": "Utilisateurs", 
+          "tags": "Tags",
           "stages": "Étapes du Pipeline"
+        },
+        "columns": {
+          "name": "Nom",
+          "email": "Email",
+          "role": "Rôle",
+          "status": "Statut"
         }
       },
       "common": {
@@ -961,12 +1029,32 @@
         "search": "Rechercher...",
         "loading": "Chargement...",
         "no_data": "Aucune donnée disponible",
+        "no_users": "Aucun utilisateur",
+        "no_tags": "Aucun tag",
+        "no_stages": "Aucune étape configurée",
         "confirm": "Confirmer",
+        "confirm_delete": "Êtes-vous sûr de vouloir supprimer ?",
         "close": "Fermer",
         "add": "Ajouter",
         "create": "Créer",
         "update": "Mettre à jour",
-        "view": "Voir les Détails"
+        "view": "Voir",
+        "no_activities": "Aucune activité"
+      },
+      "emails": {
+        "compose": "Nouveau message",
+        "to": "À",
+        "subject": "Objet",
+        "subject_placeholder": "Objet de votre email...",
+        "message": "Message",
+        "message_placeholder": "Rédigez votre message ici...",
+        "select_template": "Choisir un modèle",
+        "use": "Utiliser",
+        "send": "Envoyer",
+        "sending": "Envoi...",
+        "sent_success": "Email envoyé avec succès",
+        "send_failed": "Échec de l'envoi de l'email",
+        "error_empty": "Veuillez remplir l'objet et le message"
       },
       "errors": {
         "load_failed": "Échec du chargement des données",

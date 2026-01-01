@@ -9,6 +9,9 @@ from pydantic import BaseModel, EmailStr, Field
 from motor.motor_asyncio import AsyncIOMotorClient
 from typing import Optional, List, Dict, Any
 from datetime import datetime, timezone, timedelta
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+import aiosmtplib
 import os
 import logging
 import jwt
@@ -1450,6 +1453,98 @@ async def export_tasks_csv(user: Dict = Depends(get_current_user)):
         media_type="text/csv",
         headers={"Content-Disposition": "attachment; filename=tasks_export.csv"}
     )
+
+
+# ==========================================
+# EMAIL SENDING
+# ==========================================
+
+class EmailSendRequest(BaseModel):
+    to_email: EmailStr
+    subject: str
+    message: str
+    contact_id: Optional[str] = None
+
+@router.post("/emails/send")
+async def send_crm_email(
+    email_data: EmailSendRequest,
+    user: Dict = Depends(get_current_user)
+):
+    """Send email to a contact from CRM"""
+    current_db = get_db()
+    if current_db is None:
+        raise HTTPException(status_code=500, detail="Database not configured")
+    
+    smtp_host = os.getenv('SMTP_HOST', 'smtp.gmail.com')
+    smtp_port = int(os.getenv('SMTP_PORT', '587'))
+    smtp_user = os.getenv('SMTP_USER')
+    smtp_password = os.getenv('SMTP_PASSWORD')
+    
+    if not smtp_user or not smtp_password:
+        raise HTTPException(status_code=500, detail="SMTP credentials not configured")
+    
+    # Create email message
+    message = MIMEMultipart('alternative')
+    message['Subject'] = email_data.subject
+    message['From'] = smtp_user
+    message['To'] = email_data.to_email
+    
+    # Plain text version
+    message.attach(MIMEText(email_data.message, 'plain'))
+    
+    # HTML version (simple formatting)
+    html_message = email_data.message.replace('\n', '<br>')
+    html_body = f"""
+    <html>
+    <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+        <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+            {html_message}
+            <hr style="margin-top: 30px; border: none; border-top: 1px solid #eee;">
+            <p style="font-size: 12px; color: #666;">
+                Sent from IGV CRM
+            </p>
+        </div>
+    </body>
+    </html>
+    """
+    message.attach(MIMEText(html_body, 'html'))
+    
+    try:
+        await aiosmtplib.send(
+            message,
+            hostname=smtp_host,
+            port=smtp_port,
+            username=smtp_user,
+            password=smtp_password,
+            start_tls=True
+        )
+        
+        # Log email activity
+        activity = {
+            "type": "email_sent",
+            "to_email": email_data.to_email,
+            "subject": email_data.subject,
+            "contact_id": email_data.contact_id,
+            "sent_by": user["email"],
+            "sent_at": datetime.now(timezone.utc).isoformat()
+        }
+        await current_db.crm_activities.insert_one(activity)
+        
+        # Update contact last activity if contact_id provided
+        if email_data.contact_id:
+            try:
+                await current_db.contacts.update_one(
+                    {"_id": ObjectId(email_data.contact_id)},
+                    {"$set": {"last_activity": datetime.now(timezone.utc).isoformat()}}
+                )
+            except Exception:
+                pass  # Non-critical
+        
+        return {"success": True, "message": "Email sent successfully"}
+        
+    except Exception as e:
+        logging.error(f"Error sending CRM email: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to send email: {str(e)}")
 
 
 async def get_pipeline_stages(user: Dict = Depends(get_current_user)):

@@ -545,6 +545,21 @@
         "B": "עדיפות ב' (בינונית)",
         "C": "עדיפות ג' (נמוכה)"
       },
+      "emails": {
+        "compose": "הודעה חדשה",
+        "to": "אל",
+        "subject": "נושא",
+        "subject_placeholder": "נושא המייל...",
+        "message": "הודעה",
+        "message_placeholder": "כתוב את ההודעה שלך כאן...",
+        "select_template": "בחר תבנית",
+        "use": "השתמש",
+        "send": "שלח",
+        "sending": "שולח...",
+        "sent_success": "המייל נשלח בהצלחה",
+        "send_failed": "שליחת המייל נכשלה",
+        "error_empty": "אנא מלא את הנושא וההודעה"
+      },
       "errors": {
         "load_failed": "טעינה נכשלה",
         "export_failed": "ייצוא נכשל",

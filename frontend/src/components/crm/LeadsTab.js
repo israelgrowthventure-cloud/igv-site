@@ -3,8 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { Search, Filter, Download, Plus, Eye, X, Save, Loader2, Mail, Phone, Building, MapPin, ExternalLink, Users } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '../../utils/api';
+import { SkeletonTable } from './Skeleton';
 
-const LeadsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTerm, setSearchTerm, filters, setFilters, t }) => {
+const LeadsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, searchTerm, setSearchTerm, filters, setFilters, t }) => {
   const navigate = useNavigate();
   const [showFilters, setShowFilters] = useState(false);
   const [noteText, setNoteText] = useState('');
@@ -26,7 +27,7 @@ const LeadsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTerm, 
     try {
       setLoadingAction(true);
       await api.post('/api/crm/leads', newLeadData);
-      toast.success(t('admin.crm.leads.created') || 'Lead created successfully');
+      toast.success(t('admin.crm.leads.created'));
       setShowNewLeadForm(false);
       setNewLeadData({
         email: '',
@@ -39,7 +40,7 @@ const LeadsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTerm, 
       });
       await onRefresh();
     } catch (error) {
-      toast.error(t('admin.crm.errors.create_failed') || 'Failed to create lead');
+      toast.error(t('admin.crm.errors.create_failed'));
     } finally {
       setLoadingAction(false);
     }
@@ -56,9 +57,9 @@ const LeadsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTerm, 
       document.body.appendChild(link);
       link.click();
       link.remove();
-      toast.success(t('admin.crm.leads.export_success') || 'Leads exported successfully');
+      toast.success(t('admin.crm.leads.export_success'));
     } catch (error) {
-      toast.error(t('admin.crm.errors.export_failed') || 'Failed to export leads');
+      toast.error(t('admin.crm.errors.export_failed'));
     } finally {
       setLoadingAction(false);
     }
@@ -70,10 +71,10 @@ const LeadsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTerm, 
       setLoadingAction(true);
       await api.post(`/api/crm/leads/${leadId}/notes`, { note_text: noteText });
       setNoteText('');
-      toast.success(t('admin.crm.leads.note_added') || 'Note added');
+      toast.success(t('admin.crm.leads.note_added'));
       await onRefresh();
     } catch (error) {
-      toast.error(t('admin.crm.errors.note_failed') || 'Failed to add note');
+      toast.error(t('admin.crm.errors.note_failed'));
     } finally {
       setLoadingAction(false);
     }
@@ -83,11 +84,11 @@ const LeadsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTerm, 
     try {
       setLoadingAction(true);
       await api.put(`/api/crm/leads/${leadId}`, { status: newStatus });
-      toast.success(t('admin.crm.leads.status_updated') || 'Status updated');
+      toast.success(t('admin.crm.leads.status_updated'));
       await onRefresh();
       setSelectedItem(null);
     } catch (error) {
-      toast.error(t('admin.crm.errors.status_failed') || 'Failed to update status');
+      toast.error(t('admin.crm.errors.status_failed'));
     } finally {
       setLoadingAction(false);
     }
@@ -131,7 +132,7 @@ const LeadsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTerm, 
     try {
       setLoadingAction(true);
       const response = await api.post(`/api/crm/leads/${leadId}/convert-to-contact`);
-      toast.success(t('admin.crm.leads.converted') || 'Lead converted to contact');
+      toast.success(t('admin.crm.leads.converted'));
       
       // Afficher le contact créé avec un lien direct
       if (response.contact_id) {
@@ -152,7 +153,7 @@ const LeadsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTerm, 
       setSelectedItem(null);
     } catch (error) {
       console.error('Convert error:', error);
-      toast.error(t('admin.crm.errors.convert_failed') || 'Failed to convert lead');
+      toast.error(t('admin.crm.errors.convert_failed'));
     } finally {
       setLoadingAction(false);
     }
@@ -171,7 +172,7 @@ const LeadsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTerm, 
               <Search className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <input
                 type="text"
-                placeholder={t('admin.crm.leads.search') || 'Search leads...'}
+                placeholder={t('admin.crm.leads.search')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 border rounded-lg"
@@ -180,30 +181,30 @@ const LeadsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTerm, 
           </div>
           <button onClick={() => setShowFilters(!showFilters)} className="flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-gray-50">
             <Filter className="w-4 h-4" />
-            {t('admin.crm.common.filters') || 'Filters'}
+            {t('admin.crm.common.filters')}
           </button>
           <button onClick={handleExportCSV} disabled={loadingAction} className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50">
             <Download className="w-4 h-4" />
-            {t('admin.crm.leads.export') || 'Export CSV'}
+            {t('admin.crm.leads.export')}
           </button>
           <button onClick={() => setShowNewLeadForm(true)} className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
             <Plus className="w-4 h-4" />
-            {t('admin.crm.leads.new_lead') || 'New Lead'}
+            {t('admin.crm.leads.new_lead')}
           </button>
         </div>
 
         {showFilters && (
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 pt-4 border-t">
             <select value={filters.status || ''} onChange={(e) => setFilters({ ...filters, status: e.target.value })} className="px-3 py-2 border rounded-lg">
-              <option value="">{t('admin.crm.common.all_statuses') || 'All Statuses'}</option>
-              {statuses.map(s => <option key={s} value={s}>{t(`admin.crm.statuses.${s}`) || s}</option>)}
+              <option value="">{t('admin.crm.common.all_statuses')}</option>
+              {statuses.map(s => <option key={s} value={s}>{t(`admin.crm.statuses.${s}`)}</option>)}
             </select>
             <select value={filters.priority || ''} onChange={(e) => setFilters({ ...filters, priority: e.target.value })} className="px-3 py-2 border rounded-lg">
-              <option value="">{t('admin.crm.common.all_priorities') || 'All Priorities'}</option>
-              {priorities.map(p => <option key={p} value={p}>{t(`admin.crm.priorities.${p}`) || `Priority ${p}`}</option>)}
+              <option value="">{t('admin.crm.common.all_priorities')}</option>
+              {priorities.map(p => <option key={p} value={p}>{t(`admin.crm.priorities.${p}`)}</option>)}
             </select>
-            <input type="text" placeholder={t('admin.crm.leads.filter_sector') || 'Sector'} value={filters.sector || ''} onChange={(e) => setFilters({ ...filters, sector: e.target.value })} className="px-3 py-2 border rounded-lg" />
-            <button onClick={() => setFilters({})} className="px-4 py-2 border rounded-lg hover:bg-gray-50">{t('admin.crm.common.reset') || 'Reset'}</button>
+            <input type="text" placeholder={t('admin.crm.leads.filter_sector')} value={filters.sector || ''} onChange={(e) => setFilters({ ...filters, sector: e.target.value })} className="px-3 py-2 border rounded-lg" />
+            <button onClick={() => setFilters({})} className="px-4 py-2 border rounded-lg hover:bg-gray-50">{t('admin.crm.common.reset')}</button>
           </div>
         )}
       </div>
@@ -212,7 +213,7 @@ const LeadsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTerm, 
       {showNewLeadForm ? (
         <div className="bg-white rounded-lg shadow border p-6">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold">{t('admin.crm.leads.new_lead') || 'New Lead'}</h2>
+            <h2 className="text-2xl font-bold">{t('admin.crm.leads.new_lead')}</h2>
             <button onClick={() => setShowNewLeadForm(false)} className="p-2 hover:bg-gray-100 rounded-lg">
               <X className="w-5 h-5" />
             </button>
@@ -220,7 +221,7 @@ const LeadsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTerm, 
           <form onSubmit={handleCreateLead} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium mb-1">{t('admin.crm.leads.columns.email') || 'Email'} *</label>
+                <label className="block text-sm font-medium mb-1">{t('admin.crm.leads.columns.email')} *</label>
                 <input
                   type="email"
                   required
@@ -230,7 +231,7 @@ const LeadsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTerm, 
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">{t('admin.crm.leads.columns.name') || 'Name'}</label>
+                <label className="block text-sm font-medium mb-1">{t('admin.crm.leads.columns.name')}</label>
                 <input
                   type="text"
                   value={newLeadData.contact_name}
@@ -239,7 +240,7 @@ const LeadsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTerm, 
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">{t('admin.crm.leads.columns.brand') || 'Brand'}</label>
+                <label className="block text-sm font-medium mb-1">{t('admin.crm.leads.columns.brand')}</label>
                 <input
                   type="text"
                   value={newLeadData.brand_name}
@@ -248,7 +249,7 @@ const LeadsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTerm, 
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">{t('admin.crm.leads.columns.sector') || 'Sector'}</label>
+                <label className="block text-sm font-medium mb-1">{t('admin.crm.leads.columns.sector')}</label>
                 <input
                   type="text"
                   value={newLeadData.sector}
@@ -257,7 +258,7 @@ const LeadsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTerm, 
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">{t('admin.crm.leads.phone') || 'Phone'}</label>
+                <label className="block text-sm font-medium mb-1">{t('admin.crm.leads.phone')}</label>
                 <input
                   type="text"
                   value={newLeadData.phone}
@@ -266,15 +267,15 @@ const LeadsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTerm, 
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">{t('admin.crm.leads.columns.priority') || 'Priority'}</label>
+                <label className="block text-sm font-medium mb-1">{t('admin.crm.leads.columns.priority')}</label>
                 <select
                   value={newLeadData.priority}
                   onChange={(e) => setNewLeadData({...newLeadData, priority: e.target.value})}
                   className="w-full px-3 py-2 border rounded-lg"
                 >
-                  <option value="A">{t('admin.crm.priorities.A') || 'Priority A (High)'}</option>
-                  <option value="B">{t('admin.crm.priorities.B') || 'Priority B (Medium)'}</option>
-                  <option value="C">{t('admin.crm.priorities.C') || 'Priority C (Low)'}</option>
+                  <option value="A">{t('admin.crm.priorities.A')}</option>
+                  <option value="B">{t('admin.crm.priorities.B')}</option>
+                  <option value="C">{t('admin.crm.priorities.C')}</option>
                 </select>
               </div>
             </div>
@@ -285,30 +286,32 @@ const LeadsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTerm, 
                 className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 flex items-center gap-2"
               >
                 {loadingAction ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                {t('admin.crm.common.save') || 'Save'}
+                {t('admin.crm.common.save')}
               </button>
               <button
                 type="button"
                 onClick={() => setShowNewLeadForm(false)}
                 className="px-6 py-2 border rounded-lg hover:bg-gray-50"
               >
-                {t('admin.crm.common.cancel') || 'Cancel'}
+                {t('admin.crm.common.cancel')}
               </button>
             </div>
           </form>
         </div>
+      ) : loading ? (
+        <SkeletonTable rows={8} columns={8} />
       ) : !selectedItem ? (
         <div className="bg-white rounded-lg shadow border overflow-hidden">
           <table className="w-full">
             <thead className="bg-gray-50 border-b">
               <tr>
-                <th className="px-4 py-3 text-left text-sm font-semibold">{t('admin.crm.leads.columns.name') || 'Name'}</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">{t('admin.crm.leads.columns.email') || 'Email'}</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">{t('admin.crm.leads.columns.brand') || 'Brand'}</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">{t('admin.crm.leads.columns.sector') || 'Sector'}</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">{t('admin.crm.leads.columns.status') || 'Status'}</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">{t('admin.crm.leads.columns.priority') || 'Priority'}</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">{t('admin.crm.leads.columns.created') || 'Created'}</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold">{t('admin.crm.leads.columns.name')}</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold">{t('admin.crm.leads.columns.email')}</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold">{t('admin.crm.leads.columns.brand')}</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold">{t('admin.crm.leads.columns.sector')}</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold">{t('admin.crm.leads.columns.status')}</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold">{t('admin.crm.leads.columns.priority')}</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold">{t('admin.crm.leads.columns.created')}</th>
                 <th className="px-4 py-3"></th>
               </tr>
             </thead>
@@ -353,11 +356,11 @@ const LeadsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTerm, 
                 <tr><td colSpan="8" className="px-4 py-12 text-center">
                   <div className="text-gray-500">
                     <Users className="w-12 h-12 mx-auto mb-3 text-gray-300" />
-                    <p className="font-medium">{t('admin.crm.leads.empty_title') || 'No leads yet'}</p>
-                    <p className="text-sm mt-1">{t('admin.crm.leads.empty_subtitle') || 'Create your first lead to get started'}</p>
+                    <p className="font-medium">{t('admin.crm.leads.empty_title')}</p>
+                    <p className="text-sm mt-1">{t('admin.crm.leads.empty_subtitle')}</p>
                     <button onClick={() => setShowNewLeadForm(true)} className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 inline-flex items-center gap-2">
                       <Plus className="w-4 h-4" />
-                      {t('admin.crm.leads.new_lead') || 'New Lead'}
+                      {t('admin.crm.leads.new_lead')}
                     </button>
                   </div>
                 </td></tr>
@@ -381,37 +384,37 @@ const LeadsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTerm, 
             <div className="space-y-4">
               <div className="flex items-start gap-3">
                 <Mail className="w-5 h-5 text-gray-400 mt-1" />
-                <div><p className="text-sm text-gray-600">{t('admin.crm.leads.details.email') || 'Email'}</p><p className="font-medium">{selectedItem.email}</p></div>
+                <div><p className="text-sm text-gray-600">{t('admin.crm.leads.details.email')}</p><p className="font-medium">{selectedItem.email}</p></div>
               </div>
               {selectedItem.phone && (
                 <div className="flex items-start gap-3">
                   <Phone className="w-5 h-5 text-gray-400 mt-1" />
-                  <div><p className="text-sm text-gray-600">{t('admin.crm.leads.details.phone') || 'Phone'}</p><p className="font-medium">{selectedItem.phone}</p></div>
+                  <div><p className="text-sm text-gray-600">{t('admin.crm.leads.details.phone')}</p><p className="font-medium">{selectedItem.phone}</p></div>
                 </div>
               )}
               {selectedItem.sector && (
                 <div className="flex items-start gap-3">
                   <Building className="w-5 h-5 text-gray-400 mt-1" />
-                  <div><p className="text-sm text-gray-600">{t('admin.crm.leads.details.sector') || 'Sector'}</p><p className="font-medium">{selectedItem.sector}</p></div>
+                  <div><p className="text-sm text-gray-600">{t('admin.crm.leads.details.sector')}</p><p className="font-medium">{selectedItem.sector}</p></div>
                 </div>
               )}
               {selectedItem.target_city && (
                 <div className="flex items-start gap-3">
                   <MapPin className="w-5 h-5 text-gray-400 mt-1" />
-                  <div><p className="text-sm text-gray-600">{t('admin.crm.leads.details.city') || 'Target City'}</p><p className="font-medium">{selectedItem.target_city}</p></div>
+                  <div><p className="text-sm text-gray-600">{t('admin.crm.leads.details.city')}</p><p className="font-medium">{selectedItem.target_city}</p></div>
                 </div>
               )}
             </div>
 
             <div className="space-y-4">
               <div>
-                <label className="text-sm text-gray-600">{t('admin.crm.leads.details.status') || 'Status'}</label>
+                <label className="text-sm text-gray-600">{t('admin.crm.leads.details.status')}</label>
                 <select value={selectedItem.status} onChange={(e) => handleUpdateStatus(selectedItem.lead_id, e.target.value)} disabled={loadingAction} className="w-full mt-1 px-3 py-2 border rounded-lg">
                   {statuses.map(s => <option key={s} value={s}>{t(`admin.crm.statuses.${s}`) || s}</option>)}
                 </select>
               </div>
               <div>
-                <label className="text-sm text-gray-600">{t('admin.crm.leads.details.priority') || 'Priority'}</label>
+                <label className="text-sm text-gray-600">{t('admin.crm.leads.details.priority')}</label>
                 <select value={selectedItem.priority || 'C'} className="w-full mt-1 px-3 py-2 border rounded-lg">
                   {priorities.map(p => <option key={p} value={p}>{t(`admin.crm.priorities.${p}`) || `Priority ${p}`}</option>)}
                 </select>
@@ -421,13 +424,13 @@ const LeadsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTerm, 
 
           {selectedItem.focus_notes && (
             <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-              <p className="text-sm font-semibold text-blue-900">{t('admin.crm.leads.details.focus_notes') || 'Focus Notes'}</p>
+              <p className="text-sm font-semibold text-blue-900">{t('admin.crm.leads.details.focus_notes')}</p>
               <p className="text-sm text-blue-800 mt-1">{selectedItem.focus_notes}</p>
             </div>
           )}
 
           <div className="mt-6 border-t pt-6">
-            <h3 className="font-semibold mb-4">{t('admin.crm.leads.details.notes') || 'Notes'}</h3>
+            <h3 className="font-semibold mb-4">{t('admin.crm.leads.details.notes')}</h3>
             <div className="space-y-3 mb-4">
               {selectedItem.notes?.map((note, idx) => (
                 <div key={idx} className="p-3 bg-gray-50 rounded-lg">
@@ -437,8 +440,8 @@ const LeadsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTerm, 
               )) || <p className="text-gray-500 text-sm">{t('admin.crm.common.no_notes') || 'No notes yet'}</p>}
             </div>
             <div className="flex gap-2">
-              <input type="text" placeholder={t('admin.crm.leads.add_note_placeholder') || 'Add a note...'} value={noteText} onChange={(e) => setNoteText(e.target.value)} className="flex-1 px-3 py-2 border rounded-lg" />
-              <button onClick={() => handleAddNote(selectedItem.lead_id)} disabled={!noteText.trim() || loadingAction} className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50">{loadingAction ? <Loader2 className="w-4 h-4 animate-spin" /> : t('admin.crm.common.add') || 'Add'}</button>
+              <input type="text" placeholder={t('admin.crm.leads.add_note_placeholder')} value={noteText} onChange={(e) => setNoteText(e.target.value)} className="flex-1 px-3 py-2 border rounded-lg" />
+              <button onClick={() => handleAddNote(selectedItem.lead_id)} disabled={!noteText.trim() || loadingAction} className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50">{loadingAction ? <Loader2 className="w-4 h-4 animate-spin" /> : t('admin.crm.common.add')}</button>
             </div>
           </div>
 
@@ -474,7 +477,7 @@ const LeadsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTerm, 
                 ) : (
                   <>
                     <Users className="w-4 h-4" />
-                    <span>{t('admin.crm.leads.convert_to_contact') || 'Convertir en Contact'}</span>
+                    <span>{t('admin.crm.leads.convert_to_contact')}</span>
                   </>
                 )}
               </button>
@@ -486,7 +489,7 @@ const LeadsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTerm, 
               className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
             >
               <ExternalLink className="w-4 h-4" />
-              <span>{t('admin.crm.leads.create_opportunity') || 'Créer une opportunité'}</span>
+              <span>{t('admin.crm.leads.create_opportunity')}</span>
             </button>
           </div>
         </div>

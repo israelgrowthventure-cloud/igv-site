@@ -1,13 +1,19 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Mail, Phone, Building, MapPin, X, Loader2, Plus, Users, Edit, Trash2, Save } from 'lucide-react';
+import { Search, Mail, Phone, Building, MapPin, X, Loader2, Plus, Users, Edit, Trash2, Save, Send } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '../../utils/api';
+import { SkeletonTable } from './Skeleton';
+import EmailModal from './EmailModal';
+import { useTranslation } from 'react-i18next';
 
-const ContactsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTerm, setSearchTerm, t }) => {
+const ContactsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, searchTerm, setSearchTerm, t }) => {
+  const { i18n } = useTranslation();
   const [loadingAction, setLoadingAction] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showEmailModal, setShowEmailModal] = useState(false);
+  const [emailContact, setEmailContact] = useState(null);
   const [editingContact, setEditingContact] = useState(null);
   const [formData, setFormData] = useState({ name: '', email: '', phone: '', position: '', language: 'fr' });
   const navigate = useNavigate();
@@ -17,12 +23,12 @@ const ContactsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTer
     try {
       setLoadingAction(true);
       await api.post('/api/crm/contacts', formData);
-      toast.success(t('admin.crm.contacts.created') || 'Contact créé');
+      toast.success(t('admin.crm.contacts.created'));
       setShowCreateModal(false);
       setFormData({ name: '', email: '', phone: '', position: '', language: 'fr' });
       await onRefresh();
     } catch (error) {
-      toast.error(t('admin.crm.errors.create_failed') || 'Échec de la création');
+      toast.error(t('admin.crm.errors.create_failed'));
     } finally {
       setLoadingAction(false);
     }
@@ -33,27 +39,27 @@ const ContactsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTer
     try {
       setLoadingAction(true);
       await api.put(`/api/crm/contacts/${editingContact._id || editingContact.contact_id}`, formData);
-      toast.success(t('admin.crm.contacts.updated') || 'Contact mis à jour');
+      toast.success(t('admin.crm.contacts.updated'));
       setShowEditModal(false);
       setEditingContact(null);
       setFormData({ name: '', email: '', phone: '', position: '', language: 'fr' });
       await onRefresh();
     } catch (error) {
-      toast.error(t('admin.crm.errors.update_failed') || 'Échec de la mise à jour');
+      toast.error(t('admin.crm.errors.update_failed'));
     } finally {
       setLoadingAction(false);
     }
   };
 
   const handleDelete = async (contactId) => {
-    if (!window.confirm(t('admin.crm.common.confirm_delete') || 'Êtes-vous sûr de vouloir supprimer ?')) return;
+    if (!window.confirm(t('admin.crm.common.confirm_delete'))) return;
     try {
       setLoadingAction(true);
       await api.delete(`/api/crm/contacts/${contactId}`);
-      toast.success(t('admin.crm.contacts.deleted') || 'Contact supprimé');
+      toast.success(t('admin.crm.contacts.deleted'));
       await onRefresh();
     } catch (error) {
-      toast.error(t('admin.crm.errors.delete_failed') || 'Échec de la suppression');
+      toast.error(t('admin.crm.errors.delete_failed'));
     } finally {
       setLoadingAction(false);
     }
@@ -72,10 +78,10 @@ const ContactsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTer
         expected_close_date: new Date(Date.now() + 30*24*60*60*1000).toISOString()
       });
       
-      toast.success(t('admin.crm.opportunities.created') || 'Opportunité créée avec succès !', {
+      toast.success(t('admin.crm.opportunities.created'), {
         duration: 5000,
         action: {
-          label: t('admin.crm.common.view') || "Voir",
+          label: t('admin.crm.common.view'),
           onClick: () => {
             window.location.hash = '#opportunities';
           }
@@ -83,7 +89,7 @@ const ContactsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTer
       });
       await onRefresh();
     } catch (error) {
-      toast.error(t('admin.crm.errors.create_failed') || 'Échec de la création');
+      toast.error(t('admin.crm.errors.create_failed'));
     } finally {
       setLoadingAction(false);
     }
@@ -106,7 +112,7 @@ const ContactsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTer
       <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-lg font-semibold">
-            {isEdit ? (t('admin.crm.contacts.edit_contact') || 'Modifier le contact') : (t('admin.crm.contacts.new_contact') || 'Nouveau contact')}
+            {isEdit ? t('admin.crm.contacts.edit_contact') : t('admin.crm.contacts.new_contact')}
           </h3>
           <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded">
             <X className="w-5 h-5" />
@@ -115,7 +121,7 @@ const ContactsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTer
         <form onSubmit={onSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              {t('admin.crm.contacts.columns.name') || 'Nom'} *
+              {t('admin.crm.contacts.columns.name')} *
             </label>
             <input
               type="text"
@@ -127,7 +133,7 @@ const ContactsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTer
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              {t('admin.crm.contacts.columns.email') || 'Email'} *
+              {t('admin.crm.contacts.columns.email')} *
             </label>
             <input
               type="email"
@@ -139,7 +145,7 @@ const ContactsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTer
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              {t('admin.crm.contacts.columns.phone') || 'Téléphone'}
+              {t('admin.crm.contacts.columns.phone')}
             </label>
             <input
               type="tel"
@@ -150,7 +156,7 @@ const ContactsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTer
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              {t('admin.crm.contacts.details.position') || 'Poste'}
+              {t('admin.crm.contacts.details.position')}
             </label>
             <input
               type="text"
@@ -166,14 +172,14 @@ const ContactsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTer
               className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
             >
               {loadingAction ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-              {t('common.save') || 'Enregistrer'}
+              {t('common.save')}
             </button>
             <button
               type="button"
               onClick={onClose}
               className="px-4 py-2 border rounded-lg hover:bg-gray-100"
             >
-              {t('common.cancel') || 'Annuler'}
+              {t('common.cancel')}
             </button>
           </div>
         </form>
@@ -189,7 +195,7 @@ const ContactsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTer
           <Search className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
           <input
             type="text"
-            placeholder={t('admin.crm.contacts.search') || 'Rechercher des contacts...'}
+            placeholder={t('admin.crm.contacts.search')}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full pl-10 pr-4 py-2 border rounded-lg"
@@ -200,21 +206,23 @@ const ContactsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTer
           className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
         >
           <Plus className="w-4 h-4" />
-          {t('admin.crm.contacts.new_contact') || 'Nouveau contact'}
+          {t('admin.crm.contacts.new_contact')}
         </button>
       </div>
 
-      {!selectedItem ? (
+      {loading ? (
+        <SkeletonTable rows={6} columns={6} />
+      ) : !selectedItem ? (
         <div className="bg-white rounded-lg shadow border overflow-hidden">
           <table className="w-full">
             <thead className="bg-gray-50 border-b">
               <tr>
-                <th className="px-4 py-3 text-left text-sm font-semibold">{t('admin.crm.contacts.columns.name') || 'Nom'}</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">{t('admin.crm.contacts.columns.email') || 'Email'}</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">{t('admin.crm.contacts.columns.phone') || 'Téléphone'}</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">{t('admin.crm.contacts.details.tags') || 'Tags'}</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">{t('admin.crm.contacts.columns.created') || 'Créé le'}</th>
-                <th className="px-4 py-3 text-right text-sm font-semibold">{t('admin.crm.common.actions') || 'Actions'}</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold">{t('admin.crm.contacts.columns.name')}</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold">{t('admin.crm.contacts.columns.email')}</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold">{t('admin.crm.contacts.columns.phone')}</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold">{t('admin.crm.contacts.details.tags')}</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold">{t('admin.crm.contacts.columns.created')}</th>
+                <th className="px-4 py-3 text-right text-sm font-semibold">{t('admin.crm.common.actions')}</th>
               </tr>
             </thead>
             <tbody>
@@ -242,9 +250,16 @@ const ContactsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTer
                   <td className="px-4 py-3">
                     <div className="flex gap-2 justify-end">
                       <button
+                        onClick={(e) => { e.stopPropagation(); setEmailContact(contact); setShowEmailModal(true); }}
+                        className="p-1.5 text-green-600 hover:bg-green-50 rounded"
+                        title={t('admin.crm.emails.send')}
+                      >
+                        <Send className="w-4 h-4" />
+                      </button>
+                      <button
                         onClick={(e) => { e.stopPropagation(); openEditModal(contact); }}
                         className="p-1.5 text-blue-600 hover:bg-blue-50 rounded"
-                        title={t('common.edit') || 'Modifier'}
+                        title={t('common.edit')}
                       >
                         <Edit className="w-4 h-4" />
                       </button>
@@ -252,7 +267,7 @@ const ContactsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTer
                         onClick={(e) => { e.stopPropagation(); handleDelete(contact._id || contact.contact_id); }}
                         disabled={loadingAction}
                         className="p-1.5 text-red-600 hover:bg-red-50 rounded disabled:opacity-50"
-                        title={t('common.delete') || 'Supprimer'}
+                        title={t('common.delete')}
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -263,14 +278,14 @@ const ContactsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTer
                 <tr><td colSpan="6" className="px-4 py-12 text-center">
                   <div className="text-gray-500">
                     <Users className="w-12 h-12 mx-auto mb-3 text-gray-300" />
-                    <p className="font-medium">{t('admin.crm.contacts.empty_title') || 'Aucun contact'}</p>
-                    <p className="text-sm mt-1">{t('admin.crm.contacts.empty_subtitle') || 'Les contacts apparaissent ici quand vous convertissez des prospects'}</p>
+                    <p className="font-medium">{t('admin.crm.contacts.empty_title')}</p>
+                    <p className="text-sm mt-1">{t('admin.crm.contacts.empty_subtitle')}</p>
                     <button
                       onClick={() => { setFormData({ name: '', email: '', phone: '', position: '', language: 'fr' }); setShowCreateModal(true); }}
                       className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                     >
                       <Plus className="w-4 h-4" />
-                      {t('admin.crm.contacts.new_contact') || 'Créer un contact'}
+                      {t('admin.crm.contacts.new_contact')}
                     </button>
                   </div>
                 </td></tr>
@@ -292,7 +307,7 @@ const ContactsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTer
                 disabled={loadingAction}
               >
                 <Plus className="w-5 h-5" />
-                {t('admin.crm.contacts.new_opportunity') || 'Nouvelle Opportunité'}
+                {t('admin.crm.contacts.new_opportunity')}
               </button>
               <button onClick={() => openEditModal(selectedItem)} className="p-2 hover:bg-blue-50 rounded-lg text-blue-600">
                 <Edit className="w-5 h-5" />
@@ -308,7 +323,7 @@ const ContactsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTer
               <div className="flex items-start gap-3">
                 <Mail className="w-5 h-5 text-gray-400 mt-1" />
                 <div>
-                  <p className="text-sm text-gray-600">{t('admin.crm.contacts.details.email') || 'Email'}</p>
+                  <p className="text-sm text-gray-600">{t('admin.crm.contacts.details.email')}</p>
                   <p className="font-medium">{selectedItem.email}</p>
                 </div>
               </div>
@@ -316,7 +331,7 @@ const ContactsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTer
                 <div className="flex items-start gap-3">
                   <Phone className="w-5 h-5 text-gray-400 mt-1" />
                   <div>
-                    <p className="text-sm text-gray-600">{t('admin.crm.contacts.details.phone') || 'Téléphone'}</p>
+                    <p className="text-sm text-gray-600">{t('admin.crm.contacts.details.phone')}</p>
                     <p className="font-medium">{selectedItem.phone}</p>
                   </div>
                 </div>
@@ -325,7 +340,7 @@ const ContactsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTer
                 <div className="flex items-start gap-3">
                   <Building className="w-5 h-5 text-gray-400 mt-1" />
                   <div>
-                    <p className="text-sm text-gray-600">{t('admin.crm.contacts.details.position') || 'Poste'}</p>
+                    <p className="text-sm text-gray-600">{t('admin.crm.contacts.details.position')}</p>
                     <p className="font-medium">{selectedItem.position}</p>
                   </div>
                 </div>
@@ -334,7 +349,7 @@ const ContactsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTer
                 <div className="flex items-start gap-3">
                   <MapPin className="w-5 h-5 text-gray-400 mt-1" />
                   <div>
-                    <p className="text-sm text-gray-600">{t('admin.crm.contacts.details.location') || 'Localisation'}</p>
+                    <p className="text-sm text-gray-600">{t('admin.crm.contacts.details.location')}</p>
                     <p className="font-medium">{selectedItem.location}</p>
                   </div>
                 </div>
@@ -344,7 +359,7 @@ const ContactsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTer
             <div>
               {selectedItem.tags && selectedItem.tags.length > 0 && (
                 <div className="mb-4">
-                  <p className="text-sm text-gray-600 mb-2">{t('admin.crm.contacts.details.tags') || 'Tags'}</p>
+                  <p className="text-sm text-gray-600 mb-2">{t('admin.crm.contacts.details.tags')}</p>
                   <div className="flex flex-wrap gap-2">
                     {selectedItem.tags.map(tag => (
                       <span key={tag} className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">{tag}</span>
@@ -357,13 +372,13 @@ const ContactsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTer
 
           {selectedItem.converted_from_lead_id && (
             <div className="mt-6 p-4 bg-green-50 rounded-lg">
-              <p className="text-sm font-semibold text-green-900">{t('admin.crm.contacts.converted_from_lead') || 'Converti depuis un prospect'}</p>
-              <p className="text-sm text-green-800 mt-1">{t('admin.crm.contacts.lead_id') || 'ID Prospect'}: {selectedItem.converted_from_lead_id}</p>
+              <p className="text-sm font-semibold text-green-900">{t('admin.crm.contacts.converted_from_lead')}</p>
+              <p className="text-sm text-green-800 mt-1">{t('admin.crm.contacts.lead_id')}: {selectedItem.converted_from_lead_id}</p>
             </div>
           )}
 
           <div className="mt-6 border-t pt-6">
-            <h3 className="font-semibold mb-4">{t('admin.crm.contacts.recent_activities') || 'Activités récentes'}</h3>
+            <h3 className="font-semibold mb-4">{t('admin.crm.contacts.recent_activities')}</h3>
             <div className="space-y-2">
               {selectedItem.activities?.slice(0, 5).map((activity, idx) => (
                 <div key={idx} className="p-3 bg-gray-50 rounded-lg">
@@ -371,7 +386,7 @@ const ContactsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTer
                   <p className="text-xs text-gray-600 mt-1">{activity.description}</p>
                   <p className="text-xs text-gray-500 mt-1">{new Date(activity.created_at).toLocaleString()}</p>
                 </div>
-              )) || <p className="text-gray-500 text-sm">{t('admin.crm.common.no_activities') || 'Aucune activité'}</p>}
+              )) || <p className="text-gray-500 text-sm">{t('admin.crm.common.no_activities')}</p>}
             </div>
           </div>
         </div>
@@ -392,6 +407,16 @@ const ContactsTab = ({ data, selectedItem, setSelectedItem, onRefresh, searchTer
           isEdit={true} 
           onSubmit={handleEdit} 
           onClose={() => { setShowEditModal(false); setEditingContact(null); }} 
+        />
+      )}
+
+      {/* Email Modal */}
+      {showEmailModal && emailContact && (
+        <EmailModal 
+          contact={emailContact}
+          onClose={() => { setShowEmailModal(false); setEmailContact(null); }}
+          t={t}
+          language={i18n?.language || 'fr'}
         />
       )}
     </div>

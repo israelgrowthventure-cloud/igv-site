@@ -199,6 +199,19 @@ export const api = {
     return response.data;
   },
 
+  post: async (endpoint, data, config = {}) => {
+    const token = localStorage.getItem('admin_token');
+    const response = await axios.post(`${BACKEND_URL}${endpoint}`, data, {
+      ...config,
+      timeout: config.timeout || 8000,
+      headers: { 
+        Authorization: token ? `Bearer ${token}` : '',
+        ...config.headers 
+      }
+    });
+    return response.data;
+  },
+
   put: async (endpoint, data, config = {}) => {
     const token = localStorage.getItem('admin_token');
     const response = await axios.put(`${BACKEND_URL}${endpoint}`, data, {

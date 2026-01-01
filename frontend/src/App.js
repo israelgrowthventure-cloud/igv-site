@@ -6,7 +6,7 @@ import './i18n/config';
 import './App.css';
 import './styles/rtl.css';
 
-// Build trigger: 2025-12-30-performance-v1
+// Build trigger: 2026-01-02-payment-monetico-v2
 
 // Layout Components
 import Header from './components/Header';

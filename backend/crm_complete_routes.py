@@ -1606,6 +1606,48 @@ async def get_pipeline_stages(user: Dict = Depends(get_current_user)):
     
     return {"stages": stages}
 
+
+# ==========================================
+# ACTIVITIES
+# ==========================================
+
+@router.get("/activities")
+async def get_activities(
+    user: Dict = Depends(get_current_user),
+    skip: int = Query(0, ge=0),
+    limit: int = Query(50, ge=1, le=500),
+    type: Optional[str] = None
+):
+    """
+    Get activities timeline (notes, emails, calls, meetings)
+    """
+    current_db = get_db()
+    if current_db is None:
+        raise HTTPException(status_code=500, detail="Database not configured")
+    
+    filter_query = {}
+    if type:
+        filter_query["type"] = type
+    
+    # Get activities
+    cursor = current_db.activities.find(filter_query).sort("created_at", -1).skip(skip).limit(limit)
+    activities = await cursor.to_list(length=limit)
+    total = await current_db.activities.count_documents(filter_query)
+    
+    # Convert ObjectId to string
+    for activity in activities:
+        activity["_id"] = str(activity["_id"])
+        if "created_at" in activity and isinstance(activity["created_at"], datetime):
+            activity["created_at"] = activity["created_at"].isoformat()
+    
+    return {
+        "activities": activities,
+        "total": total,
+        "skip": skip,
+        "limit": limit
+    }
+
+
 # ==========================================
 # ROUTE PUBLIQUE: Lead depuis Packs (demande rappel)
 # ==========================================

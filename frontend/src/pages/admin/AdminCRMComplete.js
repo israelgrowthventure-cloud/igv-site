@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { 
   TrendingUp, Users, Target, Mail, Settings, LogOut, Search, Filter,
-  Download, Plus, Eye, DollarSign, AlertCircle, X, Save, Loader2
+  Download, Plus, Eye, DollarSign, AlertCircle, X, Save, Loader2, Activity, Send
 } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '../../utils/api';
@@ -17,6 +17,8 @@ const TAB_ROUTES = {
   pipeline: '/admin/crm/pipeline',
   opportunities: '/admin/crm/opportunities',
   contacts: '/admin/crm/contacts',
+  emails: '/admin/crm/emails',
+  activities: '/admin/crm/activities',
   users: '/admin/crm/users',
   settings: '/admin/crm/settings'
 };
@@ -29,6 +31,8 @@ const ROUTE_TO_TAB = {
   '/admin/crm/pipeline': 'pipeline',
   '/admin/crm/opportunities': 'opportunities',
   '/admin/crm/contacts': 'contacts',
+  '/admin/crm/emails': 'emails',
+  '/admin/crm/activities': 'activities',
   '/admin/crm/users': 'users',
   '/admin/crm/settings': 'settings'
 };
@@ -260,6 +264,8 @@ const AdminCRMComplete = () => {
                 { id: 'pipeline', icon: Target, label: t('admin.crm.tabs.pipeline') },
                 { id: 'opportunities', icon: DollarSign, label: t('admin.crm.tabs.opportunities') },
                 { id: 'contacts', icon: Mail, label: t('admin.crm.tabs.contacts') },
+                { id: 'emails', icon: Send, label: t('admin.crm.tabs.emails', 'Emails') },
+                { id: 'activities', icon: Activity, label: t('admin.crm.tabs.activities', 'Activités') },
                 ...(user?.role === 'admin' ? [
                   { id: 'users', icon: Users, label: t('admin.crm.tabs.users', 'Utilisateurs') },
                   { id: 'settings', icon: Settings, label: t('admin.crm.tabs.settings') }
@@ -295,6 +301,8 @@ const AdminCRMComplete = () => {
           {activeTab === 'pipeline' && <PipelineTab data={data.pipeline} loading={initialLoad && tabLoading} onRefresh={loadTabData} t={t} />}
           {activeTab === 'opportunities' && <OpportunitiesTab data={data} loading={initialLoad && tabLoading} onRefresh={loadTabData} searchTerm={searchTerm} setSearchTerm={setSearchTerm} t={t} />}
           {activeTab === 'contacts' && <ContactsTab data={data} loading={initialLoad && tabLoading} selectedItem={selectedItem} setSelectedItem={setSelectedItem} onRefresh={loadTabData} searchTerm={searchTerm} setSearchTerm={setSearchTerm} t={t} />}
+          {activeTab === 'emails' && <EmailsTab t={t} />}
+          {activeTab === 'activities' && <ActivitiesTab t={t} />}
           {activeTab === 'settings' && user?.role === 'admin' && <SettingsTab data={data} onRefresh={loadTabData} t={t} />}
         </main>
       </div>
@@ -434,5 +442,7 @@ import UsersTab from '../../components/crm/UsersTab';
 import ContactsTab from '../../components/crm/ContactsTab';
 import SettingsTab from '../../components/crm/SettingsTab';
 import OpportunitiesTab from '../../components/crm/OpportunitiesTab';
+import EmailsTab from '../../components/crm/EmailsTab';
+import ActivitiesTab from '../../components/crm/ActivitiesTab';
 
 export default AdminCRMComplete;

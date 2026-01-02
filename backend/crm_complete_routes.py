@@ -1498,6 +1498,82 @@ class EmailSendRequest(BaseModel):
     subject: str
     message: str
     contact_id: Optional[str] = None
+    lead_id: Optional[str] = None
+    template_id: Optional[str] = None  # PHASE 5: support template usage
+
+
+class EmailTemplateCreate(BaseModel):
+    name: str
+    subject: str
+    body: str  # Supports {{variables}} like {{brand}}, {{contact_name}}, {{link}}
+    language: str = "fr"
+
+
+@router.get("/emails/templates")
+async def get_email_templates(user: Dict = Depends(get_current_user)):
+    """Get all email templates"""
+    current_db = get_db()
+    if current_db is None:
+        raise HTTPException(status_code=500, detail="Database not configured")
+    
+    templates = await current_db.email_templates.find({}).to_list(100)
+    for template in templates:
+        template["_id"] = str(template["_id"])
+    
+    return {"templates": templates}
+
+
+@router.post("/emails/templates")
+async def create_email_template(template: EmailTemplateCreate, user: Dict = Depends(get_current_user)):
+    """Create new email template (Admin only)"""
+    await require_role(user, ["admin"])
+    
+    current_db = get_db()
+    if current_db is None:
+        raise HTTPException(status_code=500, detail="Database not configured")
+    
+    template_doc = {
+        **template.dict(),
+        "created_by": user["email"],
+        "created_at": datetime.now(timezone.utc)
+    }
+    
+    result = await current_db.email_templates.insert_one(template_doc)
+    return {"template_id": str(result.inserted_id), "message": "Template created"}
+
+
+@router.get("/emails/history")
+async def get_email_history(
+    user: Dict = Depends(get_current_user),
+    contact_id: Optional[str] = None,
+    lead_id: Optional[str] = None,
+    limit: int = Query(50, le=200)
+):
+    """Get email send history"""
+    current_db = get_db()
+    if current_db is None:
+        raise HTTPException(status_code=500, detail="Database not configured")
+    
+    query = {}
+    if contact_id:
+        query["contact_id"] = contact_id
+    if lead_id:
+        query["lead_id"] = lead_id
+    
+    # PHASE 4: Commercial sees only their sent emails
+    if user["role"] == "commercial":
+        query["sent_by"] = user["email"]
+    
+    emails = await current_db.crm_activities.find({
+        "type": "email_sent",
+        **query
+    }).sort("sent_at", -1).limit(limit).to_list(limit)
+    
+    for email in emails:
+        email["_id"] = str(email["_id"])
+    
+    return {"emails": emails, "total": len(emails)}
+
 
 @router.post("/emails/send")
 async def send_crm_email(

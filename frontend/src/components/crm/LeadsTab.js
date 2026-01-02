@@ -4,6 +4,7 @@ import { Search, Filter, Download, Plus, Eye, X, Save, Loader2, Mail, Phone, Bui
 import { toast } from 'sonner';
 import api from '../../utils/api';
 import { SkeletonTable } from './Skeleton';
+import EmailModal from './EmailModal';
 
 const LeadsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, searchTerm, setSearchTerm, filters, setFilters, t }) => {
   const navigate = useNavigate();
@@ -12,6 +13,7 @@ const LeadsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, sea
   const [editingLead, setEditingLead] = useState(null);
   const [loadingAction, setLoadingAction] = useState(false);
   const [showNewLeadForm, setShowNewLeadForm] = useState(false);
+  const [showEmailModal, setShowEmailModal] = useState(false);
   const [newLeadData, setNewLeadData] = useState({
     email: '',
     contact_name: '',
@@ -491,8 +493,29 @@ const LeadsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, sea
               <ExternalLink className="w-4 h-4" />
               <span>{t('admin.crm.leads.create_opportunity')}</span>
             </button>
+            
+            <button
+              onClick={() => setShowEmailModal(true)}
+              disabled={!selectedItem.email}
+              className="flex items-center gap-2 px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 transition-colors"
+            >
+              <Mail className="w-4 h-4" />
+              <span>{t('admin.crm.emails.compose', 'Envoyer Email')}</span>
+            </button>
           </div>
         </div>
+      )}
+      
+      {showEmailModal && selectedItem && (
+        <EmailModal 
+          contact={{ 
+            _id: selectedItem.lead_id, 
+            name: selectedItem.contact_name, 
+            email: selectedItem.email 
+          }} 
+          onClose={() => setShowEmailModal(false)} 
+          t={t} 
+        />
       )}
     </div>
   );

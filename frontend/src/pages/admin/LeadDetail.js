@@ -321,6 +321,33 @@ const LeadDetail = () => {
             </div>
           </div>
 
+          {/* Mini-Analysis Section */}
+          {lead.analysis && lead.analysis.trim() && (
+            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg shadow-md border border-blue-200 p-6">
+              <h2 className="font-semibold text-lg text-blue-900 mb-3 flex items-center gap-2">
+                <MessageSquare className="w-5 h-5" />
+                {t('admin.crm.leads.mini_analysis') || 'Mini-Analyse IGV'}
+              </h2>
+              <div className="bg-white rounded-lg p-4 border border-blue-100">
+                <p className="text-gray-800 whitespace-pre-wrap leading-relaxed">{lead.analysis}</p>
+              </div>
+              {lead.analysis_meta && (
+                <div className="mt-3 text-xs text-blue-700">
+                  <p>
+                    <strong>{t('admin.crm.leads.generated_on') || 'Générée le'} :</strong>{' '}
+                    {new Date(lead.analysis_meta.generated_at).toLocaleString()}
+                  </p>
+                  {lead.analysis_meta.language && (
+                    <p>
+                      <strong>{t('admin.crm.leads.language') || 'Langue'} :</strong>{' '}
+                      {lead.analysis_meta.language.toUpperCase()}
+                    </p>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+
           {/* Additional Info */}
           {editing && (
             <div className="bg-white rounded-lg shadow border p-6">

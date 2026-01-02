@@ -6,6 +6,7 @@ from fastapi.exceptions import RequestValidationError
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
+from bson import ObjectId
 import os
 import logging
 from pathlib import Path
@@ -333,6 +334,8 @@ class AdminUser(BaseModel):
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     email: EmailStr
+    first_name: str = ""
+    last_name: str = ""
     password_hash: str
     role: str = 'admin'  # 'admin', 'sales', 'viewer'
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
@@ -344,6 +347,8 @@ class AdminLoginRequest(BaseModel):
 
 class AdminUserCreate(BaseModel):
     email: EmailStr
+    first_name: str = ""
+    last_name: str = ""
     password: str
     role: str = 'viewer'  # Default to lowest privilege
 
@@ -814,6 +819,8 @@ async def create_admin_user(user_data: AdminUserCreate, current_user: Dict = Dep
     # Create user
     new_user = AdminUser(
         email=user_data.email,
+        first_name=user_data.first_name,
+        last_name=user_data.last_name,
         password_hash=hash_password(user_data.password),
         role=user_data.role
     )
@@ -823,6 +830,8 @@ async def create_admin_user(user_data: AdminUserCreate, current_user: Dict = Dep
     return {
         "message": "User created successfully",
         "email": new_user.email,
+        "first_name": new_user.first_name,
+        "last_name": new_user.last_name,
         "role": new_user.role
     }
 
@@ -844,21 +853,23 @@ async def list_admin_users(current_user: Dict = Depends(get_current_user)):
     return {"users": users}
 
 
-@api_router.delete("/admin/users/{email}")
-async def delete_admin_user(email: str, current_user: Dict = Depends(get_current_user)):
-    """Delete/deactivate admin user (admin only)"""
+@api_router.delete("/admin/users/{user_id}")
+async def delete_admin_user(user_id: str, current_user: Dict = Depends(get_current_user)):
+    """Delete/deactivate admin user by _id (admin only)"""
     if db is None:
         raise HTTPException(status_code=503, detail="Database not configured")
     
     if current_user['role'] != 'admin':
         raise HTTPException(status_code=403, detail="Only admins can delete users")
     
-    if email == current_user['email']:
+    # Check if trying to delete yourself
+    user_to_delete = await db.users.find_one({"_id": ObjectId(user_id)})
+    if user_to_delete and user_to_delete.get('email') == current_user['email']:
         raise HTTPException(status_code=400, detail="Cannot delete yourself")
     
     # Deactivate instead of delete
     result = await db.users.update_one(
-        {"email": email},
+        {"_id": ObjectId(user_id)},
         {"$set": {"is_active": False}}
     )
     

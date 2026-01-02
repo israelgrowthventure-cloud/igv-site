@@ -235,12 +235,12 @@ async def create_lead_in_crm(lead_data: dict, request_id: str) -> dict:
 
 
 def generate_mini_analysis_pdf(brand_name: str, analysis_text: str, language: str = "fr") -> bytes:
-    """Generate mini-analysis PDF with IGV official header"""
+    """Generate mini-analysis PDF with IGV header at top, content below"""
     if not PDF_AVAILABLE:
         raise Exception("PDF generation not available - reportlab not installed")
     
     buffer = BytesIO()
-    doc = SimpleDocTemplate(buffer, pagesize=A4, topMargin=2*cm, bottomMargin=2*cm, leftMargin=2*cm, rightMargin=2*cm)
+    doc = SimpleDocTemplate(buffer, pagesize=A4, topMargin=1*cm, bottomMargin=2*cm, leftMargin=2*cm, rightMargin=2*cm)
     story = []
     styles = getSampleStyleSheet()
     
@@ -262,27 +262,28 @@ def generate_mini_analysis_pdf(brand_name: str, analysis_text: str, language: st
         alignment=TA_CENTER
     )
     
-    # BUG-2 FIX: Add IGV official header image
+    # Step 1: Add IGV header image at top (if available)
     header_pdf_path = os.path.join(os.path.dirname(__file__), 'assets', 'igv_header.pdf')
     if os.path.exists(header_pdf_path):
         try:
-            # Read first page of header PDF and extract as image
-            header_reader = PdfReader(header_pdf_path)
-            # For now, add a placeholder spacer - full PDF merge would require more complex logic
-            story.append(Spacer(1, 2*cm))
-            logging.info(f"✅ IGV header PDF found: {header_pdf_path}")
-        except Exception as e:
-            logging.warning(f"⚠️ Could not load IGV header: {e}")
-            # Fallback to text header
+            # Try to insert header PDF as image using ReportLab Image
+            # This requires converting PDF to image format first
+            # For now, add company name as header since PDF->Image conversion is complex
             story.append(Paragraph(COMPANY_NAME, title_style))
             story.append(Paragraph(f"{COMPANY_EMAIL} | {COMPANY_WEBSITE}", header_style))
+            story.append(Spacer(1, 1*cm))
+            logging.info(f"✅ IGV header placeholder added (full PDF merge not implemented)")
+        except Exception as e:
+            logging.warning(f"⚠️ Could not load IGV header: {e}")
+            story.append(Paragraph(COMPANY_NAME, title_style))
+            story.append(Paragraph(f"{COMPANY_EMAIL} | {COMPANY_WEBSITE}", header_style))
+            story.append(Spacer(1, 1*cm))
     else:
-        # Fallback to text header if file not found
+        # Fallback: text header
         logging.warning(f"⚠️ IGV header not found at {header_pdf_path}")
         story.append(Paragraph(COMPANY_NAME, title_style))
         story.append(Paragraph(f"{COMPANY_EMAIL} | {COMPANY_WEBSITE}", header_style))
-    
-    story.append(Spacer(1, 1*cm))
+        story.append(Spacer(1, 1*cm))
     
     # Title
     title_text = {
@@ -329,11 +330,12 @@ def generate_mini_analysis_pdf(brand_name: str, analysis_text: str, language: st
     
     story.append(Paragraph(f"<i>{footer_text}</i>", header_style))
     
-    # Build PDF
+    # Build final PDF
     doc.build(story)
     pdf_bytes = buffer.getvalue()
     buffer.close()
     
+    logging.info(f"✅ PDF generated successfully ({len(pdf_bytes)} bytes)")
     return pdf_bytes
 
 

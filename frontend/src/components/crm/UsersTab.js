@@ -14,7 +14,8 @@ const UsersTab = ({ t }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [formData, setFormData] = useState({
     email: '',
-    name: '',
+    first_name: '',
+    last_name: '',
     password: '',
     role: 'commercial',
     assigned_leads: []
@@ -40,7 +41,7 @@ const UsersTab = ({ t }) => {
   const handleCreate = async (e) => {
     e.preventDefault();
     
-    if (!formData.email || !formData.name || !formData.password) {
+    if (!formData.email || !formData.first_name || !formData.last_name || !formData.password) {
       toast.error('Tous les champs obligatoires doivent être remplis');
       return;
     }
@@ -50,7 +51,7 @@ const UsersTab = ({ t }) => {
       await api.post('/api/admin/users', formData);
       toast.success('Utilisateur créé avec succès');
       setShowCreateModal(false);
-      setFormData({ email: '', name: '', password: '', role: 'commercial', assigned_leads: [] });
+      setFormData({ email: '', first_name: '', last_name: '', password: '', role: 'commercial', assigned_leads: [] });
       await fetchUsers();
     } catch (error) {
       const errorMsg = error.response?.data?.detail || 'Erreur lors de la création';
@@ -66,7 +67,8 @@ const UsersTab = ({ t }) => {
     try {
       setLoadingAction(true);
       const updateData = {
-        name: formData.name,
+        first_name: formData.first_name,
+        last_name: formData.last_name,
         role: formData.role,
         is_active: formData.is_active,
         assigned_leads: formData.assigned_leads
@@ -76,7 +78,7 @@ const UsersTab = ({ t }) => {
       toast.success('Utilisateur mis à jour avec succès');
       setShowEditModal(false);
       setEditingUser(null);
-      setFormData({ email: '', name: '', password: '', role: 'commercial', assigned_leads: [] });
+      setFormData({ email: '', first_name: '', last_name: '', password: '', role: 'commercial', assigned_leads: [] });
       await fetchUsers();
     } catch (error) {
       const errorMsg = error.response?.data?.detail || 'Erreur lors de la mise à jour';
@@ -107,7 +109,8 @@ const UsersTab = ({ t }) => {
   const openEditModal = (user) => {
     setEditingUser(user);
     setFormData({
-      email: user.email,
+      first_name: user.first_name || '',
+      last_name: user.last_.email,
       name: user.name || '',
       password: '', // Never pre-fill password
       role: user.role || 'commercial',
@@ -118,7 +121,8 @@ const UsersTab = ({ t }) => {
   };
 
   const filteredUsers = users.filter(user =>
-    (user.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (user.first_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+     user.last_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
      user.email?.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
@@ -180,14 +184,29 @@ const UsersTab = ({ t }) => {
           
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Nom complet *
+              Prénom *
             </label>
             <input
               type="text"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              value={formData.first_name}
+              onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
               required
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              placeholder="Jean"
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Nom *
+            </label>
+            <input
+              type="text"
+              value={formData.last_name}
+              onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
+              required
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              placeholder="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
               placeholder="Jean Dupont"
             />
           </div>
@@ -349,7 +368,7 @@ const UsersTab = ({ t }) => {
                           <Users className="w-5 h-5 text-blue-600" />
                         </div>
                         <div>
-                          <p className="font-medium text-gray-900">{user.name}</p>
+                          <p className="font-medium text-gray-900">{user.first_name} {user.last_name}</p>
                           <p className="text-sm text-gray-500">{user.email}</p>
                         </div>
                       </div>

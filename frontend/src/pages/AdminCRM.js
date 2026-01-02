@@ -2,6 +2,7 @@
  * CRM Complete Admin Dashboard - Production Ready MVP
  * Modules: Dashboard, Leads, Pipeline, Contacts, Settings
  * Multilingual: FR/EN/HE with RTL support
+ * v3.0.1 - API fix /api/crm prefix
  */
 
 import React, { useState, useEffect } from 'react';
@@ -16,6 +17,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '../utils/api';
+import crmApi from '../utils/crmApi';
 
 const AdminCRMDashboard = () => {
   const { t, i18n } = useTranslation();
@@ -98,39 +100,38 @@ const AdminCRMDashboard = () => {
     try {
       switch (tab) {
         case 'dashboard':
-          const stats = await api.get('/api/crm/dashboard/stats');
+          const stats = await crmApi.getDashboardStats();
           setDashboardStats(stats);
           break;
 
         case 'leads':
-          const leadsData = await api.get('/api/crm/leads', {
-            params: {
-              search: searchTerm,
-              status: statusFilter,
-              stage: stageFilter,
-              limit: 100
-            }
+          const leadsData = await crmApi.getLeads({
+            search: searchTerm,
+            status: statusFilter,
+            stage: stageFilter,
+            limit: 100
           });
           setLeads(leadsData.leads || []);
           break;
 
         case 'pipeline':
-          const pipelineData = await api.get('/api/crm/pipeline');
+          const pipelineData = await crmApi.getPipeline();
           setPipeline(pipelineData.pipeline || {});
           break;
 
         case 'contacts':
-          const contactsData = await api.get('/api/crm/contacts', {
-            params: { search: searchTerm, limit: 100 }
+          const contactsData = await crmApi.getContacts({
+            search: searchTerm,
+            limit: 100
           });
           setContacts(contactsData.contacts || []);
           break;
 
         case 'settings':
           const [usersData, tagsData, stagesData] = await Promise.all([
-            api.get('/api/crm/settings/users'),
-            api.get('/api/crm/settings/tags'),
-            api.get('/api/crm/settings/pipeline-stages')
+            crmApi.getUsers(),
+            crmApi.getTags(),
+            crmApi.getPipelineStages()
           ]);
           setCRMUsers(usersData.users || []);
           setTags(tagsData.tags || []);
@@ -277,18 +278,18 @@ const AdminCRMDashboard = () => {
                   leads={leads}
                   selectedLead={selectedLead}
                   setSelectedLead={setSelectedLead}
-                  onRefresh={() => loadTabData('leads')}}
-              searchTerm={searchTerm}
-              setSearchTerm={setSearchTerm}
-              statusFilter={statusFilter}
-              setStatusFilter={setStatusFilter}
-              stageFilter={stageFilter}
-              setStageFilter={setStageFilter}
-              t={t}
-              isRTL={isRTL}
-              user={user}
-            />
-          )}
+                  onRefresh={() => loadTabData('leads')}
+                  searchTerm={searchTerm}
+                  setSearchTerm={setSearchTerm}
+                  statusFilter={statusFilter}
+                  setStatusFilter={setStatusFilter}
+                  stageFilter={stageFilter}
+                  setStageFilter={setStageFilter}
+                  t={t}
+                  isRTL={isRTL}
+                  user={user}
+                />
+              )}
           {activeTab === 'pipeline' && (
             <PipelineTab
               pipeline={pipeline}

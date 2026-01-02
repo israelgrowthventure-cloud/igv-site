@@ -911,8 +911,52 @@
     }
   },
   "admin": {
+    "welcome": "ברוך הבא",
+    "logout": {
+      "success": "התנתקות בהצלחה",
+      "button": "התנתק"
+    },
+    "roles": {
+      "admin": "מנהל",
+      "commercial": "איש מכירות",
+      "user": "משתמש"
+    },
     "crm": {
+      "tabs": {
+        "dashboard": "לוח בקרה",
+        "leads": "לידים",
+        "pipeline": "צינור מכירות",
+        "contacts": "אנשי קשר",
+        "opportunities": "הזדמנויות",
+        "settings": "הגדרות"
+      },
+      "dashboard": {
+        "leads_today": "לידים היום",
+        "leads_7d": "לידים 7 ימים",
+        "pipeline_value": "ערך צינור",
+        "tasks_overdue": "משימות באיחור",
+        "direct": "ישיר",
+        "top_sources": "מקורות עיקריים",
+        "stage_distribution": "חלוקה לפי שלב"
+      },
+      "stages": {
+        "prospecting": "חיפוש",
+        "qualification": "התאמה",
+        "proposal": "הצעה",
+        "negotiation": "מושא ומתן",
+        "closed_won": "נסגר - ניצחון",
+        "closed_lost": "נסגר - אבוד",
+        "new": "חדש",
+        "contacted": "בא במגע",
+        "qualified": "מותאם"
+      },
       "title": "ניהול CRM",
+      "sendEmail": "שלח אימייל",
+      "emailSent": "אימייל נשלח בהצלחה",
+      "emailFailed": "שליחה נכשלה",
+      "convertToContact": "המר לאיש קשר",
+      "leadConverted": "ליד הומר בהצלחה",
+      "conversionFailed": "המרה נכשלה",
       "leads": {
         "title": "לידים",
         "created": "ליד נוצר בהצלחה",

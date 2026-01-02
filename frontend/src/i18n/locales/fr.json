@@ -911,8 +911,52 @@
     }
   },
   "admin": {
+    "welcome": "Bienvenue",
+    "logout": {
+      "success": "Déconnexion réussie",
+      "button": "Se déconnecter"
+    },
+    "roles": {
+      "admin": "Administrateur",
+      "commercial": "Commercial",
+      "user": "Utilisateur"
+    },
     "crm": {
+      "tabs": {
+        "dashboard": "Tableau de bord",
+        "leads": "Prospects",
+        "pipeline": "Pipeline",
+        "contacts": "Contacts",
+        "opportunities": "Opportunités",
+        "settings": "Paramètres"
+      },
+      "dashboard": {
+        "leads_today": "Leads aujourd'hui",
+        "leads_7d": "Leads 7 derniers jours",
+        "pipeline_value": "Valeur pipeline",
+        "tasks_overdue": "Tâches en retard",
+        "direct": "Direct",
+        "top_sources": "Sources principales",
+        "stage_distribution": "Distribution par étape"
+      },
+      "stages": {
+        "prospecting": "Prospection",
+        "qualification": "Qualification",
+        "proposal": "Proposition",
+        "negotiation": "Négociation",
+        "closed_won": "Gagné",
+        "closed_lost": "Perdu",
+        "new": "Nouveau",
+        "contacted": "Contacté",
+        "qualified": "Qualifié"
+      },
       "title": "Gestion CRM",
+      "sendEmail": "Envoyer un email",
+      "emailSent": "Email envoyé avec succès",
+      "emailFailed": "Échec d'envoi de l'email",
+      "convertToContact": "Convertir en contact",
+      "leadConverted": "Lead converti avec succès",
+      "conversionFailed": "Échec de la conversion",
       "leads": {
         "title": "Prospects",
         "created": "Prospect créé avec succès",

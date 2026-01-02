@@ -922,8 +922,52 @@
     }
   },
   "admin": {
+    "welcome": "Welcome",
+    "logout": {
+      "success": "Logged out successfully",
+      "button": "Logout"
+    },
+    "roles": {
+      "admin": "Administrator",
+      "commercial": "Sales Rep",
+      "user": "User"
+    },
     "crm": {
+      "tabs": {
+        "dashboard": "Dashboard",
+        "leads": "Leads",
+        "pipeline": "Pipeline",
+        "contacts": "Contacts",
+        "opportunities": "Opportunities",
+        "settings": "Settings"
+      },
+      "dashboard": {
+        "leads_today": "Leads today",
+        "leads_7d": "Leads last 7 days",
+        "pipeline_value": "Pipeline value",
+        "tasks_overdue": "Overdue tasks",
+        "direct": "Direct",
+        "top_sources": "Top sources",
+        "stage_distribution": "Stage distribution"
+      },
+      "stages": {
+        "prospecting": "Prospecting",
+        "qualification": "Qualification",
+        "proposal": "Proposal",
+        "negotiation": "Negotiation",
+        "closed_won": "Won",
+        "closed_lost": "Lost",
+        "new": "New",
+        "contacted": "Contacted",
+        "qualified": "Qualified"
+      },
       "title": "CRM Management",
+      "sendEmail": "Send Email",
+      "emailSent": "Email sent successfully",
+      "emailFailed": "Failed to send email",
+      "convertToContact": "Convert to Contact",
+      "leadConverted": "Lead converted successfully",
+      "conversionFailed": "Conversion failed",
       "leads": {
         "title": "Leads",
         "created": "Lead created successfully",

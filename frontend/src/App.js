@@ -162,6 +162,8 @@ function AppContent() {
             <Route path="users" element={<UsersPage />} />
             <Route path="opportunities" element={<AdminCRMComplete />} />
             <Route path="pipeline" element={<Pipeline />} />
+            <Route path="emails" element={<AdminCRMComplete />} />
+            <Route path="activities" element={<AdminCRMComplete />} />
             <Route path="settings" element={<AdminCRMComplete />} />
           </Route>
           

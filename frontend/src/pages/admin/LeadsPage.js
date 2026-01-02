@@ -1,12 +1,51 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Loader2 } from 'lucide-react';
 import LeadsTab from '../../components/crm/LeadsTab';
+import api from '../../utils/api';
+import { toast } from 'sonner';
 
 /**
  * LeadsPage - Page dédiée à la gestion des prospects
+ * Charge ses propres données et les passe à LeadsTab
  */
 const LeadsPage = () => {
   const { t } = useTranslation();
+  const [data, setData] = useState({ leads: [], total: 0 });
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filters, setFilters] = useState({});
+  const [selectedItem, setSelectedItem] = useState(null);
+
+  useEffect(() => {
+    loadLeads();
+  }, [searchTerm, filters]);
+
+  const loadLeads = async () => {
+    try {
+      setLoading(true);
+      const response = await api.get('/api/crm/leads', {
+        params: { search: searchTerm, ...filters, limit: 50 }
+      });
+      setData({
+        leads: Array.isArray(response?.leads) ? response.leads : [],
+        total: response?.total || 0
+      });
+    } catch (error) {
+      console.error('Error loading leads:', error);
+      toast.error(t('admin.crm.errors.load_failed', 'Erreur de chargement'));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -19,7 +58,18 @@ const LeadsPage = () => {
         </p>
       </div>
 
-      <LeadsTab t={t} />
+      <LeadsTab 
+        data={data} 
+        loading={loading}
+        selectedItem={selectedItem}
+        setSelectedItem={setSelectedItem}
+        onRefresh={loadLeads}
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        filters={filters}
+        setFilters={setFilters}
+        t={t} 
+      />
     </div>
   );
 };

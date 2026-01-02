@@ -11,10 +11,8 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '../../utils/api';
-import { useAuth } from '../../contexts/AuthContext';
 
 const ActivitiesTab = ({ t }) => {
-  const { user } = useAuth();
   const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [typeFilter, setTypeFilter] = useState('all');

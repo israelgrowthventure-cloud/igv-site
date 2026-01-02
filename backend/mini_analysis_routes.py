@@ -149,6 +149,75 @@ PROMPT_RESTAURATION = PROMPTS_DIR / 'MASTER_PROMPT_RESTAURATION.txt'
 PROMPT_RETAIL = PROMPTS_DIR / 'MASTER_PROMPT_RETAIL_NON_FOOD.txt'
 PROMPT_SERVICES = PROMPTS_DIR / 'MASTER_PROMPT_SERVICES_PARAMEDICAL.txt'
 
+# Helper function to create lead in CRM (copied from crm_routes.py)
+async def create_lead_in_crm(lead_data: dict, request_id: str) -> dict:
+    """
+    Create lead automatically from mini-analysis submission
+    Lead will have assigned_to=null for admin manual assignment
+    
+    Args:
+        lead_data: Lead information dictionary
+        request_id: Unique request identifier for logging
+    
+    Returns:
+        dict with status and lead_id
+    """
+    current_db = get_db()
+    
+    if current_db is None:
+        logging.error(f"[{request_id}] LEAD_CRM_FAIL_NO_DB: MongoDB not configured")
+        return {"status": "error", "error": "Database not configured"}
+    
+    try:
+        from datetime import timedelta
+        
+        # Check for duplicate (same email + brand in last 24h)
+        twenty_four_hours_ago = datetime.now(timezone.utc) - timedelta(hours=24)
+        
+        existing_lead = await current_db.leads.find_one({
+            "email": lead_data["email"],
+            "brand_name": lead_data.get("brand_name", ""),
+            "created_at": {"$gte": twenty_four_hours_ago}
+        })
+        
+        if existing_lead:
+            # Update existing lead
+            await current_db.leads.update_one(
+                {"_id": existing_lead["_id"]},
+                {
+                    "$set": {
+                        "status": lead_data.get("status", "NEW"),
+                        "updated_at": datetime.now(timezone.utc),
+                        "last_request_id": request_id
+                    },
+                    "$inc": {"request_count": 1}
+                }
+            )
+            logging.info(f"[{request_id}] LEAD_CRM_OK_UPDATED: lead_id={existing_lead['_id']}")
+            return {"status": "updated", "lead_id": str(existing_lead["_id"])}
+        
+        # Create new lead with assigned_to=null (admin will assign manually)
+        lead_record = {
+            **lead_data,
+            "assigned_to": None,  # KEY: Admin manual assignment
+            "source": "mini-analyse",
+            "stage": "analysis_requested",
+            "created_at": datetime.now(timezone.utc),
+            "updated_at": datetime.now(timezone.utc),
+            "request_count": 1,
+            "last_request_id": request_id
+        }
+        
+        result = await current_db.leads.insert_one(lead_record)
+        logging.info(f"[{request_id}] LEAD_CRM_OK: lead_id={result.inserted_id} (assigned_to=null)")
+        
+        return {"status": "created", "lead_id": str(result.inserted_id)}
+        
+    except Exception as e:
+        logging.error(f"[{request_id}] LEAD_CRM_FAIL: {str(e)}")
+        return {"status": "error", "error": str(e)}
+
+
 
 def generate_mini_analysis_pdf(brand_name: str, analysis_text: str, language: str = "fr") -> bytes:
     """Generate mini-analysis PDF with IGV official header"""
@@ -739,8 +808,6 @@ async def generate_mini_analysis(request: MiniAnalysisRequest, response: Respons
     # MISSION C: CREATE LEAD AUTOMATICALLY (BEFORE checking quota/duplicate)
     lead_data = None
     try:
-        from crm_routes import create_lead_in_crm
-        
         # Extract client metadata
         client_ip = http_request.client.host if http_request.client else None
         user_agent = http_request.headers.get("User-Agent")
@@ -775,7 +842,6 @@ async def generate_mini_analysis(request: MiniAnalysisRequest, response: Respons
         # Update lead status to ERROR
         if lead_data:
             try:
-                from crm_routes import create_lead_in_crm
                 lead_data["status"] = "ERROR"
                 await create_lead_in_crm(lead_data, request_id)
             except:
@@ -905,7 +971,6 @@ async def generate_mini_analysis(request: MiniAnalysisRequest, response: Respons
             # Update lead status to QUOTA_BLOCKED
             if lead_data:
                 try:
-                    from crm_routes import create_lead_in_crm
                     lead_data["status"] = "QUOTA_BLOCKED"
                     await create_lead_in_crm(lead_data, request_id)
                 except:
@@ -915,7 +980,6 @@ async def generate_mini_analysis(request: MiniAnalysisRequest, response: Respons
             lead_id_for_queue = None
             if lead_data:
                 try:
-                    from crm_routes import create_lead_in_crm
                     lead_result = await create_lead_in_crm(lead_data, request_id)
                     lead_id_for_queue = lead_result.get("lead_id")
                 except:
@@ -1011,7 +1075,6 @@ async def generate_mini_analysis(request: MiniAnalysisRequest, response: Respons
         # MISSION C: Update lead status to GENERATED (successful generation)
         lead_id = None
         try:
-            from crm_routes import create_lead_in_crm
             lead_data["status"] = "GENERATED"
             lead_result = await create_lead_in_crm(lead_data, request_id)
             lead_id = lead_result.get("lead_id")

@@ -55,16 +55,20 @@ const Sidebar = ({ collapsed, onToggle }) => {
       <div className="h-16 flex items-center justify-between px-4 border-b border-gray-800">
         {!collapsed && (
           <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">IGV</span>
-            </div>
+            <img 
+              src="/igv-logo.png" 
+              alt="IGV Logo" 
+              className="w-10 h-10 object-contain"
+            />
             <span className="font-semibold text-sm">Israel Growth Venture</span>
           </div>
         )}
         {collapsed && (
-          <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center mx-auto">
-            <span className="text-white font-bold text-sm">IGV</span>
-          </div>
+          <img 
+            src="/igv-logo.png" 
+            alt="IGV" 
+            className="w-10 h-10 object-contain mx-auto"
+          />
         )}
       </div>
 

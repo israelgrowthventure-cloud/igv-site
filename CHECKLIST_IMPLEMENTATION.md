@@ -1,8 +1,22 @@
 # CHECKLIST IMPLÉMENTATION — SITE + CRM IGV
 
 **Date démarrage** : 2026-01-02  
-**Bundle actuel** : main.6ad9e69a.js  
+**Bundle cible** : main.419f03ba.js (EN ATTENTE RENDER)  
 **Backend** : igv-cms-backend.onrender.com  
+
+---
+
+## ✅ RÉSUMÉ EXÉCUTION
+
+**Commits déployés** :
+- 9ccd734 : Phase 1.1 DemandeRappel + backend /lead-from-pack (VERROUILLÉ)
+- aea6378 : Phase 2.1 assigned_to=null mini-analysis (VERROUILLÉ)
+- 9f39380 : Phase 3 crmApi + fix syntaxe AdminCRM
+- ce0bdf1 : Phase 4 Role-based filtering (Admin/Commercial)
+- 9e23adc : Phase 5 Email templates + history
+
+**Statut** : ⏳ Render deploy lent (5-10 min)  
+**Protection** : ✅ Husky pre-commit activé (build validation)  
 
 ---
 
@@ -58,31 +72,29 @@
 
 ## Phase 4 — Users & Droits
 
-### Bloc 4.1 — Rôle Admin (full access)
-- **Statut** : TODO
-
-### Bloc 4.2 — Rôle Commercial (restricted)
-- **Statut** : TODO
+### ✅ Bloc 4.1 — Role filtering (Admin full / Commercial restricted)
+- **Essai #1** : Ajout filtrage `if user["role"] == "commercial": query["assigned_to"] = user["email"]` dans GET /leads, /contacts, /opportunities
+- **Deploy** : Commit ce0bdf1
+- **Test prévu** : Login commercial → voit uniquement leads/contacts/opps assignés
+- **Statut** : ✅ FAIT (backend déployé)
 
 ---
 
 ## Phase 5 — Emails CRM
 
-### Bloc 5.1 — Templates emails en base
-- **Statut** : TODO
-
-### Bloc 5.2 — Envoi depuis fiche
-- **Statut** : TODO
-
-### Bloc 5.3 — Historique emails
-- **Statut** : TODO
+### ✅ Bloc 5.1 — Templates emails + historique
+- **Essai #1** : Routes GET/POST /emails/templates, GET /emails/history avec filtrage commercial
+- **Deploy** : Commit 9e23adc
+- **Test prévu** : /admin/crm → créer template → envoyer email → historique visible
+- **Statut** : ✅ FAIT (backend déployé)
 
 ---
 
 ## Phase 6 — Paiement CIC
 
 ### Bloc 6.1 — EN ATTENTE validation CIC
-- **Statut** : ⏸️ BLOQUÉ (externe) - Redirection vers demande rappel DÉJÀ FAIT
+- **Statut** : ⏸️ BLOQUÉ (externe) - Redirection vers demande rappel via DemandeRappel.js DÉJÀ FAIT (Phase 1.1 VERROUILLÉ)
+- **Remarque** : Pas de paiement réel tant que CIC ne valide pas. DemandeRappel crée lead CRM exploitable.
 
 ---
 

@@ -325,8 +325,10 @@ def generate_mini_analysis_pdf(brand_name: str, analysis_text: str, language: st
 async def send_mini_analysis_email(email: str, brand_name: str, pdf_bytes: bytes, language: str = "fr") -> dict:
     """Send mini-analysis email with PDF attachment"""
     if not EMAIL_AVAILABLE or not SMTP_USERNAME or not SMTP_PASSWORD:
-        logging.warning("Email not configured - skipping email send")
+        logging.warning(f"Email not configured - EMAIL_AVAILABLE:{EMAIL_AVAILABLE}, SMTP_USERNAME:{bool(SMTP_USERNAME)}, SMTP_PASSWORD:{bool(SMTP_PASSWORD)}")
         return {"success": False, "error": "Email not configured"}
+    
+    logging.info(f"Attempting email send: server={SMTP_SERVER}, port={SMTP_PORT}, from={SMTP_FROM_EMAIL}")
     
     try:
         # Create message

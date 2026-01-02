@@ -1,0 +1,11 @@
+echo "🔨 Validating frontend build before commit..."
+cd frontend || exit 1
+npm run build
+
+if [ $? -ne 0 ]; then
+  echo "❌ Build failed - commit aborted"
+  exit 1
+fi
+
+echo "✅ Build OK - commit allowed"
+cd ..

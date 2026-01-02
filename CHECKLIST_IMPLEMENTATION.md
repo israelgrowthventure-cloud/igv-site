@@ -39,8 +39,11 @@
 
 ## Phase 3 — CRM Utilisable
 
-### Bloc 3.1 — Prospects/Contacts/Opportunités (pas de "coming soon")
-- **Statut** : TODO
+### Bloc 3.1 — Fix syntaxe AdminCRM + crmApi centralisé
+- **Essai #1** : Correction ligne 281 accolade `}}` → `}`, création crmApi.js, refactor api.get → crmApi
+- **Deploy** : Commit 9f39380, bundle main.419f03ba.js (EN ATTENTE RENDER)
+- **Test prévu** : /admin/crm/leads → liste prospects charge sans erreur
+- **Statut** : ⏳ EN COURS (attente deploy Render 5-10 min)
 
 ### Bloc 3.2 — Navigation fiable (URL + F5)
 - **Statut** : ✅ FAIT (VERROUILLÉ) - déjà implémenté

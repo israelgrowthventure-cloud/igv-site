@@ -1,0 +1,24 @@
+{
+  "name": "igv-site",
+  "version": "1.0.0",
+  "description": "**Version**: 1.0  \r **Date**: Décembre 2025",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "husky"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/israelgrowthventure-cloud/igv-site.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/israelgrowthventure-cloud/igv-site/issues"
+  },
+  "homepage": "https://github.com/israelgrowthventure-cloud/igv-site#readme",
+  "devDependencies": {
+    "husky": "^9.1.7"
+  }
+}

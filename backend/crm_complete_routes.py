@@ -363,6 +363,13 @@ async def get_leads(
     
     # Build filter
     filter_query = {}
+    
+    # PHASE 4: Role-based filtering
+    if user["role"] == "commercial":
+        # Commercial sees ONLY leads assigned to them
+        filter_query["assigned_to"] = user["email"]
+    # Admin sees all leads (no filter)
+    
     if status:
         filter_query["status"] = status
     if stage:
@@ -735,6 +742,12 @@ async def list_opportunities(
     
     query = {}
     
+    # PHASE 4: Role-based filtering
+    if user["role"] == "commercial":
+        # Commercial sees ONLY opportunities assigned to them
+        query["assigned_to"] = user["email"]
+    # Admin sees all opportunities
+    
     if search:
         query["$or"] = [
             {"name": {"$regex": search, "$options": "i"}},
@@ -883,6 +896,13 @@ async def get_contacts(
         raise HTTPException(status_code=500, detail="Database not configured")
     
     filter_query = {}
+    
+    # PHASE 4: Role-based filtering
+    if user["role"] == "commercial":
+        # Commercial sees ONLY contacts assigned to them
+        filter_query["assigned_to"] = user["email"]
+    # Admin sees all contacts
+    
     if search:
         filter_query["$or"] = [
             {"email": {"$regex": search, "$options": "i"}},

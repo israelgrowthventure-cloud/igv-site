@@ -171,16 +171,14 @@ class TaskUpdate(BaseModel):
 # ==========================================
 
 @router.get("/debug")
-async def debug_crm(credentials: HTTPAuthorizationCredentials = Depends(security)):
+async def debug_crm(user: Dict = Depends(get_current_user)):
     """Debug CRM auth and database connection"""
     try:
-        token = credentials.credentials
-        payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
-        
         current_db = get_db()
         db_status = "connected" if current_db is not None else "not_connected"
         
-        email = payload.get("email")
+        # Use authenticated user from get_current_user
+        email = user["email"]
         
         # Check both collections
         crm_user = None
@@ -195,11 +193,13 @@ async def debug_crm(credentials: HTTPAuthorizationCredentials = Depends(security
         
         return {
             "db_status": db_status,
+            "authenticated_user": user,
             "jwt_email": email,
-            "jwt_role": payload.get("role"),
+            "jwt_role": user.get("role"),
             "crm_user_found": bool(crm_user),
             "main_user_found": bool(main_user),
             "collections": collections_list
+        }
         }
     except Exception as e:
         return {"error": str(e), "type": type(e).__name__}

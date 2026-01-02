@@ -1277,12 +1277,18 @@
       },
       "statuses": {
         "new": "Nouveau",
+        "NEW": "Nouveau",
         "contacted": "Contacté",
+        "CONTACTED": "Contacté",
         "qualified": "Qualifié",
+        "QUALIFIED": "Qualifié",
         "proposal": "Proposition",
         "negotiation": "Négociation", 
         "closed": "Fermé",
         "lost": "Perdu",
+        "LOST": "Perdu",
+        "CONVERTED": "Converti",
+        "PENDING_QUOTA": "En attente de quota",
         "active": "Actif",
         "inactive": "Inactif"
       },
@@ -1290,7 +1296,10 @@
         "low": "Faible",
         "medium": "Moyen",
         "high": "Élevé",
-        "urgent": "Urgent"
+        "urgent": "Urgent",
+        "A": "Priorité A",
+        "B": "Priorité B",
+        "C": "Priorité C"
       }
     }
   }

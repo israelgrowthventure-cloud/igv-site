@@ -164,6 +164,10 @@ const LeadsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, sea
   const statuses = ['NEW', 'CONTACTED', 'QUALIFIED', 'CONVERTED', 'LOST', 'PENDING_QUOTA'];
   const priorities = ['A', 'B', 'C'];
 
+  // Defensive: ensure data exists
+  const leads = data?.leads || [];
+  const total = data?.total || 0;
+
   return (
     <div className="space-y-4">
       {/* Search & Filters */}
@@ -318,7 +322,7 @@ const LeadsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, sea
               </tr>
             </thead>
             <tbody>
-              {data.leads?.length > 0 ? data.leads.map(lead => (
+              {leads.length > 0 ? leads.map(lead => (
                 <tr key={lead.lead_id} className={`border-b hover:bg-gray-50 cursor-pointer ${lead.status === 'CONVERTED' ? 'bg-green-50' : ''}`} onClick={() => setSelectedItem(lead)}>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">

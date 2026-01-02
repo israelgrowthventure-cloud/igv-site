@@ -147,15 +147,15 @@ const AdminCRMComplete = () => {
           break;
         case 'leads':
           const leads = await api.get('/api/crm/leads', { params: { search: searchTerm, ...filters, limit: 50 } });
-          setData(prev => ({ ...prev, leads: leads.leads || [], total: leads.total }));
+          setData(prev => ({ ...prev, leads: Array.isArray(leads?.leads) ? leads.leads : [], total: leads?.total || 0 }));
           break;
         case 'pipeline':
           const pipeline = await api.get('/api/crm/pipeline');
-          setData(prev => ({ ...prev, pipeline: pipeline.pipeline || pipeline || {} }));
+          setData(prev => ({ ...prev, pipeline: pipeline?.pipeline || pipeline || { stages: {}, summary: {} } }));
           break;
         case 'contacts':
           const contacts = await api.get('/api/crm/contacts', { params: { search: searchTerm, limit: 50 } });
-          setData(prev => ({ ...prev, contacts: contacts.contacts || [], total: contacts.total }));
+          setData(prev => ({ ...prev, contacts: Array.isArray(contacts?.contacts) ? contacts.contacts : [], total: contacts?.total || 0 }));
           break;
         case 'settings':
           const [users, tags, stages] = await Promise.all([

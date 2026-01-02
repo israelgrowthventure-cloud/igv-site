@@ -226,7 +226,7 @@ const ContactsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, 
               </tr>
             </thead>
             <tbody>
-              {data.contacts?.length > 0 ? data.contacts.map(contact => (
+              {data?.contacts?.length > 0 ? data.contacts.map(contact => (
                 <tr key={contact._id || contact.contact_id} className="border-b hover:bg-gray-50">
                   <td 
                     className="px-4 py-3 cursor-pointer hover:text-blue-600"
@@ -258,18 +258,20 @@ const ContactsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, 
                       </button>
                       <button
                         onClick={(e) => { e.stopPropagation(); openEditModal(contact); }}
-                        className="p-1.5 text-blue-600 hover:bg-blue-50 rounded"
+                        className="p-1.5 text-blue-600 hover:bg-blue-50 rounded flex items-center gap-1"
                         title={t('common.edit')}
                       >
                         <Edit className="w-4 h-4" />
+                        <span className="text-xs">{t('common.edit')}</span>
                       </button>
                       <button
                         onClick={(e) => { e.stopPropagation(); handleDelete(contact._id || contact.contact_id); }}
                         disabled={loadingAction}
-                        className="p-1.5 text-red-600 hover:bg-red-50 rounded disabled:opacity-50"
+                        className="p-1.5 text-red-600 hover:bg-red-50 rounded disabled:opacity-50 flex items-center gap-1"
                         title={t('common.delete')}
                       >
                         <Trash2 className="w-4 h-4" />
+                        <span className="text-xs">{t('common.delete')}</span>
                       </button>
                     </div>
                   </td>

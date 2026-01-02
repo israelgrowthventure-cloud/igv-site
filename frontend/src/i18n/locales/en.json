@@ -1200,12 +1200,18 @@
       },
       "statuses": {
         "new": "New",
+        "NEW": "New",
         "contacted": "Contacted",
+        "CONTACTED": "Contacted",
         "qualified": "Qualified",
+        "QUALIFIED": "Qualified",
         "proposal": "Proposal",
-        "negotiation": "Negotiation", 
+        "negotiation": "Negotiation",
         "closed": "Closed",
         "lost": "Lost",
+        "LOST": "Lost",
+        "CONVERTED": "Converted",
+        "PENDING_QUOTA": "Pending Quota",
         "active": "Active",
         "inactive": "Inactive"
       },
@@ -1213,7 +1219,10 @@
         "low": "Low",
         "medium": "Medium",
         "high": "High",
-        "urgent": "Urgent"
+        "urgent": "Urgent",
+        "A": "Priority A",
+        "B": "Priority B",
+        "C": "Priority C"
       }
     }
   }

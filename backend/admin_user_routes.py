@@ -30,14 +30,16 @@ router = APIRouter(prefix="/api/admin")
 
 class UserCreate(BaseModel):
     email: EmailStr
-    name: str
+    first_name: str
+    last_name: str
     password: str
     role: str = "commercial"  # commercial, admin
     assigned_leads: List[str] = []
 
 
 class UserUpdate(BaseModel):
-    name: Optional[str] = None
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
     role: Optional[str] = None
     is_active: Optional[bool] = None
     assigned_leads: Optional[List[str]] = None
@@ -65,7 +67,8 @@ async def get_all_users(user: Dict = Depends(require_admin)):
             user_data = {
                 "_id": str(u["_id"]),
                 "email": u["email"],
-                "name": u.get("name", ""),
+                "first_name": u.get("first_name", ""),
+                "last_name": u.get("last_name", ""),
                 "role": u.get("role", "commercial"),
                 "is_active": u.get("is_active", True),
                 "assigned_leads": u.get("assigned_leads", []),
@@ -101,7 +104,8 @@ async def create_user(user_data: UserCreate, user: Dict = Depends(require_admin)
         # Create user document
         user_doc = {
             "email": user_data.email,
-            "name": user_data.name,
+            "first_name": user_data.first_name,
+            "last_name": user_data.last_name,
             "password_hash": password_hash,
             "role": user_data.role,
             "is_active": True,
@@ -161,8 +165,10 @@ async def update_user(user_id: str, update_data: UserUpdate, user: Dict = Depend
         
         # Build update dictionary (only non-None values)
         update_dict = {}
-        if update_data.name is not None:
-            update_dict["name"] = update_data.name
+        if update_data.first_name is not None:
+            update_dict["first_name"] = update_data.first_name
+        if update_data.last_name is not None:
+            update_dict["last_name"] = update_data.last_name
         if update_data.role is not None:
             update_dict["role"] = update_data.role
         if update_data.is_active is not None:

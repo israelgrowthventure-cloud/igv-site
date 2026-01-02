@@ -98,12 +98,12 @@ const AdminCRMDashboard = () => {
     try {
       switch (tab) {
         case 'dashboard':
-          const stats = await api.get('/crm/dashboard/stats');
+          const stats = await api.get('/api/crm/dashboard/stats');
           setDashboardStats(stats);
           break;
 
         case 'leads':
-          const leadsData = await api.get('/crm/leads', {
+          const leadsData = await api.get('/api/crm/leads', {
             params: {
               search: searchTerm,
               status: statusFilter,
@@ -115,12 +115,12 @@ const AdminCRMDashboard = () => {
           break;
 
         case 'pipeline':
-          const pipelineData = await api.get('/crm/pipeline');
+          const pipelineData = await api.get('/api/crm/pipeline');
           setPipeline(pipelineData.pipeline || {});
           break;
 
         case 'contacts':
-          const contactsData = await api.get('/crm/contacts', {
+          const contactsData = await api.get('/api/crm/contacts', {
             params: { search: searchTerm, limit: 100 }
           });
           setContacts(contactsData.contacts || []);
@@ -128,9 +128,9 @@ const AdminCRMDashboard = () => {
 
         case 'settings':
           const [usersData, tagsData, stagesData] = await Promise.all([
-            api.get('/crm/settings/users'),
-            api.get('/crm/settings/tags'),
-            api.get('/crm/settings/pipeline-stages')
+            api.get('/api/crm/settings/users'),
+            api.get('/api/crm/settings/tags'),
+            api.get('/api/crm/settings/pipeline-stages')
           ]);
           setCRMUsers(usersData.users || []);
           setTags(tagsData.tags || []);

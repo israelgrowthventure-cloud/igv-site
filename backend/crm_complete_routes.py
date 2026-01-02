@@ -200,7 +200,6 @@ async def debug_crm(user: Dict = Depends(get_current_user)):
             "main_user_found": bool(main_user),
             "collections": collections_list
         }
-        }
     except Exception as e:
         return {"error": str(e), "type": type(e).__name__}
 

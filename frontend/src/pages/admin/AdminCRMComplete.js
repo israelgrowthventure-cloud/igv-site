@@ -17,6 +17,7 @@ const TAB_ROUTES = {
   pipeline: '/admin/crm/pipeline',
   opportunities: '/admin/crm/opportunities',
   contacts: '/admin/crm/contacts',
+  users: '/admin/crm/users',
   settings: '/admin/crm/settings'
 };
 
@@ -28,6 +29,7 @@ const ROUTE_TO_TAB = {
   '/admin/crm/pipeline': 'pipeline',
   '/admin/crm/opportunities': 'opportunities',
   '/admin/crm/contacts': 'contacts',
+  '/admin/crm/users': 'users',
   '/admin/crm/settings': 'settings'
 };
 
@@ -258,7 +260,10 @@ const AdminCRMComplete = () => {
                 { id: 'pipeline', icon: Target, label: t('admin.crm.tabs.pipeline') },
                 { id: 'opportunities', icon: DollarSign, label: t('admin.crm.tabs.opportunities') },
                 { id: 'contacts', icon: Mail, label: t('admin.crm.tabs.contacts') },
-                ...(user?.role === 'admin' ? [{ id: 'settings', icon: Settings, label: t('admin.crm.tabs.settings') }] : [])
+                ...(user?.role === 'admin' ? [
+                  { id: 'users', icon: Users, label: t('admin.crm.tabs.users', 'Utilisateurs') },
+                  { id: 'settings', icon: Settings, label: t('admin.crm.tabs.settings') }
+                ] : [])
               ].map(tab => (
                 <button
                   key={tab.id}
@@ -286,6 +291,7 @@ const AdminCRMComplete = () => {
           )}
           {activeTab === 'dashboard' && <DashboardTab data={data.stats} loading={initialLoad && tabLoading} t={t} navigate={navigate} handleTabChange={handleTabChange} />}
           {activeTab === 'leads' && <LeadsTab data={data} loading={initialLoad && tabLoading} selectedItem={selectedItem} setSelectedItem={setSelectedItem} onRefresh={loadTabData} searchTerm={searchTerm} setSearchTerm={setSearchTerm} filters={filters} setFilters={setFilters} t={t} />}
+          {activeTab === 'users' && user?.role === 'admin' && <UsersTab t={t} />}
           {activeTab === 'pipeline' && <PipelineTab data={data.pipeline} loading={initialLoad && tabLoading} onRefresh={loadTabData} t={t} />}
           {activeTab === 'opportunities' && <OpportunitiesTab data={data} loading={initialLoad && tabLoading} onRefresh={loadTabData} searchTerm={searchTerm} setSearchTerm={setSearchTerm} t={t} />}
           {activeTab === 'contacts' && <ContactsTab data={data} loading={initialLoad && tabLoading} selectedItem={selectedItem} setSelectedItem={setSelectedItem} onRefresh={loadTabData} searchTerm={searchTerm} setSearchTerm={setSearchTerm} t={t} />}
@@ -424,6 +430,7 @@ const DashboardTab = ({ data, loading, t, navigate, handleTabChange }) => {
 // Import tab components
 import LeadsTab from '../../components/crm/LeadsTab';
 import PipelineTab from '../../components/crm/PipelineTab';
+import UsersTab from '../../components/crm/UsersTab';
 import ContactsTab from '../../components/crm/ContactsTab';
 import SettingsTab from '../../components/crm/SettingsTab';
 import OpportunitiesTab from '../../components/crm/OpportunitiesTab';

@@ -39,6 +39,7 @@ from admin_routes import router as admin_router
 from crm_complete_routes import router as crm_complete_router
 from gdpr_routes import router as gdpr_router
 from quota_queue_routes import router as quota_router
+from admin_user_routes import router as admin_user_router
 
 # New routers with error handling
 INVOICE_ROUTER_ERROR = None
@@ -952,6 +953,7 @@ app.include_router(mini_analysis_router)  # Mini-Analysis with Gemini
 app.include_router(extended_router)  # Extended features: PDF, Calendar, Contact Expert
 # app.include_router(crm_router)  # DISABLED - duplicate with crm_complete_routes
 app.include_router(crm_complete_router)  # CRM Complete (MVP) - ONLY CRM router now
+app.include_router(admin_user_router)  # Admin User Management (/api/admin/users)
 app.include_router(gdpr_router)  # GDPR Consent & Privacy
 app.include_router(quota_router)  # Gemini Quota Queue
 app.include_router(tracking_router)  # Tracking & Analytics

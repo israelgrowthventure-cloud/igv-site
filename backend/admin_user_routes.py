@@ -1,0 +1,372 @@
+"""
+Admin User Routes - User Management
+Secured routes for CRUD operations on users
+"""
+
+from fastapi import APIRouter, HTTPException, Depends, status
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from pydantic import BaseModel, EmailStr
+from motor.motor_asyncio import AsyncIOMotorClient
+from typing import Optional, List, Dict, Any
+from datetime import datetime, timezone
+from bson import ObjectId
+import os
+import logging
+import jwt
+import bcrypt
+
+router = APIRouter(prefix="/api/admin")
+security = HTTPBearer()
+
+# MongoDB
+mongo_url = os.getenv('MONGODB_URI') or os.getenv('MONGO_URL')
+db_name = os.getenv('DB_NAME', 'igv_production')
+
+mongo_client = None
+db = None
+
+def get_db():
+    global mongo_client, db
+    if db is None and mongo_url:
+        mongo_client = AsyncIOMotorClient(
+            mongo_url,
+            serverSelectionTimeoutMS=5000,
+            connectTimeoutMS=5000
+        )
+        db = mongo_client[db_name]
+    return db
+
+# JWT
+JWT_SECRET = os.getenv('JWT_SECRET')
+JWT_ALGORITHM = 'HS256'
+
+
+# ==========================================
+# AUTH DEPENDENCY
+# ==========================================
+
+async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)) -> Dict[str, Any]:
+    """Verify JWT and return current user"""
+    try:
+        token = credentials.credentials
+        payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+        
+        current_db = get_db()
+        if current_db is None:
+            raise HTTPException(status_code=500, detail="Database not configured")
+        
+        email = payload.get("email")
+        
+        # Check in both collections
+        user = await current_db.crm_users.find_one({"email": email})
+        if not user:
+            user = await current_db.users.find_one({"email": email})
+        
+        if not user:
+            raise HTTPException(status_code=401, detail="User not found")
+        
+        if not user.get("is_active", True):
+            raise HTTPException(status_code=403, detail="User inactive")
+        
+        return {
+            "id": str(user["_id"]),
+            "email": user["email"],
+            "name": user.get("name", email.split("@")[0]),
+            "role": user.get("role", "admin")
+        }
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Token expired")
+    except jwt.InvalidTokenError:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
+
+async def require_admin(user: Dict[str, Any]):
+    """Check if user is admin"""
+    if user["role"] != "admin":
+        raise HTTPException(status_code=403, detail="Admin access required")
+
+
+# ==========================================
+# PYDANTIC MODELS
+# ==========================================
+
+class UserCreate(BaseModel):
+    email: EmailStr
+    name: str
+    password: str
+    role: str = "commercial"  # commercial, admin
+    assigned_leads: List[str] = []
+
+
+class UserUpdate(BaseModel):
+    name: Optional[str] = None
+    role: Optional[str] = None
+    is_active: Optional[bool] = None
+    assigned_leads: Optional[List[str]] = None
+
+
+# ==========================================
+# USER CRUD ROUTES
+# ==========================================
+
+@router.get("/users")
+async def get_all_users(user: Dict = Depends(get_current_user)):
+    """Get all users (Admin only)"""
+    await require_admin(user)
+    
+    current_db = get_db()
+    if current_db is None:
+        raise HTTPException(status_code=500, detail="Database not configured")
+    
+    try:
+        # Get users from crm_users collection
+        users = await current_db.crm_users.find({}).sort("created_at", -1).to_list(None)
+        
+        result = []
+        for u in users:
+            # Never return password hash
+            user_data = {
+                "_id": str(u["_id"]),
+                "email": u["email"],
+                "name": u.get("name", ""),
+                "role": u.get("role", "commercial"),
+                "is_active": u.get("is_active", True),
+                "assigned_leads": u.get("assigned_leads", []),
+                "created_at": u.get("created_at").isoformat() if isinstance(u.get("created_at"), datetime) else None,
+                "last_login": u.get("last_login").isoformat() if isinstance(u.get("last_login"), datetime) else None
+            }
+            result.append(user_data)
+        
+        return {"users": result, "total": len(result)}
+    
+    except Exception as e:
+        logging.error(f"Error fetching users: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/users", status_code=status.HTTP_201_CREATED)
+async def create_user(user_data: UserCreate, user: Dict = Depends(get_current_user)):
+    """Create new user (Admin only)"""
+    await require_admin(user)
+    
+    current_db = get_db()
+    if current_db is None:
+        raise HTTPException(status_code=500, detail="Database not configured")
+    
+    try:
+        # Check if user already exists
+        existing = await current_db.crm_users.find_one({"email": user_data.email})
+        if existing:
+            raise HTTPException(status_code=400, detail="User with this email already exists")
+        
+        # Hash password with bcrypt
+        password_hash = bcrypt.hashpw(user_data.password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+        
+        # Create user document
+        user_doc = {
+            "email": user_data.email,
+            "name": user_data.name,
+            "password_hash": password_hash,
+            "role": user_data.role,
+            "is_active": True,
+            "is_verified": True,
+            "assigned_leads": user_data.assigned_leads,
+            "created_at": datetime.now(timezone.utc),
+            "updated_at": datetime.now(timezone.utc),
+            "created_by": user["email"]
+        }
+        
+        result = await current_db.crm_users.insert_one(user_doc)
+        user_id = str(result.inserted_id)
+        
+        logging.info(f"User created: {user_data.email} by {user['email']}")
+        
+        # Audit log
+        await current_db.audit_logs.insert_one({
+            "user_id": user["id"],
+            "user_email": user["email"],
+            "action": "create_user",
+            "entity_type": "user",
+            "entity_id": user_id,
+            "details": {"email": user_data.email, "role": user_data.role},
+            "timestamp": datetime.now(timezone.utc)
+        })
+        
+        return {
+            "success": True,
+            "user_id": user_id,
+            "message": "User created successfully"
+        }
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error creating user: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.put("/users/{user_id}")
+async def update_user(user_id: str, update_data: UserUpdate, user: Dict = Depends(get_current_user)):
+    """Update user (Admin only)"""
+    await require_admin(user)
+    
+    current_db = get_db()
+    if current_db is None:
+        raise HTTPException(status_code=500, detail="Database not configured")
+    
+    try:
+        # Validate ObjectId
+        try:
+            obj_id = ObjectId(user_id)
+        except:
+            raise HTTPException(status_code=400, detail="Invalid user ID format")
+        
+        # Check if user exists
+        existing_user = await current_db.crm_users.find_one({"_id": obj_id})
+        if not existing_user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        # Build update dictionary (only non-None values)
+        update_dict = {}
+        if update_data.name is not None:
+            update_dict["name"] = update_data.name
+        if update_data.role is not None:
+            update_dict["role"] = update_data.role
+        if update_data.is_active is not None:
+            update_dict["is_active"] = update_data.is_active
+        if update_data.assigned_leads is not None:
+            update_dict["assigned_leads"] = update_data.assigned_leads
+        
+        update_dict["updated_at"] = datetime.now(timezone.utc)
+        
+        # Update user
+        await current_db.crm_users.update_one(
+            {"_id": obj_id},
+            {"$set": update_dict}
+        )
+        
+        logging.info(f"User updated: {user_id} by {user['email']}")
+        
+        # Audit log
+        await current_db.audit_logs.insert_one({
+            "user_id": user["id"],
+            "user_email": user["email"],
+            "action": "update_user",
+            "entity_type": "user",
+            "entity_id": user_id,
+            "details": update_dict,
+            "timestamp": datetime.now(timezone.utc)
+        })
+        
+        return {
+            "success": True,
+            "message": "User updated successfully"
+        }
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error updating user: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.delete("/users/{user_id}")
+async def delete_user(user_id: str, user: Dict = Depends(get_current_user)):
+    """Soft delete user (Admin only)"""
+    await require_admin(user)
+    
+    current_db = get_db()
+    if current_db is None:
+        raise HTTPException(status_code=500, detail="Database not configured")
+    
+    try:
+        # Validate ObjectId
+        try:
+            obj_id = ObjectId(user_id)
+        except:
+            raise HTTPException(status_code=400, detail="Invalid user ID format")
+        
+        # Check if user exists
+        existing_user = await current_db.crm_users.find_one({"_id": obj_id})
+        if not existing_user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        # Prevent self-deletion
+        if str(obj_id) == user["id"]:
+            raise HTTPException(status_code=400, detail="Cannot delete your own account")
+        
+        # Soft delete (set is_active to False)
+        await current_db.crm_users.update_one(
+            {"_id": obj_id},
+            {"$set": {
+                "is_active": False,
+                "deleted_at": datetime.now(timezone.utc),
+                "deleted_by": user["email"]
+            }}
+        )
+        
+        logging.info(f"User soft-deleted: {user_id} by {user['email']}")
+        
+        # Audit log
+        await current_db.audit_logs.insert_one({
+            "user_id": user["id"],
+            "user_email": user["email"],
+            "action": "delete_user",
+            "entity_type": "user",
+            "entity_id": user_id,
+            "details": {"email": existing_user["email"]},
+            "timestamp": datetime.now(timezone.utc)
+        })
+        
+        return {
+            "success": True,
+            "message": "User deleted successfully"
+        }
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error deleting user: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/users/{user_id}")
+async def get_user(user_id: str, user: Dict = Depends(get_current_user)):
+    """Get specific user details (Admin only)"""
+    await require_admin(user)
+    
+    current_db = get_db()
+    if current_db is None:
+        raise HTTPException(status_code=500, detail="Database not configured")
+    
+    try:
+        # Validate ObjectId
+        try:
+            obj_id = ObjectId(user_id)
+        except:
+            raise HTTPException(status_code=400, detail="Invalid user ID format")
+        
+        # Get user
+        target_user = await current_db.crm_users.find_one({"_id": obj_id})
+        if not target_user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        # Remove sensitive data
+        result = {
+            "_id": str(target_user["_id"]),
+            "email": target_user["email"],
+            "name": target_user.get("name", ""),
+            "role": target_user.get("role", "commercial"),
+            "is_active": target_user.get("is_active", True),
+            "assigned_leads": target_user.get("assigned_leads", []),
+            "created_at": target_user.get("created_at").isoformat() if isinstance(target_user.get("created_at"), datetime) else None,
+            "last_login": target_user.get("last_login").isoformat() if isinstance(target_user.get("last_login"), datetime) else None
+        }
+        
+        return result
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error fetching user: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))

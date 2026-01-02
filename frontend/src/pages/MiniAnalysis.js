@@ -318,11 +318,8 @@ const MiniAnalysis = () => {
             <div className="bg-white rounded-2xl shadow-xl p-8 sm:p-12">
               {/* Quota Information - Multilingual */}
               <div className={`mb-6 p-4 bg-blue-50 border-l-4 border-blue-500 rounded ${currentLang === 'he' ? 'text-right' : 'text-left'}`} dir={currentLang === 'he' ? 'rtl' : 'ltr'}>
-                <p className="text-sm text-blue-800 font-medium mb-1">
-                  {currentLang === 'he' ? 'לכל חברה יש מכסה של מיני-אנליזות.' : currentLang === 'en' ? 'Each company has a mini-analysis quota.' : 'Chaque entreprise dispose d\'un quota de mini-analyses.'}
-                </p>
-                <p className="text-sm text-blue-800">
-                  {currentLang === 'he' ? 'ניתן להפיק מיני-אנליזה אחת בלבד לכל חברה.' : currentLang === 'en' ? 'Only one mini-analysis can be generated per company.' : 'Une seule mini-analyse peut être générée par entreprise.'}
+                <p className="text-sm text-blue-800 font-medium">
+                  {currentLang === 'he' ? 'כדי להבטיח את איכות הניתוחים שלנו, מוחלת מכסה יומית. אם הניתוח שלך לא נטען, אנא חזור מחר.' : currentLang === 'en' ? 'To ensure the quality of our analyses, a daily quota is applied. If your analysis does not load, please return tomorrow.' : 'Afin de garantir la qualité de nos analyses, un quota quotidien est appliqué. Si votre analyse ne se charge pas, nous vous invitons à revenir le lendemain.'}
                 </p>
               </div>
               

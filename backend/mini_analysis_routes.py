@@ -440,11 +440,20 @@ https://israelgrowthventure.com/packs
         )
         message.attach(pdf_attachment)
         
-        # Send
-        async with aiosmtplib.SMTP(hostname=SMTP_SERVER, port=SMTP_PORT) as smtp:
-            await smtp.starttls()
-            await smtp.login(SMTP_USERNAME, SMTP_PASSWORD)
-            await smtp.send_message(message)
+        # Send email - Adapt to SMTP server type
+        # Port 465 = SSL direct (use_tls=True, no STARTTLS)
+        # Port 587 = STARTTLS (use_tls=False, then STARTTLS)
+        if SMTP_PORT == 465:
+            # SSL direct connection for port 465
+            async with aiosmtplib.SMTP(hostname=SMTP_SERVER, port=SMTP_PORT, use_tls=True) as smtp:
+                await smtp.login(SMTP_USERNAME, SMTP_PASSWORD)
+                await smtp.send_message(message)
+        else:
+            # STARTTLS for port 587
+            async with aiosmtplib.SMTP(hostname=SMTP_SERVER, port=SMTP_PORT) as smtp:
+                await smtp.starttls()
+                await smtp.login(SMTP_USERNAME, SMTP_PASSWORD)
+                await smtp.send_message(message)
         
         logging.info(f"Mini-analysis email sent to {email}")
         

@@ -101,6 +101,11 @@
       "subject": "בקשת מידע"
     }
   },
+  "pricing": {
+    "detecting": "מזהה את האזור שלך...",
+    "region": "אזור שזוהה",
+    "international": "בינלאומי"
+  },
   "payment": {
     "title": "השלם את הקנייה שלך",
     "subtitle": "תשלום מאובטח בכרטיס אשראי",
@@ -385,6 +390,7 @@
     "edit": "ערוך",
     "search": "חפש",
     "filter": "סנן",
+    "retry": "נסה שוב",
     "brandName": "Israel Growth Venture"
   },
   "admin": {

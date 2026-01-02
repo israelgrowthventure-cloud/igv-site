@@ -52,8 +52,8 @@ const Packs = () => {
   ];
 
   const handleBuyPack = (packId) => {
-    // Redirect to payment page
-    navigate(`/payment?pack=${packId}`);
+    // Redirect to checkout page (temporary until Payment is fixed)
+    navigate(`/checkout?pack=${packId}`);
   };
 
   const handleContactAboutPack = (packId, packName) => {

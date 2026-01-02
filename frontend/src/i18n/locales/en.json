@@ -101,6 +101,11 @@
       "subject": "Information Request"
     }
   },
+  "pricing": {
+    "detecting": "Detecting your region...",
+    "region": "Detected region",
+    "international": "International"
+  },
   "payment": {
     "title": "Complete Your Purchase",
     "subtitle": "Secure card payment",
@@ -396,6 +401,7 @@
     "edit": "Edit",
     "search": "Search",
     "filter": "Filter",
+    "retry": "Retry",
     "brandName": "Israel Growth Venture"
   },
   "admin": {

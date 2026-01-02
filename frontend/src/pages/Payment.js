@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { CreditCard, ArrowRight, Shield, Lock, CheckCircle, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
-import { api } from '../utils/api';
+import api from '../utils/api';
 import { getPricing } from '../utils/pricing';
 
 const Payment = () => {

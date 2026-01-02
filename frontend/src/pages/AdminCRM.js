@@ -7,7 +7,7 @@
 import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
   Users, TrendingUp, Mail, FileText, LogOut, Settings, Plus, Eye, Edit,
   Trash2, Shield, UserCheck, UserX, Loader2, Search, Filter, Download,
@@ -20,9 +20,25 @@ import api from '../utils/api';
 const AdminCRMDashboard = () => {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
+  const location = useLocation();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('dashboard');
+  const [dataLoading, setDataLoading] = useState(false);
+  const [error, setError] = useState(null);
+  
+  // Detect active tab from URL pathname (/admin/crm/leads -> 'leads')
+  const getTabFromPath = () => {
+    const path = location.pathname;
+    if (path === '/admin/crm' || path === '/admin/crm/dashboard') return 'dashboard';
+    if (path.includes('/leads')) return 'leads';
+    if (path.includes('/pipeline')) return 'pipeline';
+    if (path.includes('/opportunities')) return 'opportunities';
+    if (path.includes('/contacts')) return 'contacts';
+    if (path.includes('/settings')) return 'settings';
+    return 'dashboard';
+  };
+  
+  const [activeTab, setActiveTab] = useState(getTabFromPath());
 
   // State for each module
   const [dashboardStats, setDashboardStats] = useState(null);
@@ -45,6 +61,11 @@ const AdminCRMDashboard = () => {
   useEffect(() => {
     checkAuth();
   }, []);
+
+  // Update activeTab when URL changes (browser back/forward)
+  useEffect(() => {
+    setActiveTab(getTabFromPath());
+  }, [location.pathname]);
 
   useEffect(() => {
     if (activeTab && user) {
@@ -72,6 +93,8 @@ const AdminCRMDashboard = () => {
   };
 
   const loadTabData = async (tab) => {
+    setDataLoading(true);
+    setError(null);
     try {
       switch (tab) {
         case 'dashboard':
@@ -116,7 +139,11 @@ const AdminCRMDashboard = () => {
       }
     } catch (error) {
       console.error(`Error loading ${tab}:`, error);
-      toast.error(t('admin.errors.loadFailed'));
+      const errorMsg = error.response?.data?.detail || error.message || t('admin.errors.loadFailed');
+      setError(errorMsg);
+      toast.error(errorMsg);
+    } finally {
+      setDataLoading(false);
     }
   };
 
@@ -195,7 +222,17 @@ const AdminCRMDashboard = () => {
               ].map(tab => (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
+                  onClick={() => {
+                    const routes = {
+                      dashboard: '/admin/crm/dashboard',
+                      leads: '/admin/crm/leads',
+                      pipeline: '/admin/crm/pipeline',
+                      opportunities: '/admin/crm/opportunities',
+                      contacts: '/admin/crm/contacts',
+                      settings: '/admin/crm/settings'
+                    };
+                    navigate(routes[tab.id] || '/admin/crm');
+                  }}
                   className={`flex items-center gap-2 px-4 py-3 border-b-2 transition whitespace-nowrap ${
                     activeTab === tab.id
                       ? 'border-blue-600 text-blue-600'
@@ -212,15 +249,35 @@ const AdminCRMDashboard = () => {
 
         {/* Main Content */}
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {activeTab === 'dashboard' && (
-            <DashboardTab stats={dashboardStats} t={t} isRTL={isRTL} />
-          )}
-          {activeTab === 'leads' && (
-            <LeadsTab
-              leads={leads}
-              selectedLead={selectedLead}
-              setSelectedLead={setSelectedLead}
-              onRefresh={() => loadTabData('leads')}
+          {error ? (
+            <div className="bg-white rounded-xl shadow-sm p-8 text-center">
+              <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                {t('admin.errors.loadFailed')}
+              </h3>
+              <p className="text-gray-600 mb-6">{error}</p>
+              <button
+                onClick={() => loadTabData(activeTab)}
+                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+              >
+                {t('common.retry', 'Réessayer')}
+              </button>
+            </div>
+          ) : dataLoading ? (
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+            </div>
+          ) : (
+            <>
+              {activeTab === 'dashboard' && (
+                <DashboardTab stats={dashboardStats} t={t} isRTL={isRTL} />
+              )}
+              {activeTab === 'leads' && (
+                <LeadsTab
+                  leads={leads}
+                  selectedLead={selectedLead}
+                  setSelectedLead={setSelectedLead}
+                  onRefresh={() => loadTabData('leads')}}
               searchTerm={searchTerm}
               setSearchTerm={setSearchTerm}
               statusFilter={statusFilter}
@@ -263,6 +320,8 @@ const AdminCRMDashboard = () => {
               t={t}
               isRTL={isRTL}
             />
+          )}
+            </>
           )}
         </main>
       </div>

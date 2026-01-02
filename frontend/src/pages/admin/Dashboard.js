@@ -211,30 +211,41 @@ const OverviewTab = ({ stats, t, navigate }) => (
 
     {/* Stats Cards */}
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      <StatCard
-        icon={Users}
-        label={t('admin.stats.totalLeads')}
-        value={stats?.total_leads || 0}
-        color="blue"
-      />
-      <StatCard
-        icon={Mail}
-        label={t('admin.stats.totalContacts')}
-        value={stats?.total_contacts || 0}
-        color="green"
-      />
-      <StatCard
-        icon={FileText}
-        label={t('admin.stats.analyses')}
-        value={stats?.total_analyses || 0}
-        color="purple"
-      />
-      <StatCard
-        icon={TrendingUp}
-        label={t('admin.stats.conversionRate')}
-        value={`${stats?.conversion_rate || 0}%`}
-        color="orange"
-      />
+      {!stats ? (
+        <>
+          <StatCardSkeleton />
+          <StatCardSkeleton />
+          <StatCardSkeleton />
+          <StatCardSkeleton />
+        </>
+      ) : (
+        <>
+          <StatCard
+            icon={Users}
+            label={t('admin.stats.totalLeads')}
+            value={stats.total_leads}
+            color="blue"
+          />
+          <StatCard
+            icon={Mail}
+            label={t('admin.stats.totalContacts')}
+            value={stats.total_contacts}
+            color="green"
+          />
+          <StatCard
+            icon={FileText}
+            label={t('admin.stats.analyses')}
+            value={stats.total_analyses}
+            color="purple"
+          />
+          <StatCard
+            icon={TrendingUp}
+            label={t('admin.stats.conversionRate')}
+            value={`${stats.conversion_rate}%`}
+            color="orange"
+          />
+        </>
+      )}
     </div>
   </div>
 );
@@ -257,6 +268,14 @@ const StatCard = ({ icon: Icon, label, value, color }) => {
     </div>
   );
 };
+
+const StatCardSkeleton = () => (
+  <div className="bg-white rounded-xl shadow-sm p-6 animate-pulse">
+    <div className="w-12 h-12 rounded-lg bg-gray-200 mb-4"></div>
+    <div className="h-4 bg-gray-200 rounded w-24 mb-2"></div>
+    <div className="h-8 bg-gray-200 rounded w-16"></div>
+  </div>
+);
 
 // Leads Tab Component
 const LeadsTab = ({ leads, t, navigate }) => (

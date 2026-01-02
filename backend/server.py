@@ -793,7 +793,7 @@ async def get_stats(user: Dict = Depends(get_current_user)):
         }
 
 
-@api_router.post("/admin/users")
+@api_router.post("/admin/users", status_code=201)
 async def create_admin_user(user_data: AdminUserCreate, current_user: Dict = Depends(get_current_user)):
     """Create new admin user (admin only)"""
     if db is None:

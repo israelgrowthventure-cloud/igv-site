@@ -32,9 +32,16 @@ import Payment from './pages/Payment';
 import Checkout from './pages/Checkout';
 import DemandeRappel from './pages/DemandeRappel';
 
+// Layouts
+import AdminLayout from './layouts/AdminLayout';
+
 // Admin Pages - Lazy loaded for performance (code splitting)
 const AdminLogin = lazy(() => import('./pages/admin/Login'));
 const AdminDashboard = lazy(() => import('./pages/admin/Dashboard'));
+const DashboardPage = lazy(() => import('./pages/admin/DashboardPage'));
+const LeadsPage = lazy(() => import('./pages/admin/LeadsPage'));
+const ContactsPage = lazy(() => import('./pages/admin/ContactsPage'));
+const UsersPage = lazy(() => import('./pages/admin/UsersPage'));
 const AdminCRMComplete = lazy(() => import('./pages/admin/AdminCRMComplete'));
 const LeadDetail = lazy(() => import('./pages/admin/LeadDetail'));
 const ContactDetail = lazy(() => import('./pages/admin/ContactDetail'));
@@ -133,33 +140,31 @@ function AppContent() {
           <Route path="/payment" element={<Payment />} />
           <Route path="/payment/return" element={<PaymentReturn />} />
           <Route path="/payment-success" element={<PaymentReturn />} />
-          <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
+          <Route path="/admin" element={<Navigate to="/admin/crm/dashboard" replace />} />
           <Route path="/admin/login" element={
             <Suspense fallback={<Loading />}><AdminLogin /></Suspense>
           } />
+          
+          {/* Admin CRM Routes with AdminLayout */}
+          <Route path="/admin/crm" element={
+            <PrivateRoute>
+              <Suspense fallback={<AdminLoading />}>
+                <AdminLayout />
+              </Suspense>
+            </PrivateRoute>
+          }>
+            <Route index element={<Navigate to="/admin/crm/dashboard" replace />} />
+            <Route path="dashboard" element={<DashboardPage />} />
+            <Route path="leads" element={<LeadsPage />} />
+            <Route path="contacts" element={<ContactsPage />} />
+            <Route path="users" element={<UsersPage />} />
+            <Route path="opportunities" element={<AdminCRMComplete />} />
+            <Route path="pipeline" element={<Pipeline />} />
+            <Route path="settings" element={<AdminCRMComplete />} />
+          </Route>
+          
           <Route path="/admin/dashboard" element={
             <PrivateRoute><Suspense fallback={<AdminLoading />}><AdminDashboard /></Suspense></PrivateRoute>
-          } />
-          <Route path="/admin/crm" element={
-            <PrivateRoute><Suspense fallback={<AdminLoading />}><AdminCRMComplete /></Suspense></PrivateRoute>
-          } />
-          <Route path="/admin/crm/dashboard" element={
-            <PrivateRoute><Suspense fallback={<AdminLoading />}><AdminCRMComplete /></Suspense></PrivateRoute>
-          } />
-          <Route path="/admin/crm/leads" element={
-            <PrivateRoute><Suspense fallback={<AdminLoading />}><AdminCRMComplete /></Suspense></PrivateRoute>
-          } />
-          <Route path="/admin/crm/opportunities" element={
-            <PrivateRoute><Suspense fallback={<AdminLoading />}><AdminCRMComplete /></Suspense></PrivateRoute>
-          } />
-          <Route path="/admin/crm/contacts" element={
-            <PrivateRoute><Suspense fallback={<AdminLoading />}><AdminCRMComplete /></Suspense></PrivateRoute>
-          } />
-          <Route path="/admin/crm/settings" element={
-            <PrivateRoute><Suspense fallback={<AdminLoading />}><AdminCRMComplete /></Suspense></PrivateRoute>
-          } />
-          <Route path="/admin/crm/pipeline" element={
-            <PrivateRoute><Suspense fallback={<AdminLoading />}><AdminCRMComplete /></Suspense></PrivateRoute>
           } />
           <Route path="/admin/crm/leads/:id" element={
             <PrivateRoute><Suspense fallback={<AdminLoading />}><LeadDetail /></Suspense></PrivateRoute>

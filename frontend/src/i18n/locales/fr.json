@@ -13,6 +13,57 @@
     "miniAnalysis": "Mini-Analyse Gratuite",
     "language": "Langue"
   },
+  "crm": {
+    "nav": {
+      "dashboard": "Tableau de bord",
+      "leads": "Prospects",
+      "contacts": "Contacts",
+      "opportunities": "Opportunités",
+      "pipeline": "Pipeline",
+      "activities": "Activités",
+      "emails": "Emails",
+      "users": "Utilisateurs",
+      "settings": "Paramètres"
+    },
+    "breadcrumb": {
+      "home": "Accueil"
+    },
+    "sidebar": {
+      "collapse": "Réduire",
+      "expand": "Développer"
+    },
+    "search": {
+      "placeholder": "Rechercher..."
+    },
+    "user": {
+      "admin": "Administrateur",
+      "logout": "Déconnexion",
+      "profile": "Profil"
+    },
+    "role": {
+      "admin": "Admin",
+      "commercial": "Commercial"
+    },
+    "dashboard": {
+      "title": "Tableau de bord",
+      "subtitle": "Vue d'ensemble de votre activité CRM",
+      "totalLeads": "Total Prospects",
+      "totalContacts": "Total Contacts",
+      "totalOpportunities": "Total Opportunités",
+      "pipelineValue": "Valeur Pipeline",
+      "recentActivity": "Activité récente",
+      "noActivity": "Aucune activité récente"
+    },
+    "leads": {
+      "subtitle": "Gérez vos prospects et convertissez-les en contacts"
+    },
+    "contacts": {
+      "subtitle": "Gérez vos contacts clients"
+    },
+    "users": {
+      "subtitle": "Gérez les utilisateurs et leurs permissions"
+    }
+  },
   "hero": {
     "title": "Israel Growth Venture",
     "subtitle": "Votre partenaire stratégique pour une expansion réussie en Israël",

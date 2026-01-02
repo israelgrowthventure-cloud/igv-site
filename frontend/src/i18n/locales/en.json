@@ -13,6 +13,57 @@
     "miniAnalysis": "Free Mini-Analysis",
     "language": "Language"
   },
+  "crm": {
+    "nav": {
+      "dashboard": "Dashboard",
+      "leads": "Leads",
+      "contacts": "Contacts",
+      "opportunities": "Opportunities",
+      "pipeline": "Pipeline",
+      "activities": "Activities",
+      "emails": "Emails",
+      "users": "Users",
+      "settings": "Settings"
+    },
+    "breadcrumb": {
+      "home": "Home"
+    },
+    "sidebar": {
+      "collapse": "Collapse",
+      "expand": "Expand"
+    },
+    "search": {
+      "placeholder": "Search..."
+    },
+    "user": {
+      "admin": "Administrator",
+      "logout": "Logout",
+      "profile": "Profile"
+    },
+    "role": {
+      "admin": "Admin",
+      "commercial": "Sales"
+    },
+    "dashboard": {
+      "title": "Dashboard",
+      "subtitle": "Overview of your CRM activity",
+      "totalLeads": "Total Leads",
+      "totalContacts": "Total Contacts",
+      "totalOpportunities": "Total Opportunities",
+      "pipelineValue": "Pipeline Value",
+      "recentActivity": "Recent Activity",
+      "noActivity": "No recent activity"
+    },
+    "leads": {
+      "subtitle": "Manage your leads and convert them to contacts"
+    },
+    "contacts": {
+      "subtitle": "Manage your customer contacts"
+    },
+    "users": {
+      "subtitle": "Manage users and their permissions"
+    }
+  },
   "hero": {
     "title": "Israel Growth Venture",
     "subtitle": "Your Strategic Partner for Successful Expansion in Israel",

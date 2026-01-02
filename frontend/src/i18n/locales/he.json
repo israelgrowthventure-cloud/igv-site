@@ -13,6 +13,57 @@
     "miniAnalysis": "מיני-אנליזה חינמית",
     "language": "שפה"
   },
+  "crm": {
+    "nav": {
+      "dashboard": "לוח בקרה",
+      "leads": "לידים",
+      "contacts": "אנשי קשר",
+      "opportunities": "הזדמנויות",
+      "pipeline": "צינור מכירות",
+      "activities": "פעילויות",
+      "emails": "אימיילים",
+      "users": "משתמשים",
+      "settings": "הגדרות"
+    },
+    "breadcrumb": {
+      "home": "בית"
+    },
+    "sidebar": {
+      "collapse": "כווץ",
+      "expand": "הרחב"
+    },
+    "search": {
+      "placeholder": "חיפוש..."
+    },
+    "user": {
+      "admin": "מנהל",
+      "logout": "התנתק",
+      "profile": "פרופיל"
+    },
+    "role": {
+      "admin": "מנהל",
+      "commercial": "מכירות"
+    },
+    "dashboard": {
+      "title": "לוח בקרה",
+      "subtitle": "סקירה של פעילות ה-CRM שלך",
+      "totalLeads": "סה״כ לידים",
+      "totalContacts": "סה״כ אנשי קשר",
+      "totalOpportunities": "סה״כ הזדמנויות",
+      "pipelineValue": "ערך צינור",
+      "recentActivity": "פעילות אחרונה",
+      "noActivity": "אין פעילות אחרונה"
+    },
+    "leads": {
+      "subtitle": "נהל את הלידים שלך והמר אותם לאנשי קשר"
+    },
+    "contacts": {
+      "subtitle": "נהל את אנשי הקשר שלך"
+    },
+    "users": {
+      "subtitle": "נהל משתמשים והרשאות"
+    }
+  },
   "hero": {
     "title": "Israel Growth Venture",
     "subtitle": "השותף האסטרטגי שלך להתרחבות מוצלחת בישראל",

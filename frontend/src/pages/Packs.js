@@ -57,8 +57,8 @@ const Packs = () => {
   };
 
   const handleContactAboutPack = (packId, packName) => {
-    // Contact via email for questions
-    window.location.href = `mailto:israel.growth.venture@gmail.com?subject=${t('packs.email.subject')} - ${packName}`;
+    // Redirect to demande rappel page instead of mailto
+    navigate(`/demande-rappel?pack=${packId}&subject=question`);
   };
 
   return (
@@ -216,14 +216,14 @@ const Packs = () => {
           <p className="text-base text-gray-600 mb-6">
             {t('packs.customPack.description', 'Chaque projet est unique. Contactez-nous pour discuter d\'une solution sur mesure adaptée à vos besoins spécifiques.')}
           </p>
-          <a
-            href="mailto:israel.growth.venture@gmail.com"
+          <button
+            onClick={() => navigate('/demande-rappel?pack=custom')}
             className="inline-flex items-center px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
             data-testid="custom-pack-contact"
           >
             <Mail className="w-5 h-5 mr-2" />
             {t('packs.customPack.cta', 'Nous contacter')}
-          </a>
+          </button>
         </div>
       </section>
     </div>

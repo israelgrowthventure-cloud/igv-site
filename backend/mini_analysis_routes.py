@@ -104,6 +104,21 @@ async def diagnose_gemini():
             "error": str(e)
         }
 
+# Diagnostic endpoint for SMTP
+@router.get("/diag-smtp")
+async def diagnose_smtp():
+    """Diagnostic endpoint to check SMTP configuration"""
+    return {
+        "EMAIL_AVAILABLE": EMAIL_AVAILABLE,
+        "SMTP_SERVER": SMTP_SERVER,
+        "SMTP_PORT": SMTP_PORT,
+        "SMTP_USERNAME": SMTP_USERNAME[:10] + "..." if SMTP_USERNAME else None,
+        "SMTP_PASSWORD_SET": bool(SMTP_PASSWORD),
+        "SMTP_FROM_EMAIL": SMTP_FROM_EMAIL,
+        "SMTP_FROM_NAME": SMTP_FROM_NAME,
+        "ready_to_send": EMAIL_AVAILABLE and SMTP_USERNAME and SMTP_PASSWORD
+    }
+
 # MongoDB connection (from server.py)
 mongo_url = os.getenv('MONGODB_URI') or os.getenv('MONGO_URL')
 db_name = os.getenv('DB_NAME', 'igv_production')

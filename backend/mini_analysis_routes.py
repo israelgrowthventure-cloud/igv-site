@@ -933,9 +933,9 @@ async def generate_mini_analysis(request: MiniAnalysisRequest, response: Respons
             
             # Multilingual confirmation messages (EXACT SPEC)
             quota_messages = {
-                "fr": "Capacité du jour atteinte.\nVotre demande est enregistrée ✅\nVous recevrez votre mini-analyse par email dès réouverture des créneaux (généralement sous 24–48h).",
-                "en": "Daily capacity reached.\nYour request is saved ✅\nYou'll receive your mini-analysis by email as soon as capacity reopens (usually within 24–48 hours).",
-                "he": "הגענו לקיבולת היומית.\nהבקשה נשמרה ✅\nתקבלו את המיני-אנליזה במייל ברגע שהקיבולת תיפתח מחדש (בדרך כלל תוך 24–48 שעות)."
+                "fr": "Quota de mini-analyses atteint. Revenez demain.",
+                "en": "Daily mini-analysis quota reached. Please come back tomorrow.",
+                "he": "המכסה היומית למיני-אנליזה הסתיימה. נסו שוב מחר."
             }
             
             response.headers["Retry-After"] = "86400"

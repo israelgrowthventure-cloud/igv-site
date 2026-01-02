@@ -734,6 +734,7 @@ async def generate_mini_analysis(request: MiniAnalysisRequest, response: Respons
             "sector": request.secteur,
             "language": language,
             "status": "NEW",  # Will be updated later
+            "assigned_to": None,  # ADMIN REDISTRIBUE MANUELLEMENT
             "ip_address": client_ip,
             "user_agent": user_agent,
             "referrer": referrer,

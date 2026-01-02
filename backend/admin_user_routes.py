@@ -117,14 +117,14 @@ async def create_user(user_data: UserCreate, user: Dict = Depends(require_admin)
         
         logging.info(f"User created: {user_data.email} by {user['email']}")
         
-        # Audit log
-        await curre using centralized function
+        # Audit log using centralized function
         await log_audit_event(
             user=user,
             action="create_user",
             entity_type="user",
             entity_id=user_id,
             details={"email": user_data.email, "role": user_data.role}
+        )
         
         return {
             "success": True,
@@ -140,10 +140,10 @@ async def create_user(user_data: UserCreate, user: Dict = Depends(require_admin)
 
 
 @router.put("/users/{user_id}")
-async def update_user(user_id: str, update_data: UserUpdate, user: Dict = Depends(get_current_user)):
-    """Update user (Admin only)"""
-    await require_admin(user)require_admin)):
+async def update_user(user_id: str, update_data: UserUpdate, user: Dict = Depends(require_admin)):
     """Update user (Admin only - uses require_admin dependency)"""
+    
+    current_db = get_db()
     if current_db is None:
         raise HTTPException(status_code=500, detail="Database not configured")
     
@@ -180,17 +180,17 @@ async def update_user(user_id: str, update_data: UserUpdate, user: Dict = Depend
         
         logging.info(f"User updated: {user_id} by {user['email']}")
         
-        # Audit log
-        await current_db.audit_logs.insert_one({
-            "user_id": user["id"],
-            "user_e using centralized function
+        # Audit log using centralized function
         await log_audit_event(
             user=user,
             action="update_user",
             entity_type="user",
             entity_id=user_id,
             details=update_dict
-           "success": True,
+        )
+        
+        return {
+            "success": True,
             "message": "User updated successfully"
         }
     
@@ -202,11 +202,11 @@ async def update_user(user_id: str, update_data: UserUpdate, user: Dict = Depend
 
 
 @router.delete("/users/{user_id}")
-async def delete_user(user_id: str, user: Dict = Depends(get_current_user)):
-    """Soft delete user (Admin only)"""
-    await require_admin(user)
-    require_admin)):
+async def delete_user(user_id: str, user: Dict = Depends(require_admin)):
     """Soft delete user (Admin only - uses require_admin dependency)"""
+    
+    current_db = get_db()
+    if current_db is None:
         raise HTTPException(status_code=500, detail="Database not configured")
     
     try:
@@ -237,18 +237,18 @@ async def delete_user(user_id: str, user: Dict = Depends(get_current_user)):
         
         logging.info(f"User soft-deleted: {user_id} by {user['email']}")
         
-        # Audit log
-        await current_db.audit_logs.insert_one({
-            "user_id": user["id"],
-            "user_email": user["email"],
-            "action using centralized function
+        # Audit log using centralized function
         await log_audit_event(
             user=user,
             action="delete_user",
             entity_type="user",
             entity_id=user_id,
             details={"email": existing_user["email"]}
-           "message": "User deleted successfully"
+        )
+        
+        return {
+            "success": True,
+            "message": "User deleted successfully"
         }
     
     except HTTPException:
@@ -259,13 +259,13 @@ async def delete_user(user_id: str, user: Dict = Depends(get_current_user)):
 
 
 @router.get("/users/{user_id}")
-async def get_user(user_id: str, user: Dict = Depends(get_current_user)):
-    """Get specific user details (Admin only)"""
-    await require_admin(user)
+async def get_user(user_id: str, user: Dict = Depends(require_admin)):
+    """Get specific user details (Admin only - uses require_admin dependency)"""
     
     current_db = get_db()
-    if current_db is None:require_admin)):
-    """Get specific user details (Admin only - uses require_admin dependency)"""
+    if current_db is None:
+        raise HTTPException(status_code=500, detail="Database not configured")
+    
     try:
         # Validate ObjectId
         try:

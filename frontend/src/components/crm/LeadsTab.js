@@ -435,6 +435,29 @@ const LeadsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, sea
             </div>
           )}
 
+          {/* Mini-Analysis Display Section */}
+          {selectedItem.analysis && (
+            <div className="mt-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border-l-4 border-blue-500">
+              <div className="flex items-center gap-2 mb-3">
+                <Eye className="w-5 h-5 text-blue-600" />
+                <h3 className="font-semibold text-blue-900">{t('admin.crm.leads.mini_analysis', 'Mini-Analyse de Marché')}</h3>
+              </div>
+              <div className="text-sm text-gray-700 whitespace-pre-wrap bg-white p-3 rounded border">
+                {selectedItem.analysis}
+              </div>
+              {selectedItem.analysis_language && (
+                <p className="text-xs text-blue-600 mt-2">
+                  {t('admin.crm.leads.analysis_language', 'Langue')}: {selectedItem.analysis_language.toUpperCase()}
+                </p>
+              )}
+              {selectedItem.analysis_date && (
+                <p className="text-xs text-gray-500 mt-1">
+                  {t('admin.crm.leads.analysis_date', 'Généré le')}: {new Date(selectedItem.analysis_date).toLocaleString()}
+                </p>
+              )}
+            </div>
+          )}
+
           <div className="mt-6 border-t pt-6">
             <h3 className="font-semibold mb-4">{t('admin.crm.leads.details.notes')}</h3>
             <div className="space-y-3 mb-4">

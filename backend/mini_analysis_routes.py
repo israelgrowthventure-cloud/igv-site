@@ -14,21 +14,19 @@ from pathlib import Path
 import google.genai as genai
 import traceback
 
-# PDF generation
+# PDF generation - NO PyPDF2 to avoid import errors
 try:
     from reportlab.lib.pagesizes import A4
     from reportlab.lib import colors
     from reportlab.lib.units import cm
-    from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, Image
+    from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
     from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
     from reportlab.lib.enums import TA_CENTER, TA_LEFT
     from io import BytesIO
     import base64
-    from PyPDF2 import PdfReader, PdfWriter
-    from reportlab.pdfgen import canvas
     PDF_AVAILABLE = True
 except ImportError as e:
-    logging.warning(f"reportlab/PyPDF2 not available - PDF generation will fail: {e}")
+    logging.warning(f"reportlab not available - PDF generation will fail: {e}")
     PDF_AVAILABLE = False
 
 # Email
@@ -235,20 +233,12 @@ async def create_lead_in_crm(lead_data: dict, request_id: str) -> dict:
 
 
 def generate_mini_analysis_pdf(brand_name: str, analysis_text: str, language: str = "fr") -> bytes:
-    """Generate mini-analysis PDF with REAL IGV header merged at top"""
+    """Generate mini-analysis PDF - Simple & Clean (no merge errors)"""
     if not PDF_AVAILABLE:
         raise Exception("PDF generation not available - reportlab not installed")
     
-    # Generate content PDF first
-    content_buffer = BytesIO()
-    doc = SimpleDocTemplate(
-        content_buffer, 
-        pagesize=A4, 
-        topMargin=0.5*cm,  # Small margin to fit header
-        bottomMargin=2*cm, 
-        leftMargin=2*cm, 
-        rightMargin=2*cm
-    )
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=A4, topMargin=2*cm, bottomMargin=2*cm, leftMargin=2*cm, rightMargin=2*cm)
     story = []
     styles = getSampleStyleSheet()
     
@@ -256,7 +246,7 @@ def generate_mini_analysis_pdf(brand_name: str, analysis_text: str, language: st
     title_style = ParagraphStyle(
         'CustomTitle',
         parent=styles['Heading1'],
-        fontSize=18,
+        fontSize=20,
         textColor=colors.HexColor('#1e40af'),
         spaceAfter=12,
         alignment=TA_CENTER
@@ -265,13 +255,15 @@ def generate_mini_analysis_pdf(brand_name: str, analysis_text: str, language: st
     header_style = ParagraphStyle(
         'Header',
         parent=styles['Normal'],
-        fontSize=9,
+        fontSize=10,
         textColor=colors.HexColor('#4b5563'),
         alignment=TA_CENTER
     )
     
-    # Leave space at top for header (will be merged later)
-    story.append(Spacer(1, 4*cm))
+    # IGV Header (text-based, professional)
+    story.append(Paragraph(COMPANY_NAME, title_style))
+    story.append(Paragraph(f"{COMPANY_EMAIL} | {COMPANY_WEBSITE}", header_style))
+    story.append(Spacer(1, 1.5*cm))
     
     # Title
     title_text = {
@@ -318,56 +310,13 @@ def generate_mini_analysis_pdf(brand_name: str, analysis_text: str, language: st
     
     story.append(Paragraph(f"<i>{footer_text}</i>", header_style))
     
-    # Build content PDF
+    # Build PDF
     doc.build(story)
-    content_bytes = content_buffer.getvalue()
-    content_buffer.close()
+    pdf_bytes = buffer.getvalue()
+    buffer.close()
     
-    # Step 2: Merge with IGV header PDF
-    header_pdf_path = os.path.join(os.path.dirname(__file__), 'assets', 'igv_header.pdf')
-    
-    if os.path.exists(header_pdf_path):
-        try:
-            from PyPDF2 import PdfReader, PdfWriter
-            
-            # Read PDFs
-            header_reader = PdfReader(header_pdf_path)
-            content_reader = PdfReader(BytesIO(content_bytes))
-            
-            writer = PdfWriter()
-            
-            # Merge header onto FIRST page only
-            if len(header_reader.pages) > 0 and len(content_reader.pages) > 0:
-                first_content_page = content_reader.pages[0]
-                header_page = header_reader.pages[0]
-                
-                # Overlay header on top of content (header appears at top)
-                first_content_page.merge_page(header_page)
-                writer.add_page(first_content_page)
-                
-                # Add remaining content pages without header
-                for i in range(1, len(content_reader.pages)):
-                    writer.add_page(content_reader.pages[i])
-                
-                # Write merged PDF
-                final_buffer = BytesIO()
-                writer.write(final_buffer)
-                final_bytes = final_buffer.getvalue()
-                final_buffer.close()
-                
-                logging.info(f"✅ PDF with IGV header merged ({len(final_bytes)} bytes)")
-                return final_bytes
-            else:
-                logging.warning("⚠️ Header or content PDF empty, returning content only")
-                return content_bytes
-                
-        except Exception as e:
-            logging.error(f"❌ PDF merge failed: {str(e)}")
-            logging.warning("⚠️ Returning content PDF without header")
-            return content_bytes
-    else:
-        logging.warning(f"⚠️ IGV header not found at {header_pdf_path}, returning content only")
-        return content_bytes
+    logging.info(f"✅ PDF generated ({len(pdf_bytes)} bytes)")
+    return pdf_bytes
 
 
 async def send_mini_analysis_email(email: str, brand_name: str, pdf_bytes: bytes, language: str = "fr") -> dict:

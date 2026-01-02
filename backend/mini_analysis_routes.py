@@ -14,7 +14,7 @@ from pathlib import Path
 import google.genai as genai
 import traceback
 
-# PDF generation - NO PyPDF2 to avoid import errors
+# PDF generation
 try:
     from reportlab.lib.pagesizes import A4
     from reportlab.lib import colors
@@ -24,9 +24,10 @@ try:
     from reportlab.lib.enums import TA_CENTER, TA_LEFT
     from io import BytesIO
     import base64
+    from PyPDF2 import PdfReader, PdfWriter
     PDF_AVAILABLE = True
 except ImportError as e:
-    logging.warning(f"reportlab not available - PDF generation will fail: {e}")
+    logging.warning(f"reportlab/PyPDF2 not available - PDF generation will fail: {e}")
     PDF_AVAILABLE = False
 
 # Email
@@ -233,37 +234,25 @@ async def create_lead_in_crm(lead_data: dict, request_id: str) -> dict:
 
 
 def generate_mini_analysis_pdf(brand_name: str, analysis_text: str, language: str = "fr") -> bytes:
-    """Generate mini-analysis PDF - Simple & Clean (no merge errors)"""
+    """Generate mini-analysis PDF with IGV header from entete igv.pdf"""
     if not PDF_AVAILABLE:
         raise Exception("PDF generation not available - reportlab not installed")
     
-    buffer = BytesIO()
-    doc = SimpleDocTemplate(buffer, pagesize=A4, topMargin=2*cm, bottomMargin=2*cm, leftMargin=2*cm, rightMargin=2*cm)
+    # Generate content PDF first
+    content_buffer = BytesIO()
+    doc = SimpleDocTemplate(
+        content_buffer, 
+        pagesize=A4, 
+        topMargin=0.5*cm,
+        bottomMargin=2*cm, 
+        leftMargin=2*cm, 
+        rightMargin=2*cm
+    )
     story = []
     styles = getSampleStyleSheet()
     
-    # Custom styles
-    title_style = ParagraphStyle(
-        'CustomTitle',
-        parent=styles['Heading1'],
-        fontSize=20,
-        textColor=colors.HexColor('#1e40af'),
-        spaceAfter=12,
-        alignment=TA_CENTER
-    )
-    
-    header_style = ParagraphStyle(
-        'Header',
-        parent=styles['Normal'],
-        fontSize=10,
-        textColor=colors.HexColor('#4b5563'),
-        alignment=TA_CENTER
-    )
-    
-    # IGV Header (text-based, professional)
-    story.append(Paragraph(COMPANY_NAME, title_style))
-    story.append(Paragraph(f"{COMPANY_EMAIL} | {COMPANY_WEBSITE}", header_style))
-    story.append(Spacer(1, 1.5*cm))
+    # Leave space for header (will be merged)
+    story.append(Spacer(1, 5*cm))
     
     # Title
     title_text = {
@@ -285,11 +274,10 @@ def generate_mini_analysis_pdf(brand_name: str, analysis_text: str, language: st
     story.append(Paragraph(f"<i>{date_label} {datetime.now(timezone.utc).strftime('%d/%m/%Y')}</i>", styles['Normal']))
     story.append(Spacer(1, 1*cm))
     
-    # Analysis content - split into paragraphs
+    # Analysis content
     paragraphs = analysis_text.split('\n\n')
     for para in paragraphs:
         if para.strip():
-            # Handle bullet points
             if para.strip().startswith('-') or para.strip().startswith('•'):
                 lines = para.split('\n')
                 for line in lines:
@@ -308,15 +296,57 @@ def generate_mini_analysis_pdf(brand_name: str, analysis_text: str, language: st
         "he": "מסמך זה הוא ניתוח ראשוני שנוצר על ידי AI. לליווי מלא, צור איתנו קשר."
     }.get(language, "Ce document est une analyse préliminaire générée par IA.")
     
+    header_style = ParagraphStyle(
+        'Header',
+        parent=styles['Normal'],
+        fontSize=9,
+        textColor=colors.HexColor('#4b5563'),
+        alignment=TA_CENTER
+    )
     story.append(Paragraph(f"<i>{footer_text}</i>", header_style))
     
-    # Build PDF
+    # Build content PDF
     doc.build(story)
-    pdf_bytes = buffer.getvalue()
-    buffer.close()
+    content_bytes = content_buffer.getvalue()
+    content_buffer.close()
     
-    logging.info(f"✅ PDF generated ({len(pdf_bytes)} bytes)")
-    return pdf_bytes
+    # Merge with IGV header
+    header_path = os.path.join(os.path.dirname(__file__), 'assets', 'entete igv.pdf')
+    
+    if os.path.exists(header_path):
+        try:
+            header_reader = PdfReader(header_path)
+            content_reader = PdfReader(BytesIO(content_bytes))
+            writer = PdfWriter()
+            
+            if len(header_reader.pages) > 0 and len(content_reader.pages) > 0:
+                # Merge header on first page
+                first_page = content_reader.pages[0]
+                header_page = header_reader.pages[0]
+                first_page.merge_page(header_page)
+                writer.add_page(first_page)
+                
+                # Add remaining pages
+                for i in range(1, len(content_reader.pages)):
+                    writer.add_page(content_reader.pages[i])
+                
+                # Write merged PDF
+                final_buffer = BytesIO()
+                writer.write(final_buffer)
+                final_bytes = final_buffer.getvalue()
+                final_buffer.close()
+                
+                logging.info(f"✅ PDF with IGV header ({len(final_bytes)} bytes)")
+                return final_bytes
+            else:
+                logging.warning("Header/content empty, returning content only")
+                return content_bytes
+        except Exception as e:
+            logging.error(f"PDF merge failed: {e}, returning content only")
+            return content_bytes
+    else:
+        logging.warning(f"IGV header not found at {header_path}")
+        return content_bytes
 
 
 async def send_mini_analysis_email(email: str, brand_name: str, pdf_bytes: bytes, language: str = "fr") -> dict:

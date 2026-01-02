@@ -235,12 +235,20 @@ async def create_lead_in_crm(lead_data: dict, request_id: str) -> dict:
 
 
 def generate_mini_analysis_pdf(brand_name: str, analysis_text: str, language: str = "fr") -> bytes:
-    """Generate mini-analysis PDF with IGV header at top, content below"""
+    """Generate mini-analysis PDF with REAL IGV header merged at top"""
     if not PDF_AVAILABLE:
         raise Exception("PDF generation not available - reportlab not installed")
     
-    buffer = BytesIO()
-    doc = SimpleDocTemplate(buffer, pagesize=A4, topMargin=1*cm, bottomMargin=2*cm, leftMargin=2*cm, rightMargin=2*cm)
+    # Generate content PDF first
+    content_buffer = BytesIO()
+    doc = SimpleDocTemplate(
+        content_buffer, 
+        pagesize=A4, 
+        topMargin=0.5*cm,  # Small margin to fit header
+        bottomMargin=2*cm, 
+        leftMargin=2*cm, 
+        rightMargin=2*cm
+    )
     story = []
     styles = getSampleStyleSheet()
     
@@ -248,9 +256,9 @@ def generate_mini_analysis_pdf(brand_name: str, analysis_text: str, language: st
     title_style = ParagraphStyle(
         'CustomTitle',
         parent=styles['Heading1'],
-        fontSize=20,
+        fontSize=18,
         textColor=colors.HexColor('#1e40af'),
-        spaceAfter=20,
+        spaceAfter=12,
         alignment=TA_CENTER
     )
     
@@ -262,28 +270,8 @@ def generate_mini_analysis_pdf(brand_name: str, analysis_text: str, language: st
         alignment=TA_CENTER
     )
     
-    # Step 1: Add IGV header image at top (if available)
-    header_pdf_path = os.path.join(os.path.dirname(__file__), 'assets', 'igv_header.pdf')
-    if os.path.exists(header_pdf_path):
-        try:
-            # Try to insert header PDF as image using ReportLab Image
-            # This requires converting PDF to image format first
-            # For now, add company name as header since PDF->Image conversion is complex
-            story.append(Paragraph(COMPANY_NAME, title_style))
-            story.append(Paragraph(f"{COMPANY_EMAIL} | {COMPANY_WEBSITE}", header_style))
-            story.append(Spacer(1, 1*cm))
-            logging.info(f"✅ IGV header placeholder added (full PDF merge not implemented)")
-        except Exception as e:
-            logging.warning(f"⚠️ Could not load IGV header: {e}")
-            story.append(Paragraph(COMPANY_NAME, title_style))
-            story.append(Paragraph(f"{COMPANY_EMAIL} | {COMPANY_WEBSITE}", header_style))
-            story.append(Spacer(1, 1*cm))
-    else:
-        # Fallback: text header
-        logging.warning(f"⚠️ IGV header not found at {header_pdf_path}")
-        story.append(Paragraph(COMPANY_NAME, title_style))
-        story.append(Paragraph(f"{COMPANY_EMAIL} | {COMPANY_WEBSITE}", header_style))
-        story.append(Spacer(1, 1*cm))
+    # Leave space at top for header (will be merged later)
+    story.append(Spacer(1, 4*cm))
     
     # Title
     title_text = {
@@ -330,13 +318,56 @@ def generate_mini_analysis_pdf(brand_name: str, analysis_text: str, language: st
     
     story.append(Paragraph(f"<i>{footer_text}</i>", header_style))
     
-    # Build final PDF
+    # Build content PDF
     doc.build(story)
-    pdf_bytes = buffer.getvalue()
-    buffer.close()
+    content_bytes = content_buffer.getvalue()
+    content_buffer.close()
     
-    logging.info(f"✅ PDF generated successfully ({len(pdf_bytes)} bytes)")
-    return pdf_bytes
+    # Step 2: Merge with IGV header PDF
+    header_pdf_path = os.path.join(os.path.dirname(__file__), 'assets', 'igv_header.pdf')
+    
+    if os.path.exists(header_pdf_path):
+        try:
+            from PyPDF2 import PdfReader, PdfWriter
+            
+            # Read PDFs
+            header_reader = PdfReader(header_pdf_path)
+            content_reader = PdfReader(BytesIO(content_bytes))
+            
+            writer = PdfWriter()
+            
+            # Merge header onto FIRST page only
+            if len(header_reader.pages) > 0 and len(content_reader.pages) > 0:
+                first_content_page = content_reader.pages[0]
+                header_page = header_reader.pages[0]
+                
+                # Overlay header on top of content (header appears at top)
+                first_content_page.merge_page(header_page)
+                writer.add_page(first_content_page)
+                
+                # Add remaining content pages without header
+                for i in range(1, len(content_reader.pages)):
+                    writer.add_page(content_reader.pages[i])
+                
+                # Write merged PDF
+                final_buffer = BytesIO()
+                writer.write(final_buffer)
+                final_bytes = final_buffer.getvalue()
+                final_buffer.close()
+                
+                logging.info(f"✅ PDF with IGV header merged ({len(final_bytes)} bytes)")
+                return final_bytes
+            else:
+                logging.warning("⚠️ Header or content PDF empty, returning content only")
+                return content_bytes
+                
+        except Exception as e:
+            logging.error(f"❌ PDF merge failed: {str(e)}")
+            logging.warning("⚠️ Returning content PDF without header")
+            return content_bytes
+    else:
+        logging.warning(f"⚠️ IGV header not found at {header_pdf_path}, returning content only")
+        return content_bytes
 
 
 async def send_mini_analysis_email(email: str, brand_name: str, pdf_bytes: bytes, language: str = "fr") -> dict:

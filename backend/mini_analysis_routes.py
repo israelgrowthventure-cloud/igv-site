@@ -882,31 +882,14 @@ async def generate_mini_analysis(request: MiniAnalysisRequest, response: Respons
     if current_db is None:
         raise HTTPException(status_code=500, detail="Base de données non configurée")
     
-    # Normalize brand name for deduplication
+    # Normalize brand name for logging
     brand_slug = normalize_brand_slug(request.nom_de_marque)
-    
-    # Check for existing analysis (anti-duplicate)
-    existing = await current_db.mini_analyses.find_one({"brand_slug": brand_slug})
     cache_key = f"{brand_slug}_{language}"
     
-    if existing:
-        logging.info(f"CACHE_HIT=true CACHE_KEY={cache_key}")
-        response.headers["X-IGV-Cache-Hit"] = "true"
-        
-        # Translate error message
-        error_messages = {
-            "fr": f"Une mini-analyse a déjà été générée pour cette enseigne ({request.nom_de_marque})",
-            "en": f"A mini-analysis has already been generated for this brand ({request.nom_de_marque})",
-            "he": f"כבר נוצר ניתוח מיני עבור המותג הזה ({request.nom_de_marque})"
-        }
-        
-        raise HTTPException(
-            status_code=409,
-            detail=error_messages.get(language, error_messages["en"])
-        )
-    else:
-        logging.info(f"CACHE_HIT=false CACHE_KEY={cache_key}")
-        response.headers["X-IGV-Cache-Hit"] = "false"
+    # Removed duplicate check - each request generates a new mini-analysis
+    # This allows multiple analyses per brand for tracking evolution over time
+    logging.info(f"NEW_ANALYSIS brand={request.nom_de_marque} slug={brand_slug} language={language}")
+    response.headers["X-IGV-Cache-Hit"] = "false"
     
     # Build prompt with IGV data
     try:

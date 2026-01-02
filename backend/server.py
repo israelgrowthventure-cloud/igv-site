@@ -802,8 +802,8 @@ async def create_admin_user(user_data: AdminUserCreate, current_user: Dict = Dep
     if current_user['role'] != 'admin':
         raise HTTPException(status_code=403, detail="Only admins can create users")
     
-    # Validate role
-    if user_data.role not in ['admin', 'sales', 'viewer']:
+    # Validate role (support commercial role used by admin_user_routes)
+    if user_data.role not in ['admin', 'commercial', 'sales', 'viewer']:
         raise HTTPException(status_code=400, detail="Invalid role")
     
     # Check if user already exists

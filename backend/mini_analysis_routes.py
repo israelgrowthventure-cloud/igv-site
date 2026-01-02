@@ -436,6 +436,8 @@ class MiniAnalysisRequest(BaseModel):
     # CORE FIELDS - FIXED 2025-12-29-17-25 (build 647212f)
     email: EmailStr
     phone: str = ""  # REQUIRED FIELD - Added 2025-01-01
+    first_name: str = ""  # REQUIRED FIELD - Added 2026-01-02
+    last_name: str = ""  # REQUIRED FIELD - Added 2026-01-02
     nom_de_marque: str = ""  # Will be filled from aliases if empty
     secteur: str = ""  # Optional field
     
@@ -816,6 +818,9 @@ async def generate_mini_analysis(request: MiniAnalysisRequest, response: Respons
         lead_data = {
             "email": request.email,
             "phone": request.phone,  # Added phone field
+            "first_name": request.first_name,  # Added 2026-01-02
+            "last_name": request.last_name,  # Added 2026-01-02
+            "name": f"{request.first_name} {request.last_name}".strip() or None,  # Full name for display
             "brand_name": request.nom_de_marque,
             "sector": request.secteur,
             "language": language,
@@ -1096,11 +1101,20 @@ async def generate_mini_analysis(request: MiniAnalysisRequest, response: Respons
                 {"$set": {"pdf_url": pdf_url, "pdf_generated_at": datetime.now(timezone.utc)}}
             )
             
-            # Update lead
+            # Update lead with PDF URL and analysis content
             if lead_id:
+                from bson import ObjectId
                 await current_db.leads.update_one(
-                    {"_id": lead_id},
-                    {"$set": {"pdf_url": pdf_url}}
+                    {"_id": ObjectId(lead_id)},
+                    {"$set": {
+                        "pdf_url": pdf_url,
+                        "analysis": analysis_text,  # Store full analysis text
+                        "analysis_meta": {
+                            "language": language,
+                            "generated_at": datetime.now(timezone.utc),
+                            "analysis_id": analysis_id
+                        }
+                    }}
                 )
             
             # Timeline event

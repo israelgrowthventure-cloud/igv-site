@@ -13,6 +13,8 @@ const MiniAnalysis = () => {
   const [formData, setFormData] = useState({
     email: '',
     phone: '',
+    first_name: '',
+    last_name: '',
     nom_de_marque: '',
     secteur: '',
     statut_alimentaire: '',
@@ -49,6 +51,27 @@ const MiniAnalysis = () => {
     // Validation
     if (!formData.email || !formData.nom_de_marque || !formData.secteur) {
       toast.error(t('miniAnalysis.toast.fieldsRequired'));
+      return;
+    }
+
+    // First name and last name are required
+    if (!formData.first_name || formData.first_name.trim().length < 2) {
+      const errorMsg = {
+        fr: 'Le prénom est obligatoire',
+        en: 'First name is required',
+        he: 'שם פרטי נדרש'
+      }[currentLang] || 'First name is required';
+      toast.error(errorMsg);
+      return;
+    }
+    
+    if (!formData.last_name || formData.last_name.trim().length < 2) {
+      const errorMsg = {
+        fr: 'Le nom est obligatoire',
+        en: 'Last name is required',
+        he: 'שם משפחה נדרש'
+      }[currentLang] || 'Last name is required';
+      toast.error(errorMsg);
       return;
     }
 
@@ -293,6 +316,16 @@ const MiniAnalysis = () => {
         <section className="pb-20 px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto">
             <div className="bg-white rounded-2xl shadow-xl p-8 sm:p-12">
+              {/* Quota Information - Multilingual */}
+              <div className={`mb-6 p-4 bg-blue-50 border-l-4 border-blue-500 rounded ${currentLang === 'he' ? 'text-right' : 'text-left'}`} dir={currentLang === 'he' ? 'rtl' : 'ltr'}>
+                <p className="text-sm text-blue-800 font-medium mb-1">
+                  {currentLang === 'he' ? 'לכל חברה יש מכסה של מיני-אנליזות.' : currentLang === 'en' ? 'Each company has a mini-analysis quota.' : 'Chaque entreprise dispose d\'un quota de mini-analyses.'}
+                </p>
+                <p className="text-sm text-blue-800">
+                  {currentLang === 'he' ? 'ניתן להפיק מיני-אנליזה אחת בלבד לכל חברה.' : currentLang === 'en' ? 'Only one mini-analysis can be generated per company.' : 'Une seule mini-analyse peut être générée par entreprise.'}
+                </p>
+              </div>
+              
               <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-8 text-center">
                 {t('miniAnalysis.form.title')}
               </h2>
@@ -329,6 +362,40 @@ const MiniAnalysis = () => {
                     onChange={handleChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder={t('miniAnalysis.form.phonePlaceholder') || '+33 6 XX XX XX XX'}
+                  />
+                </div>
+
+                {/* First Name - REQUIRED */}
+                <div>
+                  <label htmlFor="first_name" className="block text-sm font-semibold text-gray-700 mb-2">
+                    {currentLang === 'he' ? 'שם פרטי' : currentLang === 'en' ? 'First Name' : 'Prénom'} *
+                  </label>
+                  <input
+                    type="text"
+                    id="first_name"
+                    name="first_name"
+                    required
+                    value={formData.first_name}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder={currentLang === 'he' ? 'הכנס שם פרטי' : currentLang === 'en' ? 'Enter your first name' : 'Votre prénom'}
+                  />
+                </div>
+
+                {/* Last Name - REQUIRED */}
+                <div>
+                  <label htmlFor="last_name" className="block text-sm font-semibold text-gray-700 mb-2">
+                    {currentLang === 'he' ? 'שם משפחה' : currentLang === 'en' ? 'Last Name' : 'Nom'} *
+                  </label>
+                  <input
+                    type="text"
+                    id="last_name"
+                    name="last_name"
+                    required
+                    value={formData.last_name}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder={currentLang === 'he' ? 'הכנס שם משפחה' : currentLang === 'en' ? 'Enter your last name' : 'Votre nom'}
                   />
                 </div>
 

@@ -358,8 +358,7 @@ async def send_mini_analysis_email(email: str, brand_name: str, pdf_bytes: bytes
         }.get(language, f"Votre Mini-Analyse IGV - {brand_name}")
         
         # Email body
-        body_template = {
-            "fr": f"""Bonjour,
+        body_text_fr = f"""Bonjour,
 
 Merci d'avoir utilisé notre service de mini-analyse gratuite !
 
@@ -378,8 +377,9 @@ L'équipe Israel Growth Venture
 
 {COMPANY_EMAIL}
 {COMPANY_WEBSITE}
-""",
-            "en": f"""Hello,
+"""
+        
+        body_text_en = f"""Hello,
 
 Thank you for using our free mini-analysis service!
 
@@ -398,8 +398,9 @@ Israel Growth Venture Team
 
 {COMPANY_EMAIL}
 {COMPANY_WEBSITE}
-""",
-            "he": f"""שלום,
+"""
+        
+        body_text_he = f"""שלום,
 
 תודה שהשתמשת בשירות המיני-אנליזה החינמי שלנו!
 
@@ -419,7 +420,12 @@ https://israelgrowthventure.com/packs
 {COMPANY_EMAIL}
 {COMPANY_WEBSITE}
 """
-        }.get(language, body_template["fr"])
+        
+        body_template = {
+            "fr": body_text_fr,
+            "en": body_text_en,
+            "he": body_text_he
+        }.get(language, body_text_fr)
         
         message.attach(MIMEText(body_template, 'plain', 'utf-8'))
         

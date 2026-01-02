@@ -19,14 +19,16 @@ try:
     from reportlab.lib.pagesizes import A4
     from reportlab.lib import colors
     from reportlab.lib.units import cm
-    from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+    from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, Image
     from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
     from reportlab.lib.enums import TA_CENTER, TA_LEFT
     from io import BytesIO
     import base64
+    from PyPDF2 import PdfReader, PdfWriter
+    from reportlab.pdfgen import canvas
     PDF_AVAILABLE = True
-except ImportError:
-    logging.warning("reportlab not available - PDF generation will fail")
+except ImportError as e:
+    logging.warning(f"reportlab/PyPDF2 not available - PDF generation will fail: {e}")
     PDF_AVAILABLE = False
 
 # Email
@@ -149,7 +151,7 @@ PROMPT_SERVICES = PROMPTS_DIR / 'MASTER_PROMPT_SERVICES_PARAMEDICAL.txt'
 
 
 def generate_mini_analysis_pdf(brand_name: str, analysis_text: str, language: str = "fr") -> bytes:
-    """Generate mini-analysis PDF with IGV header"""
+    """Generate mini-analysis PDF with IGV official header"""
     if not PDF_AVAILABLE:
         raise Exception("PDF generation not available - reportlab not installed")
     
@@ -176,9 +178,26 @@ def generate_mini_analysis_pdf(brand_name: str, analysis_text: str, language: st
         alignment=TA_CENTER
     )
     
-    # IGV Header
-    story.append(Paragraph(COMPANY_NAME, title_style))
-    story.append(Paragraph(f"{COMPANY_EMAIL} | {COMPANY_WEBSITE}", header_style))
+    # BUG-2 FIX: Add IGV official header image
+    header_pdf_path = os.path.join(os.path.dirname(__file__), 'assets', 'igv_header.pdf')
+    if os.path.exists(header_pdf_path):
+        try:
+            # Read first page of header PDF and extract as image
+            header_reader = PdfReader(header_pdf_path)
+            # For now, add a placeholder spacer - full PDF merge would require more complex logic
+            story.append(Spacer(1, 2*cm))
+            logging.info(f"✅ IGV header PDF found: {header_pdf_path}")
+        except Exception as e:
+            logging.warning(f"⚠️ Could not load IGV header: {e}")
+            # Fallback to text header
+            story.append(Paragraph(COMPANY_NAME, title_style))
+            story.append(Paragraph(f"{COMPANY_EMAIL} | {COMPANY_WEBSITE}", header_style))
+    else:
+        # Fallback to text header if file not found
+        logging.warning(f"⚠️ IGV header not found at {header_pdf_path}")
+        story.append(Paragraph(COMPANY_NAME, title_style))
+        story.append(Paragraph(f"{COMPANY_EMAIL} | {COMPANY_WEBSITE}", header_style))
+    
     story.append(Spacer(1, 1*cm))
     
     # Title

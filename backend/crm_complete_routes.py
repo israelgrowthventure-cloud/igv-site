@@ -117,6 +117,20 @@ class LeadCreate(BaseModel):
     utm_campaign: Optional[str] = None
 
 
+class LeadFromPackRequest(BaseModel):
+    """Demande de rappel depuis page Packs"""
+    email: EmailStr
+    full_name: str
+    phone: str
+    company: Optional[str] = None
+    pack_requested: str  # analyse, succursales, franchise
+    preferred_date: Optional[str] = None
+    preferred_time: Optional[str] = None
+    message: Optional[str] = None
+    source: str = "pack_rappel"
+    status: str = "new"
+
+
 class LeadUpdate(BaseModel):
     name: Optional[str] = None
     phone: Optional[str] = None
@@ -1566,3 +1580,52 @@ async def get_pipeline_stages(user: Dict = Depends(get_current_user)):
     ])
     
     return {"stages": stages}
+
+# ==========================================
+# ROUTE PUBLIQUE: Lead depuis Packs (demande rappel)
+# ==========================================
+
+@router.post("/lead-from-pack")
+async def create_lead_from_pack(data: LeadFromPackRequest):
+    """
+    Enregistre demande de rappel depuis /packs (PUBLIQUE - pas d'auth)
+    Crée lead avec status=new, source=pack_rappel, assigned_to=null
+    Admin redistribuera manuellement
+    """
+    current_db = get_db()
+    if current_db is None:
+        raise HTTPException(status_code=500, detail="Database not configured")
+    
+    try:
+        lead_doc = {
+            "email": data.email,
+            "full_name": data.full_name,
+            "phone": data.phone,
+            "company": data.company or "",
+            "brand_name": data.company or data.full_name,  # Fallback
+            "pack_requested": data.pack_requested,
+            "preferred_contact_date": data.preferred_date,
+            "preferred_contact_time": data.preferred_time,
+            "message": data.message or "",
+            "source": data.source,
+            "status": data.status,
+            "stage": "analysis_requested",
+            "assigned_to": None,  # ADMIN REDISTRIBUE MANUELLEMENT
+            "tags": [f"pack_{data.pack_requested}"],
+            "created_at": datetime.now(timezone.utc),
+            "updated_at": datetime.now(timezone.utc)
+        }
+        
+        result = await current_db.leads.insert_one(lead_doc)
+        
+        logging.info(f"✅ Lead created from pack: {data.email} - Pack: {data.pack_requested}")
+        
+        return {
+            "success": True,
+            "lead_id": str(result.inserted_id),
+            "message": "Demande enregistrée avec succès"
+        }
+        
+    except Exception as e:
+        logging.error(f"❌ Error creating lead from pack: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Erreur lors de la création: {str(e)}")

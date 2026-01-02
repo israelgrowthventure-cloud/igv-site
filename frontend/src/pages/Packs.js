@@ -52,8 +52,8 @@ const Packs = () => {
   ];
 
   const handleBuyPack = (packId) => {
-    // Redirect to checkout page (temporary until Payment is fixed)
-    navigate(`/checkout?pack=${packId}`);
+    // Redirect to demande rappel page (Monetico en attente CIC)
+    navigate(`/demande-rappel?pack=${packId}`);
   };
 
   const handleContactAboutPack = (packId, packName) => {

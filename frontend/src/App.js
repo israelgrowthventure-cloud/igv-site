@@ -30,6 +30,7 @@ import CookiesPolicy from './pages/CookiesPolicy';
 import PaymentReturn from './pages/PaymentReturn';
 import Payment from './pages/Payment';
 import Checkout from './pages/Checkout';
+import DemandeRappel from './pages/DemandeRappel';
 
 // Admin Pages - Lazy loaded for performance (code splitting)
 const AdminLogin = lazy(() => import('./pages/admin/Login'));
@@ -127,6 +128,7 @@ function AppContent() {
           <Route path="/packs" element={<Packs />} />
           <Route path="/future-commerce" element={<FutureCommerce />} />
           <Route path="/terms" element={<Terms />} />
+          <Route path="/demande-rappel" element={<DemandeRappel />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/payment" element={<Payment />} />
           <Route path="/payment/return" element={<PaymentReturn />} />

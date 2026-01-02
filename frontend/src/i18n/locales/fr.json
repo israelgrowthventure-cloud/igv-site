@@ -110,6 +110,37 @@
     "region": "Région détectée",
     "international": "International"
   },
+  "demandeRappel": {
+    "title": "Demande de rappel",
+    "subtitle": "Un expert IGV vous contactera sous 48h pour discuter de votre projet d'expansion en Israël",
+    "successTitle": "Demande enregistrée !",
+    "successMessage": "Merci pour votre intérêt. Un expert IGV vous contactera sous 48h pour discuter de votre projet.",
+    "packSelected": "Pack sélectionné",
+    "preferredDate": "Date souhaitée",
+    "submit": "Demander un rappel",
+    "fields": {
+      "nom": "Nom complet",
+      "email": "Email",
+      "telephone": "Téléphone",
+      "entreprise": "Entreprise",
+      "date": "Date souhaitée",
+      "heure": "Heure souhaitée",
+      "message": "Message (optionnel)"
+    },
+    "placeholders": {
+      "nom": "Jean Dupont",
+      "email": "jean@entreprise.com",
+      "telephone": "+33 6 12 34 56 78",
+      "entreprise": "Nom de l'entreprise",
+      "heure": "Sélectionner",
+      "message": "Parlez-nous de votre projet..."
+    },
+    "errors": {
+      "fieldsRequired": "Veuillez remplir tous les champs obligatoires",
+      "submitFailed": "Erreur lors de l'envoi. Veuillez réessayer."
+    },
+    "success": "Votre demande a été enregistrée avec succès"
+  },
   "payment": {
     "title": "Finaliser votre achat",
     "subtitle": "Paiement sécurisé par carte bancaire",

@@ -106,6 +106,37 @@
     "region": "אזור שזוהה",
     "international": "בינלאומי"
   },
+  "demandeRappel": {
+    "title": "בקשת חזרה",
+    "subtitle": "מומחה IGV ייצור איתך קשר תוך 48 שעות לדון בפרוייקט ההתרחבות שלך בישראל",
+    "successTitle": "הבקשה נשמרה!",
+    "successMessage": "תודה על העניין. מומחה IGV ייצור איתך קשר תוך 48 שעות לדון בפרוייקט שלך.",
+    "packSelected": "חבילה נבחרה",
+    "preferredDate": "תאריך מועדף",
+    "submit": "בקש חזרה",
+    "fields": {
+      "nom": "שם מלא",
+      "email": "אימייל",
+      "telephone": "טלפון",
+      "entreprise": "חברה",
+      "date": "תאריך מועדף",
+      "heure": "שעה מועדפת",
+      "message": "הודעה (אופציונלי)"
+    },
+    "placeholders": {
+      "nom": "יוסי כהן",
+      "email": "yossi@company.com",
+      "telephone": "+972 50 123 4567",
+      "entreprise": "שם החברה",
+      "heure": "בחר",
+      "message": "ספר לנו על הפרוייקט שלך..."
+    },
+    "errors": {
+      "fieldsRequired": "אנא מלא את כל השדות החובה",
+      "submitFailed": "שגיאה בשליחה. נסה שוב."
+    },
+    "success": "הבקשה שלך נשמרה בהצלחה"
+  },
   "payment": {
     "title": "השלם את הקנייה שלך",
     "subtitle": "תשלום מאובטח בכרטיס אשראי",

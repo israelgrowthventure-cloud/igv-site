@@ -1,12 +1,11 @@
 """
 CRM Complete Routes - Production Ready MVP
 All 5 modules: Dashboard, Leads, Pipeline, Contacts, Settings
+Uses centralized auth_middleware for authentication and RBAC
 """
 
 from fastapi import APIRouter, HTTPException, Depends, Query, Body, status
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel, EmailStr, Field
-from motor.motor_asyncio import AsyncIOMotorClient
 from typing import Optional, List, Dict, Any
 from datetime import datetime, timezone, timedelta
 from email.mime.text import MIMEText
@@ -14,85 +13,23 @@ from email.mime.multipart import MIMEMultipart
 import aiosmtplib
 import os
 import logging
-import jwt
 import hashlib
 import re
 import bcrypt
 from bson import ObjectId
 
+# Import centralized auth middleware
+from auth_middleware import (
+    get_current_user,
+    get_user_or_admin,
+    require_admin,
+    get_user_assigned_filter,
+    get_user_write_permission,
+    log_audit_event,
+    get_db
+)
+
 router = APIRouter(prefix="/api/crm")
-security = HTTPBearer()
-
-# MongoDB
-mongo_url = os.getenv('MONGODB_URI') or os.getenv('MONGO_URL')
-db_name = os.getenv('DB_NAME', 'igv_production')
-
-mongo_client = None
-db = None
-
-def get_db():
-    global mongo_client, db
-    if db is None and mongo_url:
-        mongo_client = AsyncIOMotorClient(
-            mongo_url,
-            serverSelectionTimeoutMS=5000,
-            connectTimeoutMS=5000
-        )
-        db = mongo_client[db_name]
-    return db
-
-def is_db_configured():
-    """Check if database is configured without truth testing the db object"""
-    return mongo_url is not None and db is not None
-
-# JWT
-JWT_SECRET = os.getenv('JWT_SECRET')
-JWT_ALGORITHM = 'HS256'
-
-
-# ==========================================
-# AUTH DEPENDENCY
-# ==========================================
-
-async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)) -> Dict[str, Any]:
-    """Verify JWT and return current user"""
-    try:
-        token = credentials.credentials
-        payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
-        
-        current_db = get_db()
-        if current_db is None:
-            raise HTTPException(status_code=500, detail="Database not configured")
-        
-        email = payload.get("email")
-        
-        # First try crm_users, then fallback to users collection
-        user = await current_db.crm_users.find_one({"email": email})
-        if not user:
-            user = await current_db.users.find_one({"email": email})
-        
-        if not user:
-            raise HTTPException(status_code=401, detail="User not found")
-        
-        if not user.get("is_active", True):
-            raise HTTPException(status_code=403, detail="User inactive")
-        
-        return {
-            "id": str(user["_id"]),
-            "email": user["email"],
-            "name": user.get("name", email.split("@")[0]),
-            "role": user.get("role", "admin")  # Default to admin for main users
-        }
-    except jwt.ExpiredSignatureError:
-        raise HTTPException(status_code=401, detail="Token expired")
-    except jwt.InvalidTokenError:
-        raise HTTPException(status_code=401, detail="Invalid token")
-
-
-async def require_role(user: Dict[str, Any], required_roles: List[str]):
-    """Check if user has required role"""
-    if user["role"] not in required_roles:
-        raise HTTPException(status_code=403, detail="Insufficient permissions")
 
 
 # ==========================================
@@ -347,7 +284,7 @@ async def get_dashboard_stats(user: Dict = Depends(get_current_user)):
 
 @router.get("/leads")
 async def get_leads(
-    user: Dict = Depends(get_current_user),
+    user: Dict = Depends(get_user_or_admin),
     skip: int = Query(0, ge=0),
     limit: int = Query(50, ge=1, le=500),
     status: Optional[str] = None,
@@ -356,19 +293,16 @@ async def get_leads(
     search: Optional[str] = None,
     language: Optional[str] = None
 ):
-    """Get leads with filters and pagination"""
+    """
+    Get leads with filters and pagination.
+    RBAC: Admin sees all, Commercial sees only assigned leads.
+    """
     current_db = get_db()
     if current_db is None:
         raise HTTPException(status_code=500, detail="Database not configured")
     
-    # Build filter
-    filter_query = {}
-    
-    # PHASE 4: Role-based filtering
-    if user["role"] == "commercial":
-        # Commercial sees ONLY leads assigned to them
-        filter_query["assigned_to"] = user["email"]
-    # Admin sees all leads (no filter)
+    # Apply RBAC filter (BR002: Admin all, BR003: Commercial assigned only)
+    filter_query = get_user_assigned_filter(user, "leads")
     
     if status:
         filter_query["status"] = status
@@ -729,24 +663,22 @@ async def get_pipeline(user: Dict = Depends(get_current_user)):
 
 @router.get("/opportunities")
 async def list_opportunities(
-    user: Dict = Depends(get_current_user),
+    user: Dict = Depends(get_user_or_admin),
     search: str = Query(None),
     stage: str = Query(None),
     limit: int = Query(100, le=500),
     skip: int = Query(0)
 ):
-    """List all opportunities with optional filtering"""
+    """
+    List all opportunities with optional filtering.
+    RBAC: Admin sees all, Commercial sees only assigned opportunities.
+    """
     current_db = get_db()
     if current_db is None:
         raise HTTPException(status_code=500, detail="Database not configured")
     
-    query = {}
-    
-    # PHASE 4: Role-based filtering
-    if user["role"] == "commercial":
-        # Commercial sees ONLY opportunities assigned to them
-        query["assigned_to"] = user["email"]
-    # Admin sees all opportunities
+    # Apply RBAC filter (BR002: Admin all, BR003: Commercial assigned only)
+    query = get_user_assigned_filter(user, "opportunities")
     
     if search:
         query["$or"] = [
@@ -885,23 +817,21 @@ async def delete_opportunity(opp_id: str, user: Dict = Depends(get_current_user)
 
 @router.get("/contacts")
 async def get_contacts(
-    user: Dict = Depends(get_current_user),
+    user: Dict = Depends(get_user_or_admin),
     skip: int = Query(0, ge=0),
     limit: int = Query(50, ge=1, le=500),
     search: Optional[str] = None
 ):
-    """Get contacts with pagination"""
+    """
+    Get contacts with pagination.
+    RBAC: Admin sees all, Commercial sees only assigned contacts.
+    """
     current_db = get_db()
     if current_db is None:
         raise HTTPException(status_code=500, detail="Database not configured")
     
-    filter_query = {}
-    
-    # PHASE 4: Role-based filtering
-    if user["role"] == "commercial":
-        # Commercial sees ONLY contacts assigned to them
-        filter_query["assigned_to"] = user["email"]
-    # Admin sees all contacts
+    # Apply RBAC filter (BR002: Admin all, BR003: Commercial assigned only)
+    filter_query = get_user_assigned_filter(user, "contacts")
     
     if search:
         filter_query["$or"] = [

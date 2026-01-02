@@ -1,89 +1,27 @@
 """
 Admin User Routes - User Management
 Secured routes for CRUD operations on users
+Uses centralized auth_middleware for authentication and RBAC
 """
 
 from fastapi import APIRouter, HTTPException, Depends, status
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel, EmailStr
-from motor.motor_asyncio import AsyncIOMotorClient
 from typing import Optional, List, Dict, Any
 from datetime import datetime, timezone
 from bson import ObjectId
 import os
 import logging
-import jwt
 import bcrypt
 
+# Import centralized auth middleware
+from auth_middleware import (
+    get_current_user,
+    require_admin,
+    log_audit_event,
+    get_db
+)
+
 router = APIRouter(prefix="/api/admin")
-security = HTTPBearer()
-
-# MongoDB
-mongo_url = os.getenv('MONGODB_URI') or os.getenv('MONGO_URL')
-db_name = os.getenv('DB_NAME', 'igv_production')
-
-mongo_client = None
-db = None
-
-def get_db():
-    global mongo_client, db
-    if db is None and mongo_url:
-        mongo_client = AsyncIOMotorClient(
-            mongo_url,
-            serverSelectionTimeoutMS=5000,
-            connectTimeoutMS=5000
-        )
-        db = mongo_client[db_name]
-    return db
-
-# JWT
-JWT_SECRET = os.getenv('JWT_SECRET')
-JWT_ALGORITHM = 'HS256'
-
-
-# ==========================================
-# AUTH DEPENDENCY
-# ==========================================
-
-async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)) -> Dict[str, Any]:
-    """Verify JWT and return current user"""
-    try:
-        token = credentials.credentials
-        payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
-        
-        current_db = get_db()
-        if current_db is None:
-            raise HTTPException(status_code=500, detail="Database not configured")
-        
-        email = payload.get("email")
-        
-        # Check in both collections
-        user = await current_db.crm_users.find_one({"email": email})
-        if not user:
-            user = await current_db.users.find_one({"email": email})
-        
-        if not user:
-            raise HTTPException(status_code=401, detail="User not found")
-        
-        if not user.get("is_active", True):
-            raise HTTPException(status_code=403, detail="User inactive")
-        
-        return {
-            "id": str(user["_id"]),
-            "email": user["email"],
-            "name": user.get("name", email.split("@")[0]),
-            "role": user.get("role", "admin")
-        }
-    except jwt.ExpiredSignatureError:
-        raise HTTPException(status_code=401, detail="Token expired")
-    except jwt.InvalidTokenError:
-        raise HTTPException(status_code=401, detail="Invalid token")
-
-
-async def require_admin(user: Dict[str, Any]):
-    """Check if user is admin"""
-    if user["role"] != "admin":
-        raise HTTPException(status_code=403, detail="Admin access required")
 
 
 # ==========================================
@@ -110,9 +48,8 @@ class UserUpdate(BaseModel):
 # ==========================================
 
 @router.get("/users")
-async def get_all_users(user: Dict = Depends(get_current_user)):
-    """Get all users (Admin only)"""
-    await require_admin(user)
+async def get_all_users(user: Dict = Depends(require_admin)):
+    """Get all users (Admin only - uses require_admin dependency)"""
     
     current_db = get_db()
     if current_db is None:
@@ -145,9 +82,8 @@ async def get_all_users(user: Dict = Depends(get_current_user)):
 
 
 @router.post("/users", status_code=status.HTTP_201_CREATED)
-async def create_user(user_data: UserCreate, user: Dict = Depends(get_current_user)):
-    """Create new user (Admin only)"""
-    await require_admin(user)
+async def create_user(user_data: UserCreate, user: Dict = Depends(require_admin)):
+    """Create new user (Admin only - uses require_admin dependency)"""
     
     current_db = get_db()
     if current_db is None:
@@ -182,15 +118,13 @@ async def create_user(user_data: UserCreate, user: Dict = Depends(get_current_us
         logging.info(f"User created: {user_data.email} by {user['email']}")
         
         # Audit log
-        await current_db.audit_logs.insert_one({
-            "user_id": user["id"],
-            "user_email": user["email"],
-            "action": "create_user",
-            "entity_type": "user",
-            "entity_id": user_id,
-            "details": {"email": user_data.email, "role": user_data.role},
-            "timestamp": datetime.now(timezone.utc)
-        })
+        await curre using centralized function
+        await log_audit_event(
+            user=user,
+            action="create_user",
+            entity_type="user",
+            entity_id=user_id,
+            details={"email": user_data.email, "role": user_data.role}
         
         return {
             "success": True,
@@ -208,9 +142,8 @@ async def create_user(user_data: UserCreate, user: Dict = Depends(get_current_us
 @router.put("/users/{user_id}")
 async def update_user(user_id: str, update_data: UserUpdate, user: Dict = Depends(get_current_user)):
     """Update user (Admin only)"""
-    await require_admin(user)
-    
-    current_db = get_db()
+    await require_admin(user)require_admin)):
+    """Update user (Admin only - uses require_admin dependency)"""
     if current_db is None:
         raise HTTPException(status_code=500, detail="Database not configured")
     
@@ -250,16 +183,14 @@ async def update_user(user_id: str, update_data: UserUpdate, user: Dict = Depend
         # Audit log
         await current_db.audit_logs.insert_one({
             "user_id": user["id"],
-            "user_email": user["email"],
-            "action": "update_user",
-            "entity_type": "user",
-            "entity_id": user_id,
-            "details": update_dict,
-            "timestamp": datetime.now(timezone.utc)
-        })
-        
-        return {
-            "success": True,
+            "user_e using centralized function
+        await log_audit_event(
+            user=user,
+            action="update_user",
+            entity_type="user",
+            entity_id=user_id,
+            details=update_dict
+           "success": True,
             "message": "User updated successfully"
         }
     
@@ -274,9 +205,8 @@ async def update_user(user_id: str, update_data: UserUpdate, user: Dict = Depend
 async def delete_user(user_id: str, user: Dict = Depends(get_current_user)):
     """Soft delete user (Admin only)"""
     await require_admin(user)
-    
-    current_db = get_db()
-    if current_db is None:
+    require_admin)):
+    """Soft delete user (Admin only - uses require_admin dependency)"""
         raise HTTPException(status_code=500, detail="Database not configured")
     
     try:
@@ -311,16 +241,14 @@ async def delete_user(user_id: str, user: Dict = Depends(get_current_user)):
         await current_db.audit_logs.insert_one({
             "user_id": user["id"],
             "user_email": user["email"],
-            "action": "delete_user",
-            "entity_type": "user",
-            "entity_id": user_id,
-            "details": {"email": existing_user["email"]},
-            "timestamp": datetime.now(timezone.utc)
-        })
-        
-        return {
-            "success": True,
-            "message": "User deleted successfully"
+            "action using centralized function
+        await log_audit_event(
+            user=user,
+            action="delete_user",
+            entity_type="user",
+            entity_id=user_id,
+            details={"email": existing_user["email"]}
+           "message": "User deleted successfully"
         }
     
     except HTTPException:
@@ -336,9 +264,8 @@ async def get_user(user_id: str, user: Dict = Depends(get_current_user)):
     await require_admin(user)
     
     current_db = get_db()
-    if current_db is None:
-        raise HTTPException(status_code=500, detail="Database not configured")
-    
+    if current_db is None:require_admin)):
+    """Get specific user details (Admin only - uses require_admin dependency)"""
     try:
         # Validate ObjectId
         try:

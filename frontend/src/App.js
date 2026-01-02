@@ -2,11 +2,12 @@ import React, { Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import { Toaster } from 'sonner';
+import { AuthProvider } from './contexts/AuthContext';
 import './i18n/config';
 import './App.css';
 import './styles/rtl.css';
 
-// Build trigger: 2026-01-02-payment-monetico-v2
+// Build trigger: 2026-01-02-phase2-auth-rbac
 
 // Layout Components
 import Header from './components/Header';
@@ -118,24 +119,25 @@ function AppContent() {
   }, [isAdminRoute]);
 
   return (
-    <div className="App">
-      <Toaster position="top-right" richColors />
-      <CookieConsentBanner />
-      {!isAdminRoute && <Header />}
-      <main>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/mini-analyse" element={<MiniAnalysis />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/legal" element={<Terms />} />
-          <Route path="/appointment" element={<Appointment />} />
-          <Route path="/privacy" element={<PrivacyPolicy />} />
-          <Route path="/cookies" element={<CookiesPolicy />} />
-          <Route path="/packs" element={<Packs />} />
-          <Route path="/future-commerce" element={<FutureCommerce />} />
-          <Route path="/terms" element={<Terms />} />
-          <Route path="/demande-rappel" element={<DemandeRappel />} />
+    <AuthProvider>
+      <div className="App">
+        <Toaster position="top-right" richColors />
+        <CookieConsentBanner />
+        {!isAdminRoute && <Header />}
+        <main>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/mini-analyse" element={<MiniAnalysis />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/legal" element={<Terms />} />
+            <Route path="/appointment" element={<Appointment />} />
+            <Route path="/privacy" element={<PrivacyPolicy />} />
+            <Route path="/cookies" element={<CookiesPolicy />} />
+            <Route path="/packs" element={<Packs />} />
+            <Route path="/future-commerce" element={<FutureCommerce />} />
+            <Route path="/terms" element={<Terms />} />
+            <Route path="/demande-rappel" element={<DemandeRappel />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/payment" element={<Payment />} />
           <Route path="/payment/return" element={<PaymentReturn />} />
@@ -185,7 +187,8 @@ function AppContent() {
         </Routes>
       </main>
       {!isAdminRoute && <Footer />}
-    </div>
+      </div>
+    </AuthProvider>
   );
 }
 

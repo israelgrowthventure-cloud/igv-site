@@ -403,19 +403,22 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
     return verify_jwt_token(token)
 
 
-# Helper function to send email via Gmail SMTP
+# Helper function to send email via OVH SMTP (contact@israelgrowthventure.com)
 async def send_email_gmail(to_email: str, subject: str, body: str, html_body: str = None):
-    smtp_host = os.getenv('SMTP_HOST', 'smtp.gmail.com')
-    smtp_port = int(os.getenv('SMTP_PORT', '587'))
-    smtp_user = os.getenv('SMTP_USER')
+    # OVH SMTP Configuration
+    smtp_host = os.getenv('SMTP_HOST', 'ssl0.ovh.net')
+    smtp_port = int(os.getenv('SMTP_PORT', '465'))
+    smtp_user = os.getenv('SMTP_USER', 'contact@israelgrowthventure.com')
     smtp_password = os.getenv('SMTP_PASSWORD')
+    smtp_from = os.getenv('SMTP_FROM', 'contact@israelgrowthventure.com')
     
     if not smtp_user or not smtp_password:
         raise HTTPException(status_code=500, detail="SMTP credentials not configured")
     
     message = MIMEMultipart('alternative')
     message['Subject'] = subject
-    message['From'] = smtp_user
+    message['From'] = f"Israel Growth Venture <{smtp_from}>"
+    message['Reply-To'] = smtp_from
     message['To'] = to_email
     
     part1 = MIMEText(body, 'plain')
@@ -426,13 +429,14 @@ async def send_email_gmail(to_email: str, subject: str, body: str, html_body: st
         message.attach(part2)
     
     try:
+        # OVH requires SSL/TLS (port 465) instead of STARTTLS (port 587)
         await aiosmtplib.send(
             message,
             hostname=smtp_host,
             port=smtp_port,
             username=smtp_user,
             password=smtp_password,
-            start_tls=True
+            use_tls=True  # SSL/TLS direct for OVH
         )
         return True
     except Exception as e:

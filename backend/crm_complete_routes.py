@@ -1514,10 +1514,12 @@ async def send_crm_email(
     if current_db is None:
         raise HTTPException(status_code=500, detail="Database not configured")
     
-    smtp_host = os.getenv('SMTP_HOST', 'smtp.gmail.com')
-    smtp_port = int(os.getenv('SMTP_PORT', '587'))
-    smtp_user = os.getenv('SMTP_USER')
+    # OVH SMTP Configuration (contact@israelgrowthventure.com)
+    smtp_host = os.getenv('SMTP_HOST', 'ssl0.ovh.net')
+    smtp_port = int(os.getenv('SMTP_PORT', '465'))
+    smtp_user = os.getenv('SMTP_USER', 'contact@israelgrowthventure.com')
     smtp_password = os.getenv('SMTP_PASSWORD')
+    smtp_from = os.getenv('SMTP_FROM', 'contact@israelgrowthventure.com')
     
     if not smtp_user or not smtp_password:
         raise HTTPException(status_code=500, detail="SMTP credentials not configured")
@@ -1525,7 +1527,8 @@ async def send_crm_email(
     # Create email message
     message = MIMEMultipart('alternative')
     message['Subject'] = email_data.subject
-    message['From'] = smtp_user
+    message['From'] = f"Israel Growth Venture <{smtp_from}>"
+    message['Reply-To'] = smtp_from
     message['To'] = email_data.to_email
     
     # Plain text version
@@ -1549,13 +1552,14 @@ async def send_crm_email(
     message.attach(MIMEText(html_body, 'html'))
     
     try:
+        # OVH requires SSL/TLS (port 465) instead of STARTTLS (port 587)
         await aiosmtplib.send(
             message,
             hostname=smtp_host,
             port=smtp_port,
             username=smtp_user,
             password=smtp_password,
-            start_tls=True
+            use_tls=True  # SSL/TLS direct for OVH
         )
         
         # Log email activity

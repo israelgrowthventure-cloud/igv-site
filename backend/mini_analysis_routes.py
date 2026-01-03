@@ -21,11 +21,27 @@ try:
     from reportlab.lib.units import cm
     from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
     from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-    from reportlab.lib.enums import TA_CENTER, TA_LEFT
+    from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_RIGHT
+    from reportlab.pdfbase import pdfmetrics
+    from reportlab.pdfbase.ttfonts import TTFont
     from io import BytesIO
     import base64
     from PyPDF2 import PdfReader, PdfWriter
     PDF_AVAILABLE = True
+    
+    # Register Hebrew font (Noto Sans Hebrew - Google Fonts OFL license)
+    # Font file should be placed in backend/fonts/ directory
+    # Download from: https://fonts.google.com/noto/specimen/Noto+Sans+Hebrew
+    try:
+        hebrew_font_path = os.path.join(os.path.dirname(__file__), 'fonts', 'NotoSansHebrew-Regular.ttf')
+        if os.path.exists(hebrew_font_path):
+            pdfmetrics.registerFont(TTFont('HebrewFont', hebrew_font_path))
+            logging.info("✅ Hebrew font registered successfully")
+        else:
+            logging.warning(f"⚠️ Hebrew font not found at {hebrew_font_path} - Hebrew PDFs will show squares")
+    except Exception as e:
+        logging.warning(f"⚠️ Could not register Hebrew font: {e}")
+        
 except ImportError as e:
     logging.warning(f"reportlab/PyPDF2 not available - PDF generation will fail: {e}")
     PDF_AVAILABLE = False
@@ -122,17 +138,17 @@ async def diagnose_smtp():
 mongo_url = os.getenv('MONGODB_URI') or os.getenv('MONGO_URL')
 db_name = os.getenv('DB_NAME', 'igv_production')
 
-# SMTP Config - Support both naming conventions
-SMTP_SERVER = os.getenv('SMTP_SERVER') or os.getenv('SMTP_HOST', 'smtp.gmail.com')
-SMTP_PORT = int(os.getenv('SMTP_PORT', '587'))
-SMTP_USERNAME = os.getenv('SMTP_USERNAME') or os.getenv('SMTP_USER')
+# SMTP Config - OVH (contact@israelgrowthventure.com)
+SMTP_SERVER = os.getenv('SMTP_SERVER') or os.getenv('SMTP_HOST', 'ssl0.ovh.net')
+SMTP_PORT = int(os.getenv('SMTP_PORT', '465'))
+SMTP_USERNAME = os.getenv('SMTP_USERNAME') or os.getenv('SMTP_USER', 'contact@israelgrowthventure.com')
 SMTP_PASSWORD = os.getenv('SMTP_PASSWORD')
-SMTP_FROM_EMAIL = os.getenv('SMTP_FROM_EMAIL') or os.getenv('SMTP_FROM', 'israel.growth.venture@gmail.com')
+SMTP_FROM_EMAIL = os.getenv('SMTP_FROM_EMAIL') or os.getenv('SMTP_FROM', 'contact@israelgrowthventure.com')
 SMTP_FROM_NAME = os.getenv('SMTP_FROM_NAME', 'Israel Growth Venture')
 
 # Company info
 COMPANY_NAME = "Israel Growth Venture"
-COMPANY_EMAIL = "israel.growth.venture@gmail.com"
+COMPANY_EMAIL = "contact@israelgrowthventure.com"  # Email CRM officiel (boîte de contrôle: israel.growth.venture@gmail.com)
 COMPANY_WEBSITE = "israelgrowthventure.com"
 
 # MongoDB client et db seront initialisés à la demande
@@ -251,6 +267,63 @@ def generate_mini_analysis_pdf(brand_name: str, analysis_text: str, language: st
     story = []
     styles = getSampleStyleSheet()
     
+    # Configure Hebrew RTL styles if language is Hebrew
+    if language == "he":
+        # Check if Hebrew font is available
+        hebrew_font_available = 'HebrewFont' in pdfmetrics.getRegisteredFontNames()
+        
+        if hebrew_font_available:
+            # Create Hebrew-specific styles with RTL support
+            hebrew_title_style = ParagraphStyle(
+                'HebrewTitle',
+                parent=styles['Heading2'],
+                fontName='HebrewFont',
+                fontSize=16,
+                leading=22,
+                alignment=TA_RIGHT,
+                wordWrap='RTL'
+            )
+            
+            hebrew_normal_style = ParagraphStyle(
+                'HebrewNormal',
+                parent=styles['Normal'],
+                fontName='HebrewFont',
+                fontSize=11,
+                leading=16,
+                alignment=TA_RIGHT,
+                wordWrap='RTL'
+            )
+            
+            hebrew_footer_style = ParagraphStyle(
+                'HebrewFooter',
+                parent=styles['Normal'],
+                fontName='HebrewFont',
+                fontSize=9,
+                leading=12,
+                textColor=colors.HexColor('#4b5563'),
+                alignment=TA_CENTER
+            )
+            
+            title_style = hebrew_title_style
+            normal_style = hebrew_normal_style
+            footer_style = hebrew_footer_style
+        else:
+            logging.warning("Hebrew font not available - PDF will show squares")
+            title_style = styles['Heading2']
+            normal_style = styles['Normal']
+            footer_style = styles['Normal']
+    else:
+        # Use default styles for FR/EN
+        title_style = styles['Heading2']
+        normal_style = styles['Normal']
+        footer_style = ParagraphStyle(
+            'Footer',
+            parent=styles['Normal'],
+            fontSize=9,
+            textColor=colors.HexColor('#4b5563'),
+            alignment=TA_CENTER
+        )
+    
     # Leave space for header (will be merged)
     story.append(Spacer(1, 5*cm))
     
@@ -261,7 +334,7 @@ def generate_mini_analysis_pdf(brand_name: str, analysis_text: str, language: st
         "he": f"מיני-אנליזה שוק - {brand_name}"
     }.get(language, f"Mini-Analyse de Marché - {brand_name}")
     
-    story.append(Paragraph(title_text, styles['Heading2']))
+    story.append(Paragraph(title_text, title_style))
     story.append(Spacer(1, 0.5*cm))
     
     # Date
@@ -271,7 +344,7 @@ def generate_mini_analysis_pdf(brand_name: str, analysis_text: str, language: st
         "he": "נוצר בתאריך:"
     }.get(language, "Généré le:")
     
-    story.append(Paragraph(f"<i>{date_label} {datetime.now(timezone.utc).strftime('%d/%m/%Y')}</i>", styles['Normal']))
+    story.append(Paragraph(f"<i>{date_label} {datetime.now(timezone.utc).strftime('%d/%m/%Y')}</i>", normal_style))
     story.append(Spacer(1, 1*cm))
     
     # Analysis content
@@ -282,10 +355,10 @@ def generate_mini_analysis_pdf(brand_name: str, analysis_text: str, language: st
                 lines = para.split('\n')
                 for line in lines:
                     if line.strip():
-                        story.append(Paragraph(line.strip(), styles['Normal']))
+                        story.append(Paragraph(line.strip(), normal_style))
                 story.append(Spacer(1, 0.3*cm))
             else:
-                story.append(Paragraph(para.strip(), styles['Normal']))
+                story.append(Paragraph(para.strip(), normal_style))
                 story.append(Spacer(1, 0.5*cm))
     
     # Footer
@@ -296,14 +369,7 @@ def generate_mini_analysis_pdf(brand_name: str, analysis_text: str, language: st
         "he": "מסמך זה הוא ניתוח ראשוני שנוצר על ידי AI. לליווי מלא, צור איתנו קשר."
     }.get(language, "Ce document est une analyse préliminaire générée par IA.")
     
-    header_style = ParagraphStyle(
-        'Header',
-        parent=styles['Normal'],
-        fontSize=9,
-        textColor=colors.HexColor('#4b5563'),
-        alignment=TA_CENTER
-    )
-    story.append(Paragraph(f"<i>{footer_text}</i>", header_style))
+    story.append(Paragraph(f"<i>{footer_text}</i>", footer_style))
     
     # Build content PDF
     doc.build(story)
@@ -576,10 +642,29 @@ def build_prompt(request: MiniAnalysisRequest, language: str = "fr") -> str:
     # Select whitelist based on statut_alimentaire
     if request.statut_alimentaire.lower() == 'halal':
         whitelist_data = load_igv_file(WHITELIST_ARAB)
-        whitelist_name = "Whitelist_2_Arabe_incl_Mixed"
+        whitelist_internal_code = "Whitelist_2_Arabe_incl_Mixed"
     else:
         whitelist_data = load_igv_file(WHITELIST_JEWISH)
-        whitelist_name = "Whitelist_1_Jewish_incl_Mixed"
+        whitelist_internal_code = "Whitelist_1_Jewish_incl_Mixed"
+    
+    # Map internal codes to human-readable labels (MULTI-LANGUAGE)
+    whitelist_labels = {
+        "fr": {
+            "Whitelist_1_Jewish_incl_Mixed": "Villes Juives & Mixtes",
+            "Whitelist_2_Arabe_incl_Mixed": "Villes Arabes & Mixtes"
+        },
+        "en": {
+            "Whitelist_1_Jewish_incl_Mixed": "Jewish & Mixed Cities",
+            "Whitelist_2_Arabe_incl_Mixed": "Arab & Mixed Cities"
+        },
+        "he": {
+            "Whitelist_1_Jewish_incl_Mixed": "ערים יהודיות ומעורבות",
+            "Whitelist_2_Arabe_incl_Mixed": "ערים ערביות ומעורבות"
+        }
+    }
+    
+    # Get human-readable label for current language
+    whitelist_name = whitelist_labels.get(language, {}).get(whitelist_internal_code, whitelist_internal_code)
     
     # Build form data section (TRANSLATED based on language)
     if language == "en":

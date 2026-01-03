@@ -275,20 +275,21 @@ async def create_lead_in_crm(lead_data: dict, request_id: str) -> dict:
 
 def prepare_hebrew_text(text: str) -> str:
     """
-    Prepare Hebrew text for PDF rendering with BiDi support
-    Converts logical order to visual order for proper RTL display
+    Prepare Hebrew text for PDF rendering - reshape only (no BiDi inversion)
+    
+    ReportLab with wordWrap='RTL' handles text direction automatically.
+    We only need arabic_reshaper to fix character forms, NOT get_display()
+    which would cause double-reversal (reshaper reverses + ReportLab reverses = inverted text).
     """
     if not BIDI_AVAILABLE:
         return text
     
     try:
-        # Reshape Arabic/Hebrew characters (connects them properly)
+        # Only reshape characters (fix letter forms) - ReportLab handles RTL order
         reshaped_text = arabic_reshaper.reshape(text)
-        # Apply BiDi algorithm to get display order (RTL)
-        bidi_text = get_display(reshaped_text)
-        return bidi_text
+        return reshaped_text
     except Exception as e:
-        logging.warning(f"BiDi conversion failed: {e}")
+        logging.warning(f"Hebrew reshape failed: {e}")
         return text
 
 
@@ -377,7 +378,10 @@ def generate_mini_analysis_pdf(brand_name: str, analysis_text: str, language: st
         "he": f"מיני-אנליזה שוק - {brand_name}"
     }.get(language, f"Mini-Analyse de Marché - {brand_name}")
     
-    # NO BiDi needed - ReportLab with Unicode font + TA_RIGHT handles RTL automatically
+    # Apply BiDi for Hebrew - converts logical order to visual order for RTL display
+    if language == "he" and BIDI_AVAILABLE:
+        title_text = prepare_hebrew_text(title_text)
+    
     story.append(Paragraph(title_text, title_style))
     story.append(Spacer(1, 0.5*cm))
     
@@ -388,8 +392,10 @@ def generate_mini_analysis_pdf(brand_name: str, analysis_text: str, language: st
         "he": "נוצר בתאריך:"
     }.get(language, "Généré le:")
     
-    # NO BiDi - ReportLab handles RTL with Unicode font
+    # Apply BiDi for Hebrew
     date_text = f"<i>{date_label} {datetime.now(timezone.utc).strftime('%d/%m/%Y')}</i>"
+    if language == "he" and BIDI_AVAILABLE:
+        date_text = f"<i>{prepare_hebrew_text(date_label)} {datetime.now(timezone.utc).strftime('%d/%m/%Y')}</i>"
     
     story.append(Paragraph(date_text, normal_style))
     story.append(Spacer(1, 1*cm))
@@ -398,15 +404,17 @@ def generate_mini_analysis_pdf(brand_name: str, analysis_text: str, language: st
     paragraphs = analysis_text.split('\n\n')
     for para in paragraphs:
         if para.strip():
-            # NO BiDi - use raw text, ReportLab handles RTL direction
+            # Apply BiDi for Hebrew paragraphs - converts logical to visual order
+            display_para = prepare_hebrew_text(para) if language == "he" and BIDI_AVAILABLE else para
+            
             if para.strip().startswith('-') or para.strip().startswith('•'):
-                lines = para.split('\n')
+                lines = display_para.split('\n')
                 for line in lines:
                     if line.strip():
                         story.append(Paragraph(line.strip(), normal_style))
                 story.append(Spacer(1, 0.3*cm))
             else:
-                story.append(Paragraph(para.strip(), normal_style))
+                story.append(Paragraph(display_para.strip(), normal_style))
                 story.append(Spacer(1, 0.5*cm))
     
     # Footer
@@ -417,8 +425,10 @@ def generate_mini_analysis_pdf(brand_name: str, analysis_text: str, language: st
         "he": "מסמך זה הוא ניתוח ראשוני שנוצר על ידי AI. לליווי מלא, צור איתנו קשר."
     }.get(language, "Ce document est une analyse préliminaire générée par IA.")
     
-    # NO BiDi - ReportLab with HebrewFont + TA_RIGHT handles RTL correctly
-    story.append(Paragraph(f"<i>{footer_text}</i>", footer_style))
+    # Apply BiDi for Hebrew footer
+    display_footer = prepare_hebrew_text(footer_text) if language == "he" and BIDI_AVAILABLE else footer_text
+    
+    story.append(Paragraph(f"<i>{display_footer}</i>", footer_style))
     
     # Build content PDF
     doc.build(story)

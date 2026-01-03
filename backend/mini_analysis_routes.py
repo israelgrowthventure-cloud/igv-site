@@ -377,10 +377,7 @@ def generate_mini_analysis_pdf(brand_name: str, analysis_text: str, language: st
         "he": f"מיני-אנליזה שוק - {brand_name}"
     }.get(language, f"Mini-Analyse de Marché - {brand_name}")
     
-    # Apply BiDi for Hebrew
-    if language == "he" and BIDI_AVAILABLE:
-        title_text = prepare_hebrew_text(title_text)
-    
+    # NO BiDi needed - ReportLab with Unicode font + TA_RIGHT handles RTL automatically
     story.append(Paragraph(title_text, title_style))
     story.append(Spacer(1, 0.5*cm))
     
@@ -391,11 +388,8 @@ def generate_mini_analysis_pdf(brand_name: str, analysis_text: str, language: st
         "he": "נוצר בתאריך:"
     }.get(language, "Généré le:")
     
-    # Apply BiDi for Hebrew
+    # NO BiDi - ReportLab handles RTL with Unicode font
     date_text = f"<i>{date_label} {datetime.now(timezone.utc).strftime('%d/%m/%Y')}</i>"
-    if language == "he" and BIDI_AVAILABLE:
-        # Note: Keep HTML tags, only convert the actual text
-        date_text = f"<i>{prepare_hebrew_text(date_label)} {datetime.now(timezone.utc).strftime('%d/%m/%Y')}</i>"
     
     story.append(Paragraph(date_text, normal_style))
     story.append(Spacer(1, 1*cm))
@@ -404,11 +398,9 @@ def generate_mini_analysis_pdf(brand_name: str, analysis_text: str, language: st
     paragraphs = analysis_text.split('\n\n')
     for para in paragraphs:
         if para.strip():
-            # Apply BiDi for Hebrew paragraphs
-            display_para = prepare_hebrew_text(para) if language == "he" and BIDI_AVAILABLE else para
-            
+            # NO BiDi - use raw text, ReportLab handles RTL direction
             if para.strip().startswith('-') or para.strip().startswith('•'):
-                lines = display_para.split('\n')
+                lines = para.split('\n')
                 for line in lines:
                     if line.strip():
                         story.append(Paragraph(line.strip(), normal_style))
@@ -425,10 +417,8 @@ def generate_mini_analysis_pdf(brand_name: str, analysis_text: str, language: st
         "he": "מסמך זה הוא ניתוח ראשוני שנוצר על ידי AI. לליווי מלא, צור איתנו קשר."
     }.get(language, "Ce document est une analyse préliminaire générée par IA.")
     
-    # Apply BiDi for Hebrew footer
-    display_footer = prepare_hebrew_text(footer_text) if language == "he" and BIDI_AVAILABLE else footer_text
-    
-    story.append(Paragraph(f"<i>{display_footer}</i>", footer_style))
+    # NO BiDi - ReportLab with HebrewFont + TA_RIGHT handles RTL correctly
+    story.append(Paragraph(f"<i>{footer_text}</i>", footer_style))
     
     # Build content PDF
     doc.build(story)

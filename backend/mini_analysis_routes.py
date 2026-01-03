@@ -27,6 +27,17 @@ try:
     from io import BytesIO
     import base64
     from PyPDF2 import PdfReader, PdfWriter
+    
+    # BiDi support for Hebrew/Arabic RTL text
+    try:
+        from bidi.algorithm import get_display
+        import arabic_reshaper
+        BIDI_AVAILABLE = True
+        logging.info("✅ BiDi support available for RTL languages")
+    except ImportError:
+        BIDI_AVAILABLE = False
+        logging.warning("⚠️ BiDi libraries not available - Hebrew/Arabic RTL may not render correctly")
+    
     PDF_AVAILABLE = True
     
     # Register Hebrew font (Noto Sans Hebrew - Google Fonts OFL license)
@@ -258,6 +269,25 @@ async def create_lead_in_crm(lead_data: dict, request_id: str) -> dict:
 
 
 
+def prepare_hebrew_text(text: str) -> str:
+    """
+    Prepare Hebrew text for PDF rendering with BiDi support
+    Converts logical order to visual order for proper RTL display
+    """
+    if not BIDI_AVAILABLE:
+        return text
+    
+    try:
+        # Reshape Arabic/Hebrew characters (connects them properly)
+        reshaped_text = arabic_reshaper.reshape(text)
+        # Apply BiDi algorithm to get display order (RTL)
+        bidi_text = get_display(reshaped_text)
+        return bidi_text
+    except Exception as e:
+        logging.warning(f"BiDi conversion failed: {e}")
+        return text
+
+
 def generate_mini_analysis_pdf(brand_name: str, analysis_text: str, language: str = "fr") -> bytes:
     """Generate mini-analysis PDF with IGV header from entete igv.pdf"""
     if not PDF_AVAILABLE:
@@ -343,6 +373,10 @@ def generate_mini_analysis_pdf(brand_name: str, analysis_text: str, language: st
         "he": f"מיני-אנליזה שוק - {brand_name}"
     }.get(language, f"Mini-Analyse de Marché - {brand_name}")
     
+    # Apply BiDi for Hebrew
+    if language == "he" and BIDI_AVAILABLE:
+        title_text = prepare_hebrew_text(title_text)
+    
     story.append(Paragraph(title_text, title_style))
     story.append(Spacer(1, 0.5*cm))
     
@@ -353,15 +387,24 @@ def generate_mini_analysis_pdf(brand_name: str, analysis_text: str, language: st
         "he": "נוצר בתאריך:"
     }.get(language, "Généré le:")
     
-    story.append(Paragraph(f"<i>{date_label} {datetime.now(timezone.utc).strftime('%d/%m/%Y')}</i>", normal_style))
+    # Apply BiDi for Hebrew
+    date_text = f"<i>{date_label} {datetime.now(timezone.utc).strftime('%d/%m/%Y')}</i>"
+    if language == "he" and BIDI_AVAILABLE:
+        # Note: Keep HTML tags, only convert the actual text
+        date_text = f"<i>{prepare_hebrew_text(date_label)} {datetime.now(timezone.utc).strftime('%d/%m/%Y')}</i>"
+    
+    story.append(Paragraph(date_text, normal_style))
     story.append(Spacer(1, 1*cm))
     
     # Analysis content
     paragraphs = analysis_text.split('\n\n')
     for para in paragraphs:
         if para.strip():
+            # Apply BiDi for Hebrew paragraphs
+            display_para = prepare_hebrew_text(para) if language == "he" and BIDI_AVAILABLE else para
+            
             if para.strip().startswith('-') or para.strip().startswith('•'):
-                lines = para.split('\n')
+                lines = display_para.split('\n')
                 for line in lines:
                     if line.strip():
                         story.append(Paragraph(line.strip(), normal_style))
@@ -1361,7 +1404,7 @@ async def generate_pdf_endpoint(request: PDFGenerateRequest):
             raise HTTPException(status_code=500, detail="PDF generation not available")
         
         # Generate PDF with analysis text
-        pdf_bytes = await generate_mini_analysis_pdf(
+        pdf_bytes = generate_mini_analysis_pdf(
             brand_name=request.brandName,
             analysis_text=request.analysis,
             language=request.language
@@ -1404,7 +1447,7 @@ async def send_pdf_email_endpoint(request: EmailPDFRequest):
             raise HTTPException(status_code=500, detail="PDF generation not available")
         
         # Generate PDF first
-        pdf_bytes = await generate_mini_analysis_pdf(
+        pdf_bytes = generate_mini_analysis_pdf(
             brand_name=request.brandName,
             analysis_text=request.analysis,
             language=request.language

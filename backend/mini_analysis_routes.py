@@ -1314,3 +1314,118 @@ async def generate_mini_analysis(request: MiniAnalysisRequest, response: Respons
         "email_status": "sent" if email_sent else "failed" if email_error else "pending",
         "lead_id": lead_id
     }
+
+
+# ============================================================================
+# NEW ENDPOINTS FOR UI BUTTONS (Download PDF / Send Email)
+# ============================================================================
+
+class PDFGenerateRequest(BaseModel):
+    email: str
+    brandName: str
+    sector: str
+    origin: str = ""
+    analysis: str
+    language: str = "fr"
+
+class EmailPDFRequest(BaseModel):
+    email: str
+    brandName: str
+    sector: str
+    origin: str = ""
+    analysis: str
+    language: str = "fr"
+
+
+@router.post("/pdf/generate")
+async def generate_pdf_endpoint(request: PDFGenerateRequest):
+    """
+    Generate PDF from existing analysis (for Download PDF button)
+    Called when user clicks "Télécharger PDF" on results page
+    """
+    request_id = f"pdf_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}"
+    
+    try:
+        logging.info(f"[{request_id}] PDF generation requested for {request.brandName}")
+        
+        if not PDF_AVAILABLE:
+            raise HTTPException(status_code=500, detail="PDF generation not available")
+        
+        # Generate PDF with analysis text
+        pdf_bytes = await generate_mini_analysis_pdf(
+            brand_name=request.brandName,
+            analysis_text=request.analysis,
+            language=request.language
+        )
+        
+        if not pdf_bytes:
+            raise HTTPException(status_code=500, detail="PDF generation failed")
+        
+        # Convert to base64
+        pdf_base64 = base64.b64encode(pdf_bytes).decode('utf-8')
+        
+        logging.info(f"[{request_id}] PDF generated successfully ({len(pdf_bytes)} bytes)")
+        
+        return {
+            "success": True,
+            "pdfBase64": pdf_base64,
+            "message": "PDF generated successfully"
+        }
+        
+    except Exception as e:
+        logging.error(f"[{request_id}] PDF generation error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"PDF generation failed: {str(e)}")
+
+
+@router.post("/email/send-pdf")
+async def send_pdf_email_endpoint(request: EmailPDFRequest):
+    """
+    Send email with PDF attachment (for Send Email button)
+    Called when user clicks "Envoyer par mail" on results page
+    """
+    request_id = f"email_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}"
+    
+    try:
+        logging.info(f"[{request_id}] Email send requested to {request.email} for {request.brandName}")
+        
+        if not EMAIL_AVAILABLE:
+            raise HTTPException(status_code=500, detail="Email service not available")
+        
+        if not PDF_AVAILABLE:
+            raise HTTPException(status_code=500, detail="PDF generation not available")
+        
+        # Generate PDF first
+        pdf_bytes = await generate_mini_analysis_pdf(
+            brand_name=request.brandName,
+            analysis_text=request.analysis,
+            language=request.language
+        )
+        
+        if not pdf_bytes:
+            raise HTTPException(status_code=500, detail="PDF generation failed")
+        
+        # Send email with PDF
+        email_result = await send_mini_analysis_email(
+            email=request.email,
+            brand_name=request.brandName,
+            pdf_bytes=pdf_bytes,
+            language=request.language
+        )
+        
+        if not email_result["success"]:
+            error_msg = email_result.get("error", "Unknown error")
+            raise HTTPException(status_code=500, detail=f"Email send failed: {error_msg}")
+        
+        logging.info(f"[{request_id}] Email sent successfully to {request.email}")
+        
+        return {
+            "success": True,
+            "message": "Email sent successfully"
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"[{request_id}] Email send error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Email send failed: {str(e)}")
+

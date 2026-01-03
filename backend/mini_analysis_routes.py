@@ -425,7 +425,10 @@ def generate_mini_analysis_pdf(brand_name: str, analysis_text: str, language: st
         "he": "מסמך זה הוא ניתוח ראשוני שנוצר על ידי AI. לליווי מלא, צור איתנו קשר."
     }.get(language, "Ce document est une analyse préliminaire générée par IA.")
     
-    story.append(Paragraph(f"<i>{footer_text}</i>", footer_style))
+    # Apply BiDi for Hebrew footer
+    display_footer = prepare_hebrew_text(footer_text) if language == "he" and BIDI_AVAILABLE else footer_text
+    
+    story.append(Paragraph(f"<i>{display_footer}</i>", footer_style))
     
     # Build content PDF
     doc.build(story)

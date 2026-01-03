@@ -275,21 +275,22 @@ async def create_lead_in_crm(lead_data: dict, request_id: str) -> dict:
 
 def prepare_hebrew_text(text: str) -> str:
     """
-    Prepare Hebrew text for PDF rendering - reshape only (no BiDi inversion)
+    Prepare Hebrew text for PDF rendering with full BiDi support
     
-    ReportLab with wordWrap='RTL' handles text direction automatically.
-    We only need arabic_reshaper to fix character forms, NOT get_display()
-    which would cause double-reversal (reshaper reverses + ReportLab reverses = inverted text).
+    CRITICAL: ReportLab wordWrap='RTL' only reverses WORD order, not LETTER order!
+    We need get_display() to reverse individual letters within words.
+    But we must NOT use wordWrap='RTL' to avoid double word-reversal.
     """
     if not BIDI_AVAILABLE:
         return text
     
     try:
-        # Only reshape characters (fix letter forms) - ReportLab handles RTL order
+        # Reshape characters (contextual letter forms) then reverse for visual display
         reshaped_text = arabic_reshaper.reshape(text)
-        return reshaped_text
+        bidi_text = get_display(reshaped_text)
+        return bidi_text
     except Exception as e:
-        logging.warning(f"Hebrew reshape failed: {e}")
+        logging.warning(f"Hebrew BiDi conversion failed: {e}")
         return text
 
 
@@ -324,8 +325,7 @@ def generate_mini_analysis_pdf(brand_name: str, analysis_text: str, language: st
                 fontName='HebrewFont',
                 fontSize=16,
                 leading=22,
-                alignment=TA_RIGHT,
-                wordWrap='RTL'
+                alignment=TA_RIGHT
             )
             
             hebrew_normal_style = ParagraphStyle(
@@ -334,8 +334,7 @@ def generate_mini_analysis_pdf(brand_name: str, analysis_text: str, language: st
                 fontName='HebrewFont',
                 fontSize=11,
                 leading=16,
-                alignment=TA_RIGHT,
-                wordWrap='RTL'
+                alignment=TA_RIGHT
             )
             
             hebrew_footer_style = ParagraphStyle(

@@ -857,31 +857,8 @@ async def list_admin_users(current_user: Dict = Depends(get_current_user)):
     return {"users": users}
 
 
-@api_router.delete("/admin/users/{user_id}")
-async def delete_admin_user(user_id: str, current_user: Dict = Depends(get_current_user)):
-    """Delete/deactivate admin user by _id (admin only)"""
-    if db is None:
-        raise HTTPException(status_code=503, detail="Database not configured")
-    
-    if current_user['role'] != 'admin':
-        raise HTTPException(status_code=403, detail="Only admins can delete users")
-    
-    # Check if trying to delete yourself
-    user_to_delete = await db.users.find_one({"_id": ObjectId(user_id)})
-    if user_to_delete and user_to_delete.get('email') == current_user['email']:
-        raise HTTPException(status_code=400, detail="Cannot delete yourself")
-    
-    # Deactivate instead of delete
-    result = await db.users.update_one(
-        {"_id": ObjectId(user_id)},
-        {"$set": {"is_active": False}}
-    )
-    
-    if result.matched_count == 0:
-        raise HTTPException(status_code=404, detail="User not found")
-    
-    return {"message": "User deactivated successfully"}
-
+# REMOVED: Duplicate DELETE endpoint - now handled by admin_user_routes.py
+# Old endpoint used db.users, new one uses db.crm_users (correct collection)
 
 # ============================================================
 # Monetico Payment Endpoints

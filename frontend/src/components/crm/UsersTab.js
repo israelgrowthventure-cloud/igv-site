@@ -109,9 +109,9 @@ const UsersTab = ({ t }) => {
   const openEditModal = (user) => {
     setEditingUser(user);
     setFormData({
+      email: user.email || '',
       first_name: user.first_name || '',
-      last_name: user.last_.email,
-      name: user.name || '',
+      last_name: user.last_name || '',
       password: '', // Never pre-fill password
       role: user.role || 'commercial',
       is_active: user.is_active !== false,

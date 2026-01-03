@@ -220,7 +220,10 @@ const MiniAnalysis = () => {
     } catch (error) {
       console.error('Error generating PDF:', error);
       toast.dismiss(loadingToastId);
-      toast.error(t('miniAnalysis.toast.error'));
+      
+      // Better error message with backend detail if available
+      const errorMsg = error?.response?.data?.detail || error?.message || t('miniAnalysis.toast.error');
+      toast.error(`PDF Error: ${errorMsg}`);
     } finally {
       setPdfLoading(false);
     }
@@ -247,7 +250,10 @@ const MiniAnalysis = () => {
     } catch (error) {
       console.error('Error emailing PDF:', error);
       toast.dismiss(loadingToastId);
-      toast.error(t('miniAnalysis.toast.error'));
+      
+      // Better error message with backend detail if available
+      const errorMsg = error?.response?.data?.detail || error?.message || t('miniAnalysis.toast.error');
+      toast.error(`Email Error: ${errorMsg}`);
     } finally {
       setEmailLoading(false);
     }

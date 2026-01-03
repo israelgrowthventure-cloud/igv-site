@@ -40,24 +40,28 @@ try:
     
     PDF_AVAILABLE = True
     
-    # Register Hebrew font (Noto Sans Hebrew - Google Fonts OFL license)
-    # Auto-download if missing
+    # Register Hebrew font - Use DejaVuSans (pre-installed on most Linux systems)
+    # DejaVuSans has excellent Hebrew support
     try:
-        import urllib.request
-        fonts_dir = os.path.join(os.path.dirname(__file__), 'fonts')
-        os.makedirs(fonts_dir, exist_ok=True)
-        hebrew_font_path = os.path.join(fonts_dir, 'NotoSansHebrew-Regular.ttf')
+        # Try system font paths (Render uses Debian-based container)
+        font_paths = [
+            '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',
+            '/usr/share/fonts/TTF/DejaVuSans.ttf',
+            '/System/Library/Fonts/Supplemental/DejaVuSans.ttf',  # macOS
+            'C:\\Windows\\Fonts\\DejaVuSans.ttf'  # Windows (dev)
+        ]
         
-        # Download font if not present
-        if not os.path.exists(hebrew_font_path):
-            font_url = 'https://github.com/notofonts/notofonts.github.io/raw/main/fonts/NotoSansHebrew/hinted/ttf/NotoSansHebrew-Regular.ttf'
-            logging.info(f"📥 Downloading Hebrew font from {font_url}")
-            urllib.request.urlretrieve(font_url, hebrew_font_path)
-            logging.info(f"✅ Hebrew font downloaded to {hebrew_font_path}")
+        hebrew_font_registered = False
+        for font_path in font_paths:
+            if os.path.exists(font_path):
+                pdfmetrics.registerFont(TTFont('HebrewFont', font_path))
+                logging.info(f"✅ Hebrew font registered: {font_path}")
+                hebrew_font_registered = True
+                break
         
-        # Register font
-        pdfmetrics.registerFont(TTFont('HebrewFont', hebrew_font_path))
-        logging.info("✅ Hebrew font registered successfully")
+        if not hebrew_font_registered:
+            logging.error("❌ DejaVuSans font not found - Hebrew PDFs will show squares")
+    
     except Exception as e:
         logging.error(f"❌ Could not setup Hebrew font: {e}")
         logging.error(traceback.format_exc())

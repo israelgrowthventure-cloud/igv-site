@@ -30,17 +30,26 @@ try:
     PDF_AVAILABLE = True
     
     # Register Hebrew font (Noto Sans Hebrew - Google Fonts OFL license)
-    # Font file should be placed in backend/fonts/ directory
-    # Download from: https://fonts.google.com/noto/specimen/Noto+Sans+Hebrew
+    # Auto-download if missing
     try:
-        hebrew_font_path = os.path.join(os.path.dirname(__file__), 'fonts', 'NotoSansHebrew-Regular.ttf')
-        if os.path.exists(hebrew_font_path):
-            pdfmetrics.registerFont(TTFont('HebrewFont', hebrew_font_path))
-            logging.info("✅ Hebrew font registered successfully")
-        else:
-            logging.warning(f"⚠️ Hebrew font not found at {hebrew_font_path} - Hebrew PDFs will show squares")
+        import urllib.request
+        fonts_dir = os.path.join(os.path.dirname(__file__), 'fonts')
+        os.makedirs(fonts_dir, exist_ok=True)
+        hebrew_font_path = os.path.join(fonts_dir, 'NotoSansHebrew-Regular.ttf')
+        
+        # Download font if not present
+        if not os.path.exists(hebrew_font_path):
+            font_url = 'https://github.com/notofonts/notofonts.github.io/raw/main/fonts/NotoSansHebrew/hinted/ttf/NotoSansHebrew-Regular.ttf'
+            logging.info(f"📥 Downloading Hebrew font from {font_url}")
+            urllib.request.urlretrieve(font_url, hebrew_font_path)
+            logging.info(f"✅ Hebrew font downloaded to {hebrew_font_path}")
+        
+        # Register font
+        pdfmetrics.registerFont(TTFont('HebrewFont', hebrew_font_path))
+        logging.info("✅ Hebrew font registered successfully")
     except Exception as e:
-        logging.warning(f"⚠️ Could not register Hebrew font: {e}")
+        logging.error(f"❌ Could not setup Hebrew font: {e}")
+        logging.error(traceback.format_exc())
         
 except ImportError as e:
     logging.warning(f"reportlab/PyPDF2 not available - PDF generation will fail: {e}")

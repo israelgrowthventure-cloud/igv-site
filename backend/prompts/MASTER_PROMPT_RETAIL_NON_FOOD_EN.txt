@@ -111,41 +111,64 @@ HALAL RULE — ZONE SELECTION (MANDATORY IF FOOD_STATUS = Halal)
 - Forbidden: "modern casual", "family friendly", "trendy urban".
 
 ==================================================
-SECTION STRUCTURE (MANDATORY)
+SECTION STRUCTURE (MANDATORY - DETAILED)
 ==================================================
-A. Summary (3-4 lines max)
-   Opening: direct and energetic. Capture opportunity and positioning.
+A. Summary (3-4 lines minimum)
+   Opening: direct and energetic statement of opportunity
+   Include: concept strength, target market positioning, strategic advantage
+   Must capture brand differentiation and Israel market fit
 
-B. Main condition (1-2 lines)
-   Critical point to validate BEFORE going further.
-   Examples: food status to define, supplier validation, concept adaptation, price alignment.
+B. What clearly works in your favor
+   - Strength 1: (2-3 lines with specific market advantage)
+   - Strength 2: (2-3 lines with competitive positioning detail)
+   Connect strengths to Israel consumer preferences and market gaps
 
-C. Main operational risk (1-2 lines)
-   Real risk: staff, turnover, pace, daily execution, consistency.
+C. Main operational risk not to miss
+   - 3-4 lines maximum, very concrete, OPERATIONAL focus
+   - Real Israel challenges: staffing, turnover, local competition, execution
+   - Include specific mitigation approaches
 
-D. Recommended approach (3-4 lines)
-   Style: [OPERATIONAL]
-   Suggested format: [concrete + precise]
-   Adaptations: [if necessary]
+D. Recommended format to start
+   - Format: (pilot / corner / flagship / franchise) + detailed justification (3-4 lines)
+   - Style: (2-3 lines, OPERATIONAL - "fast-casual" / "grab & go" / specific format)
+   - Space requirements and setup considerations (1-2 lines)
 
-E. Target locations (3 zones × 3 examples each)
+E0. Selection logic
+   - 4-6 lines explaining zone selection criteria
+   - Connect to brand positioning, target demographics, foot traffic
+   - Include commercial strategy rationale
+
+E. Target locations (3 zones × 3 examples each = 9 lines minimum)
    Zone 1: [CITY NAME]
+   - Profile: [detailed demographic and commercial profile - 2 lines]
    - [KNOWN example 1]
    - [KNOWN example 2]
    - [SPOTS example 3]
 
    Zone 2: [CITY NAME]
+   - Profile: [detailed demographic and commercial profile - 2 lines]
    - [KNOWN example 1]
    - [KNOWN example 2]
    - [SPOTS example 3]
 
    Zone 3: [CITY NAME]
+   - Profile: [detailed demographic and commercial profile - 2 lines]
    - [KNOWN example 1]
    - [KNOWN example 2]
    - [SPOTS example 3]
 
-F. Verdict (1 line)
+F. Two typical execution pitfalls in Israel
+   - Pitfall 1: (2-3 lines, concrete operational risk with specific examples)
+   - Pitfall 2: (2-3 lines, concrete market/execution risk with mitigation)
+
+G. Next logical step
+   - EXACTLY 2-3 lines suggesting complete IGV analysis
+   - Include: exact zones, positioning, format, constraints, staffing, opening plan
+
+H. Verdict (1 line)
    Verdict: [one of the 3 formulas]
+
+MINIMUM TOTAL LENGTH: 30-40 lines of substantive content (excluding blank lines)
 
 ==================================================
 FINAL REMINDER

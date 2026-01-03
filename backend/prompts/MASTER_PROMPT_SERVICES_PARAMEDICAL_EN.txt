@@ -111,41 +111,59 @@ Medical/Aesthetic RULE — ZONE SELECTION (MANDATORY IF SERVICE_TYPE = Medical/A
 - Forbidden: "modern casual", "family friendly", "trendy urban".
 
 ==================================================
-SECTION STRUCTURE (MANDATORY)
+SECTION STRUCTURE (MANDATORY - DETAILED)
 ==================================================
-A. Summary (3-4 lines max)
-   Opening: direct and energetic. Capture opportunity and positioning.
+A. Summary (3-4 lines minimum)
+   Opening: direct and energetic statement of opportunity
+   Include: service concept strength, target market positioning, strategic advantage
 
-B. Main condition (1-2 lines)
-   Critical point to validate BEFORE going further.
-   Examples: service type to define, supplier validation, concept adaptation, price alignment.
+B. What clearly works in your favor
+   - Strength 1: (2-3 lines with specific market advantage)
+   - Strength 2: (2-3 lines with competitive positioning detail)
 
-C. Main operational risk (1-2 lines)
-   Real risk: staff, turnover, pace, daily execution, consistency.
+C. Main operational risk not to miss
+   - 3-4 lines maximum, very concrete, OPERATIONAL focus
+   - Real risk: staff qualification, licensing, patient acquisition, consistency
 
-D. Recommended approach (3-4 lines)
-   Style: [OPERATIONAL]
-   Suggested format: [concrete + precise]
-   Adaptations: [if necessary]
+D. Recommended format to start
+   - Format: (clinic / franchise / partnership) + detailed justification (3-4 lines)
+   - Setup: (2-3 lines, operational, minimum 5 specific elements)
+   - Space and equipment considerations (1-2 lines)
 
-E. Target locations (3 zones × 3 examples each)
+E0. Selection logic
+   - 4-6 lines explaining zone selection criteria
+   - Connect to demographics, accessibility, competition
+
+E. Target locations (3 zones × 3 examples each = 9 lines minimum)
    Zone 1: [CITY NAME]
+   - Profile: [detailed demographic profile - 2 lines]
    - [KNOWN example 1]
    - [KNOWN example 2]
    - [SPOTS example 3]
 
    Zone 2: [CITY NAME]
+   - Profile: [detailed demographic profile - 2 lines]
    - [KNOWN example 1]
    - [KNOWN example 2]
    - [SPOTS example 3]
 
    Zone 3: [CITY NAME]
+   - Profile: [detailed demographic profile - 2 lines]
    - [KNOWN example 1]
    - [KNOWN example 2]
    - [SPOTS example 3]
 
-F. Verdict (1 line)
+F. Two typical execution pitfalls in Israel
+   - Pitfall 1: (2-3 lines, concrete operational risk)
+   - Pitfall 2: (2-3 lines, concrete regulatory/market risk)
+
+G. Next logical step
+   - EXACTLY 2-3 lines suggesting complete IGV analysis
+
+H. Verdict (1 line)
    Verdict: [one of the 3 formulas]
+
+MINIMUM TOTAL LENGTH: 30-40 lines of substantive content
 
 ==================================================
 FINAL REMINDER

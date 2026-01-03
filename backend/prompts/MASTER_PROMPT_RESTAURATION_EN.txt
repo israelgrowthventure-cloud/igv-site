@@ -115,20 +115,24 @@ SECTION STRUCTURE (MANDATORY)
 ==================================================
 A. Summary (3-4 lines max)
    Opening: direct and energetic. Capture opportunity and positioning.
+   Include: concept strength, target market fit, and strategic advantage.
 
-B. Main condition (1-2 lines)
+B. Main condition (2-3 lines)
    Critical point to validate BEFORE going further.
    Examples: food status to define, supplier validation, concept adaptation, price alignment.
+   Must be specific and actionable.
 
-C. Main operational risk (1-2 lines)
+C. Main operational risk (2-3 lines)
    Real risk: staff, turnover, pace, daily execution, consistency.
+   Must address Israel-specific operational challenges.
 
-D. Recommended approach (3-4 lines)
-   Style: [OPERATIONAL]
-   Suggested format: [concrete + precise]
-   Adaptations: [if necessary]
+D. Recommended approach (4-5 lines minimum)
+   Style: [OPERATIONAL format - fast-casual/full service/grab & go/etc.]
+   Suggested format: [concrete + precise - pilot/corner/flagship/franchise]
+   Adaptations: [detailed operational requirements]
+   Include: service model, space requirements, workflow optimization.
 
-E. Target locations (3 zones × 3 examples each)
+E. Target locations (3 zones × 3 examples each = 9 lines minimum)
    Zone 1: [CITY NAME]
    - [KNOWN example 1]
    - [KNOWN example 2]
@@ -144,8 +148,79 @@ E. Target locations (3 zones × 3 examples each)
    - [KNOWN example 2]
    - [SPOTS example 3]
 
-F. Verdict (1 line)
+F. Key success factors (3-4 lines)
+   List 3-4 critical operational elements for success.
+   Must be specific to the brand concept and Israeli market.
+
+G. Potential pitfalls (3-4 lines)
+   Identify 2-3 concrete operational or market risks.
+   Each pitfall: 1-2 lines with specific risk and mitigation approach.
+
+H. Verdict (1 line)
    Verdict: [one of the 3 formulas]
+
+MINIMUM TOTAL LENGTH: 30-40 lines of substantive content (excluding blank lines)
+
+==================================================
+OUTPUT FORMAT (MANDATORY - DETAILED STRUCTURE)
+==================================================
+
+IGV Mini-Analysis — Israel Potential for [BRAND_NAME] (AI-generated)
+
+A) Verdict
+- Verdict: GO (pilot) / GO (to frame) / GO (test recommended) — + short explanatory phrase
+- Main condition: + operational phrase (integrate FOOD_STATUS if relevant)
+
+B) What clearly works in your favor
+- Point 1: (2-3 lines with specific advantage)
+- Point 2: (2-3 lines with competitive positioning)
+
+C) Main operational risk not to miss
+- 3-4 lines maximum, very concrete, OPERATIONAL
+
+D) Recommended format to start
+- Format: (pilot / corner / flagship / branch / franchise) + justification (3-4 lines)
+- Style: (2-3 lines, operational, minimum 5 elements)
+
+E0) Selection logic
+- 4-6 lines maximum explaining zone selection criteria
+
+E) Examples of relevant locations
+Zone 1:
+- Area: ...
+- Profile: ...
+- Examples:
+  * [KNOWN] ...
+  * [KNOWN] ...
+  * [SPOTS] ...
+
+Zone 2:
+- Area: ...
+- Profile: ...
+- Examples:
+  * [KNOWN] ...
+  * [KNOWN] ...
+  * [SPOTS] ...
+
+Zone 3:
+- Area: ...
+- Profile: ...
+- Examples:
+  * [KNOWN] ...
+  * [KNOWN] ...
+  * [SPOTS] ...
+
+F) Two typical execution pitfalls in Israel
+- Pitfall 1: (2-3 lines, concrete, integrate FOOD_STATUS if relevant)
+- Pitfall 2: (2-3 lines, concrete, integrate FOOD_STATUS if relevant)
+
+G) Next logical step
+- EXACTLY 2-3 lines:
+  1) suggest a complete IGV analysis (exact zones, positioning, format, constraints, staffing, opening plan)
+  2) how to request it (email / website form)
+
+FINAL LINE (MANDATORY — EXACT)
+"This mini-analysis is AI-generated from limited information. It provides an initial orientation but does not replace a human on-the-ground analysis (zoning, rents, operational constraints, partners)."
 
 ==================================================
 FINAL REMINDER

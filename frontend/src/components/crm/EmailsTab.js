@@ -30,8 +30,8 @@ const EmailsTab = ({ t }) => {
   const loadTemplates = async () => {
     try {
       setLoading(true);
-      const response = await api.get('/crm/emails/templates');
-      setTemplates(response.data.templates || []);
+      const response = await api.get('/api/crm/emails/templates');
+      setTemplates(response.templates || response.data.templates || []);
     } catch (error) {
       console.error('Erreur chargement templates:', error);
       toast.error('Erreur lors du chargement des templates');
@@ -44,7 +44,7 @@ const EmailsTab = ({ t }) => {
     e.preventDefault();
     try {
       setLoadingAction(true);
-      await api.post('/crm/emails/templates', formData);
+      await api.post('/api/crm/emails/templates', formData);
       toast.success('Template créé avec succès');
       setShowCreateModal(false);
       setFormData({ name: '', subject: '', body: '', language: 'fr' });

@@ -30,8 +30,8 @@ const UsersTab = () => {
   const loadUsers = async () => {
     try {
       setLoading(true);
-      const response = await api.get('/admin/users');
-      setUsers(response.data.users || response.data);
+      const response = await api.get('/api/admin/users');
+      setUsers(response.users || response.data.users || response.data);
     } catch (error) {
       console.error('Erreur chargement users:', error);
       toast.error('Erreur lors du chargement des utilisateurs');
@@ -62,11 +62,11 @@ const UsersTab = () => {
         if (!updateData.password) {
           delete updateData.password; // Don't send empty password
         }
-        await api.put(`/admin/users/${editingUser._id || editingUser.id}`, updateData);
+        await api.put(`/api/admin/users/${editingUser._id || editingUser.id}`, updateData);
         toast.success('Utilisateur modifié avec succès');
       } else {
         // Create new user
-        await api.post('/admin/users', formData);
+        await api.post('/api/admin/users', formData);
         toast.success('Utilisateur créé avec succès');
       }
       
@@ -90,7 +90,7 @@ const UsersTab = () => {
 
     try {
       setLoadingAction(true);
-      await api.delete(`/admin/users/${userId}`);
+      await api.delete(`/api/admin/users/${userId}`);
       toast.success('Utilisateur supprimé avec succès');
       await loadUsers();
     } catch (error) {

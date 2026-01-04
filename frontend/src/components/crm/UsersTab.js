@@ -31,7 +31,7 @@ const UsersTab = () => {
     try {
       setLoading(true);
       const response = await api.get('/admin/users');
-      setUsers(response.data);
+      setUsers(response.data.users || response.data);
     } catch (error) {
       console.error('Erreur chargement users:', error);
       toast.error('Erreur lors du chargement des utilisateurs');
@@ -62,7 +62,7 @@ const UsersTab = () => {
         if (!updateData.password) {
           delete updateData.password; // Don't send empty password
         }
-        await api.put(`/admin/users/${editingUser.id}`, updateData);
+        await api.put(`/admin/users/${editingUser._id || editingUser.id}`, updateData);
         toast.success('Utilisateur modifié avec succès');
       } else {
         // Create new user

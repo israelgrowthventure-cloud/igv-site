@@ -227,16 +227,24 @@ async def delete_user(user_id: str, user: Dict = Depends(require_admin)):
     try:
         # Users now use UUID "id" field instead of MongoDB "_id"
         # Check if user exists by UUID id (try both id field and _id for backward compatibility)
+        logging.info(f"DELETE user attempt: user_id={user_id}")
         existing_user = await current_db.crm_users.find_one({"id": user_id})
+        logging.info(f"Query {{\"id\": \"{user_id}\"}} returned: {existing_user is not None}")
+        
         if not existing_user:
             # Fallback to MongoDB _id for old users
+            logging.info(f"Trying fallback to MongoDB _id...")
             try:
                 obj_id = ObjectId(user_id)
                 existing_user = await current_db.crm_users.find_one({"_id": obj_id})
-            except:
-                pass
+                logging.info(f"Fallback query {{\"_id\": ObjectId(\"{user_id}\")}} returned: {existing_user is not None}")
+            except Exception as e:
+                logging.warning(f"ObjectId conversion failed: {e}")
         
         if not existing_user:
+            # DEBUG: List all users to see what's in DB
+            all_users = await current_db.crm_users.find({}).limit(5).to_list(5)
+            logging.error(f"User {user_id} not found. Sample users in DB: {[{'id': u.get('id'), '_id': str(u.get('_id')), 'email': u.get('email')} for u in all_users]}")
             raise HTTPException(status_code=404, detail="User not found")
         
         # Prevent self-deletion

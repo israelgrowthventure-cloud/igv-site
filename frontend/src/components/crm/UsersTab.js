@@ -482,10 +482,7 @@ const UsersTab = ({ t }) => {
         </div>
         
         <button
-          onClick={() => {
-            setFormData({ email: '', name: '', password: '', role: 'commercial', assigned_leads: [] });
-            setShowCreateModal(true);
-          }}
+          onClick={() => setShowCreateModal(true)}
           className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-700 transition-colors"
         >
           <Plus className="w-4 h-4" />

@@ -1,8 +1,6 @@
 DEPLOY TRIGGER - IGV Backend
-Last deployment: 2026-01-04 20:30:00 UTC
-Reason: CRM Admin complete fixes
-- Users GET endpoint fix
-- EmailsTab backend integration  
-- Prospect to contact conversion
-- Email templates CRUD
-Build: CRM-FIX-20260104
+Last deployment: 2026-01-04 20:40:00 UTC
+Reason: CRM Admin API endpoints fix - add /api prefix
+- UsersTab: /api/admin/users
+- EmailsTab: /api/crm/emails/templates
+Build: CRM-API-FIX-20260104-2040

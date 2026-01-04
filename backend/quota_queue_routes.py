@@ -56,7 +56,7 @@ async def queue_analysis(analysis: PendingAnalysisCreate):
     Called automatically by mini-analysis when quota reached
     """
     current_db = get_db()
-    if not current_db:
+    if current_db is None:
         raise HTTPException(status_code=500, detail="Database not configured")
     
     # Check if already queued
@@ -147,7 +147,7 @@ async def get_queue_position(db, queue_id: str) -> int:
 async def get_queue_status(queue_id: str):
     """Get status of queued analysis"""
     current_db = get_db()
-    if not current_db:
+    if current_db is None:
         raise HTTPException(status_code=500, detail="Database not configured")
     
     try:
@@ -180,7 +180,7 @@ async def get_pending_analyses(
     Used to process the queue
     """
     current_db = get_db()
-    if not current_db:
+    if current_db is None:
         raise HTTPException(status_code=500, detail="Database not configured")
     
     filter_query = {}
@@ -215,7 +215,7 @@ async def process_pending_analysis(queue_id: str):
     Admin endpoint to manually trigger processing
     """
     current_db = get_db()
-    if not current_db:
+    if current_db is None:
         raise HTTPException(status_code=500, detail="Database not configured")
     
     try:
@@ -261,7 +261,7 @@ async def retry_failed_analyses():
     Admin endpoint for bulk retry
     """
     current_db = get_db()
-    if not current_db:
+    if current_db is None:
         raise HTTPException(status_code=500, detail="Database not configured")
     
     # Reset failed analyses back to pending

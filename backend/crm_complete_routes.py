@@ -23,6 +23,7 @@ from auth_middleware import (
     get_current_user,
     get_user_or_admin,
     require_admin,
+    require_role,
     get_user_assigned_filter,
     get_user_write_permission,
     log_audit_event,
@@ -970,7 +971,7 @@ async def delete_contact(contact_id: str, user: Dict = Depends(get_current_user)
 @router.get("/settings/users")
 async def get_crm_users(user: Dict = Depends(get_current_user)):
     """Get all CRM users (admin only)"""
-    await require_role(user, ["admin"])
+    await require_admin(user)
     
     current_db = get_db()
     if current_db is None:
@@ -990,7 +991,7 @@ async def get_crm_users(user: Dict = Depends(get_current_user)):
 @router.post("/settings/users", status_code=status.HTTP_201_CREATED)
 async def create_crm_user(user_data: UserCreate, user: Dict = Depends(get_current_user)):
     """Create new CRM user (UNLIMITED)"""
-    await require_role(user, ["admin"])
+    await require_admin(user)
     
     current_db = get_db()
     if current_db is None:
@@ -1038,7 +1039,7 @@ async def create_crm_user(user_data: UserCreate, user: Dict = Depends(get_curren
 @router.put("/settings/users/{user_id}")
 async def update_crm_user(user_id: str, update_data: UserUpdate, user: Dict = Depends(get_current_user)):
     """Update CRM user"""
-    await require_role(user, ["admin"])
+    await require_admin(user)
     
     current_db = get_db()
     if current_db is None:
@@ -1137,7 +1138,7 @@ async def get_tags(user: Dict = Depends(get_current_user)):
 @router.post("/settings/tags")
 async def add_tag(tag: str = Body(..., embed=True), user: Dict = Depends(get_current_user)):
     """Add new tag"""
-    await require_role(user, ["admin"])
+    await require_role(["admin"], user)
     
     current_db = get_db()
     if current_db is None:
@@ -1350,7 +1351,7 @@ async def update_task(
 @router.delete("/tasks/{task_id}")
 async def delete_task(task_id: str, user: Dict = Depends(get_current_user)):
     """Delete task"""
-    await require_role(user, ["admin", "sales"])
+    await require_role(["admin", "sales"], user)
     
     current_db = get_db()
     if current_db is None:
@@ -1455,7 +1456,7 @@ async def get_email_templates(user: Dict = Depends(get_current_user)):
 @router.post("/emails/templates")
 async def create_email_template(template: EmailTemplateCreate, user: Dict = Depends(get_current_user)):
     """Create new email template (Admin only)"""
-    await require_role(user, ["admin"])
+    await require_role(["admin"], user)
     
     current_db = get_db()
     if current_db is None:

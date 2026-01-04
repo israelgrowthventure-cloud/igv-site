@@ -75,7 +75,7 @@ async def update_consent(consent: ConsentUpdate, request: Request):
     Stores consent in visitor record
     """
     current_db = get_db()
-    if not current_db:
+    if current_db is None:
         raise HTTPException(status_code=500, detail="Database not configured")
     
     # Get visitor ID (hash of IP + user agent)
@@ -123,7 +123,7 @@ async def update_consent(consent: ConsentUpdate, request: Request):
 async def get_consent(request: Request):
     """Get current consent preferences for this visitor"""
     current_db = get_db()
-    if not current_db:
+    if current_db is None:
         raise HTTPException(status_code=500, detail="Database not configured")
     
     # Get visitor ID
@@ -159,7 +159,7 @@ async def track_visit(tracking: VisitorTracking, request: Request):
     GDPR-compliant: no tracking without consent
     """
     current_db = get_db()
-    if not current_db:
+    if current_db is None:
         raise HTTPException(status_code=500, detail="Database not configured")
     
     # Get visitor ID
@@ -235,7 +235,7 @@ async def newsletter_subscribe(sub: NewsletterSubscribe, request: Request):
     Requires EXPLICIT marketing consent
     """
     current_db = get_db()
-    if not current_db:
+    if current_db is None:
         raise HTTPException(status_code=500, detail="Database not configured")
     
     # GDPR: Marketing consent is MANDATORY
@@ -310,7 +310,7 @@ async def newsletter_unsubscribe(email: EmailStr, reason: Optional[str] = None):
     Newsletter unsubscribe (GDPR right to withdraw consent)
     """
     current_db = get_db()
-    if not current_db:
+    if current_db is None:
         raise HTTPException(status_code=500, detail="Database not configured")
     
     subscriber = await current_db.newsletter_subscribers.find_one({"email": email})
@@ -346,7 +346,7 @@ async def newsletter_delete_data(email: EmailStr):
     Delete all newsletter data (GDPR right to erasure)
     """
     current_db = get_db()
-    if not current_db:
+    if current_db is None:
         raise HTTPException(status_code=500, detail="Database not configured")
     
     result = await current_db.newsletter_subscribers.delete_one({"email": email})
@@ -369,7 +369,7 @@ async def get_my_data(email: EmailStr):
     Get all data stored for an email (GDPR right of access)
     """
     current_db = get_db()
-    if not current_db:
+    if current_db is None:
         raise HTTPException(status_code=500, detail="Database not configured")
     
     data = {}
@@ -406,7 +406,7 @@ async def delete_all_data(email: EmailStr, confirmation: str):
     Requires confirmation = email address
     """
     current_db = get_db()
-    if not current_db:
+    if current_db is None:
         raise HTTPException(status_code=500, detail="Database not configured")
     
     # Safety check

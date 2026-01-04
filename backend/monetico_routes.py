@@ -120,7 +120,7 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
         payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
         
         current_db = get_db()
-        if not current_db:
+        if current_db is None:
             raise HTTPException(status_code=500, detail="Database not configured")
         
         user = await current_db.crm_users.find_one({"email": payload.get("email")})
@@ -203,7 +203,7 @@ async def init_payment_public(payment_request: PaymentInitRequest):
         )
     
     current_db = get_db()
-    if not current_db:
+    if current_db is None:
         raise HTTPException(status_code=500, detail="Database not configured")
     
     # Generate payment reference
@@ -287,7 +287,7 @@ async def init_payment(
         )
     
     current_db = get_db()
-    if not current_db:
+    if current_db is None:
         raise HTTPException(status_code=500, detail="Database not configured")
     
     # Use the public endpoint logic
@@ -359,7 +359,7 @@ async def monetico_notify(request: Request):
     
     # Find payment in DB
     current_db = get_db()
-    if not current_db:
+    if current_db is None:
         logging.error("Database not configured")
         return {"status": "error", "message": "Database error"}
     
@@ -451,7 +451,7 @@ async def get_payment_status(
 ):
     """Get payment status"""
     current_db = get_db()
-    if not current_db:
+    if current_db is None:
         raise HTTPException(status_code=500, detail="Database not configured")
     
     payment = await current_db.payments.find_one({"payment_id": payment_id})
@@ -473,7 +473,7 @@ async def list_payments(
 ):
     """List payments"""
     current_db = get_db()
-    if not current_db:
+    if current_db is None:
         raise HTTPException(status_code=500, detail="Database not configured")
     
     query = {}

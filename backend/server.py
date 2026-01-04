@@ -526,8 +526,17 @@ async def get_contacts():
         raise HTTPException(status_code=503, detail="Database not configured")
     contacts = await db.contacts.find({}, {"_id": 0}).to_list(1000)
     for contact in contacts:
-        if isinstance(contact['timestamp'], str):
-            contact['timestamp'] = datetime.fromisoformat(contact['timestamp'])
+        ts = contact.get('timestamp')
+        if ts is None:
+            contact['timestamp'] = datetime.now(timezone.utc)
+            continue
+        if isinstance(ts, str):
+            try:
+                contact['timestamp'] = datetime.fromisoformat(ts)
+            except ValueError:
+                contact['timestamp'] = datetime.now(timezone.utc)
+        elif not isinstance(ts, datetime):
+            contact['timestamp'] = datetime.now(timezone.utc)
     return contacts
 
 

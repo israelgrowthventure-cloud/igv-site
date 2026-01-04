@@ -250,7 +250,7 @@ const UsersTab = ({ t }) => {
         updateData.password = formData.password;
       }
       
-      await api.put(`/api/admin/users/${editingUser._id}`, updateData);
+      await api.put(`/api/admin/users/${editingUser.id}`, updateData);
       toast.success('Utilisateur mis à jour avec succès');
       setShowEditModal(false);
       setEditingUser(null);
@@ -567,7 +567,7 @@ const UsersTab = ({ t }) => {
                           <Edit className="w-4 h-4" />
                         </button>
                         <button
-                          onClick={() => handleDelete(user._id)}
+                          onClick={() => handleDelete(user.id)}
                           disabled={loadingAction}
                           className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
                           title="Désactiver"

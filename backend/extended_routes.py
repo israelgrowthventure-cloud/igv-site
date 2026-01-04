@@ -580,67 +580,7 @@ async def generate_pdf(request: PDFGenerateRequest, response: Response):
         logging.error(f"Error generating PDF: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
-# Email PDF endpoint
-@router.post("/email/send-pdf")
-async def email_pdf(request: EmailPDFRequest, background_tasks: BackgroundTasks):
-    """
-    Generate and email PDF to user
-    """
-    try:
-        # Check email libraries first
-        if not EMAIL_LIBS_AVAILABLE:
-            return {
-                "success": False,
-                "error": "Email functionality not available",
-                "stage": "smtp",
-                "detail": "Email libraries (aiosmtplib) not installed on server"
-            }
-        
-        if not (SMTP_HOST and SMTP_USER and SMTP_PASSWORD):
-            return {
-                "success": False,
-                "error": "SMTP not configured",
-                "stage": "smtp",
-                "detail": "SMTP credentials missing in environment variables"
-            }
-        
-        # Generate PDF first
-        pdf_request = PDFGenerateRequest(
-            email=request.email,
-            brandName=request.brandName,
-            sector=request.sector,
-            country=request.country,
-            analysisText=request.analysis,
-            language=request.language
-        )
-        
-        pdf_result = await generate_pdf(pdf_request)
-        
-        if not pdf_result.get('success'):
-            return {
-                "success": False,
-                "error": "PDF generation failed",
-                "stage": "pdf"
-            }
-        
-        # Send email with PDF attachment (background task)
-        background_tasks.add_task(
-            send_pdf_email_task,
-            to_email=request.email,
-            brand_name=request.brandName,
-            pdf_base64=pdf_result['pdfBase64'],
-            filename=pdf_result['filename'],
-            language=request.language
-        )
-        
-        return {
-            "success": True,
-            "message": "PDF will be sent to your email shortly"
-        }
-        
-    except Exception as e:
-        logging.error(f"Error emailing PDF: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
+# REMOVED: POST /email/send-pdf - now handled by mini_analysis_routes.py (duplicate removed)
 
 # Google Calendar event creation
 @router.post("/calendar/create-event")

@@ -228,24 +228,39 @@ async def delete_user(user_id: str, user: Dict = Depends(require_admin)):
         # Users now use UUID "id" field instead of MongoDB "_id"
         # Check if user exists by UUID id (try both id field and _id for backward compatibility)
         logging.info(f"DELETE user attempt: user_id={user_id}")
+        
+        # Strategy 1: Search by UUID "id" field (new users created with POST /users)
         existing_user = await current_db.crm_users.find_one({"id": user_id})
-        logging.info(f"Query {{\"id\": \"{user_id}\"}} returned: {existing_user is not None}")
+        logging.info(f"Strategy 1 - Query {{\"id\": \"{user_id}\"}} returned: {existing_user is not None}")
         
         if not existing_user:
-            # Fallback to MongoDB _id for old users
-            logging.info(f"Trying fallback to MongoDB _id...")
+            # Strategy 2: Try MongoDB _id (old users without "id" field)
+            logging.info(f"Strategy 2 - Trying MongoDB _id fallback...")
             try:
                 obj_id = ObjectId(user_id)
                 existing_user = await current_db.crm_users.find_one({"_id": obj_id})
-                logging.info(f"Fallback query {{\"_id\": ObjectId(\"{user_id}\")}} returned: {existing_user is not None}")
+                logging.info(f"Strategy 2 - Query {{\"_id\": ObjectId(\"{user_id}\")}} returned: {existing_user is not None}")
             except Exception as e:
-                logging.warning(f"ObjectId conversion failed: {e}")
+                logging.warning(f"Strategy 2 - ObjectId conversion failed (normal if user_id is UUID): {e}")
         
         if not existing_user:
-            # DEBUG: List all users to see what's in DB
-            all_users = await current_db.crm_users.find({}).limit(5).to_list(5)
-            logging.error(f"User {user_id} not found. Sample users in DB: {[{'id': u.get('id'), '_id': str(u.get('_id')), 'email': u.get('email')} for u in all_users]}")
-            raise HTTPException(status_code=404, detail="User not found")
+            # Strategy 3: GET endpoint returns user.id = str(_id) for old users
+            # We need to find user where str(_id) matches user_id
+            logging.info(f"Strategy 3 - Searching all users for str(_id) match...")
+            all_users = await current_db.crm_users.find({}).to_list(None)
+            for u in all_users:
+                # Replicate GET endpoint logic: id = u.get("id", str(u["_id"]))
+                user_id_from_db = u.get("id", str(u["_id"]))
+                if user_id_from_db == user_id:
+                    existing_user = u
+                    logging.info(f"Strategy 3 - Found user via str(_id) match: email={u.get('email')}")
+                    break
+            
+            if not existing_user:
+                # DEBUG: Show sample users to diagnose
+                logging.error(f"All strategies failed for user_id={user_id}. Sample users: " +
+                             f"{[{'id': u.get('id'), '_id': str(u.get('_id')), 'email': u.get('email')} for u in all_users[:5]]}")
+                raise HTTPException(status_code=404, detail="User not found")
         
         # Prevent self-deletion
         if user_id == user["id"] or (existing_user.get("id") == user["id"]):

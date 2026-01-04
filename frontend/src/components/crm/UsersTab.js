@@ -21,6 +21,11 @@ const UserModal = ({ isEdit, initialData, onSubmit, onClose, loadingAction }) =>
     onSubmit(localFormData);
   };
 
+  // Prevent focus loss by using controlled inputs with stable references
+  const handleInputChange = (field, value) => {
+    setLocalFormData(prev => ({ ...prev, [field]: value }));
+  };
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
@@ -42,7 +47,7 @@ const UserModal = ({ isEdit, initialData, onSubmit, onClose, loadingAction }) =>
               <input
                 type="email"
                 value={localFormData.email}
-                onChange={(e) => setLocalFormData({ ...localFormData, email: e.target.value })}
+                onChange={(e) => handleInputChange('email', e.target.value)}
                 required
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                 placeholder="utilisateur@exemple.com"
@@ -71,7 +76,7 @@ const UserModal = ({ isEdit, initialData, onSubmit, onClose, loadingAction }) =>
             <input
               type="text"
               value={localFormData.first_name}
-              onChange={(e) => setLocalFormData({ ...localFormData, first_name: e.target.value })}
+              onChange={(e) => handleInputChange('first_name', e.target.value)}
               required
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
               placeholder="Jean"
@@ -85,7 +90,7 @@ const UserModal = ({ isEdit, initialData, onSubmit, onClose, loadingAction }) =>
             <input
               type="text"
               value={localFormData.last_name}
-              onChange={(e) => setLocalFormData({ ...localFormData, last_name: e.target.value })}
+              onChange={(e) => handleInputChange('last_name', e.target.value)}
               required
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
               placeholder="Dupont"
@@ -100,7 +105,7 @@ const UserModal = ({ isEdit, initialData, onSubmit, onClose, loadingAction }) =>
               <input
                 type="password"
                 value={localFormData.password}
-                onChange={(e) => setLocalFormData({ ...localFormData, password: e.target.value })}
+                onChange={(e) => handleInputChange('password', e.target.value)}
                 required
                 minLength={6}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
@@ -117,7 +122,7 @@ const UserModal = ({ isEdit, initialData, onSubmit, onClose, loadingAction }) =>
               <input
                 type="password"
                 value={localFormData.password}
-                onChange={(e) => setLocalFormData({ ...localFormData, password: e.target.value })}
+                onChange={(e) => handleInputChange('password', e.target.value)}
                 minLength={6}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                 placeholder="Laisser vide pour ne pas modifier"
@@ -131,7 +136,7 @@ const UserModal = ({ isEdit, initialData, onSubmit, onClose, loadingAction }) =>
             </label>
             <select
               value={localFormData.role}
-              onChange={(e) => setLocalFormData({ ...localFormData, role: e.target.value })}
+              onChange={(e) => handleInputChange('role', e.target.value)}
               required
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
             >
@@ -146,7 +151,7 @@ const UserModal = ({ isEdit, initialData, onSubmit, onClose, loadingAction }) =>
               <input
                 type="checkbox"
                 checked={localFormData.is_active !== false}
-                onChange={(e) => setLocalFormData({ ...localFormData, is_active: e.target.checked })}
+                onChange={(e) => handleInputChange('is_active', e.target.checked)}
                 className="h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-2 focus:ring-blue-500"
               />
               <label className="ml-2 text-sm text-gray-700">

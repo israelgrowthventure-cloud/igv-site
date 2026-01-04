@@ -200,10 +200,8 @@ const MiniAnalysis = () => {
       
       toast.dismiss(loadingToastId);
       
-      // Download PDF
-      if (pdfData.pdfUrl) {
-        window.open(pdfData.pdfUrl, '_blank');
-      } else if (pdfData.pdfBase64) {
+      // Download PDF - check pdfBase64 first (backend returns this)
+      if (pdfData.pdfBase64) {
         // Create blob from base64 and download
         const blob = base64ToBlob(pdfData.pdfBase64, 'application/pdf');
         const url = window.URL.createObjectURL(blob);
@@ -214,9 +212,13 @@ const MiniAnalysis = () => {
         a.click();
         window.URL.revokeObjectURL(url);
         document.body.removeChild(a);
+        toast.success(t('miniAnalysis.toast.pdfDownloaded'));
+      } else if (pdfData.pdfUrl) {
+        window.open(pdfData.pdfUrl, '_blank');
+        toast.success(t('miniAnalysis.toast.pdfDownloaded'));
+      } else {
+        throw new Error('No PDF data received');
       }
-      
-      toast.success(t('miniAnalysis.toast.pdfDownloaded'));
     } catch (error) {
       console.error('Error generating PDF:', error);
       toast.dismiss(loadingToastId);

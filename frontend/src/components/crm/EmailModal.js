@@ -251,7 +251,7 @@ const EmailModal = ({ contact, onClose, t, language = 'fr' }) => {
         contact_id: contact._id || contact.contact_id,
         to_email: contact.email,
         subject,
-        body,
+        message: body,  // Backend expects 'message' not 'body'
         template_id: selectedTemplate?.id
       });
       toast.success(t('admin.crm.emails.sent_success'));

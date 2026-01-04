@@ -286,12 +286,12 @@ class ContactForm(BaseModel):
 class ContactResponse(BaseModel):
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    name: str
+    name: Optional[str] = None
     email: str
     company: Optional[str] = None
     phone: Optional[str] = None
-    message: str
-    language: str
+    message: Optional[str] = None
+    language: str = "fr"
     timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class CartItem(BaseModel):

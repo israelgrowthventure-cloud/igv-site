@@ -802,63 +802,9 @@ async def get_stats(user: Dict = Depends(get_current_user)):
         }
 
 
-@api_router.post("/admin/users", status_code=201)
-async def create_admin_user(user_data: AdminUserCreate, current_user: Dict = Depends(get_current_user)):
-    """Create new admin user (admin only)"""
-    if db is None:
-        raise HTTPException(status_code=503, detail="Database not configured")
-    
-    if current_user['role'] != 'admin':
-        raise HTTPException(status_code=403, detail="Only admins can create users")
-    
-    # Validate role (support commercial role used by admin_user_routes)
-    if user_data.role not in ['admin', 'commercial', 'sales', 'viewer']:
-        raise HTTPException(status_code=400, detail="Invalid role")
-    
-    # Check if user already exists
-    existing = await db.users.find_one({"email": user_data.email})
-    if existing:
-        raise HTTPException(status_code=409, detail="User already exists")
-    
-    # Create user
-    new_user = AdminUser(
-        email=user_data.email,
-        first_name=user_data.first_name,
-        last_name=user_data.last_name,
-        password_hash=hash_password(user_data.password),
-        role=user_data.role
-    )
-    
-    await db.users.insert_one(new_user.model_dump())
-    
-    return {
-        "message": "User created successfully",
-        "email": new_user.email,
-        "first_name": new_user.first_name,
-        "last_name": new_user.last_name,
-        "role": new_user.role
-    }
-
-
-@api_router.get("/admin/users")
-async def list_admin_users(current_user: Dict = Depends(get_current_user)):
-    """List all admin users (admin only)"""
-    if db is None:
-        raise HTTPException(status_code=503, detail="Database not configured")
-    
-    if current_user['role'] != 'admin':
-        raise HTTPException(status_code=403, detail="Only admins can view users")
-    
-    users = await db.users.find(
-        {},
-        {"password_hash": 0, "_id": 0}
-    ).sort("created_at", -1).to_list(100)
-    
-    return {"users": users}
-
-
-# REMOVED: Duplicate DELETE endpoint - now handled by admin_user_routes.py
-# Old endpoint used db.users, new one uses db.crm_users (correct collection)
+# REMOVED: POST /admin/users - now handled by admin_user_routes.py (returns proper user_id + user object)
+# REMOVED: GET /admin/users - now handled by admin_user_routes.py (uses crm_users collection)
+# Old endpoints used db.users collection, new ones use db.crm_users (correct for CRM)
 
 # ============================================================
 # Monetico Payment Endpoints

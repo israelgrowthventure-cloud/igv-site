@@ -64,8 +64,9 @@ async def get_all_users(user: Dict = Depends(require_admin)):
         result = []
         for u in users:
             # Never return password hash
+            # Users now use UUID "id" field instead of MongoDB "_id"
             user_data = {
-                "_id": str(u["_id"]),
+                "_id": u.get("id", str(u["_id"])),  # Return UUID id if exists, fallback to MongoDB _id for old users
                 "email": u["email"],
                 "first_name": u.get("first_name", ""),
                 "last_name": u.get("last_name", ""),
@@ -101,8 +102,10 @@ async def create_user(user_data: UserCreate, user: Dict = Depends(require_admin)
         # Hash password with bcrypt
         password_hash = bcrypt.hashpw(user_data.password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
         
-        # Create user document
+        # Create user document with UUID id (consistent with other users)
+        import uuid
         user_doc = {
+            "id": str(uuid.uuid4()),  # Generate UUID for user id
             "email": user_data.email,
             "first_name": user_data.first_name,
             "last_name": user_data.last_name,
@@ -117,7 +120,7 @@ async def create_user(user_data: UserCreate, user: Dict = Depends(require_admin)
         }
         
         result = await current_db.crm_users.insert_one(user_doc)
-        user_id = str(result.inserted_id)
+        user_id = user_doc["id"]  # Use UUID id instead of MongoDB _id
         
         logging.info(f"User created: {user_data.email} by {user['email']}")
         
@@ -152,14 +155,17 @@ async def update_user(user_id: str, update_data: UserUpdate, user: Dict = Depend
         raise HTTPException(status_code=500, detail="Database not configured")
     
     try:
-        # Validate ObjectId
-        try:
-            obj_id = ObjectId(user_id)
-        except:
-            raise HTTPException(status_code=400, detail="Invalid user ID format")
+        # Users now use UUID "id" field instead of MongoDB "_id"
+        # Check if user exists by UUID id (try both id field and _id for backward compatibility)
+        existing_user = await current_db.crm_users.find_one({"id": user_id})
+        if not existing_user:
+            # Fallback to MongoDB _id for old users
+            try:
+                obj_id = ObjectId(user_id)
+                existing_user = await current_db.crm_users.find_one({"_id": obj_id})
+            except:
+                pass
         
-        # Check if user exists
-        existing_user = await current_db.crm_users.find_one({"_id": obj_id})
         if not existing_user:
             raise HTTPException(status_code=404, detail="User not found")
         
@@ -178,9 +184,10 @@ async def update_user(user_id: str, update_data: UserUpdate, user: Dict = Depend
         
         update_dict["updated_at"] = datetime.now(timezone.utc)
         
-        # Update user
+        # Update user (use the same query that found the user)
+        query = {"id": existing_user.get("id")} if "id" in existing_user else {"_id": existing_user["_id"]}
         await current_db.crm_users.update_one(
-            {"_id": obj_id},
+            query,
             {"$set": update_dict}
         )
         
@@ -216,24 +223,28 @@ async def delete_user(user_id: str, user: Dict = Depends(require_admin)):
         raise HTTPException(status_code=500, detail="Database not configured")
     
     try:
-        # Validate ObjectId
-        try:
-            obj_id = ObjectId(user_id)
-        except:
-            raise HTTPException(status_code=400, detail="Invalid user ID format")
+        # Users now use UUID "id" field instead of MongoDB "_id"
+        # Check if user exists by UUID id (try both id field and _id for backward compatibility)
+        existing_user = await current_db.crm_users.find_one({"id": user_id})
+        if not existing_user:
+            # Fallback to MongoDB _id for old users
+            try:
+                obj_id = ObjectId(user_id)
+                existing_user = await current_db.crm_users.find_one({"_id": obj_id})
+            except:
+                pass
         
-        # Check if user exists
-        existing_user = await current_db.crm_users.find_one({"_id": obj_id})
         if not existing_user:
             raise HTTPException(status_code=404, detail="User not found")
         
         # Prevent self-deletion
-        if str(obj_id) == user["id"]:
+        if user_id == user["id"] or (existing_user.get("id") == user["id"]):
             raise HTTPException(status_code=400, detail="Cannot delete your own account")
         
         # Soft delete (set is_active to False)
+        query = {"id": existing_user.get("id")} if "id" in existing_user else {"_id": existing_user["_id"]}
         await current_db.crm_users.update_one(
-            {"_id": obj_id},
+            query,
             {"$set": {
                 "is_active": False,
                 "deleted_at": datetime.now(timezone.utc),

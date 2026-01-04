@@ -58,8 +58,9 @@ async def get_all_users(user: Dict = Depends(require_admin)):
         raise HTTPException(status_code=500, detail="Database not configured")
     
     try:
-        # Get users from crm_users collection
-        users = await current_db.crm_users.find({}).sort("created_at", -1).to_list(None)
+        # Get ONLY ACTIVE users from crm_users collection
+        # Deleted users have is_active=False and should not appear in the list
+        users = await current_db.crm_users.find({"is_active": {"$ne": False}}).sort("created_at", -1).to_list(None)
         
         result = []
         for u in users:

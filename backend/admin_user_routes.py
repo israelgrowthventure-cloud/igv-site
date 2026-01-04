@@ -64,9 +64,11 @@ async def get_all_users(user: Dict = Depends(require_admin)):
         result = []
         for u in users:
             # Never return password hash
-            # Users now use UUID "id" field instead of MongoDB "_id"
+            # Return both "_id" and "id" for frontend/backend compatibility
+            user_id = u.get("id", str(u["_id"]))  # UUID id if exists, fallback to MongoDB _id
             user_data = {
-                "_id": u.get("id", str(u["_id"])),  # Return UUID id if exists, fallback to MongoDB _id for old users
+                "_id": user_id,  # For frontend (uses user._id)
+                "id": user_id,   # For API consistency
                 "email": u["email"],
                 "first_name": u.get("first_name", ""),
                 "last_name": u.get("last_name", ""),

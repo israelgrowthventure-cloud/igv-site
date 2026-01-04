@@ -4,6 +4,190 @@ import { toast } from 'sonner';
 import api from '../../utils/api';
 import { SkeletonTable } from './Skeleton';
 
+// Separate Modal Component to prevent re-render issues
+const UserModal = ({ isEdit, initialData, onSubmit, onClose, loadingAction }) => {
+  const [localFormData, setLocalFormData] = useState(initialData || {
+    email: '',
+    first_name: '',
+    last_name: '',
+    password: '',
+    role: 'commercial',
+    is_active: true,
+    assigned_leads: []
+  });
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSubmit(localFormData);
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-lg font-semibold">
+            {isEdit ? 'Modifier l\'utilisateur' : 'Nouvel utilisateur'}
+          </h3>
+          <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded" type="button">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+        
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {!isEdit && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Email *
+              </label>
+              <input
+                type="email"
+                value={localFormData.email}
+                onChange={(e) => setLocalFormData({ ...localFormData, email: e.target.value })}
+                required
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                placeholder="utilisateur@exemple.com"
+              />
+            </div>
+          )}
+          
+          {isEdit && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Email
+              </label>
+              <input
+                type="email"
+                value={localFormData.email}
+                disabled
+                className="w-full px-3 py-2 border border-gray-200 rounded-lg bg-gray-50 text-gray-600"
+              />
+            </div>
+          )}
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Prénom *
+            </label>
+            <input
+              type="text"
+              value={localFormData.first_name}
+              onChange={(e) => setLocalFormData({ ...localFormData, first_name: e.target.value })}
+              required
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              placeholder="Jean"
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Nom *
+            </label>
+            <input
+              type="text"
+              value={localFormData.last_name}
+              onChange={(e) => setLocalFormData({ ...localFormData, last_name: e.target.value })}
+              required
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              placeholder="Dupont"
+            />
+          </div>
+          
+          {!isEdit && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Mot de passe *
+              </label>
+              <input
+                type="password"
+                value={localFormData.password}
+                onChange={(e) => setLocalFormData({ ...localFormData, password: e.target.value })}
+                required
+                minLength={6}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                placeholder="Min. 6 caractères"
+              />
+            </div>
+          )}
+          
+          {isEdit && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Nouveau mot de passe (optionnel)
+              </label>
+              <input
+                type="password"
+                value={localFormData.password}
+                onChange={(e) => setLocalFormData({ ...localFormData, password: e.target.value })}
+                minLength={6}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                placeholder="Laisser vide pour ne pas modifier"
+              />
+            </div>
+          )}
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Rôle *
+            </label>
+            <select
+              value={localFormData.role}
+              onChange={(e) => setLocalFormData({ ...localFormData, role: e.target.value })}
+              required
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="commercial">Commercial</option>
+              <option value="admin">Admin</option>
+              <option value="viewer">Viewer</option>
+            </select>
+          </div>
+          
+          {isEdit && (
+            <div className="flex items-center">
+              <input
+                type="checkbox"
+                checked={localFormData.is_active !== false}
+                onChange={(e) => setLocalFormData({ ...localFormData, is_active: e.target.checked })}
+                className="h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-2 focus:ring-blue-500"
+              />
+              <label className="ml-2 text-sm text-gray-700">
+                Compte actif
+              </label>
+            </div>
+          )}
+          
+          <div className="flex gap-2 pt-4">
+            <button
+              type="button"
+              onClick={onClose}
+              disabled={loadingAction}
+              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50"
+            >
+              Annuler
+            </button>
+            <button
+              type="submit"
+              disabled={loadingAction}
+              className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 flex items-center justify-center gap-2"
+            >
+              {loadingAction ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Enregistrement...</span>
+                </>
+              ) : (
+                <>
+                  <Save className="w-4 h-4" />
+                  <span>{isEdit ? 'Modifier' : 'Créer'}</span>
+                </>
+              )}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
 const UsersTab = ({ t }) => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -12,14 +196,6 @@ const UsersTab = ({ t }) => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [formData, setFormData] = useState({
-    email: '',
-    first_name: '',
-    last_name: '',
-    password: '',
-    role: 'commercial',
-    assigned_leads: []
-  });
 
   useEffect(() => {
     fetchUsers();
@@ -38,9 +214,7 @@ const UsersTab = ({ t }) => {
     }
   };
 
-  const handleCreate = async (e) => {
-    e.preventDefault();
-    
+  const handleCreate = async (formData) => {
     if (!formData.email || !formData.first_name || !formData.last_name || !formData.password) {
       toast.error('Tous les champs obligatoires doivent être remplis');
       return;
@@ -51,7 +225,6 @@ const UsersTab = ({ t }) => {
       await api.post('/api/admin/users', formData);
       toast.success('Utilisateur créé avec succès');
       setShowCreateModal(false);
-      setFormData({ email: '', first_name: '', last_name: '', password: '', role: 'commercial', assigned_leads: [] });
       await fetchUsers();
     } catch (error) {
       const errorMsg = error.response?.data?.detail || 'Erreur lors de la création';
@@ -61,9 +234,7 @@ const UsersTab = ({ t }) => {
     }
   };
 
-  const handleEdit = async (e) => {
-    e.preventDefault();
-    
+  const handleEdit = async (formData) => {
     try {
       setLoadingAction(true);
       const updateData = {
@@ -71,14 +242,18 @@ const UsersTab = ({ t }) => {
         last_name: formData.last_name,
         role: formData.role,
         is_active: formData.is_active,
-        assigned_leads: formData.assigned_leads
+        assigned_leads: formData.assigned_leads || []
       };
+      
+      // Include password only if provided
+      if (formData.password) {
+        updateData.password = formData.password;
+      }
       
       await api.put(`/api/admin/users/${editingUser._id}`, updateData);
       toast.success('Utilisateur mis à jour avec succès');
       setShowEditModal(false);
       setEditingUser(null);
-      setFormData({ email: '', first_name: '', last_name: '', password: '', role: 'commercial', assigned_leads: [] });
       await fetchUsers();
     } catch (error) {
       const errorMsg = error.response?.data?.detail || 'Erreur lors de la mise à jour';
@@ -108,15 +283,6 @@ const UsersTab = ({ t }) => {
 
   const openEditModal = (user) => {
     setEditingUser(user);
-    setFormData({
-      email: user.email || '',
-      first_name: user.first_name || '',
-      last_name: user.last_name || '',
-      password: '', // Never pre-fill password
-      role: user.role || 'commercial',
-      is_active: user.is_active !== false,
-      assigned_leads: user.assigned_leads || []
-    });
     setShowEditModal(true);
   };
 
@@ -464,17 +630,37 @@ const UsersTab = ({ t }) => {
       {/* Modals */}
       {showCreateModal && (
         <UserModal 
-          isEdit={false} 
+          isEdit={false}
+          initialData={{
+            email: '',
+            first_name: '',
+            last_name: '',
+            password: '',
+            role: 'commercial',
+            is_active: true,
+            assigned_leads: []
+          }}
           onSubmit={handleCreate} 
-          onClose={() => setShowCreateModal(false)} 
+          onClose={() => setShowCreateModal(false)}
+          loadingAction={loadingAction}
         />
       )}
 
-      {showEditModal && (
+      {showEditModal && editingUser && (
         <UserModal 
-          isEdit={true} 
+          isEdit={true}
+          initialData={{
+            email: editingUser.email || '',
+            first_name: editingUser.first_name || '',
+            last_name: editingUser.last_name || '',
+            password: '',
+            role: editingUser.role || 'commercial',
+            is_active: editingUser.is_active !== false,
+            assigned_leads: editingUser.assigned_leads || []
+          }}
           onSubmit={handleEdit} 
-          onClose={() => { setShowEditModal(false); setEditingUser(null); }} 
+          onClose={() => { setShowEditModal(false); setEditingUser(null); }}
+          loadingAction={loadingAction}
         />
       )}
     </div>

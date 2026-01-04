@@ -138,6 +138,14 @@ async def create_user(user_data: UserCreate, user: Dict = Depends(require_admin)
         return {
             "success": True,
             "user_id": user_id,
+            "user": {
+                "id": user_id,
+                "_id": user_id,
+                "email": user_data.email,
+                "first_name": user_data.first_name,
+                "last_name": user_data.last_name,
+                "role": user_data.role
+            },
             "message": "User created successfully"
         }
     
@@ -225,42 +233,27 @@ async def delete_user(user_id: str, user: Dict = Depends(require_admin)):
         raise HTTPException(status_code=500, detail="Database not configured")
     
     try:
-        # Users now use UUID "id" field instead of MongoDB "_id"
-        # Check if user exists by UUID id (try both id field and _id for backward compatibility)
         logging.info(f"DELETE user attempt: user_id={user_id}")
         
-        # Strategy 1: Search by UUID "id" field (new users created with POST /users)
+        # Search user - try UUID id field first, then MongoDB _id
+        existing_user = None
+        
+        # Try 1: Search by "id" field (new users with UUID)
         existing_user = await current_db.crm_users.find_one({"id": user_id})
-        logging.info(f"Strategy 1 - Query {{\"id\": \"{user_id}\"}} returned: {existing_user is not None}")
         
         if not existing_user:
-            # Strategy 2: Try MongoDB _id (old users without "id" field)
-            logging.info(f"Strategy 2 - Trying MongoDB _id fallback...")
+            # Try 2: Search by MongoDB _id (old users or if id is actually an ObjectId)
             try:
                 obj_id = ObjectId(user_id)
                 existing_user = await current_db.crm_users.find_one({"_id": obj_id})
-                logging.info(f"Strategy 2 - Query {{\"_id\": ObjectId(\"{user_id}\")}} returned: {existing_user is not None}")
-            except Exception as e:
-                logging.warning(f"Strategy 2 - ObjectId conversion failed (normal if user_id is UUID): {e}")
+            except:
+                pass  # Not a valid ObjectId, skip
         
         if not existing_user:
-            # Strategy 3: GET endpoint returns user.id = str(_id) for old users
-            # We need to find user where str(_id) matches user_id
-            logging.info(f"Strategy 3 - Searching all users for str(_id) match...")
-            all_users = await current_db.crm_users.find({}).to_list(None)
-            for u in all_users:
-                # Replicate GET endpoint logic: id = u.get("id", str(u["_id"]))
-                user_id_from_db = u.get("id", str(u["_id"]))
-                if user_id_from_db == user_id:
-                    existing_user = u
-                    logging.info(f"Strategy 3 - Found user via str(_id) match: email={u.get('email')}")
-                    break
-            
-            if not existing_user:
-                # DEBUG: Show sample users to diagnose
-                logging.error(f"All strategies failed for user_id={user_id}. Sample users: " +
-                             f"{[{'id': u.get('id'), '_id': str(u.get('_id')), 'email': u.get('email')} for u in all_users[:5]]}")
-                raise HTTPException(status_code=404, detail="User not found")
+            # Try 3: Search by email (fallback - in case GET returns something else)
+            # This shouldn't be needed but we're being defensive
+            logging.error(f"User not found with id={user_id}")
+            raise HTTPException(status_code=404, detail="User not found")
         
         # Prevent self-deletion
         if user_id == user["id"] or (existing_user.get("id") == user["id"]):

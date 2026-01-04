@@ -275,22 +275,26 @@ async def create_lead_in_crm(lead_data: dict, request_id: str) -> dict:
 
 def prepare_hebrew_text(text: str) -> str:
     """
-    Prepare Hebrew text for PDF rendering with full BiDi support
+    Prepare Hebrew text for PDF rendering - reshape only (no BiDi inversion)
     
-    CRITICAL: ReportLab wordWrap='RTL' only reverses WORD order, not LETTER order!
-    We need get_display() to reverse individual letters within words.
-    But we must NOT use wordWrap='RTL' to avoid double word-reversal.
+    CRITICAL: ReportLab with alignment=TA_RIGHT handles RTL text direction automatically.
+    Using get_display() causes DOUBLE REVERSAL:
+      1. get_display() reverses text for RTL visual order
+      2. ReportLab with TA_RIGHT reverses again
+      = Result: Text displayed LEFT-TO-RIGHT (backwards/garbled)
+    
+    SOLUTION: Only use arabic_reshaper to fix character forms.
+    ReportLab handles the RTL ordering with alignment=TA_RIGHT.
     """
     if not BIDI_AVAILABLE:
         return text
     
     try:
-        # Reshape characters (contextual letter forms) then reverse for visual display
+        # Only reshape characters (fix letter forms) - ReportLab handles RTL order
         reshaped_text = arabic_reshaper.reshape(text)
-        bidi_text = get_display(reshaped_text)
-        return bidi_text
+        return reshaped_text
     except Exception as e:
-        logging.warning(f"Hebrew BiDi conversion failed: {e}")
+        logging.warning(f"Hebrew character reshaping failed: {e}")
         return text
 
 

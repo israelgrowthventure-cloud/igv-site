@@ -32,6 +32,16 @@
       "collapse": "Réduire",
       "expand": "Développer"
     },
+    "common": {
+      "back_to_list": "← Retour à la liste",
+      "search": "Rechercher...",
+      "filter": "Filtrer",
+      "refresh": "Actualiser",
+      "save": "Enregistrer",
+      "cancel": "Annuler",
+      "delete": "Supprimer",
+      "edit": "Modifier"
+    },
     "search": {
       "placeholder": "Rechercher..."
     },

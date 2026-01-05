@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
   LayoutDashboard,
@@ -28,6 +28,7 @@ import {
 const Sidebar = ({ collapsed, onToggle }) => {
   const { t } = useTranslation();
   const location = useLocation();
+  const navigate = useNavigate();
 
   const navigationItems = [
     { id: 'dashboard', path: '/admin/crm/dashboard', icon: LayoutDashboard, label: t('crm.nav.dashboard', 'Tableau de bord') },
@@ -81,10 +82,20 @@ const Sidebar = ({ collapsed, onToggle }) => {
             
             return (
               <li key={item.id}>
-                <Link
-                  to={item.path}
+                <button
+                  onClick={() => {
+                    // Force navigation even if already on the same path
+                    // This triggers useEffect in LeadsPage to reset selectedItem
+                    if (location.pathname === item.path) {
+                      // Dispatch custom event for pages to listen
+                      window.dispatchEvent(new CustomEvent('resetLeadView'));
+                      navigate(item.path, { replace: true });
+                    } else {
+                      navigate(item.path);
+                    }
+                  }}
                   className={`
-                    flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-colors
+                    w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-colors
                     ${active 
                       ? 'bg-blue-600 text-white border-l-4 border-blue-400' 
                       : 'text-gray-300 hover:bg-gray-800 hover:text-white'
@@ -97,7 +108,7 @@ const Sidebar = ({ collapsed, onToggle }) => {
                   {!collapsed && (
                     <span className="text-sm font-medium">{item.label}</span>
                   )}
-                </Link>
+                </button>
               </li>
             );
           })}

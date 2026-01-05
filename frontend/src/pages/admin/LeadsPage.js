@@ -26,6 +26,21 @@ const LeadsPage = () => {
     }
   }, [location.pathname]);
 
+  // Listen for custom event from Sidebar when clicking on Leads menu
+  useEffect(() => {
+    const handleResetView = () => {
+      setSelectedItem(null);
+    };
+    
+    window.addEventListener('resetLeadView', handleResetView);
+    window.addEventListener('popstate', handleResetView);
+    
+    return () => {
+      window.removeEventListener('resetLeadView', handleResetView);
+      window.removeEventListener('popstate', handleResetView);
+    };
+  }, []);
+
   useEffect(() => {
     loadLeads();
   }, [searchTerm, filters]);

@@ -689,6 +689,7 @@
         "actions": "Actions",
         "export": "Exporter",
         "back": "Retour au CRM",
+        "back_to_list": "Retour à la liste",
         "loading": "Chargement...",
         "error": "Une erreur est survenue",
         "no_data": "Aucune donnée",

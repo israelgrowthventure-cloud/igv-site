@@ -1,0 +1,104 @@
+﻿=== AUDIT CRM IGV - CONTEXTE ===
+Date: 2026-01-04 19:33:25
+PWD: C:\Users\PC\Desktop\IGV\igv site\igv-site
+
+DIR ROOT:
+
+Name                                     Length LastWriteTime      
+----                                     ------ -------------      
+.github                                         13/12/2025 20:50:11
+.husky                                          02/01/2026 04:13:29
+audit_out                                       04/01/2026 16:28:00
+backend                                         04/01/2026 15:17:15
+frontend                                        02/01/2026 04:09:22
+node_modules                                    02/01/2026 04:13:21
+.gitignore                               410    14/12/2025 12:29:36
+analyze_pdf_content.py                   1664   04/01/2026 16:03:55
+check_deploy_status.py                   4948   04/01/2026 16:03:55
+crm_audit_results.json                   11155  04/01/2026 16:03:55
+deploy.ps1                               2373   02/01/2026 01:06:48
+deploy.sh                                1607   02/01/2026 01:06:48
+diagnostic_delete_user.py                4096   04/01/2026 16:03:55
+diagnostic_old_users.py                  4180   04/01/2026 16:03:55
+ENV_VARS_REQUIRED.md                     7706   02/01/2026 06:52:24
+mini_analyse_he_prod_1767500474.pdf      265425 04/01/2026 16:03:55
+mini_analyse_he_REEL_1767500870.pdf      264982 04/01/2026 16:03:55
+MISSION_STATUS.md                        7474   03/01/2026 23:39:57
+monitor_deploy.ps1                       13432  04/01/2026 07:12:29
+monitor_deploy.py                        14889  04/01/2026 06:57:00
+package-lock.json                        741    02/01/2026 04:13:21
+package.json                             627    02/01/2026 04:13:29
+PREUVE_PDF_HE_DOWNLOAD.pdf               146625 04/01/2026 05:12:21
+RAPPORT_AUDIT_BACKEND_CRM_20260104.md    10082  04/01/2026 16:03:55
+RAPPORT_AUDIT_CRM_FULL_20260104.md       3830   04/01/2026 16:27:32
+RAPPORT_AUDIT_CRM_PRODUCTION_20260104.md 16894  04/01/2026 16:03:55
+RAPPORT_VALIDATION_FINALE_20260104.md    8559   04/01/2026 05:14:41
+README.md                                3232   26/12/2025 00:14:19
+render.yaml                              2461   03/01/2026 19:15:33
+RENDER_ENV_VARS_REQUIRED.md              3714   02/01/2026 00:59:03
+test_backend_simple.py                   654    04/01/2026 16:03:55
+test_bugs_production_live.py             11496  04/01/2026 05:03:55
+test_create_delete_complete.py           5679   04/01/2026 16:03:55
+test_create_then_delete.py               1552   04/01/2026 05:20:26
+test_crm_email_final.py                  1232   04/01/2026 05:13:08
+test_crm_email_send.py                   1807   04/01/2026 16:03:55
+test_crm_local_audit.py                  9799   04/01/2026 16:03:55
+test_crm_production.ps1                  7873   04/01/2026 16:03:55
+test_crm_production_audit.py             23696  04/01/2026 16:03:55
+test_delete_force.py                     2818   04/01/2026 16:03:55
+test_delete_old_user.py                  1670   04/01/2026 16:03:55
+test_delete_user_bug.py                  1820   04/01/2026 05:19:37
+test_delete_user_final_proof.py          4431   04/01/2026 16:03:55
+test_delete_user_proof_final.py          4945   04/01/2026 16:03:55
+test_id_format.py                        1733   04/01/2026 16:03:55
+test_login_prod.py                       1802   04/01/2026 05:48:29
+test_minianalyse_he_complete_prod.py     9603   04/01/2026 06:20:37
+test_minianalyse_he_END_TO_END.py        7809   04/01/2026 06:27:18
+test_minianalyse_he_prod.py              4237   04/01/2026 06:08:11
+test_pdf_long_he.pdf                     152869 04/01/2026 06:11:42
+test_pdf_long_he.py                      5975   04/01/2026 06:11:38
+test_prospect_to_contact.py              4565   04/01/2026 06:24:12
+test_smtp_diagnostic.py                  1330   04/01/2026 06:29:24
+test_validation_post_correction.py       11871  04/01/2026 05:12:19
+
+
+
+
+DIR BACKEND:
+
+Name                    
+----                    
+assets                  
+fonts                   
+igv_internal            
+models                  
+prompts                 
+__pycache__             
+.deploy_trigger         
+.env                    
+.env.example            
+.gitignore              
+admin_routes.py         
+admin_user_routes.py    
+ai_routes.py            
+auth_middleware.py      
+check_mini_analyses.py  
+crm_complete_routes.py  
+crm_routes.py           
+DEPLOY_TRIGGER.txt      
+download_fonts.sh       
+extended_routes.py      
+gdpr_routes.py          
+invoice_routes.py       
+migrate_mini_analyses.py
+mini_analysis_routes.py 
+monetico_routes.py      
+quota_queue_routes.py   
+requirements.txt        
+server.py               
+test_crm_routes.py      
+test_gemini_multilang.py
+tracking_routes.py      
+
+
+

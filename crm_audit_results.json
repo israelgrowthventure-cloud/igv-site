@@ -1,0 +1,229 @@
+{
+  "api_base": "https://igv-cms-backend.onrender.com/api",
+  "login_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InBvc3RtYXN0ZXJAaXNyYWVsZ3Jvd3RodmVudHVyZS5jb20iLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3Njc2MTk5ODUsImlhdCI6MTc2NzUzMzU4NX0.i8u0wDdx9ZkCypRniIinA01vcas1yOIk9it9FLQBX30",
+  "tests": [
+    {
+      "test": "1. Identify API_BASE",
+      "status": "EXECUTING",
+      "timestamp": "2026-01-04T15:33:00.969751",
+      "details": "",
+      "payload": "",
+      "response": "",
+      "status_code": null
+    },
+    {
+      "test": "1.2 Login endpoint test",
+      "status": "PASS",
+      "timestamp": "2026-01-04T15:33:03.730104",
+      "details": "API_BASE confirmed: https://igv-cms-backend.onrender.com/api",
+      "payload": "",
+      "response": "",
+      "status_code": 200
+    },
+    {
+      "test": "2.A OpenAPI JSON",
+      "status": "EXECUTING",
+      "timestamp": "2026-01-04T15:33:03.732398",
+      "details": "",
+      "payload": "",
+      "response": "",
+      "status_code": null
+    },
+    {
+      "test": "2.A OpenAPI JSON",
+      "status": "FAIL",
+      "timestamp": "2026-01-04T15:33:04.615282",
+      "details": "URL: https://igv-cms-backend.onrender.com/api/openapi.json",
+      "payload": "",
+      "response": "{\"detail\":\"Not Found\"}",
+      "status_code": 404
+    },
+    {
+      "test": "3. Admin Login",
+      "status": "EXECUTING",
+      "timestamp": "2026-01-04T15:33:04.616679",
+      "details": "",
+      "payload": "",
+      "response": "",
+      "status_code": null
+    },
+    {
+      "test": "3. Admin Login",
+      "status": "PASS",
+      "timestamp": "2026-01-04T15:33:05.728810",
+      "details": "Token obtained: eyJhbGciOiJIUzI1NiIsInR5cCI6Ik...",
+      "payload": {
+        "email": "postmaster@israelgrowthventure.com",
+        "password": "Admin@igv2025#"
+      },
+      "response": "{\n  \"access_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InBvc3RtYXN0ZXJAaXNyYWVsZ3Jvd3RodmVudHVyZS5jb20iLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3Njc2MTk5ODUsImlhdCI6MTc2NzUzMzU4NX0.i8u0wDdx9ZkCypRniIinA01vcas1yOIk9it9FLQBX30\",\n  \"token_type\": \"bearer\",\n  \"role\": \"admin\"\n}",
+      "status_code": 200
+    },
+    {
+      "test": "4.A.1 List Users",
+      "status": "PASS",
+      "timestamp": "2026-01-04T15:33:07.159346",
+      "details": "Total users: 1",
+      "payload": "",
+      "response": "{\n  \"users\": [\n    {\n      \"_id\": \"74440eba-5f4c-41d8-8d29-8d2915feecf5\",\n      \"id\": \"74440eba-5f4c-41d8-8d29-8d2915feecf5\",\n      \"email\": \"postmaster@israelgrowthventure.com\",\n      \"first_name\": \"mickael\",\n      \"last_name\": \"benmoussa\",\n      \"role\": \"admin\",\n      \"is_active\": true,\n      \"assigned_leads\": [],\n      \"created_at\": \"2026-01-04T05:50:08.535000\",\n      \"last_login\": null\n    }\n  ],\n  \"total\": 1\n}",
+      "status_code": 200
+    },
+    {
+      "test": "4.A.2 Create User (commercial)",
+      "status": "PASS",
+      "timestamp": "2026-01-04T15:33:09.520258",
+      "details": "User created: 94582800-19b8-4fd1-ab95-5b2ece63b5ef",
+      "payload": {
+        "email": "test_user_commercial_1_1767533587@igvtest.com",
+        "first_name": "TestCommercial",
+        "last_name": "User1",
+        "password": "TestPass123!",
+        "role": "commercial"
+      },
+      "response": "{\n  \"success\": true,\n  \"user_id\": \"94582800-19b8-4fd1-ab95-5b2ece63b5ef\",\n  \"user\": {\n    \"id\": \"94582800-19b8-4fd1-ab95-5b2ece63b5ef\",\n    \"_id\": \"94582800-19b8-4fd1-ab95-5b2ece63b5ef\",\n    \"email\": \"test_user_commercial_1_1767533587@igvtest.com\",\n    \"first_name\": \"TestCommercial\",\n    \"last_name\": \"User1\",\n    \"role\": \"commercial\"\n  },\n  \"message\": \"User created successfully\"\n}",
+      "status_code": 201
+    },
+    {
+      "test": "4.A.2 Create User (admin)",
+      "status": "PASS",
+      "timestamp": "2026-01-04T15:33:12.203972",
+      "details": "User created: 7d528132-6fe1-48bf-a841-1de8a66f3f56",
+      "payload": {
+        "email": "test_user_admin_2_1767533589@igvtest.com",
+        "first_name": "TestAdmin",
+        "last_name": "User2",
+        "password": "TestPass123!",
+        "role": "admin"
+      },
+      "response": "{\n  \"success\": true,\n  \"user_id\": \"7d528132-6fe1-48bf-a841-1de8a66f3f56\",\n  \"user\": {\n    \"id\": \"7d528132-6fe1-48bf-a841-1de8a66f3f56\",\n    \"_id\": \"7d528132-6fe1-48bf-a841-1de8a66f3f56\",\n    \"email\": \"test_user_admin_2_1767533589@igvtest.com\",\n    \"first_name\": \"TestAdmin\",\n    \"last_name\": \"User2\",\n    \"role\": \"admin\"\n  },\n  \"message\": \"User created successfully\"\n}",
+      "status_code": 201
+    },
+    {
+      "test": "4.A.3 Update User",
+      "status": "PASS",
+      "timestamp": "2026-01-04T15:33:14.249834",
+      "details": "User ID: 94582800-19b8-4fd1-ab95-5b2ece63b5ef",
+      "payload": {
+        "first_name": "UpdatedFirst",
+        "last_name": "UpdatedLast"
+      },
+      "response": "{\"success\":true,\"message\":\"User updated successfully\"}",
+      "status_code": 200
+    },
+    {
+      "test": "4.A.4 Delete User",
+      "status": "PASS",
+      "timestamp": "2026-01-04T15:33:16.365055",
+      "details": "User ID: 94582800-19b8-4fd1-ab95-5b2ece63b5ef, Email: test_user_commercial_1_1767533587@igvtest.com",
+      "payload": "",
+      "response": "{\"success\":true,\"message\":\"User deleted successfully\"}",
+      "status_code": 200
+    },
+    {
+      "test": "4.A.4 Delete User",
+      "status": "PASS",
+      "timestamp": "2026-01-04T15:33:18.433659",
+      "details": "User ID: 7d528132-6fe1-48bf-a841-1de8a66f3f56, Email: test_user_admin_2_1767533589@igvtest.com",
+      "payload": "",
+      "response": "{\"success\":true,\"message\":\"User deleted successfully\"}",
+      "status_code": 200
+    },
+    {
+      "test": "4.A.1 List Users",
+      "status": "PASS",
+      "timestamp": "2026-01-04T15:33:19.844763",
+      "details": "Total users: 1",
+      "payload": "",
+      "response": "{\n  \"users\": [\n    {\n      \"_id\": \"74440eba-5f4c-41d8-8d29-8d2915feecf5\",\n      \"id\": \"74440eba-5f4c-41d8-8d29-8d2915feecf5\",\n      \"email\": \"postmaster@israelgrowthventure.com\",\n      \"first_name\": \"mickael\",\n      \"last_name\": \"benmoussa\",\n      \"role\": \"admin\",\n      \"is_active\": true,\n      \"assigned_leads\": [],\n      \"created_at\": \"2026-01-04T05:50:08.535000\",\n      \"last_login\": null\n    }\n  ],\n  \"total\": 1\n}",
+      "status_code": 200
+    },
+    {
+      "test": "4.B.1 Create Lead",
+      "status": "PASS",
+      "timestamp": "2026-01-04T15:33:21.895324",
+      "details": "Lead created: 695a6c21c0ae99e54ef6175b",
+      "payload": {
+        "email": "testlead_1767533599@igvtest.com",
+        "brand_name": "Test Brand 1767533599",
+        "name": "Test Contact",
+        "phone": "+972501234567",
+        "language": "fr",
+        "sector": "Tech"
+      },
+      "response": "{\n  \"lead_id\": \"695a6c21c0ae99e54ef6175b\",\n  \"message\": \"Lead created successfully\"\n}",
+      "status_code": 201
+    },
+    {
+      "test": "4.B.2 Get Lead",
+      "status": "PASS",
+      "timestamp": "2026-01-04T15:33:23.958052",
+      "details": "Lead structure retrieved",
+      "payload": "",
+      "response": "{\n  \"_id\": \"695a6c21c0ae99e54ef6175b\",\n  \"email\": \"testlead_1767533599@igvtest.com\",\n  \"brand_name\": \"Test Brand 1767533599\",\n  \"name\": \"Test Contact\",\n  \"phone\": \"+972501234567\",\n  \"sector\": \"Tech\",\n  \"language\": \"fr\",\n  \"expansion_type\": null,\n  \"format\": null,\n  \"budget_estimated\": null,\n  \"target_city\": null,\n  \"timeline\": null,\n  \"source\": null,\n  \"utm_source\": null,\n  \"utm_medium\": null,\n  \"utm_campaign\": null,\n  \"status\": \"NEW\",\n  \"stage\": \"analysis_requested\",\n  \"priority\": \"B\",\n  \"tags\": [],\n  \"created_at\": \"2026-01-04T13:33:21.110000\",\n  \"updated_at\": \"2026-01-04T13:33:21.110000\",\n  \"request_count\": 1,\n  \"activity_count\": 0,\n  \"activities\": [\n    {\n      \"_id\": \"695a6c21c0ae99e54ef6175c\",\n      \"type\": \"note\",\n      \"subject\": \"Lead created\",\n      \"description\": \"Lead created by postmaster@israelgrowthventure.com\",\n      \"lead_id\": \"695a6c21c0ae99e54ef6175b\",\n      \"user_id\": \"6959ff90c0ae99e54ef6174e\",\n      \"user_email\": \"postmaster@israelgrowthventure.com\",\n      \"metadata\": {},\n      \"created_at\": \"2026-01-04T13:33:21.399000\"\n    }\n  ]\n}",
+      "status_code": 200
+    },
+    {
+      "test": "4.B.3 Convert Lead",
+      "status": "PASS",
+      "timestamp": "2026-01-04T15:33:26.070005",
+      "details": "Contact created: 695a6c25c0ae99e54ef6175d",
+      "payload": "",
+      "response": "{\n  \"contact_id\": \"695a6c25c0ae99e54ef6175d\",\n  \"message\": \"Lead converted successfully\"\n}",
+      "status_code": 200
+    },
+    {
+      "test": "4.C.1 Create Opportunity",
+      "status": "PASS",
+      "timestamp": "2026-01-04T15:33:27.439191",
+      "details": "Opportunity created: 695a6c26c0ae99e54ef6175f",
+      "payload": {
+        "name": "Test Opportunity 1767533606",
+        "value": 50000,
+        "stage": "qualification",
+        "probability": 50
+      },
+      "response": "{\n  \"opportunity_id\": \"695a6c26c0ae99e54ef6175f\",\n  \"message\": \"Opportunity created successfully\"\n}",
+      "status_code": 201
+    },
+    {
+      "test": "4.C.2 Update Opportunity Stage",
+      "status": "PASS",
+      "timestamp": "2026-01-04T15:33:29.289707",
+      "details": "Opportunity ID: 695a6c26c0ae99e54ef6175f, New stage: proposal",
+      "payload": {
+        "stage": "proposal"
+      },
+      "response": "{\"message\":\"Opportunity updated successfully\"}",
+      "status_code": 200
+    },
+    {
+      "test": "4.D.1 Create Email Template",
+      "status": "FAIL",
+      "timestamp": "2026-01-04T15:33:30.346455",
+      "details": "Status 500",
+      "payload": {
+        "name": "Test Template 1767533609",
+        "subject": "Test Email Subject",
+        "body": "Hello {name}, this is a test template.",
+        "language": "fr"
+      },
+      "response": "{\"error\":\"Internal Server Error\",\"message\":\"name 'require_role' is not defined\",\"error_id\":\"err_20260104_133330_118859\",\"error_type\":\"NameError\"}",
+      "status_code": 500
+    },
+    {
+      "test": "4.D.2 Send Email",
+      "status": "FAIL",
+      "timestamp": "2026-01-04T15:33:33.532342",
+      "details": "Email send attempt",
+      "payload": {
+        "to_email": "test@example.com",
+        "subject": "Test Email from CRM Audit",
+        "message": "This is a test email sent from CRM audit script."
+      },
+      "response": "{\"detail\":\"Failed to send email: [SMTPRecipientRefused(556, '5.1.10 <test@example.com> <test@example.com>: Recipient address rejected: Domain example.com does not accept mail (nullMX)', 'test@example.com')]\"}",
+      "status_code": 500
+    }
+  ],
+  "bugs": [],
+  "incoherences": []
+}

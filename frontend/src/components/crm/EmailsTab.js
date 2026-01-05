@@ -57,6 +57,23 @@ const EmailsTab = ({ t }) => {
     }
   };
 
+  const handleDeleteTemplate = async (templateId, templateName) => {
+    if (!window.confirm(`Êtes-vous sûr de vouloir supprimer le template "${templateName}" ?`)) {
+      return;
+    }
+    try {
+      setLoadingAction(true);
+      await api.delete(`/api/crm/emails/templates/${templateId}`);
+      toast.success('Template supprimé avec succès');
+      await loadTemplates();
+    } catch (error) {
+      console.error('Erreur suppression template:', error);
+      toast.error('Erreur lors de la suppression');
+    } finally {
+      setLoadingAction(false);
+    }
+  };
+
   const previewData = {
     name: 'Jean Dupont',
     company: 'Exemple SA',
@@ -161,8 +178,20 @@ const EmailsTab = ({ t }) => {
                     toast.success('Template copié');
                   }}
                   className="p-2 text-gray-600 hover:bg-gray-100 rounded-md transition"
+                  title="Copier"
                 >
                   <Copy className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDeleteTemplate(template.id || template._id, template.name);
+                  }}
+                  disabled={loadingAction}
+                  className="p-2 text-red-600 hover:bg-red-50 rounded-md transition disabled:opacity-50"
+                  title="Supprimer"
+                >
+                  <Trash2 className="w-4 h-4" />
                 </button>
               </div>
             </div>

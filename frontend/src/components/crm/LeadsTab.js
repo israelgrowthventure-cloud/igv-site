@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Filter, Download, Plus, Eye, X, Save, Loader2, Mail, Phone, Building, MapPin, ExternalLink, Users } from 'lucide-react';
+import { Search, Filter, Download, Plus, Eye, X, Save, Loader2, Mail, Phone, Building, MapPin, ExternalLink, Users, Trash2, ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '../../utils/api';
 import { SkeletonTable } from './Skeleton';
@@ -130,6 +130,24 @@ const LeadsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, sea
     }
   };
 
+  const handleDeleteLead = async (leadId) => {
+    if (!window.confirm(t('admin.crm.common.confirm_delete'))) {
+      return;
+    }
+    try {
+      setLoadingAction(true);
+      await api.delete(`/api/crm/leads/${leadId}`);
+      toast.success(t('admin.crm.leads.deleted') || 'Prospect supprimé');
+      setSelectedItem(null);
+      await onRefresh();
+    } catch (error) {
+      console.error('Delete lead error:', error);
+      toast.error(t('admin.crm.errors.delete_failed') || 'Erreur lors de la suppression');
+    } finally {
+      setLoadingAction(false);
+    }
+  };
+
   const handleConvertToContact = async (leadId) => {
     try {
       setLoadingAction(true);
@@ -155,7 +173,15 @@ const LeadsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, sea
       setSelectedItem(null);
     } catch (error) {
       console.error('Convert error:', error);
-      toast.error(t('admin.crm.errors.convert_failed'));
+      // Message d'erreur plus détaillé
+      const errorMsg = error?.response?.data?.detail || error?.message || '';
+      if (errorMsg.includes('already converted')) {
+        toast.error('Ce prospect a déjà été converti en contact');
+      } else if (errorMsg.includes('not found')) {
+        toast.error('Prospect introuvable');
+      } else {
+        toast.error(t('admin.crm.errors.convert_failed') || 'Échec de la conversion du prospect');
+      }
     } finally {
       setLoadingAction(false);
     }
@@ -378,10 +404,17 @@ const LeadsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, sea
         <div className="bg-white rounded-lg shadow border p-6">
           <div className="flex justify-between items-start mb-6">
             <div>
+              <button 
+                onClick={() => setSelectedItem(null)} 
+                className="flex items-center gap-2 text-blue-600 hover:text-blue-800 mb-2 text-sm"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                {t('admin.crm.common.back_to_list') || 'Retour à la liste'}
+              </button>
               <h2 className="text-2xl font-bold">{selectedItem.contact_name || selectedItem.email}</h2>
               <p className="text-gray-600">{selectedItem.brand_name}</p>
             </div>
-            <button onClick={() => setSelectedItem(null)} className="p-2 hover:bg-gray-100 rounded-lg">
+            <button onClick={() => setSelectedItem(null)} className="p-2 hover:bg-gray-100 rounded-lg" title="Fermer">
               <X className="w-5 h-5" />
             </button>
           </div>
@@ -461,12 +494,19 @@ const LeadsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, sea
           <div className="mt-6 border-t pt-6">
             <h3 className="font-semibold mb-4">{t('admin.crm.leads.details.notes')}</h3>
             <div className="space-y-3 mb-4">
-              {selectedItem.notes?.map((note, idx) => (
-                <div key={idx} className="p-3 bg-gray-50 rounded-lg">
-                  <p className="text-sm">{note.note_text}</p>
-                  <p className="text-xs text-gray-500 mt-1">{new Date(note.created_at).toLocaleString()} • {note.created_by}</p>
-                </div>
-              )) || <p className="text-gray-500 text-sm">{t('admin.crm.common.no_notes') || 'No notes yet'}</p>}
+              {selectedItem.notes && selectedItem.notes.length > 0 ? (
+                selectedItem.notes.map((note, idx) => (
+                  <div key={note.id || idx} className="p-3 bg-gray-50 rounded-lg">
+                    <p className="text-sm">{note.content || note.note_text || note.details || ''}</p>
+                    <p className="text-xs text-gray-500 mt-1">
+                      {note.created_at ? new Date(note.created_at).toLocaleString() : ''}
+                      {note.created_by ? ` • ${note.created_by}` : ''}
+                    </p>
+                  </div>
+                ))
+              ) : (
+                <p className="text-gray-500 text-sm">{t('admin.crm.common.no_notes', 'Aucune note')}</p>
+              )}
             </div>
             <div className="flex gap-2">
               <input type="text" placeholder={t('admin.crm.leads.add_note_placeholder')} value={noteText} onChange={(e) => setNoteText(e.target.value)} className="flex-1 px-3 py-2 border rounded-lg" />
@@ -528,6 +568,15 @@ const LeadsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, sea
             >
               <Mail className="w-4 h-4" />
               <span>{t('admin.crm.emails.compose', 'Envoyer Email')}</span>
+            </button>
+            
+            <button
+              onClick={() => handleDeleteLead(selectedItem.lead_id)}
+              disabled={loadingAction}
+              className="flex items-center gap-2 px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 transition-colors ml-auto"
+            >
+              <Trash2 className="w-4 h-4" />
+              <span>{t('admin.crm.common.delete', 'Supprimer')}</span>
             </button>
           </div>
         </div>

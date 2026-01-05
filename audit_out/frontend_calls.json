@@ -1,0 +1,1053 @@
+{
+  "total_calls": 129,
+  "calls": [
+    {
+      "file": "src\\components\\CRMTabs.js",
+      "line": 29,
+      "method": "GET",
+      "url_template": "/crm/leads/export/csv",
+      "call_type": "axios",
+      "module": "Components/CRMTabs.js"
+    },
+    {
+      "file": "src\\components\\CRMTabs.js",
+      "line": 46,
+      "method": "PUT",
+      "url_template": "/crm/leads/${leadId}",
+      "call_type": "axios_template",
+      "module": "Components/CRMTabs.js"
+    },
+    {
+      "file": "src\\components\\CRMTabs.js",
+      "line": 56,
+      "method": "POST",
+      "url_template": "/crm/leads/${leadId}/notes",
+      "call_type": "axios_template",
+      "module": "Components/CRMTabs.js"
+    },
+    {
+      "file": "src\\components\\CRMTabs.js",
+      "line": 68,
+      "method": "POST",
+      "url_template": "/crm/leads/${leadId}/convert-to-contact",
+      "call_type": "axios_template",
+      "module": "Components/CRMTabs.js"
+    },
+    {
+      "file": "src\\components\\CookieConsentBanner.js",
+      "line": 33,
+      "method": "POST",
+      "url_template": "/api/gdpr/consent",
+      "call_type": "axios",
+      "module": "Components/CookieConsentBanner.js"
+    },
+    {
+      "file": "src\\components\\CookieConsentBanner.js",
+      "line": 46,
+      "method": "POST",
+      "url_template": "/api/gdpr/consent",
+      "call_type": "axios",
+      "module": "Components/CookieConsentBanner.js"
+    },
+    {
+      "file": "src\\components\\CookieConsentBanner.js",
+      "line": 58,
+      "method": "POST",
+      "url_template": "/api/gdpr/consent",
+      "call_type": "axios",
+      "module": "Components/CookieConsentBanner.js"
+    },
+    {
+      "file": "src\\components\\crm\\ActivitiesTab.js",
+      "line": 57,
+      "method": "GET",
+      "url_template": "/api/crm/activities",
+      "call_type": "axios",
+      "module": "Components/crm"
+    },
+    {
+      "file": "src\\components\\crm\\ContactsTab.js",
+      "line": 25,
+      "method": "POST",
+      "url_template": "/api/crm/contacts",
+      "call_type": "axios",
+      "module": "Components/crm"
+    },
+    {
+      "file": "src\\components\\crm\\ContactsTab.js",
+      "line": 41,
+      "method": "PUT",
+      "url_template": "/api/crm/contacts/${editingContact._id || editingContact.contact_id}",
+      "call_type": "axios_template",
+      "module": "Components/crm"
+    },
+    {
+      "file": "src\\components\\crm\\ContactsTab.js",
+      "line": 58,
+      "method": "DELETE",
+      "url_template": "/api/crm/contacts/${contactId}",
+      "call_type": "axios_template",
+      "module": "Components/crm"
+    },
+    {
+      "file": "src\\components\\crm\\ContactsTab.js",
+      "line": 72,
+      "method": "POST",
+      "url_template": "/api/crm/opportunities",
+      "call_type": "axios",
+      "module": "Components/crm"
+    },
+    {
+      "file": "src\\components\\crm\\EmailModal.js",
+      "line": 250,
+      "method": "POST",
+      "url_template": "/api/crm/emails/send",
+      "call_type": "axios",
+      "module": "Components/crm"
+    },
+    {
+      "file": "src\\components\\crm\\EmailsTab.js",
+      "line": 33,
+      "method": "GET",
+      "url_template": "/api/crm/emails/templates",
+      "call_type": "axios",
+      "module": "Components/crm"
+    },
+    {
+      "file": "src\\components\\crm\\EmailsTab.js",
+      "line": 47,
+      "method": "POST",
+      "url_template": "/api/crm/emails/templates",
+      "call_type": "axios",
+      "module": "Components/crm"
+    },
+    {
+      "file": "src\\components\\crm\\LeadsTab.js",
+      "line": 31,
+      "method": "POST",
+      "url_template": "/api/crm/leads",
+      "call_type": "axios",
+      "module": "Components/crm"
+    },
+    {
+      "file": "src\\components\\crm\\LeadsTab.js",
+      "line": 54,
+      "method": "GET",
+      "url_template": "/api/crm/leads/export",
+      "call_type": "axios",
+      "module": "Components/crm"
+    },
+    {
+      "file": "src\\components\\crm\\LeadsTab.js",
+      "line": 74,
+      "method": "POST",
+      "url_template": "/api/crm/leads/${leadId}/notes",
+      "call_type": "axios_template",
+      "module": "Components/crm"
+    },
+    {
+      "file": "src\\components\\crm\\LeadsTab.js",
+      "line": 88,
+      "method": "PUT",
+      "url_template": "/api/crm/leads/${leadId}",
+      "call_type": "axios_template",
+      "module": "Components/crm"
+    },
+    {
+      "file": "src\\components\\crm\\LeadsTab.js",
+      "line": 102,
+      "method": "POST",
+      "url_template": "/api/crm/opportunities",
+      "call_type": "axios",
+      "module": "Components/crm"
+    },
+    {
+      "file": "src\\components\\crm\\LeadsTab.js",
+      "line": 136,
+      "method": "POST",
+      "url_template": "/api/crm/leads/${leadId}/convert-to-contact",
+      "call_type": "axios_template",
+      "module": "Components/crm"
+    },
+    {
+      "file": "src\\components\\crm\\OpportunitiesTab.js",
+      "line": 38,
+      "method": "GET",
+      "url_template": "/api/crm/opportunities",
+      "call_type": "axios",
+      "module": "Components/crm"
+    },
+    {
+      "file": "src\\components\\crm\\OpportunitiesTab.js",
+      "line": 53,
+      "method": "POST",
+      "url_template": "/api/crm/opportunities",
+      "call_type": "axios",
+      "module": "Components/crm"
+    },
+    {
+      "file": "src\\components\\crm\\OpportunitiesTab.js",
+      "line": 73,
+      "method": "PUT",
+      "url_template": "/api/crm/opportunities/${editingOpp._id || editingOpp.opportunity_id}",
+      "call_type": "axios_template",
+      "module": "Components/crm"
+    },
+    {
+      "file": "src\\components\\crm\\OpportunitiesTab.js",
+      "line": 94,
+      "method": "DELETE",
+      "url_template": "/api/crm/opportunities/${oppId}",
+      "call_type": "axios_template",
+      "module": "Components/crm"
+    },
+    {
+      "file": "src\\components\\crm\\PipelineTab.js",
+      "line": 24,
+      "method": "PUT",
+      "url_template": "/api/crm/pipeline/opportunities/${oppId}",
+      "call_type": "axios_template",
+      "module": "Components/crm"
+    },
+    {
+      "file": "src\\components\\crm\\SettingsTab.js",
+      "line": 18,
+      "method": "POST",
+      "url_template": "/api/crm/settings/users",
+      "call_type": "axios",
+      "module": "Components/crm"
+    },
+    {
+      "file": "src\\components\\crm\\SettingsTab.js",
+      "line": 34,
+      "method": "DELETE",
+      "url_template": "/api/crm/settings/users/${userId}",
+      "call_type": "axios_template",
+      "module": "Components/crm"
+    },
+    {
+      "file": "src\\components\\crm\\SettingsTab.js",
+      "line": 56,
+      "method": "POST",
+      "url_template": "/api/crm/settings/users/change-password",
+      "call_type": "axios",
+      "module": "Components/crm"
+    },
+    {
+      "file": "src\\components\\crm\\SettingsTab.js",
+      "line": 74,
+      "method": "POST",
+      "url_template": "/api/crm/settings/tags",
+      "call_type": "axios",
+      "module": "Components/crm"
+    },
+    {
+      "file": "src\\components\\crm\\UsersTab.js",
+      "line": 33,
+      "method": "GET",
+      "url_template": "/api/admin/users",
+      "call_type": "axios",
+      "module": "Components/crm"
+    },
+    {
+      "file": "src\\components\\crm\\UsersTab.js",
+      "line": 65,
+      "method": "PUT",
+      "url_template": "/api/admin/users/${editingUser._id || editingUser.id}",
+      "call_type": "axios_template",
+      "module": "Components/crm"
+    },
+    {
+      "file": "src\\components\\crm\\UsersTab.js",
+      "line": 69,
+      "method": "POST",
+      "url_template": "/api/admin/users",
+      "call_type": "axios",
+      "module": "Components/crm"
+    },
+    {
+      "file": "src\\components\\crm\\UsersTab.js",
+      "line": 93,
+      "method": "DELETE",
+      "url_template": "/api/admin/users/${userId}",
+      "call_type": "axios_template",
+      "module": "Components/crm"
+    },
+    {
+      "file": "src\\pages\\DemandeRappel.js",
+      "line": 51,
+      "method": "POST",
+      "url_template": "/crm/lead-from-pack",
+      "call_type": "axios",
+      "module": "Pages/DemandeRappel.js"
+    },
+    {
+      "file": "src\\pages\\Payment.js",
+      "line": 66,
+      "method": "POST",
+      "url_template": "/api/monetico/init-payment",
+      "call_type": "axios",
+      "module": "Pages/Payment.js"
+    },
+    {
+      "file": "src\\pages\\admin\\AdminCRMComplete.js",
+      "line": 149,
+      "method": "GET",
+      "url_template": "/api/crm/dashboard/stats",
+      "call_type": "axios",
+      "module": "Pages/admin"
+    },
+    {
+      "file": "src\\pages\\admin\\AdminCRMComplete.js",
+      "line": 153,
+      "method": "GET",
+      "url_template": "/api/crm/leads",
+      "call_type": "axios",
+      "module": "Pages/admin"
+    },
+    {
+      "file": "src\\pages\\admin\\AdminCRMComplete.js",
+      "line": 157,
+      "method": "GET",
+      "url_template": "/api/crm/pipeline",
+      "call_type": "axios",
+      "module": "Pages/admin"
+    },
+    {
+      "file": "src\\pages\\admin\\AdminCRMComplete.js",
+      "line": 161,
+      "method": "GET",
+      "url_template": "/api/crm/contacts",
+      "call_type": "axios",
+      "module": "Pages/admin"
+    },
+    {
+      "file": "src\\pages\\admin\\AdminCRMComplete.js",
+      "line": 166,
+      "method": "GET",
+      "url_template": "/api/crm/settings/users",
+      "call_type": "axios",
+      "module": "Pages/admin"
+    },
+    {
+      "file": "src\\pages\\admin\\AdminCRMComplete.js",
+      "line": 167,
+      "method": "GET",
+      "url_template": "/api/crm/settings/tags",
+      "call_type": "axios",
+      "module": "Pages/admin"
+    },
+    {
+      "file": "src\\pages\\admin\\AdminCRMComplete.js",
+      "line": 168,
+      "method": "GET",
+      "url_template": "/api/crm/settings/pipeline-stages",
+      "call_type": "axios",
+      "module": "Pages/admin"
+    },
+    {
+      "file": "src\\pages\\admin\\AdminCRMComplete.js",
+      "line": 190,
+      "method": "GET",
+      "url_template": "/api/crm/leads",
+      "call_type": "axios",
+      "module": "Pages/admin"
+    },
+    {
+      "file": "src\\pages\\admin\\AdminCRMComplete.js",
+      "line": 193,
+      "method": "GET",
+      "url_template": "/api/crm/contacts",
+      "call_type": "axios",
+      "module": "Pages/admin"
+    },
+    {
+      "file": "src\\pages\\admin\\AdminCRMComplete.js",
+      "line": 196,
+      "method": "GET",
+      "url_template": "/api/crm/pipeline",
+      "call_type": "axios",
+      "module": "Pages/admin"
+    },
+    {
+      "file": "src\\pages\\admin\\AdminCRMComplete.js",
+      "line": 199,
+      "method": "GET",
+      "url_template": "/api/crm/dashboard/stats",
+      "call_type": "axios",
+      "module": "Pages/admin"
+    },
+    {
+      "file": "src\\pages\\admin\\ContactDetail.js",
+      "line": 35,
+      "method": "GET",
+      "url_template": "/api/crm/contacts/${id}",
+      "call_type": "axios_template",
+      "module": "Pages/admin"
+    },
+    {
+      "file": "src\\pages\\admin\\ContactDetail.js",
+      "line": 40,
+      "method": "GET",
+      "url_template": "/api/crm/opportunities",
+      "call_type": "axios",
+      "module": "Pages/admin"
+    },
+    {
+      "file": "src\\pages\\admin\\ContactDetail.js",
+      "line": 58,
+      "method": "PUT",
+      "url_template": "/api/crm/contacts/${id}",
+      "call_type": "axios_template",
+      "module": "Pages/admin"
+    },
+    {
+      "file": "src\\pages\\admin\\ContactDetail.js",
+      "line": 72,
+      "method": "DELETE",
+      "url_template": "/api/crm/contacts/${id}",
+      "call_type": "axios_template",
+      "module": "Pages/admin"
+    },
+    {
+      "file": "src\\pages\\admin\\ContactDetail.js",
+      "line": 87,
+      "method": "POST",
+      "url_template": "/api/crm/opportunities",
+      "call_type": "axios",
+      "module": "Pages/admin"
+    },
+    {
+      "file": "src\\pages\\admin\\ContactsPage.js",
+      "line": 26,
+      "method": "GET",
+      "url_template": "/api/crm/contacts",
+      "call_type": "axios",
+      "module": "Pages/admin"
+    },
+    {
+      "file": "src\\pages\\admin\\DashboardPage.js",
+      "line": 23,
+      "method": "GET",
+      "url_template": "/api/crm/dashboard/stats",
+      "call_type": "axios",
+      "module": "Pages/admin"
+    },
+    {
+      "file": "src\\pages\\admin\\LeadDetail.js",
+      "line": 37,
+      "method": "GET",
+      "url_template": "/api/crm/leads/${id}",
+      "call_type": "axios_template",
+      "module": "Pages/admin"
+    },
+    {
+      "file": "src\\pages\\admin\\LeadDetail.js",
+      "line": 52,
+      "method": "PUT",
+      "url_template": "/api/crm/leads/${id}",
+      "call_type": "axios_template",
+      "module": "Pages/admin"
+    },
+    {
+      "file": "src\\pages\\admin\\LeadDetail.js",
+      "line": 66,
+      "method": "DELETE",
+      "url_template": "/api/crm/leads/${id}",
+      "call_type": "axios_template",
+      "module": "Pages/admin"
+    },
+    {
+      "file": "src\\pages\\admin\\LeadDetail.js",
+      "line": 81,
+      "method": "POST",
+      "url_template": "/api/crm/leads/${id}/notes",
+      "call_type": "axios_template",
+      "module": "Pages/admin"
+    },
+    {
+      "file": "src\\pages\\admin\\LeadDetail.js",
+      "line": 95,
+      "method": "POST",
+      "url_template": "/api/crm/leads/${id}/convert-to-contact",
+      "call_type": "axios_template",
+      "module": "Pages/admin"
+    },
+    {
+      "file": "src\\pages\\admin\\LeadDetail.js",
+      "line": 109,
+      "method": "POST",
+      "url_template": "/api/crm/opportunities",
+      "call_type": "axios",
+      "module": "Pages/admin"
+    },
+    {
+      "file": "src\\pages\\admin\\LeadsPage.js",
+      "line": 27,
+      "method": "GET",
+      "url_template": "/api/crm/leads",
+      "call_type": "axios",
+      "module": "Pages/admin"
+    },
+    {
+      "file": "src\\pages\\admin\\Pipeline.js",
+      "line": 40,
+      "method": "GET",
+      "url_template": "/api/crm/pipeline",
+      "call_type": "axios",
+      "module": "Pages/admin"
+    },
+    {
+      "file": "src\\pages\\client\\Dashboard.js",
+      "line": 33,
+      "method": "GET",
+      "url_template": "/client/profile",
+      "call_type": "axios",
+      "module": "Pages/client"
+    },
+    {
+      "file": "src\\pages\\client\\Dashboard.js",
+      "line": 34,
+      "method": "GET",
+      "url_template": "/client/analyses",
+      "call_type": "axios",
+      "module": "Pages/client"
+    },
+    {
+      "file": "src\\pages\\client\\Dashboard.js",
+      "line": 52,
+      "method": "GET",
+      "url_template": "/client/analyses/${analysisId}/download",
+      "call_type": "axios_template",
+      "module": "Pages/client"
+    },
+    {
+      "file": "src\\utils\\api.js",
+      "line": 36,
+      "method": "POST",
+      "url_template": "${API}/contact",
+      "call_type": "axios_template",
+      "module": "Utils/API"
+    },
+    {
+      "file": "src\\utils\\api.js",
+      "line": 42,
+      "method": "GET",
+      "url_template": "${API}/contacts",
+      "call_type": "axios_template",
+      "module": "Utils/API"
+    },
+    {
+      "file": "src\\utils\\api.js",
+      "line": 48,
+      "method": "POST",
+      "url_template": "${API}/cart",
+      "call_type": "axios_template",
+      "module": "Utils/API"
+    },
+    {
+      "file": "src\\utils\\api.js",
+      "line": 53,
+      "method": "GET",
+      "url_template": "${API}/cart",
+      "call_type": "axios_template",
+      "module": "Utils/API"
+    },
+    {
+      "file": "src\\utils\\api.js",
+      "line": 60,
+      "method": "GET",
+      "url_template": "${API}/detect-location",
+      "call_type": "axios_template",
+      "module": "Utils/API"
+    },
+    {
+      "file": "src\\utils\\api.js",
+      "line": 77,
+      "method": "POST",
+      "url_template": "${backendUrl}/api/mini-analysis",
+      "call_type": "axios_template",
+      "module": "Utils/API"
+    },
+    {
+      "file": "src\\utils\\api.js",
+      "line": 85,
+      "method": "POST",
+      "url_template": "${API}/contact-expert",
+      "call_type": "axios_template",
+      "module": "Utils/API"
+    },
+    {
+      "file": "src\\utils\\api.js",
+      "line": 91,
+      "method": "POST",
+      "url_template": "${API}/pdf/generate",
+      "call_type": "axios_template",
+      "module": "Utils/API"
+    },
+    {
+      "file": "src\\utils\\api.js",
+      "line": 99,
+      "method": "POST",
+      "url_template": "${API}/email/send-pdf",
+      "call_type": "axios_template",
+      "module": "Utils/API"
+    },
+    {
+      "file": "src\\utils\\api.js",
+      "line": 105,
+      "method": "POST",
+      "url_template": "${API}/calendar/create-event",
+      "call_type": "axios_template",
+      "module": "Utils/API"
+    },
+    {
+      "file": "src\\utils\\api.js",
+      "line": 111,
+      "method": "POST",
+      "url_template": "${API}/admin/login",
+      "call_type": "axios_template",
+      "module": "Utils/API"
+    },
+    {
+      "file": "src\\utils\\api.js",
+      "line": 117,
+      "method": "GET",
+      "url_template": "${API}/admin/verify",
+      "call_type": "axios_template",
+      "module": "Utils/API"
+    },
+    {
+      "file": "src\\utils\\api.js",
+      "line": 126,
+      "method": "GET",
+      "url_template": "${API}/admin/stats",
+      "call_type": "axios_template",
+      "module": "Utils/API"
+    },
+    {
+      "file": "src\\utils\\api.js",
+      "line": 134,
+      "method": "GET",
+      "url_template": "${API}/crm/leads",
+      "call_type": "axios_template",
+      "module": "Utils/API"
+    },
+    {
+      "file": "src\\utils\\api.js",
+      "line": 143,
+      "method": "GET",
+      "url_template": "${API}/crm/contacts",
+      "call_type": "axios_template",
+      "module": "Utils/API"
+    },
+    {
+      "file": "src\\utils\\api.js",
+      "line": 152,
+      "method": "POST",
+      "url_template": "${API}/admin/users",
+      "call_type": "axios_template",
+      "module": "Utils/API"
+    },
+    {
+      "file": "src\\utils\\api.js",
+      "line": 160,
+      "method": "GET",
+      "url_template": "${API}/admin/users",
+      "call_type": "axios_template",
+      "module": "Utils/API"
+    },
+    {
+      "file": "src\\utils\\api.js",
+      "line": 168,
+      "method": "DELETE",
+      "url_template": "${API}/admin/users/${email}",
+      "call_type": "axios_template",
+      "module": "Utils/API"
+    },
+    {
+      "file": "src\\utils\\api.js",
+      "line": 178,
+      "method": "GET",
+      "url_template": "${BACKEND_URL}${endpoint}",
+      "call_type": "axios_template",
+      "module": "Utils/API"
+    },
+    {
+      "file": "src\\utils\\api.js",
+      "line": 191,
+      "method": "POST",
+      "url_template": "${BACKEND_URL}${endpoint}",
+      "call_type": "axios_template",
+      "module": "Utils/API"
+    },
+    {
+      "file": "src\\utils\\api.js",
+      "line": 204,
+      "method": "POST",
+      "url_template": "${BACKEND_URL}${endpoint}",
+      "call_type": "axios_template",
+      "module": "Utils/API"
+    },
+    {
+      "file": "src\\utils\\api.js",
+      "line": 217,
+      "method": "PUT",
+      "url_template": "${BACKEND_URL}${endpoint}",
+      "call_type": "axios_template",
+      "module": "Utils/API"
+    },
+    {
+      "file": "src\\utils\\api.js",
+      "line": 230,
+      "method": "DELETE",
+      "url_template": "${BACKEND_URL}${endpoint}",
+      "call_type": "axios_template",
+      "module": "Utils/API"
+    },
+    {
+      "file": "src\\utils\\crmApi.js",
+      "line": 14,
+      "method": "GET",
+      "url_template": "${CRM_PREFIX}/dashboard/stats",
+      "call_type": "axios_template",
+      "module": "Utils/API"
+    },
+    {
+      "file": "src\\utils\\crmApi.js",
+      "line": 19,
+      "method": "GET",
+      "url_template": "${CRM_PREFIX}/leads",
+      "call_type": "axios_template",
+      "module": "Utils/API"
+    },
+    {
+      "file": "src\\utils\\crmApi.js",
+      "line": 20,
+      "method": "GET",
+      "url_template": "${CRM_PREFIX}/leads/${id}",
+      "call_type": "axios_template",
+      "module": "Utils/API"
+    },
+    {
+      "file": "src\\utils\\crmApi.js",
+      "line": 21,
+      "method": "POST",
+      "url_template": "${CRM_PREFIX}/leads",
+      "call_type": "axios_template",
+      "module": "Utils/API"
+    },
+    {
+      "file": "src\\utils\\crmApi.js",
+      "line": 22,
+      "method": "PUT",
+      "url_template": "${CRM_PREFIX}/leads/${id}",
+      "call_type": "axios_template",
+      "module": "Utils/API"
+    },
+    {
+      "file": "src\\utils\\crmApi.js",
+      "line": 23,
+      "method": "DELETE",
+      "url_template": "${CRM_PREFIX}/leads/${id}",
+      "call_type": "axios_template",
+      "module": "Utils/API"
+    },
+    {
+      "file": "src\\utils\\crmApi.js",
+      "line": 24,
+      "method": "POST",
+      "url_template": "${CRM_PREFIX}/leads/${id}/notes",
+      "call_type": "axios_template",
+      "module": "Utils/API"
+    },
+    {
+      "file": "src\\utils\\crmApi.js",
+      "line": 25,
+      "method": "POST",
+      "url_template": "${CRM_PREFIX}/leads/${id}/convert-to-contact",
+      "call_type": "axios_template",
+      "module": "Utils/API"
+    },
+    {
+      "file": "src\\utils\\crmApi.js",
+      "line": 26,
+      "method": "GET",
+      "url_template": "${CRM_PREFIX}/leads/export/csv",
+      "call_type": "axios_template",
+      "module": "Utils/API"
+    },
+    {
+      "file": "src\\utils\\crmApi.js",
+      "line": 31,
+      "method": "GET",
+      "url_template": "${CRM_PREFIX}/contacts",
+      "call_type": "axios_template",
+      "module": "Utils/API"
+    },
+    {
+      "file": "src\\utils\\crmApi.js",
+      "line": 32,
+      "method": "GET",
+      "url_template": "${CRM_PREFIX}/contacts/${id}",
+      "call_type": "axios_template",
+      "module": "Utils/API"
+    },
+    {
+      "file": "src\\utils\\crmApi.js",
+      "line": 33,
+      "method": "POST",
+      "url_template": "${CRM_PREFIX}/contacts",
+      "call_type": "axios_template",
+      "module": "Utils/API"
+    },
+    {
+      "file": "src\\utils\\crmApi.js",
+      "line": 34,
+      "method": "PUT",
+      "url_template": "${CRM_PREFIX}/contacts/${id}",
+      "call_type": "axios_template",
+      "module": "Utils/API"
+    },
+    {
+      "file": "src\\utils\\crmApi.js",
+      "line": 35,
+      "method": "DELETE",
+      "url_template": "${CRM_PREFIX}/contacts/${id}",
+      "call_type": "axios_template",
+      "module": "Utils/API"
+    },
+    {
+      "file": "src\\utils\\crmApi.js",
+      "line": 40,
+      "method": "GET",
+      "url_template": "${CRM_PREFIX}/opportunities",
+      "call_type": "axios_template",
+      "module": "Utils/API"
+    },
+    {
+      "file": "src\\utils\\crmApi.js",
+      "line": 41,
+      "method": "GET",
+      "url_template": "${CRM_PREFIX}/opportunities/${id}",
+      "call_type": "axios_template",
+      "module": "Utils/API"
+    },
+    {
+      "file": "src\\utils\\crmApi.js",
+      "line": 42,
+      "method": "POST",
+      "url_template": "${CRM_PREFIX}/opportunities",
+      "call_type": "axios_template",
+      "module": "Utils/API"
+    },
+    {
+      "file": "src\\utils\\crmApi.js",
+      "line": 43,
+      "method": "PUT",
+      "url_template": "${CRM_PREFIX}/opportunities/${id}",
+      "call_type": "axios_template",
+      "module": "Utils/API"
+    },
+    {
+      "file": "src\\utils\\crmApi.js",
+      "line": 44,
+      "method": "DELETE",
+      "url_template": "${CRM_PREFIX}/opportunities/${id}",
+      "call_type": "axios_template",
+      "module": "Utils/API"
+    },
+    {
+      "file": "src\\utils\\crmApi.js",
+      "line": 49,
+      "method": "GET",
+      "url_template": "${CRM_PREFIX}/pipeline",
+      "call_type": "axios_template",
+      "module": "Utils/API"
+    },
+    {
+      "file": "src\\utils\\crmApi.js",
+      "line": 50,
+      "method": "PUT",
+      "url_template": "${CRM_PREFIX}/pipeline/opportunities/${oppId}",
+      "call_type": "axios_template",
+      "module": "Utils/API"
+    },
+    {
+      "file": "src\\utils\\crmApi.js",
+      "line": 55,
+      "method": "GET",
+      "url_template": "${CRM_PREFIX}/settings/users",
+      "call_type": "axios_template",
+      "module": "Utils/API"
+    },
+    {
+      "file": "src\\utils\\crmApi.js",
+      "line": 56,
+      "method": "POST",
+      "url_template": "${CRM_PREFIX}/settings/users",
+      "call_type": "axios_template",
+      "module": "Utils/API"
+    },
+    {
+      "file": "src\\utils\\crmApi.js",
+      "line": 57,
+      "method": "PUT",
+      "url_template": "${CRM_PREFIX}/settings/users/${userId}",
+      "call_type": "axios_template",
+      "module": "Utils/API"
+    },
+    {
+      "file": "src\\utils\\crmApi.js",
+      "line": 58,
+      "method": "DELETE",
+      "url_template": "${CRM_PREFIX}/settings/users/${userId}",
+      "call_type": "axios_template",
+      "module": "Utils/API"
+    },
+    {
+      "file": "src\\utils\\crmApi.js",
+      "line": 59,
+      "method": "POST",
+      "url_template": "${CRM_PREFIX}/settings/users/change-password",
+      "call_type": "axios_template",
+      "module": "Utils/API"
+    },
+    {
+      "file": "src\\utils\\crmApi.js",
+      "line": 61,
+      "method": "GET",
+      "url_template": "${CRM_PREFIX}/settings/tags",
+      "call_type": "axios_template",
+      "module": "Utils/API"
+    },
+    {
+      "file": "src\\utils\\crmApi.js",
+      "line": 62,
+      "method": "POST",
+      "url_template": "${CRM_PREFIX}/settings/tags",
+      "call_type": "axios_template",
+      "module": "Utils/API"
+    },
+    {
+      "file": "src\\utils\\crmApi.js",
+      "line": 63,
+      "method": "DELETE",
+      "url_template": "${CRM_PREFIX}/settings/tags/${tagId}",
+      "call_type": "axios_template",
+      "module": "Utils/API"
+    },
+    {
+      "file": "src\\utils\\crmApi.js",
+      "line": 65,
+      "method": "GET",
+      "url_template": "${CRM_PREFIX}/settings/pipeline-stages",
+      "call_type": "axios_template",
+      "module": "Utils/API"
+    },
+    {
+      "file": "src\\utils\\crmApi.js",
+      "line": 70,
+      "method": "GET",
+      "url_template": "${CRM_PREFIX}/tasks",
+      "call_type": "axios_template",
+      "module": "Utils/API"
+    },
+    {
+      "file": "src\\utils\\crmApi.js",
+      "line": 71,
+      "method": "GET",
+      "url_template": "${CRM_PREFIX}/tasks/${id}",
+      "call_type": "axios_template",
+      "module": "Utils/API"
+    },
+    {
+      "file": "src\\utils\\crmApi.js",
+      "line": 72,
+      "method": "POST",
+      "url_template": "${CRM_PREFIX}/tasks",
+      "call_type": "axios_template",
+      "module": "Utils/API"
+    },
+    {
+      "file": "src\\utils\\crmApi.js",
+      "line": 73,
+      "method": "PUT",
+      "url_template": "${CRM_PREFIX}/tasks/${id}",
+      "call_type": "axios_template",
+      "module": "Utils/API"
+    },
+    {
+      "file": "src\\utils\\crmApi.js",
+      "line": 74,
+      "method": "DELETE",
+      "url_template": "${CRM_PREFIX}/tasks/${id}",
+      "call_type": "axios_template",
+      "module": "Utils/API"
+    },
+    {
+      "file": "src\\utils\\crmApi.js",
+      "line": 79,
+      "method": "POST",
+      "url_template": "${CRM_PREFIX}/emails/send",
+      "call_type": "axios_template",
+      "module": "Utils/API"
+    },
+    {
+      "file": "src\\utils\\crmApi.js",
+      "line": 80,
+      "method": "GET",
+      "url_template": "${CRM_PREFIX}/emails/history",
+      "call_type": "axios_template",
+      "module": "Utils/API"
+    },
+    {
+      "file": "src\\utils\\crmApi.js",
+      "line": 85,
+      "method": "GET",
+      "url_template": "${CRM_PREFIX}/mini-analysis-requests",
+      "call_type": "axios_template",
+      "module": "Utils/API"
+    },
+    {
+      "file": "src\\utils\\crmApi.js",
+      "line": 86,
+      "method": "POST",
+      "url_template": "${CRM_PREFIX}/mini-analysis-requests/${id}/validate",
+      "call_type": "axios_template",
+      "module": "Utils/API"
+    },
+    {
+      "file": "src\\utils\\crmApi.js",
+      "line": 88,
+      "method": "GET",
+      "url_template": "${CRM_PREFIX}/pack-rappel-requests",
+      "call_type": "axios_template",
+      "module": "Utils/API"
+    },
+    {
+      "file": "src\\utils\\crmApi.js",
+      "line": 89,
+      "method": "PUT",
+      "url_template": "${CRM_PREFIX}/pack-rappel-requests/${id}/assign",
+      "call_type": "axios_template",
+      "module": "Utils/API"
+    }
+  ],
+  "stats_by_method": {
+    "GET": 53,
+    "PUT": 16,
+    "POST": 46,
+    "DELETE": 14
+  },
+  "stats_by_module": {
+    "Components/CRMTabs.js": 4,
+    "Components/CookieConsentBanner.js": 3,
+    "Components/crm": 27,
+    "Pages/DemandeRappel.js": 1,
+    "Pages/Payment.js": 1,
+    "Pages/admin": 26,
+    "Pages/client": 3,
+    "Utils/API": 64
+  }
+}

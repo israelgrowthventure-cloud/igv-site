@@ -1497,6 +1497,26 @@ async def create_email_template(template: EmailTemplateCreate, user: Dict = Depe
     return {"template_id": str(result.inserted_id), "message": "Template created"}
 
 
+@router.delete("/emails/templates/{template_id}")
+async def delete_email_template(template_id: str, user: Dict = Depends(get_current_user)):
+    """Delete email template (Admin only)"""
+    await require_role(["admin"], user)
+    
+    current_db = get_db()
+    if current_db is None:
+        raise HTTPException(status_code=500, detail="Database not configured")
+    
+    try:
+        result = await current_db.email_templates.delete_one({"_id": ObjectId(template_id)})
+    except:
+        raise HTTPException(status_code=400, detail="Invalid template ID")
+    
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Template not found")
+    
+    return {"message": "Template deleted successfully"}
+
+
 @router.get("/emails/history")
 async def get_email_history(
     user: Dict = Depends(get_current_user),

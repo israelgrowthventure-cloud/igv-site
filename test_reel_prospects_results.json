@@ -1,0 +1,88 @@
+{
+  "date": "2026-01-06T00:35:42.296202",
+  "tests": [
+    {
+      "test": "Auth",
+      "status": "PASS",
+      "details": "Connexion admin OK"
+    },
+    {
+      "test": "Liste prospects",
+      "status": "PASS",
+      "details": "108 prospects"
+    },
+    {
+      "test": "Recherche",
+      "status": "PASS",
+      "details": "84 résultats pour 'test'"
+    },
+    {
+      "test": "Export CSV",
+      "status": "PASS",
+      "details": "108 lignes exportées"
+    },
+    {
+      "test": "Création prospect",
+      "status": "PASS",
+      "details": "ID: 695c3cce11092d68173f09bf"
+    },
+    {
+      "test": "Ajout note (note_text)",
+      "status": "PASS",
+      "details": "Note ajoutée"
+    },
+    {
+      "test": "Persistance notes",
+      "status": "PASS",
+      "details": "2 note(s) - 'Note audit réel - 2026-01-06T00:35:59.93...'"
+    },
+    {
+      "test": "Conversion",
+      "status": "PASS",
+      "details": "Contact ID: 695c3cd511092d68173f09c2"
+    },
+    {
+      "test": "Contact accessible",
+      "status": "PASS",
+      "details": "Email: audit_reel_1767652557@test.igv"
+    },
+    {
+      "test": "Statut CONVERTED",
+      "status": "PASS",
+      "details": "Status=CONVERTED, ref=695c3cd511092d68173f09c2"
+    },
+    {
+      "test": "Templates disponibles",
+      "status": "PASS",
+      "details": "1 template(s)"
+    },
+    {
+      "test": "Envoi email test",
+      "status": "PASS",
+      "details": "Email envoyé à contact@israelgrowthventure.com"
+    },
+    {
+      "test": "Création pour suppression",
+      "status": "PASS",
+      "details": "ID: 695c3ce211092d68173f09c5"
+    },
+    {
+      "test": "Suppression",
+      "status": "PASS",
+      "details": "Prospect supprimé"
+    },
+    {
+      "test": "Vérification suppression",
+      "status": "PASS",
+      "details": "Prospect introuvable (404)"
+    }
+  ],
+  "summary": {
+    "total": 15,
+    "passed": 15,
+    "failed": 0,
+    "warned": 0,
+    "skipped": 0,
+    "success_rate": "100.0%"
+  }
+}

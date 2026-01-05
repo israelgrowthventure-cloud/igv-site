@@ -1,0 +1,87 @@
+{
+  "tests": [
+    {
+      "test": "Authentification",
+      "status": "PASS",
+      "details": "Connexion admin OK"
+    },
+    {
+      "test": "Création prospect",
+      "status": "PASS",
+      "details": "ID: 695c3f3a11092d68173f09cb"
+    },
+    {
+      "test": "Ajout note",
+      "status": "PASS",
+      "details": "Note ajoutée avec note_text"
+    },
+    {
+      "test": "Persistance note",
+      "status": "PASS",
+      "details": "2 note(s) visible(s)"
+    },
+    {
+      "test": "Templates disponibles",
+      "status": "PASS",
+      "details": "5 templates, dont 4 avec [DATE]/[HEURE]"
+    },
+    {
+      "test": "Templates prédéfinis",
+      "status": "PASS",
+      "details": "4/4 templates trouvés"
+    },
+    {
+      "test": "[DATE]/[HEURE] présents",
+      "status": "PASS",
+      "details": "4 templates avec marqueurs"
+    },
+    {
+      "test": "Envoi email test",
+      "status": "PASS",
+      "details": "Email envoyé à contact@israelgrowthventure.com"
+    },
+    {
+      "test": "Conversion",
+      "status": "PASS",
+      "details": "Contact ID: 695c3f4811092d68173f09cf"
+    },
+    {
+      "test": "Contact accessible",
+      "status": "PASS",
+      "details": "Email: fulltest_1767653177@audit.igv"
+    },
+    {
+      "test": "Statut CONVERTED",
+      "status": "PASS",
+      "details": "Status=CONVERTED"
+    },
+    {
+      "test": "Création pour suppression",
+      "status": "PASS",
+      "details": "ID: 695c3f4f11092d68173f09d1"
+    },
+    {
+      "test": "Suppression",
+      "status": "PASS",
+      "details": "Prospect supprimé"
+    },
+    {
+      "test": "Introuvable après suppression",
+      "status": "PASS",
+      "details": "404 confirmé"
+    },
+    {
+      "test": "Templates dans module EMAILS",
+      "status": "PASS",
+      "details": "5 templates disponibles"
+    }
+  ],
+  "date": "2026-01-06T00:46:15.982600",
+  "summary": {
+    "passed": 15,
+    "failed": 0,
+    "warned": 0,
+    "skipped": 0,
+    "success_rate": "100.0%"
+  }
+}

@@ -1,0 +1,1223 @@
+{
+  "total_routes": 108,
+  "routes": [
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "GET",
+      "path": "/debug/routers",
+      "function": "debug_routers_debug_routers_get",
+      "auth": [],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "GET",
+      "path": "/health",
+      "function": "root_health_health_get",
+      "auth": [],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "GET",
+      "path": "/",
+      "function": "root__get",
+      "auth": [],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "GET",
+      "path": "/api/debug/headers",
+      "function": "debug_headers_api_debug_headers_get",
+      "auth": [],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "GET",
+      "path": "/api/health",
+      "function": "health_check_api_health_get",
+      "auth": [],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "GET",
+      "path": "/api/",
+      "function": "root_api__get",
+      "auth": [],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "POST",
+      "path": "/api/contact",
+      "function": "create_contact_api_contact_post",
+      "auth": [],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "GET",
+      "path": "/api/contacts",
+      "function": "get_contacts_api_contacts_get",
+      "auth": [],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "GET",
+      "path": "/api/cart",
+      "function": "get_cart_api_cart_get",
+      "auth": [],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "POST",
+      "path": "/api/cart",
+      "function": "add_to_cart_api_cart_post",
+      "auth": [],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "GET",
+      "path": "/api/detect-location",
+      "function": "detect_location_api_detect_location_get",
+      "auth": [],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "GET",
+      "path": "/api/cms/content",
+      "function": "get_cms_content_api_cms_content_get",
+      "auth": [
+        {
+          "HTTPBearer": []
+        }
+      ],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "POST",
+      "path": "/api/cms/content",
+      "function": "save_cms_content_api_cms_content_post",
+      "auth": [
+        {
+          "HTTPBearer": []
+        }
+      ],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "POST",
+      "path": "/api/admin/bootstrap",
+      "function": "bootstrap_admin_api_admin_bootstrap_post",
+      "auth": [],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "POST",
+      "path": "/api/admin/login",
+      "function": "admin_login_api_admin_login_post",
+      "auth": [],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "GET",
+      "path": "/api/admin/verify",
+      "function": "verify_admin_token_api_admin_verify_get",
+      "auth": [
+        {
+          "HTTPBearer": []
+        }
+      ],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "GET",
+      "path": "/api/admin/contacts",
+      "function": "get_all_contacts_api_admin_contacts_get",
+      "auth": [
+        {
+          "HTTPBearer": []
+        }
+      ],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "GET",
+      "path": "/api/admin/stats",
+      "function": "get_stats_api_admin_stats_get",
+      "auth": [
+        {
+          "HTTPBearer": []
+        }
+      ],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "POST",
+      "path": "/api/monetico/init-payment",
+      "function": "init_payment_public_api_monetico_init_payment_post",
+      "auth": [],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "POST",
+      "path": "/api/monetico/callback",
+      "function": "monetico_callback_api_monetico_callback_post",
+      "auth": [],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "POST",
+      "path": "/api/ai/generate-insight",
+      "function": "generate_insight_api_ai_generate_insight_post",
+      "auth": [],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "GET",
+      "path": "/api/diag-gemini",
+      "function": "diagnose_gemini_api_diag_gemini_get",
+      "auth": [],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "GET",
+      "path": "/api/diag-smtp",
+      "function": "diagnose_smtp_api_diag_smtp_get",
+      "auth": [],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "GET",
+      "path": "/api/mini-analysis/debug",
+      "function": "debug_mini_analysis_api_mini_analysis_debug_get",
+      "auth": [],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "POST",
+      "path": "/api/admin/test-gemini-multilang",
+      "function": "test_gemini_multilang_admin_api_admin_test_gemini_multilang_post",
+      "auth": [],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "POST",
+      "path": "/api/mini-analysis",
+      "function": "generate_mini_analysis_api_mini_analysis_post",
+      "auth": [],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "POST",
+      "path": "/api/pdf/generate",
+      "function": "generate_pdf_api_pdf_generate_post",
+      "auth": [],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "POST",
+      "path": "/api/email/send-pdf",
+      "function": "send_pdf_email_endpoint_api_email_send_pdf_post",
+      "auth": [],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "GET",
+      "path": "/api/diag/pdf-header",
+      "function": "check_pdf_header_api_diag_pdf_header_get",
+      "auth": [],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "GET",
+      "path": "/api/diag/smtp",
+      "function": "check_smtp_config_api_diag_smtp_get",
+      "auth": [],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "POST",
+      "path": "/api/contact-expert",
+      "function": "contact_expert_api_contact_expert_post",
+      "auth": [],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "POST",
+      "path": "/api/calendar/create-event",
+      "function": "create_calendar_event_api_calendar_create_event_post",
+      "auth": [],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "GET",
+      "path": "/api/crm/debug",
+      "function": "debug_crm_api_crm_debug_get",
+      "auth": [
+        {
+          "HTTPBearer": []
+        }
+      ],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "GET",
+      "path": "/api/crm/dashboard/stats",
+      "function": "get_dashboard_stats_api_crm_dashboard_stats_get",
+      "auth": [
+        {
+          "HTTPBearer": []
+        }
+      ],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "GET",
+      "path": "/api/crm/leads",
+      "function": "get_leads_api_crm_leads_get",
+      "auth": [
+        {
+          "HTTPBearer": []
+        }
+      ],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "POST",
+      "path": "/api/crm/leads",
+      "function": "create_lead_api_crm_leads_post",
+      "auth": [
+        {
+          "HTTPBearer": []
+        }
+      ],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "GET",
+      "path": "/api/crm/leads/{lead_id}",
+      "function": "get_lead_api_crm_leads__lead_id__get",
+      "auth": [
+        {
+          "HTTPBearer": []
+        }
+      ],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "PUT",
+      "path": "/api/crm/leads/{lead_id}",
+      "function": "update_lead_api_crm_leads__lead_id__put",
+      "auth": [
+        {
+          "HTTPBearer": []
+        }
+      ],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "DELETE",
+      "path": "/api/crm/leads/{lead_id}",
+      "function": "delete_lead_api_crm_leads__lead_id__delete",
+      "auth": [
+        {
+          "HTTPBearer": []
+        }
+      ],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "POST",
+      "path": "/api/crm/leads/{lead_id}/notes",
+      "function": "add_note_to_lead_api_crm_leads__lead_id__notes_post",
+      "auth": [
+        {
+          "HTTPBearer": []
+        }
+      ],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "POST",
+      "path": "/api/crm/leads/{lead_id}/convert-to-contact",
+      "function": "convert_lead_to_contact_api_crm_leads__lead_id__convert_to_contact_post",
+      "auth": [
+        {
+          "HTTPBearer": []
+        }
+      ],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "GET",
+      "path": "/api/crm/leads/export/csv",
+      "function": "export_leads_csv_api_crm_leads_export_csv_get",
+      "auth": [
+        {
+          "HTTPBearer": []
+        }
+      ],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "GET",
+      "path": "/api/crm/pipeline",
+      "function": "get_pipeline_api_crm_pipeline_get",
+      "auth": [
+        {
+          "HTTPBearer": []
+        }
+      ],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "GET",
+      "path": "/api/crm/opportunities",
+      "function": "list_opportunities_api_crm_opportunities_get",
+      "auth": [
+        {
+          "HTTPBearer": []
+        }
+      ],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "POST",
+      "path": "/api/crm/opportunities",
+      "function": "create_opportunity_api_crm_opportunities_post",
+      "auth": [
+        {
+          "HTTPBearer": []
+        }
+      ],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "PUT",
+      "path": "/api/crm/opportunities/{opp_id}",
+      "function": "update_opportunity_api_crm_opportunities__opp_id__put",
+      "auth": [
+        {
+          "HTTPBearer": []
+        }
+      ],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "DELETE",
+      "path": "/api/crm/opportunities/{opp_id}",
+      "function": "delete_opportunity_api_crm_opportunities__opp_id__delete",
+      "auth": [
+        {
+          "HTTPBearer": []
+        }
+      ],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "GET",
+      "path": "/api/crm/contacts",
+      "function": "get_contacts_api_crm_contacts_get",
+      "auth": [
+        {
+          "HTTPBearer": []
+        }
+      ],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "POST",
+      "path": "/api/crm/contacts",
+      "function": "create_contact_api_crm_contacts_post",
+      "auth": [
+        {
+          "HTTPBearer": []
+        }
+      ],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "GET",
+      "path": "/api/crm/contacts/{contact_id}",
+      "function": "get_contact_api_crm_contacts__contact_id__get",
+      "auth": [
+        {
+          "HTTPBearer": []
+        }
+      ],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "PUT",
+      "path": "/api/crm/contacts/{contact_id}",
+      "function": "update_contact_api_crm_contacts__contact_id__put",
+      "auth": [
+        {
+          "HTTPBearer": []
+        }
+      ],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "DELETE",
+      "path": "/api/crm/contacts/{contact_id}",
+      "function": "delete_contact_api_crm_contacts__contact_id__delete",
+      "auth": [
+        {
+          "HTTPBearer": []
+        }
+      ],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "GET",
+      "path": "/api/crm/settings/users",
+      "function": "get_crm_users_api_crm_settings_users_get",
+      "auth": [
+        {
+          "HTTPBearer": []
+        }
+      ],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "POST",
+      "path": "/api/crm/settings/users",
+      "function": "create_crm_user_api_crm_settings_users_post",
+      "auth": [
+        {
+          "HTTPBearer": []
+        }
+      ],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "PUT",
+      "path": "/api/crm/settings/users/{user_id}",
+      "function": "update_crm_user_api_crm_settings_users__user_id__put",
+      "auth": [
+        {
+          "HTTPBearer": []
+        }
+      ],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "POST",
+      "path": "/api/crm/settings/users/change-password",
+      "function": "change_password_api_crm_settings_users_change_password_post",
+      "auth": [
+        {
+          "HTTPBearer": []
+        }
+      ],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "GET",
+      "path": "/api/crm/settings/tags",
+      "function": "get_tags_api_crm_settings_tags_get",
+      "auth": [
+        {
+          "HTTPBearer": []
+        }
+      ],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "POST",
+      "path": "/api/crm/settings/tags",
+      "function": "add_tag_api_crm_settings_tags_post",
+      "auth": [
+        {
+          "HTTPBearer": []
+        }
+      ],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "GET",
+      "path": "/api/crm/settings/pipeline-stages",
+      "function": "get_pipeline_stages_api_crm_settings_pipeline_stages_get",
+      "auth": [
+        {
+          "HTTPBearer": []
+        }
+      ],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "GET",
+      "path": "/api/crm/tasks",
+      "function": "get_tasks_api_crm_tasks_get",
+      "auth": [
+        {
+          "HTTPBearer": []
+        }
+      ],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "POST",
+      "path": "/api/crm/tasks",
+      "function": "create_task_api_crm_tasks_post",
+      "auth": [
+        {
+          "HTTPBearer": []
+        }
+      ],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "GET",
+      "path": "/api/crm/tasks/{task_id}",
+      "function": "get_task_api_crm_tasks__task_id__get",
+      "auth": [
+        {
+          "HTTPBearer": []
+        }
+      ],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "PATCH",
+      "path": "/api/crm/tasks/{task_id}",
+      "function": "update_task_api_crm_tasks__task_id__patch",
+      "auth": [
+        {
+          "HTTPBearer": []
+        }
+      ],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "DELETE",
+      "path": "/api/crm/tasks/{task_id}",
+      "function": "delete_task_api_crm_tasks__task_id__delete",
+      "auth": [
+        {
+          "HTTPBearer": []
+        }
+      ],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "GET",
+      "path": "/api/crm/tasks/export/csv",
+      "function": "export_tasks_csv_api_crm_tasks_export_csv_get",
+      "auth": [
+        {
+          "HTTPBearer": []
+        }
+      ],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "GET",
+      "path": "/api/crm/emails/templates",
+      "function": "get_email_templates_api_crm_emails_templates_get",
+      "auth": [
+        {
+          "HTTPBearer": []
+        }
+      ],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "POST",
+      "path": "/api/crm/emails/templates",
+      "function": "create_email_template_api_crm_emails_templates_post",
+      "auth": [
+        {
+          "HTTPBearer": []
+        }
+      ],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "GET",
+      "path": "/api/crm/emails/history",
+      "function": "get_email_history_api_crm_emails_history_get",
+      "auth": [
+        {
+          "HTTPBearer": []
+        }
+      ],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "POST",
+      "path": "/api/crm/emails/send",
+      "function": "send_crm_email_api_crm_emails_send_post",
+      "auth": [
+        {
+          "HTTPBearer": []
+        }
+      ],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "GET",
+      "path": "/api/crm/activities",
+      "function": "get_activities_api_crm_activities_get",
+      "auth": [
+        {
+          "HTTPBearer": []
+        }
+      ],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "POST",
+      "path": "/api/crm/lead-from-pack",
+      "function": "create_lead_from_pack_api_crm_lead_from_pack_post",
+      "auth": [],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "GET",
+      "path": "/api/admin/users",
+      "function": "get_all_users_api_admin_users_get",
+      "auth": [
+        {
+          "HTTPBearer": []
+        }
+      ],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "POST",
+      "path": "/api/admin/users",
+      "function": "create_user_api_admin_users_post",
+      "auth": [
+        {
+          "HTTPBearer": []
+        }
+      ],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "PUT",
+      "path": "/api/admin/users/{user_id}",
+      "function": "update_user_api_admin_users__user_id__put",
+      "auth": [
+        {
+          "HTTPBearer": []
+        }
+      ],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "DELETE",
+      "path": "/api/admin/users/{user_id}",
+      "function": "delete_user_api_admin_users__user_id__delete",
+      "auth": [
+        {
+          "HTTPBearer": []
+        }
+      ],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "GET",
+      "path": "/api/admin/users/{user_id}",
+      "function": "get_user_api_admin_users__user_id__get",
+      "auth": [
+        {
+          "HTTPBearer": []
+        }
+      ],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "GET",
+      "path": "/api/gdpr/consent",
+      "function": "get_consent_api_gdpr_consent_get",
+      "auth": [],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "POST",
+      "path": "/api/gdpr/consent",
+      "function": "update_consent_api_gdpr_consent_post",
+      "auth": [],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "POST",
+      "path": "/api/gdpr/track/visit",
+      "function": "track_visit_api_gdpr_track_visit_post",
+      "auth": [],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "POST",
+      "path": "/api/gdpr/newsletter/subscribe",
+      "function": "newsletter_subscribe_api_gdpr_newsletter_subscribe_post",
+      "auth": [],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "POST",
+      "path": "/api/gdpr/newsletter/unsubscribe",
+      "function": "newsletter_unsubscribe_api_gdpr_newsletter_unsubscribe_post",
+      "auth": [],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "DELETE",
+      "path": "/api/gdpr/newsletter/delete-data",
+      "function": "newsletter_delete_data_api_gdpr_newsletter_delete_data_delete",
+      "auth": [],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "GET",
+      "path": "/api/gdpr/my-data",
+      "function": "get_my_data_api_gdpr_my_data_get",
+      "auth": [],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "DELETE",
+      "path": "/api/gdpr/delete-all-data",
+      "function": "delete_all_data_api_gdpr_delete_all_data_delete",
+      "auth": [],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "POST",
+      "path": "/api/quota/queue-analysis",
+      "function": "queue_analysis_api_quota_queue_analysis_post",
+      "auth": [],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "GET",
+      "path": "/api/quota/queue-status/{queue_id}",
+      "function": "get_queue_status_api_quota_queue_status__queue_id__get",
+      "auth": [],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "GET",
+      "path": "/api/quota/admin/pending-analyses",
+      "function": "get_pending_analyses_api_quota_admin_pending_analyses_get",
+      "auth": [],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "POST",
+      "path": "/api/quota/admin/process-pending/{queue_id}",
+      "function": "process_pending_analysis_api_quota_admin_process_pending__queue_id__post",
+      "auth": [],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "POST",
+      "path": "/api/quota/admin/retry-failed",
+      "function": "retry_failed_analyses_api_quota_admin_retry_failed_post",
+      "auth": [],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "POST",
+      "path": "/api/track/visit",
+      "function": "track_visit_api_track_visit_post",
+      "auth": [],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "GET",
+      "path": "/api/track/stats",
+      "function": "get_visit_stats_api_track_stats_get",
+      "auth": [],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "GET",
+      "path": "/api/admin/stats/visits",
+      "function": "get_visit_stats_admin_api_admin_stats_visits_get",
+      "auth": [],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "GET",
+      "path": "/api/admin/stats/leads",
+      "function": "get_lead_stats_admin_api_admin_stats_leads_get",
+      "auth": [],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "POST",
+      "path": "/api/admin/process-pending",
+      "function": "process_pending_analyses_api_admin_process_pending_post",
+      "auth": [],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "GET",
+      "path": "/api/admin/pending-stats",
+      "function": "get_pending_stats_api_admin_pending_stats_get",
+      "auth": [],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "GET",
+      "path": "/api/invoices/",
+      "function": "list_invoices_api_invoices__get",
+      "auth": [
+        {
+          "HTTPBearer": []
+        }
+      ],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "POST",
+      "path": "/api/invoices/",
+      "function": "create_invoice_api_invoices__post",
+      "auth": [
+        {
+          "HTTPBearer": []
+        }
+      ],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "GET",
+      "path": "/api/invoices/{invoice_id}",
+      "function": "get_invoice_api_invoices__invoice_id__get",
+      "auth": [
+        {
+          "HTTPBearer": []
+        }
+      ],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "PATCH",
+      "path": "/api/invoices/{invoice_id}",
+      "function": "update_invoice_api_invoices__invoice_id__patch",
+      "auth": [
+        {
+          "HTTPBearer": []
+        }
+      ],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "DELETE",
+      "path": "/api/invoices/{invoice_id}",
+      "function": "delete_invoice_api_invoices__invoice_id__delete",
+      "auth": [
+        {
+          "HTTPBearer": []
+        }
+      ],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "POST",
+      "path": "/api/invoices/{invoice_id}/generate-pdf",
+      "function": "generate_pdf_for_invoice_api_invoices__invoice_id__generate_pdf_post",
+      "auth": [
+        {
+          "HTTPBearer": []
+        }
+      ],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "POST",
+      "path": "/api/invoices/{invoice_id}/send",
+      "function": "send_invoice_api_invoices__invoice_id__send_post",
+      "auth": [
+        {
+          "HTTPBearer": []
+        }
+      ],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "GET",
+      "path": "/api/invoices/stats/overview",
+      "function": "get_invoice_stats_api_invoices_stats_overview_get",
+      "auth": [
+        {
+          "HTTPBearer": []
+        }
+      ],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "GET",
+      "path": "/api/monetico/config",
+      "function": "get_monetico_config_api_monetico_config_get",
+      "auth": [],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "POST",
+      "path": "/api/monetico/init",
+      "function": "init_payment_api_monetico_init_post",
+      "auth": [
+        {
+          "HTTPBearer": []
+        }
+      ],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "POST",
+      "path": "/api/monetico/notify",
+      "function": "monetico_notify_api_monetico_notify_post",
+      "auth": [],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "GET",
+      "path": "/api/monetico/payment/{payment_id}",
+      "function": "get_payment_status_api_monetico_payment__payment_id__get",
+      "auth": [
+        {
+          "HTTPBearer": []
+        }
+      ],
+      "router_var": "openapi"
+    },
+    {
+      "file": "openapi",
+      "line": 0,
+      "method": "GET",
+      "path": "/api/monetico/payments",
+      "function": "list_payments_api_monetico_payments_get",
+      "auth": [
+        {
+          "HTTPBearer": []
+        }
+      ],
+      "router_var": "openapi"
+    }
+  ],
+  "stats_by_method": {
+    "GET": 52,
+    "POST": 41,
+    "PUT": 5,
+    "DELETE": 8,
+    "PATCH": 2
+  },
+  "stats_by_file": {
+    "openapi": 108
+  }
+}

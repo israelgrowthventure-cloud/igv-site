@@ -1,0 +1,96 @@
+{
+  "tests": [
+    {
+      "name": "Admin Login",
+      "status": "PASS",
+      "details": "Token obtained (first 20 chars: eyJhbGciOiJIUzI1NiIs...)",
+      "timestamp": "2026-01-05T23:58:27.751961"
+    },
+    {
+      "name": "Get Leads List",
+      "status": "PASS",
+      "details": "Total: 106 prospects",
+      "timestamp": "2026-01-05T23:58:31.876787"
+    },
+    {
+      "name": "Create Test Prospect",
+      "status": "PASS",
+      "details": "Lead ID: 695c34088547ec0e21606463",
+      "timestamp": "2026-01-05T23:58:34.350211"
+    },
+    {
+      "name": "Get Single Prospect",
+      "status": "PASS",
+      "details": "Email: test_audit_1767650311@example.com",
+      "timestamp": "2026-01-05T23:58:35.985600"
+    },
+    {
+      "name": "Add Note",
+      "status": "PASS",
+      "details": "Response: {'message': 'Note added successfully'}",
+      "timestamp": "2026-01-05T23:58:37.326694"
+    },
+    {
+      "name": "Note Persistence",
+      "status": "PASS",
+      "details": "Found 2 note(s)",
+      "timestamp": "2026-01-05T23:58:39.922065"
+    },
+    {
+      "name": "Convert to Contact",
+      "status": "PASS",
+      "details": "Contact ID: 695c34108547ec0e21606466",
+      "timestamp": "2026-01-05T23:58:42.019208"
+    },
+    {
+      "name": "Contact Created & Accessible",
+      "status": "PASS",
+      "details": "Email: test_audit_1767650311@example.com",
+      "timestamp": "2026-01-05T23:58:43.607380"
+    },
+    {
+      "name": "Lead Status Updated",
+      "status": "PASS",
+      "details": "Status is CONVERTED",
+      "timestamp": "2026-01-05T23:58:45.278416"
+    },
+    {
+      "name": "Lead Has Contact Reference",
+      "status": "PASS",
+      "details": "converted_to_contact_id: 695c34108547ec0e21606466",
+      "timestamp": "2026-01-05T23:58:45.278616"
+    },
+    {
+      "name": "Get Email Templates",
+      "status": "PASS",
+      "details": "Found 1 templates",
+      "timestamp": "2026-01-05T23:58:46.621681"
+    },
+    {
+      "name": "Delete Prospect",
+      "status": "PASS",
+      "details": "Lead 695c34088547ec0e21606463 deleted",
+      "timestamp": "2026-01-05T23:58:48.667724"
+    },
+    {
+      "name": "Deletion Verified",
+      "status": "PASS",
+      "details": "Lead no longer exists",
+      "timestamp": "2026-01-05T23:58:51.044317"
+    },
+    {
+      "name": "Search Prospects",
+      "status": "PASS",
+      "details": "Found 82 results",
+      "timestamp": "2026-01-05T23:58:56.803940"
+    },
+    {
+      "name": "Export CSV",
+      "status": "PASS",
+      "details": "Exported 106 leads",
+      "timestamp": "2026-01-05T23:58:59.436105"
+    }
+  ],
+  "errors": [],
+  "warnings": []
+}

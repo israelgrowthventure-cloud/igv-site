@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useLocation } from 'react-router-dom';
 import { Loader2 } from 'lucide-react';
 import LeadsTab from '../../components/crm/LeadsTab';
 import api from '../../utils/api';
@@ -11,11 +12,19 @@ import { toast } from 'sonner';
  */
 const LeadsPage = () => {
   const { t } = useTranslation();
+  const location = useLocation();
   const [data, setData] = useState({ leads: [], total: 0 });
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState({});
   const [selectedItem, setSelectedItem] = useState(null);
+
+  // Reset selectedItem when navigating back to leads list via menu
+  useEffect(() => {
+    if (location.pathname === '/admin/crm/leads') {
+      setSelectedItem(null);
+    }
+  }, [location.pathname]);
 
   useEffect(() => {
     loadLeads();

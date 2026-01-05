@@ -333,6 +333,8 @@ async def get_leads(
     # Convert ObjectId to string
     for lead in leads:
         lead["_id"] = str(lead["_id"])
+        lead["lead_id"] = str(lead["_id"])  # Add lead_id alias
+        lead["contact_name"] = lead.get("name")  # Add contact_name alias for frontend
         if "created_at" in lead and isinstance(lead["created_at"], datetime):
             lead["created_at"] = lead["created_at"].isoformat()
         if "updated_at" in lead and isinstance(lead["updated_at"], datetime):
@@ -367,6 +369,7 @@ async def get_lead(lead_id: str, user: Dict = Depends(get_current_user)):
     # Convert ObjectIds and dates
     lead["_id"] = str(lead["_id"])
     lead["lead_id"] = str(lead["_id"])  # Also add lead_id field for frontend
+    lead["contact_name"] = lead.get("name")  # Add contact_name alias for frontend
     if "created_at" in lead and isinstance(lead["created_at"], datetime):
         lead["created_at"] = lead["created_at"].isoformat()
     if "updated_at" in lead and isinstance(lead["updated_at"], datetime):
@@ -381,8 +384,12 @@ async def get_lead(lead_id: str, user: Dict = Depends(get_current_user)):
         
         # Build notes array from note-type activities
         if activity.get("type") == "note":
+            note_content = activity.get("description") or activity.get("note_text") or activity.get("details") or ""
             notes.append({
-                "note_text": activity.get("description") or activity.get("note_text") or "",
+                "id": str(activity["_id"]),
+                "content": note_content,  # Primary field for frontend
+                "note_text": note_content,  # Alias for compatibility
+                "details": note_content,  # Another alias
                 "created_at": activity.get("created_at"),
                 "created_by": activity.get("user_email") or activity.get("created_by") or "Unknown"
             })

@@ -1,0 +1,97 @@
+{
+  "tests": [
+    {
+      "test": "Authentification admin",
+      "status": "PASS",
+      "details": "Token obtenu"
+    },
+    {
+      "test": "Création prospect",
+      "status": "PASS",
+      "details": "ID: 695c4679bcf3b38ab5808300"
+    },
+    {
+      "test": "Ajout note (note_text)",
+      "status": "PASS",
+      "details": "Note ajoutée avec champ frontend"
+    },
+    {
+      "test": "Persistance notes",
+      "status": "PASS",
+      "details": "2 note(s) dans le champ notes[]"
+    },
+    {
+      "test": "Contenu note accessible",
+      "status": "PASS",
+      "details": "Note récupérable correctement"
+    },
+    {
+      "test": "Liste templates",
+      "status": "PASS",
+      "details": "5 templates disponibles"
+    },
+    {
+      "test": "Templates prédéfinis",
+      "status": "PASS",
+      "details": "4 templates trouvés"
+    },
+    {
+      "test": "[DATE]/[HEURE] présents",
+      "status": "PASS",
+      "details": "4 templates avec marqueurs"
+    },
+    {
+      "test": "Création template test",
+      "status": "PASS",
+      "details": "ID: 695c4681bcf3b38ab5808303"
+    },
+    {
+      "test": "Suppression template",
+      "status": "PASS",
+      "details": "Template supprimé"
+    },
+    {
+      "test": "Envoi email",
+      "status": "PASS",
+      "details": "Email envoyé à contact@israelgrowthventure.com"
+    },
+    {
+      "test": "Conversion",
+      "status": "PASS",
+      "details": "Contact ID: 695c4688bcf3b38ab5808305"
+    },
+    {
+      "test": "Contact accessible",
+      "status": "PASS",
+      "details": "Email: test_mission_1767655033@audit.igv"
+    },
+    {
+      "test": "Statut CONVERTED",
+      "status": "PASS",
+      "details": "Status=CONVERTED"
+    },
+    {
+      "test": "Création pour suppression",
+      "status": "PASS",
+      "details": "ID: 695c468ebcf3b38ab5808307"
+    },
+    {
+      "test": "Suppression prospect",
+      "status": "PASS",
+      "details": "Prospect supprimé via API"
+    },
+    {
+      "test": "Vérification 404",
+      "status": "PASS",
+      "details": "Prospect introuvable après suppression"
+    }
+  ],
+  "date": "2026-01-06T01:17:12.241440",
+  "summary": {
+    "passed": 17,
+    "failed": 0,
+    "warned": 0,
+    "skipped": 0,
+    "success_rate": "100.0%"
+  }
+}

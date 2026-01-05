@@ -409,10 +409,18 @@ const LeadsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, sea
                 className="flex items-center gap-2 text-blue-600 hover:text-blue-800 mb-2 text-sm"
               >
                 <ArrowLeft className="w-4 h-4" />
-                {t('admin.crm.common.back_to_list') || 'Retour à la liste'}
+                {t('admin.crm.common.back_to_list', 'Retour à la liste')}
               </button>
-              <h2 className="text-2xl font-bold">{selectedItem.contact_name || selectedItem.email}</h2>
-              <p className="text-gray-600">{selectedItem.brand_name}</p>
+              <h2 className="text-2xl font-bold">
+                {selectedItem.contact_name || selectedItem.name || selectedItem.brand_name || selectedItem.email}
+              </h2>
+              {selectedItem.brand_name && (
+                <p className="text-gray-600">{selectedItem.brand_name}</p>
+              )}
+              <p className="text-sm text-gray-500 mt-1">{selectedItem.email}</p>
+              {selectedItem.phone && (
+                <p className="text-sm text-gray-500">{selectedItem.phone}</p>
+              )}
             </div>
             <button onClick={() => setSelectedItem(null)} className="p-2 hover:bg-gray-100 rounded-lg" title="Fermer">
               <X className="w-5 h-5" />

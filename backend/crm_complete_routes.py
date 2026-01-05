@@ -87,10 +87,16 @@ class LeadUpdate(BaseModel):
 
 
 class NoteCreate(BaseModel):
-    content: str
+    content: Optional[str] = None
+    note_text: Optional[str] = None  # Alias for content (frontend compatibility)
     lead_id: Optional[str] = None
     contact_id: Optional[str] = None
     opportunity_id: Optional[str] = None
+    
+    @property
+    def text(self) -> str:
+        """Get note text from content or note_text field"""
+        return self.content or self.note_text or ""
 
 
 class OpportunityCreate(BaseModel):
@@ -360,17 +366,29 @@ async def get_lead(lead_id: str, user: Dict = Depends(get_current_user)):
     
     # Convert ObjectIds and dates
     lead["_id"] = str(lead["_id"])
+    lead["lead_id"] = str(lead["_id"])  # Also add lead_id field for frontend
     if "created_at" in lead and isinstance(lead["created_at"], datetime):
         lead["created_at"] = lead["created_at"].isoformat()
     if "updated_at" in lead and isinstance(lead["updated_at"], datetime):
         lead["updated_at"] = lead["updated_at"].isoformat()
     
+    # Process activities and extract notes for frontend
+    notes = []
     for activity in activities:
         activity["_id"] = str(activity["_id"])
         if "created_at" in activity and isinstance(activity["created_at"], datetime):
             activity["created_at"] = activity["created_at"].isoformat()
+        
+        # Build notes array from note-type activities
+        if activity.get("type") == "note":
+            notes.append({
+                "note_text": activity.get("description") or activity.get("note_text") or "",
+                "created_at": activity.get("created_at"),
+                "created_by": activity.get("user_email") or activity.get("created_by") or "Unknown"
+            })
     
     lead["activities"] = activities
+    lead["notes"] = notes  # Add notes array for frontend compatibility
     
     return lead
 
@@ -491,13 +509,20 @@ async def add_note_to_lead(lead_id: str, note: NoteCreate, user: Dict = Depends(
     if current_db is None:
         raise HTTPException(status_code=500, detail="Database not configured")
     
+    # Get note text from content or note_text field
+    note_content = note.content or note.note_text or ""
+    if not note_content.strip():
+        raise HTTPException(status_code=400, detail="Note content is required")
+    
     await current_db.activities.insert_one({
         "type": "note",
         "subject": "Note added",
-        "description": note.content,
+        "description": note_content,
+        "note_text": note_content,  # Also store as note_text for frontend compatibility
         "lead_id": lead_id,
         "user_id": user["id"],
         "user_email": user["email"],
+        "created_by": user["email"],
         "metadata": {},
         "created_at": datetime.now(timezone.utc)
     })

@@ -68,7 +68,9 @@ const LeadsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, sea
   };
 
   const handleAddNote = async (leadId) => {
-    console.log('[DEBUG handleAddNote] Called with leadId:', leadId, 'noteText:', noteText);
+    console.log('[DEBUG handleAddNote] Called with leadId:', leadId);
+    console.log('[DEBUG handleAddNote] selectedItem:', JSON.stringify(selectedItem));
+    console.log('[DEBUG handleAddNote] noteText:', noteText);
     if (!noteText.trim()) {
       console.log('[DEBUG handleAddNote] Empty noteText, returning early');
       return;

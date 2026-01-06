@@ -33,12 +33,16 @@ test.describe('CRM - Module Prospects (LIVE)', () => {
   test('Validation complète fiche prospect - ENHANCED', async ({ page }) => {
     console.log('🎯 Début du test CRM live (version 2.0 - détection erreurs)...');
     
-    // Capture des erreurs console
+    // Capture des erreurs console ET logs DEBUG
     page.on('console', msg => {
+      const text = msg.text();
       if (msg.type() === 'error') {
-        const error = `CONSOLE ERROR: ${msg.text()}`;
+        const error = `CONSOLE ERROR: ${text}`;
         console.log(`❌ ${error}`);
         detectedErrors.push(error);
+      } else if (text.includes('[DEBUG') || text.includes('handleAddNote')) {
+        // Capturer les logs DEBUG
+        console.log(`🐛 ${text}`);
       }
     });
     
@@ -252,32 +256,47 @@ test.describe('CRM - Module Prospects (LIVE)', () => {
         await noteInput.fill(testNote);
         console.log(`✅ Note saisie: "${testNote}"`);
         
-        // Chercher le bouton d'ajout avec tous les sélecteurs possibles
-        // PRIORITÉ: Bouton texte "Ajouter" proche de l'input
-        const submitSelectors = [
-          'button:has-text("Ajouter"):visible',
-          'button.bg-blue-600:visible',  // Bouton bleu du formulaire note
-          'button:has-text("Add"):visible',
-        ];
+        // CRITIQUE: Chercher le bouton d'ajout JUSTE À CÔTÉ de l'input note
+        // Stratégie: chercher un div.flex.gap-2 qui contient input + button
+        const noteFormContainer = page.locator('div.flex.gap-2:has(input[placeholder*="note"])').first();
         
         let submitButton = null;
-        for (const selector of submitSelectors) {
-          const allButtons = page.locator(selector);
-          const count = await allButtons.count();
+        if (await noteFormContainer.count() > 0) {
+          // Chercher le bouton DANS ce container
+          submitButton = noteFormContainer.locator('button').first();
+          if (await submitButton.isVisible()) {
+            console.log('✅ Bouton submit trouvé: bouton dans div.flex.gap-2 avec input note');
+          } else {
+            submitButton = null;
+          }
+        }
+        
+        // Fallback: anciens sélecteurs
+        if (!submitButton) {
+          const submitSelectors = [
+            'button:has-text("Ajouter"):visible',
+            'button.bg-blue-600:visible',
+            'button:has-text("Add"):visible',
+          ];
           
-          if (count > 0) {
-            console.log(`🔍 Sélecteur "${selector}" trouve ${count} bouton(s)`);
+          for (const selector of submitSelectors) {
+            const allButtons = page.locator(selector);
+            const count = await allButtons.count();
             
-            // Prendre le dernier bouton visible (formulaire est en bas)
-            for (let i = count - 1; i >= 0; i--) {
-              const btn = allButtons.nth(i);
-              if (await btn.isVisible()) {
-                submitButton = btn;
-                console.log(`✅ Bouton submit trouvé: ${selector} (index ${i}/${count})`);
-                break;
+            if (count > 0) {
+              console.log(`🔍 Fallback sélecteur "${selector}" trouve ${count} bouton(s)`);
+              
+              // Prendre le dernier bouton visible
+              for (let i = count - 1; i >= 0; i--) {
+                const btn = allButtons.nth(i);
+                if (await btn.isVisible()) {
+                  submitButton = btn;
+                  console.log(`✅ Bouton submit trouvé (fallback): ${selector} (index ${i}/${count})`);
+                  break;
+                }
               }
+              if (submitButton) break;
             }
-            if (submitButton) break;
           }
         }
         

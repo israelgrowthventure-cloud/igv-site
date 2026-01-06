@@ -68,14 +68,21 @@ const LeadsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, sea
   };
 
   const handleAddNote = async (leadId) => {
-    if (!noteText.trim()) return;
+    console.log('[DEBUG handleAddNote] Called with leadId:', leadId, 'noteText:', noteText);
+    if (!noteText.trim()) {
+      console.log('[DEBUG handleAddNote] Empty noteText, returning early');
+      return;
+    }
     try {
+      console.log('[DEBUG handleAddNote] Calling API POST /notes with leadId:', leadId);
       setLoadingAction(true);
       await api.post(`/api/crm/leads/${leadId}/notes`, { note_text: noteText });
+      console.log('[DEBUG handleAddNote] API call successful');
       setNoteText('');
       toast.success(t('admin.crm.leads.note_added'));
       await onRefresh();
     } catch (error) {
+      console.error('[DEBUG handleAddNote] API call failed:', error);
       toast.error(t('admin.crm.errors.note_failed'));
     } finally {
       setLoadingAction(false);

@@ -93,7 +93,7 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "timedOut",
-                      "duration": 63125,
+                      "duration": 62200,
                       "error": {
                         "message": "\u001b[31mTest timeout of 60000ms exceeded.\u001b[39m",
                         "stack": "\u001b[31mTest timeout of 60000ms exceeded.\u001b[39m"
@@ -106,9 +106,9 @@
                           "location": {
                             "file": "C:\\Users\\PC\\Desktop\\IGV\\igv site\\igv-site\\tests\\ui_crm_live.spec.js",
                             "column": 22,
-                            "line": 424
+                            "line": 433
                           },
-                          "message": "Error: locator.click: Test timeout of 60000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:has-text(\"Retour\"), button:has-text(\"←\")').first()\u001b[22m\n\n\n\u001b[0m \u001b[90m 422 |\u001b[39m     \n \u001b[90m 423 |\u001b[39m     \u001b[90m// Cliquer sur \"Retour à la liste\"\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 424 |\u001b[39m     \u001b[36mawait\u001b[39m backButton\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                      \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 425 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForTimeout(\u001b[35m1000\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 426 |\u001b[39m     \n \u001b[90m 427 |\u001b[39m     \u001b[90m// Vérifier que la liste est de nouveau visible\u001b[39m\u001b[0m\n\u001b[2m    at C:\\Users\\PC\\Desktop\\IGV\\igv site\\igv-site\\tests\\ui_crm_live.spec.js:424:22\u001b[22m"
+                          "message": "Error: locator.click: Test timeout of 60000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:has-text(\"Retour\"), button:has-text(\"←\")').first()\u001b[22m\n\n\n\u001b[0m \u001b[90m 431 |\u001b[39m     \n \u001b[90m 432 |\u001b[39m     \u001b[90m// Cliquer sur \"Retour à la liste\"\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 433 |\u001b[39m     \u001b[36mawait\u001b[39m backButton\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                      \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 434 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForTimeout(\u001b[35m1000\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 435 |\u001b[39m     \n \u001b[90m 436 |\u001b[39m     \u001b[90m// Vérifier que la liste est de nouveau visible\u001b[39m\u001b[0m\n\u001b[2m    at C:\\Users\\PC\\Desktop\\IGV\\igv site\\igv-site\\tests\\ui_crm_live.spec.js:433:22\u001b[22m"
                         }
                       ],
                       "stdout": [
@@ -129,6 +129,18 @@
                         },
                         {
                           "text": "📡 API Call: GET https://igv-cms-backend.onrender.com/api/admin/verify\n"
+                        },
+                        {
+                          "text": "📡 API Call: GET https://igv-cms-backend.onrender.com/api/crm/dashboard/stats\n"
+                        },
+                        {
+                          "text": "✅ Clic sur bouton Leads effectué\n"
+                        },
+                        {
+                          "text": "✅ URL changée vers /admin/crm/leads\n"
+                        },
+                        {
+                          "text": "📡 API Call: GET https://igv-cms-backend.onrender.com/api/crm/leads?search=&limit=50\n"
                         },
                         {
                           "text": "📡 API Call: GET https://igv-cms-backend.onrender.com/api/crm/dashboard/stats\n"
@@ -176,7 +188,7 @@
                           "text": "📝 Notes existantes AVANT: 1\n"
                         },
                         {
-                          "text": "✅ Note saisie: \"TEST PERSISTENCE 2026-01-06T01:14:25.459Z\"\n"
+                          "text": "✅ Note saisie: \"TEST PERSISTENCE 2026-01-06T01:38:08.965Z\"\n"
                         },
                         {
                           "text": "✅ Bouton submit trouvé avec sélecteur: button:has(svg)\n"
@@ -220,7 +232,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-01-06T01:14:07.851Z",
+                      "startTime": "2026-01-06T01:37:48.027Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -256,8 +268,8 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-01-06T01:14:05.614Z",
-    "duration": 66026.943,
+    "startTime": "2026-01-06T01:37:45.640Z",
+    "duration": 65233.780999999995,
     "expected": 0,
     "skipped": 0,
     "unexpected": 1,

@@ -85,6 +85,22 @@ test.describe('CRM - Module Prospects (LIVE)', () => {
     // ==========================================================================
     console.log('\n📋 STEP 2: Navigation vers Prospects');
     
+    // CRITIQUE: Intercepter la réponse GET /leads pour vérifier lead_id
+    page.on('response', async (response) => {
+      const url = response.url();
+      if (url.includes('/api/crm/leads') && response.request().method() === 'GET' && !url.includes('/notes')) {
+        try {
+          const json = await response.json();
+          if (json.leads && json.leads.length > 0) {
+            const firstLead = json.leads[0];
+            console.log(`🔍 API /leads premier lead: _id=${firstLead._id}, lead_id=${firstLead.lead_id}`);
+          }
+        } catch (e) {
+          // Ignore parsing errors
+        }
+      }
+    });
+    
     // Attendre que la sidebar soit chargée
     await page.waitForSelector('nav', { timeout: 10000 });
     
@@ -118,6 +134,18 @@ test.describe('CRM - Module Prospects (LIVE)', () => {
     
     // Attendre que la liste soit visible (chercher une ligne de tableau ou carte)
     await page.waitForTimeout(2000); // Attendre le chargement des données
+    
+    // CRITIQUE: Extraire le nom/ID du PREMIER prospect pour le retrouver après reload
+    const firstProspectData = await page.evaluate(() => {
+      const firstRow = document.querySelector('tbody tr');
+      if (firstRow) {
+        const nameCell = firstRow.querySelector('td:first-child');
+        const name = nameCell ? nameCell.textContent.trim() : null;
+        return { name };
+      }
+      return null;
+    });
+    console.log(`🔍 Premier prospect identifié: ${JSON.stringify(firstProspectData)}`);
     
     // Chercher le premier prospect (bouton "Voir" ou ligne cliquable)
     const viewButton = page.locator('button:has-text("Voir"), button[title*="Voir"], svg[class*="eye"]').first();
@@ -225,22 +253,31 @@ test.describe('CRM - Module Prospects (LIVE)', () => {
         console.log(`✅ Note saisie: "${testNote}"`);
         
         // Chercher le bouton d'ajout avec tous les sélecteurs possibles
+        // PRIORITÉ: Bouton texte "Ajouter" proche de l'input
         const submitSelectors = [
-          'button:has-text("Ajouter")',
-          'button:has-text("Envoyer")',
-          'button:has-text("Submit")',
-          'button[type="submit"]',
-          'button:has-text("Soumettre")',
-          'button:has(svg)',  // Bouton avec icône
+          'button:has-text("Ajouter"):visible',
+          'button.bg-blue-600:visible',  // Bouton bleu du formulaire note
+          'button:has-text("Add"):visible',
         ];
         
         let submitButton = null;
         for (const selector of submitSelectors) {
-          const btn = page.locator(selector).first();
-          if (await btn.count() > 0 && await btn.isVisible()) {
-            submitButton = btn;
-            console.log(`✅ Bouton submit trouvé avec sélecteur: ${selector}`);
-            break;
+          const allButtons = page.locator(selector);
+          const count = await allButtons.count();
+          
+          if (count > 0) {
+            console.log(`🔍 Sélecteur "${selector}" trouve ${count} bouton(s)`);
+            
+            // Prendre le dernier bouton visible (formulaire est en bas)
+            for (let i = count - 1; i >= 0; i--) {
+              const btn = allButtons.nth(i);
+              if (await btn.isVisible()) {
+                submitButton = btn;
+                console.log(`✅ Bouton submit trouvé: ${selector} (index ${i}/${count})`);
+                break;
+              }
+            }
+            if (submitButton) break;
           }
         }
         
@@ -312,14 +349,38 @@ test.describe('CRM - Module Prospects (LIVE)', () => {
           await page.waitForTimeout(2000);
           
           // CRITIQUE: Après reload, on est revenu à la liste des leads
-          // Il faut RE-OUVRIR le même prospect
-          console.log('📂 Réouverture du prospect après reload...');
-          const viewButtonAfterReload = page.locator('button:has-text("Voir"), button[title*="Voir"], svg[class*="eye"]').first();
+          // Il faut RE-OUVRIR le même prospect (chercher par nom)
+          console.log('📂 Réouverture du MÊME prospect après reload...');
           
-          if (await viewButtonAfterReload.count() > 0) {
-            await viewButtonAfterReload.click();
-            await page.waitForTimeout(2000);
-            console.log('✅ Prospect réouvert après reload');
+          if (firstProspectData && firstProspectData.name) {
+            // Chercher le bouton Voir pour ce prospect spécifique
+            console.log(`🔍 Recherche du bouton Voir pour: "${firstProspectData.name}"`);
+            
+            // Utiliser Playwright locator (pas page.evaluate)
+            const viewButtonForProspect = page.locator(`tr:has-text("${firstProspectData.name}") button:has-text("Voir")`).first();
+            
+            if (await viewButtonForProspect.count() > 0) {
+              await viewButtonForProspect.click();
+              await page.waitForTimeout(2000);
+              console.log(`✅ Prospect réouvert après reload: ${firstProspectData.name}`);
+            } else {
+              console.log('⚠️  Bouton Voir non trouvé pour le bon prospect, utilisation du premier');
+              const viewButtonFallback = page.locator('button:has-text("Voir"), button[title*="Voir"]').first();
+              if (await viewButtonFallback.count() > 0) {
+                await viewButtonFallback.click();
+                await page.waitForTimeout(2000);
+              }
+            }
+          } else {
+            // Fallback: prendre le premier comme avant
+            console.log('⚠️  Pas de nom de prospect mémorisé, utilisation du premier');
+            const viewButtonAfterReload = page.locator('button:has-text("Voir"), button[title*="Voir"]').first();
+            
+            if (await viewButtonAfterReload.count() > 0) {
+              await viewButtonAfterReload.click();
+              await page.waitForTimeout(2000);
+              console.log('✅ Prospect réouvert après reload (premier de la liste)');
+            }
           }
           
           // Rouvrir l'onglet Notes après reload
@@ -367,6 +428,29 @@ test.describe('CRM - Module Prospects (LIVE)', () => {
     // STEP 6: CONVERSION EN CONTACT (AVEC CAPTURE ERREUR)
     // ==========================================================================
     console.log('\n📋 STEP 6: Conversion en contact (test complet)');
+    
+    // CRITIQUE: Vérifier le DOM pour debug - chercher des attributs data-lead-id ou similaires
+    const leadIdFromDom = await page.evaluate(() => {
+      // Chercher dans les attributs data-*
+      const elements = document.querySelectorAll('[data-lead-id], [data-id]');
+      const ids = Array.from(elements).map(el => ({
+        tag: el.tagName,
+        leadId: el.getAttribute('data-lead-id') || el.getAttribute('data-id'),
+        text: el.textContent?.substring(0, 30)
+      }));
+      
+      // Aussi regarder les URLs dans les boutons (vanilla JS)
+      const convertBtn = Array.from(document.querySelectorAll('button')).find(b => 
+        b.textContent && (b.textContent.includes('Convertir') || b.textContent.includes('Convert'))
+      );
+      
+      return {
+        dataElements: ids,
+        convertButtonExists: !!convertBtn,
+        convertButtonText: convertBtn?.textContent?.trim()
+      };
+    });
+    console.log(`🔍 Lead ID dans DOM: ${JSON.stringify(leadIdFromDom)}`);
     
     // Chercher le bouton "Convertir en contact"
     const convertButton = page.locator('button:has-text("Convertir"), button:has-text("Convert")').first();

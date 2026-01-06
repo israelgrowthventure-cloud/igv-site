@@ -1,0 +1,210 @@
+{
+  "config": {
+    "configFile": "C:\\Users\\PC\\Desktop\\IGV\\igv site\\igv-site\\playwright.config.js",
+    "rootDir": "C:/Users/PC/Desktop/IGV/igv site/igv-site/tests",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "html",
+        {
+          "outputFolder": "audit_out/playwright-report"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "audit_out/test-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "quiet": false,
+    "projects": [
+      {
+        "outputDir": "C:/Users/PC/Desktop/IGV/igv site/igv-site/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "C:/Users/PC/Desktop/IGV/igv site/igv-site/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 60000
+      }
+    ],
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.57.0",
+    "workers": 4,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "ui_crm_live.spec.js",
+      "file": "ui_crm_live.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "CRM - Module Prospects (LIVE)",
+          "file": "ui_crm_live.spec.js",
+          "line": 24,
+          "column": 6,
+          "specs": [
+            {
+              "title": "Validation complète fiche prospect",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 25456,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "🎯 Début du test CRM live...\n"
+                        },
+                        {
+                          "text": "\n📋 STEP 1: Login admin\n"
+                        },
+                        {
+                          "text": "✅ Login réussi\n"
+                        },
+                        {
+                          "text": "\n📋 STEP 2: Navigation vers Prospects\n"
+                        },
+                        {
+                          "text": "✅ Page Prospects chargée\n"
+                        },
+                        {
+                          "text": "\n📋 STEP 3: Ouverture fiche prospect\n"
+                        },
+                        {
+                          "text": "✅ Prospect ouvert via bouton Voir\n"
+                        },
+                        {
+                          "text": "\n📋 STEP 4: Vérification affichage données prospect\n"
+                        },
+                        {
+                          "text": "✅ Vue détail confirmée (bouton Retour visible)\n"
+                        },
+                        {
+                          "text": "✅ Bouton traduit: \"Retour à la liste\"\n"
+                        },
+                        {
+                          "text": "⚠️  Aucun email visible dans la fiche\n"
+                        },
+                        {
+                          "text": "✅ Téléphone détecté: 999999999\n"
+                        },
+                        {
+                          "text": "✅ Titre/Nom détecté: \"Leads...\"\n"
+                        },
+                        {
+                          "text": "\n📋 STEP 5: Ajout d'une note\n"
+                        },
+                        {
+                          "text": "✅ Onglet Notes ouvert\n"
+                        },
+                        {
+                          "text": "✅ Note saisie: \"Test Playwright 2026-01-06T00:39:20.567Z\"\n"
+                        },
+                        {
+                          "text": "⚠️  Bouton d'ajout de note non trouvé\n"
+                        },
+                        {
+                          "text": "\n📋 STEP 6: Conversion en contact\n"
+                        },
+                        {
+                          "text": "✅ Bouton Convertir trouvé\n"
+                        },
+                        {
+                          "text": "⚠️  Bouton Convertir disponible mais non cliqué (éviter conversion en prod)\n"
+                        },
+                        {
+                          "text": "   Pour tester: cliquer manuellement ou utiliser un prospect de test\n"
+                        },
+                        {
+                          "text": "\n📋 STEP 7: Test navigation retour\n"
+                        },
+                        {
+                          "text": "✅ Retour à la liste OK\n"
+                        },
+                        {
+                          "text": "\n📋 STEP 8: Test navigation via menu\n"
+                        },
+                        {
+                          "text": "✅ Fiche réouverte\n"
+                        },
+                        {
+                          "text": "✅ Clic menu Leads ferme la fiche (retour liste)\n"
+                        },
+                        {
+                          "text": "\n✅ TEST COMPLET TERMINÉ\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-06T00:38:59.116Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "95295aa45af0371cfbf6-ac5cb098e45600518512",
+              "file": "ui_crm_live.spec.js",
+              "line": 26,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-01-06T00:38:57.028Z",
+    "duration": 28233.144,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

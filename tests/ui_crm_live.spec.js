@@ -249,9 +249,27 @@ test.describe('CRM - Module Prospects (LIVE)', () => {
           const isButtonDisabled = await submitButton.isDisabled();
           console.log(`🔍 Bouton disabled: ${isButtonDisabled}`);
           
+          // Extraire le code HTML du bouton pour debug
+          const buttonHTML = await submitButton.innerHTML();
+          console.log(`🔍 Bouton HTML: ${buttonHTML.substring(0, 100)}...`);
+          
+          // Vérifier que le handler onclick existe
+          const hasOnClick = await submitButton.evaluate(btn => {
+            return btn.onclick !== null || btn.hasAttribute('onclick');
+          });
+          console.log(`🔍 Bouton a onClick: ${hasOnClick}`);
+          
           // Attendre la requête API
           const responsePromise = page.waitForResponse(
-            response => response.url().includes('/notes') && response.request().method() === 'POST',
+            response => {
+              const url = response.url();
+              const method = response.request().method();
+              const isNotesPost = url.includes('/notes') && method === 'POST';
+              if (isNotesPost) {
+                console.log(`📡 DÉTECTÉ: POST /notes vers ${url}`);
+              }
+              return isNotesPost;
+            },
             { timeout: 10000 }
           ).catch(() => null);
           
@@ -292,6 +310,17 @@ test.describe('CRM - Module Prospects (LIVE)', () => {
           console.log('🔄 HARD RELOAD pour tester la persistence...');
           await page.reload({ waitUntil: 'networkidle' });
           await page.waitForTimeout(2000);
+          
+          // CRITIQUE: Après reload, on est revenu à la liste des leads
+          // Il faut RE-OUVRIR le même prospect
+          console.log('📂 Réouverture du prospect après reload...');
+          const viewButtonAfterReload = page.locator('button:has-text("Voir"), button[title*="Voir"], svg[class*="eye"]').first();
+          
+          if (await viewButtonAfterReload.count() > 0) {
+            await viewButtonAfterReload.click();
+            await page.waitForTimeout(2000);
+            console.log('✅ Prospect réouvert après reload');
+          }
           
           // Rouvrir l'onglet Notes après reload
           const notesTabAfterReload = page.locator('button:has-text("Notes"), div:has-text("Notes"), [role="tab"]:has-text("Notes")').first();

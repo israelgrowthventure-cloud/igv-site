@@ -151,17 +151,15 @@ test.describe('CRM - Module Prospects (LIVE)', () => {
     });
     console.log(`🔍 Premier prospect identifié: ${JSON.stringify(firstProspectData)}`);
     
-    // Chercher le premier prospect (bouton "Voir" ou ligne cliquable)
-    const viewButton = page.locator('button:has-text("Voir"), button[title*="Voir"], svg[class*="eye"]').first();
+    // STRATÉGIE SIMPLIFIÉE: Cliquer directement sur la première ligne du tableau
+    // Cela appellera setSelectedItem(lead) avec l'objet lead complet
+    const firstRow = page.locator('tbody tr').first();
     
-    if (await viewButton.count() > 0) {
-      await viewButton.click();
-      console.log('✅ Prospect ouvert via bouton Voir');
-    } else {
-      // Alternative: cliquer sur la première ligne du tableau
-      const firstRow = page.locator('tbody tr, div[role="row"]').first();
+    if (await firstRow.count() > 0) {
       await firstRow.click();
-      console.log('✅ Prospect ouvert via clic ligne');
+      console.log('✅ Prospect ouvert via clic sur ligne tableau');
+    } else {
+      throw new Error('Aucune ligne de prospect trouvée dans le tableau');
     }
     
     // Attendre que la fiche s'affiche

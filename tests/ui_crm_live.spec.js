@@ -245,6 +245,10 @@ test.describe('CRM - Module Prospects (LIVE)', () => {
         }
         
         if (submitButton) {
+          // Log le state avant clic
+          const isButtonDisabled = await submitButton.isDisabled();
+          console.log(`🔍 Bouton disabled: ${isButtonDisabled}`);
+          
           // Attendre la requête API
           const responsePromise = page.waitForResponse(
             response => response.url().includes('/notes') && response.request().method() === 'POST',
@@ -429,8 +433,14 @@ test.describe('CRM - Module Prospects (LIVE)', () => {
     // ==========================================================================
     console.log('\n📋 STEP 7: Test navigation retour');
     
+    // Re-sélectionner le bouton Retour (car page peut avoir été reload)
+    const backButtonRetour = page.locator('button:has-text("Retour"), button:has-text("←")').first();
+    
+    // Vérifier qu'il est visible
+    await expect(backButtonRetour).toBeVisible({ timeout: 10000 });
+    
     // Cliquer sur "Retour à la liste"
-    await backButton.click();
+    await backButtonRetour.click();
     await page.waitForTimeout(1000);
     
     // Vérifier que la liste est de nouveau visible

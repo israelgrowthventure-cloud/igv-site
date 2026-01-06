@@ -1,0 +1,119 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - region "Notifications alt+T"
+  - generic [ref=e6]:
+    - paragraph [ref=e7]: We use cookies to improve your experience. You can choose which types of cookies you accept.
+    - generic [ref=e8]:
+      - button "Accept All" [ref=e9] [cursor=pointer]
+      - button "Refuse All" [ref=e10] [cursor=pointer]
+      - link "Learn More" [ref=e11] [cursor=pointer]:
+        - /url: /privacy
+  - main [ref=e12]:
+    - generic [ref=e13]:
+      - generic [ref=e14]:
+        - generic [ref=e16]:
+          - img "IGV Logo" [ref=e17]
+          - generic [ref=e18]: Israel Growth Venture
+        - navigation [ref=e19]:
+          - list [ref=e20]:
+            - listitem [ref=e21]:
+              - button "Dashboard" [ref=e22] [cursor=pointer]:
+                - img [ref=e23]
+                - generic [ref=e28]: Dashboard
+            - listitem [ref=e29]:
+              - button "Leads" [ref=e30] [cursor=pointer]:
+                - img [ref=e31]
+                - generic [ref=e36]: Leads
+            - listitem [ref=e37]:
+              - button "Contacts" [ref=e38] [cursor=pointer]:
+                - img [ref=e39]
+                - generic [ref=e43]: Contacts
+            - listitem [ref=e44]:
+              - button "Opportunities" [ref=e45] [cursor=pointer]:
+                - img [ref=e46]
+                - generic [ref=e50]: Opportunities
+            - listitem [ref=e51]:
+              - button "Pipeline" [ref=e52] [cursor=pointer]:
+                - img [ref=e53]
+                - generic [ref=e55]: Pipeline
+            - listitem [ref=e56]:
+              - button "Activities" [ref=e57] [cursor=pointer]:
+                - img [ref=e58]
+                - generic [ref=e60]: Activities
+            - listitem [ref=e61]:
+              - button "Emails" [ref=e62] [cursor=pointer]:
+                - img [ref=e63]
+                - generic [ref=e66]: Emails
+            - listitem [ref=e67]:
+              - button "Users" [ref=e68] [cursor=pointer]:
+                - img [ref=e69]
+                - generic [ref=e81]: Users
+            - listitem [ref=e82]:
+              - button "Settings" [ref=e83] [cursor=pointer]:
+                - img [ref=e84]
+                - generic [ref=e87]: Settings
+        - button "Collapse" [ref=e89] [cursor=pointer]:
+          - img [ref=e90]
+          - generic [ref=e92]: Collapse
+      - generic [ref=e93]:
+        - generic [ref=e94]:
+          - navigation [ref=e96]:
+            - button "Home" [ref=e97] [cursor=pointer]
+          - generic [ref=e99]:
+            - img [ref=e100]
+            - textbox "Search..." [ref=e103]
+          - generic [ref=e104]:
+            - button "en" [ref=e106] [cursor=pointer]:
+              - img [ref=e107]
+              - generic [ref=e110]: en
+              - img [ref=e111]
+            - button [ref=e113] [cursor=pointer]:
+              - img [ref=e114]
+            - button "Administrator Sales" [ref=e119] [cursor=pointer]:
+              - img [ref=e121]
+              - generic [ref=e124]:
+                - generic [ref=e125]: Administrator
+                - generic [ref=e126]: Sales
+              - img [ref=e127]
+        - main [ref=e129]:
+          - generic [ref=e131]:
+            - generic [ref=e132]:
+              - heading "Dashboard" [level=1] [ref=e133]
+              - paragraph [ref=e134]: Overview of your CRM activity
+            - generic [ref=e135]:
+              - generic [ref=e137]:
+                - generic [ref=e138]:
+                  - paragraph [ref=e139]: Total Leads
+                  - paragraph [ref=e140]: "111"
+                - img [ref=e142]
+              - generic [ref=e148]:
+                - generic [ref=e149]:
+                  - paragraph [ref=e150]: Prospects Aujourd'hui
+                  - paragraph [ref=e151]: "0"
+                - img [ref=e153]
+              - generic [ref=e157]:
+                - generic [ref=e158]:
+                  - paragraph [ref=e159]: Pipeline Value
+                  - paragraph [ref=e160]: 70,010 €
+                - img [ref=e162]
+              - generic [ref=e165]:
+                - generic [ref=e166]:
+                  - paragraph [ref=e167]: Total Opportunities
+                  - paragraph [ref=e168]: "0"
+                - img [ref=e170]
+            - generic [ref=e174]:
+              - generic [ref=e175]:
+                - heading "Top Sources" [level=2] [ref=e176]
+                - generic [ref=e178]:
+                  - generic [ref=e179]: Direct
+                  - generic [ref=e180]: "111"
+              - generic [ref=e181]:
+                - heading "Distribution par étape" [level=2] [ref=e182]
+                - generic [ref=e183]:
+                  - generic [ref=e184]:
+                    - generic [ref=e185]: analysis requested
+                    - generic [ref=e186]: "60"
+                  - generic [ref=e188]: "51"
+```

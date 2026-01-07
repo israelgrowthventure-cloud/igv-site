@@ -330,7 +330,7 @@ async def get_leads(
     leads = await cursor.to_list(length=limit)
     total = await current_db.leads.count_documents(filter_query)
     
-    # Convert ObjectId to string and fetch notes for each lead
+    # Convert ObjectId to string
     for lead in leads:
         lead["_id"] = str(lead["_id"])
         lead["lead_id"] = str(lead["_id"])  # Add lead_id alias
@@ -340,17 +340,9 @@ async def get_leads(
         if "updated_at" in lead and isinstance(lead["updated_at"], datetime):
             lead["updated_at"] = lead["updated_at"].isoformat()
         
-        # CRITIQUE: Fetch notes from activities collection
-        notes_cursor = current_db.activities.find({"lead_id": lead["lead_id"], "type": "note"}).sort("created_at", -1)
-        notes_list = await notes_cursor.to_list(length=100)
+        # TODO: Fetch notes in a separate endpoint for better performance
+        # For now, initialize empty notes array
         lead["notes"] = []
-        for note in notes_list:
-            note_data = {
-                "text": note.get("note_text") or note.get("description") or "",
-                "created_at": note["created_at"].isoformat() if isinstance(note.get("created_at"), datetime) else None,
-                "created_by": note.get("created_by") or note.get("user_email") or "Unknown"
-            }
-            lead["notes"].append(note_data)
     
     return {
         "leads": leads,

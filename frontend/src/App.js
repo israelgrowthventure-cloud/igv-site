@@ -1,4 +1,4 @@
-import React, { Suspense, lazy } from 'react';
+import React, { Suspense, lazy, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import { Toaster } from 'sonner';
@@ -117,6 +117,23 @@ function AppContent() {
       preloadAdminComponents();
     }
   }, [isAdminRoute]);
+
+  // Load embeddable CMS script (Wix-style)
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://4vm404m082y6.space.minimax.io/livecms.js';
+    script.async = true;
+    script.onload = () => console.log('✅ CMS embeddable chargé');
+    script.onerror = () => console.warn('⚠️ CMS embeddable non disponible');
+    document.body.appendChild(script);
+    
+    return () => {
+      // Cleanup on unmount
+      if (document.body.contains(script)) {
+        document.body.removeChild(script);
+      }
+    };
+  }, []);
 
   return (
     <AuthProvider>

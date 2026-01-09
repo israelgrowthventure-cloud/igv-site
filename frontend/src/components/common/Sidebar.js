@@ -12,8 +12,10 @@ import {
   UserCog,
   Settings,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Palette
 } from 'lucide-react';
+import CmsAdminButton from '../CmsAdminButton';
 
 /**
  * Sidebar - Navigation principale du CRM
@@ -114,6 +116,11 @@ const Sidebar = ({ collapsed, onToggle }) => {
           })}
         </ul>
       </nav>
+
+      {/* CMS Admin Button - Wix-style embeddable */}
+      <div className="px-2 pb-2">
+        <CmsAdminButton collapsed={collapsed} />
+      </div>
 
       {/* Collapse Toggle */}
       <div className="p-4 border-t border-gray-800">

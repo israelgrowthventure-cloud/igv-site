@@ -1,6 +1,6 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Mail, Phone, Building, MapPin, X, Loader2, Plus, Users, Edit, Trash2, Save, Send } from 'lucide-react';
+import { Search, Mail, Phone, Building, MapPin, X, Loader2, Plus, Users, Edit, Trash2, Save, Send, StickyNote, MessageSquare } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '../../utils/api';
 import { SkeletonTable } from './Skeleton';
@@ -17,6 +17,68 @@ const ContactsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, 
   const [editingContact, setEditingContact] = useState(null);
   const [formData, setFormData] = useState({ name: '', email: '', phone: '', position: '', language: 'fr' });
   const navigate = useNavigate();
+  
+  // Notes state
+  const [notes, setNotes] = useState([]);
+  const [loadingNotes, setLoadingNotes] = useState(false);
+  const [newNote, setNewNote] = useState('');
+  const [showNoteInput, setShowNoteInput] = useState(false);
+
+  // Fetch notes when selectedItem changes
+  useEffect(() => {
+    if (selectedItem?._id || selectedItem?.contact_id) {
+      fetchNotes(selectedItem._id || selectedItem.contact_id);
+    } else {
+      setNotes([]);
+    }
+  }, [selectedItem]);
+
+  const fetchNotes = async (contactId) => {
+    try {
+      setLoadingNotes(true);
+      const response = await api.get(`/api/contacts/${contactId}/notes`);
+      setNotes(response.data?.notes || []);
+    } catch (error) {
+      console.error('Error fetching notes:', error);
+      setNotes([]);
+    } finally {
+      setLoadingNotes(false);
+    }
+  };
+
+  const handleAddNote = async () => {
+    if (!newNote.trim()) return;
+    const contactId = selectedItem._id || selectedItem.contact_id;
+    
+    try {
+      setLoadingAction(true);
+      await api.post(`/api/contacts/${contactId}/notes`, { content: newNote.trim() });
+      toast.success(t('admin.crm.notes.added', 'Note ajoutée'));
+      setNewNote('');
+      setShowNoteInput(false);
+      await fetchNotes(contactId);
+    } catch (error) {
+      toast.error(t('admin.crm.notes.add_failed', 'Erreur lors de l\'ajout de la note'));
+    } finally {
+      setLoadingAction(false);
+    }
+  };
+
+  const handleDeleteNote = async (noteId) => {
+    if (!window.confirm(t('admin.crm.notes.confirm_delete', 'Supprimer cette note?'))) return;
+    const contactId = selectedItem._id || selectedItem.contact_id;
+    
+    try {
+      setLoadingAction(true);
+      await api.delete(`/api/contacts/${contactId}/notes/${noteId}`);
+      toast.success(t('admin.crm.notes.deleted', 'Note supprimée'));
+      await fetchNotes(contactId);
+    } catch (error) {
+      toast.error(t('admin.crm.notes.delete_failed', 'Erreur lors de la suppression'));
+    } finally {
+      setLoadingAction(false);
+    }
+  };
 
   // Filter contacts by search term
   const filteredContacts = useMemo(() => {
@@ -403,6 +465,86 @@ const ContactsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, 
                   <p className="text-xs text-gray-500 mt-1">{new Date(activity.created_at).toLocaleString()}</p>
                 </div>
               )) || <p className="text-gray-500 text-sm">{t('admin.crm.common.no_activities')}</p>}
+            </div>
+          </div>
+
+          {/* Notes Section */}
+          <div className="mt-6 border-t pt-6">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="font-semibold flex items-center gap-2">
+                <StickyNote className="w-5 h-5 text-yellow-500" />
+                {t('admin.crm.notes.title', 'Notes')}
+              </h3>
+              <button
+                onClick={() => setShowNoteInput(!showNoteInput)}
+                className="flex items-center gap-2 px-3 py-1.5 bg-yellow-100 text-yellow-700 rounded-lg hover:bg-yellow-200 text-sm"
+              >
+                <Plus className="w-4 h-4" />
+                {t('admin.crm.notes.add', 'Ajouter une note')}
+              </button>
+            </div>
+
+            {/* Add Note Form */}
+            {showNoteInput && (
+              <div className="mb-4 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                <textarea
+                  value={newNote}
+                  onChange={(e) => setNewNote(e.target.value)}
+                  placeholder={t('admin.crm.notes.placeholder', 'Écrivez votre note ici...')}
+                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-yellow-500 resize-none"
+                  rows={3}
+                />
+                <div className="flex gap-2 mt-2">
+                  <button
+                    onClick={handleAddNote}
+                    disabled={loadingAction || !newNote.trim()}
+                    className="flex items-center gap-2 px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 disabled:opacity-50"
+                  >
+                    {loadingAction ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                    {t('common.save', 'Enregistrer')}
+                  </button>
+                  <button
+                    onClick={() => { setShowNoteInput(false); setNewNote(''); }}
+                    className="px-4 py-2 border rounded-lg hover:bg-gray-100"
+                  >
+                    {t('common.cancel', 'Annuler')}
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Notes List */}
+            <div className="space-y-3">
+              {loadingNotes ? (
+                <div className="flex items-center justify-center py-8">
+                  <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
+                </div>
+              ) : notes.length > 0 ? (
+                notes.map((note) => (
+                  <div key={note._id} className="p-4 bg-yellow-50 rounded-lg border border-yellow-100 group">
+                    <div className="flex justify-between items-start">
+                      <div className="flex-1">
+                        <p className="text-sm text-gray-800 whitespace-pre-wrap">{note.content}</p>
+                        <p className="text-xs text-gray-500 mt-2">
+                          {new Date(note.created_at).toLocaleString()}
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => handleDeleteNote(note._id)}
+                        className="p-1.5 text-red-500 hover:bg-red-50 rounded opacity-0 group-hover:opacity-100 transition-opacity"
+                        title={t('common.delete', 'Supprimer')}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="text-center py-8 text-gray-500">
+                  <MessageSquare className="w-10 h-10 mx-auto mb-2 text-gray-300" />
+                  <p className="text-sm">{t('admin.crm.notes.empty', 'Aucune note pour ce contact')}</p>
+                </div>
+              )}
             </div>
           </div>
         </div>

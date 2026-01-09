@@ -384,3 +384,198 @@ async def get_pending_stats():
     except Exception as e:
         logging.error(f"Error getting pending stats: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
+
+
+# =============================================================================
+# USER MANAGEMENT ROUTES
+# =============================================================================
+
+from pydantic import BaseModel, EmailStr
+from passlib.context import CryptContext
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+class UserCreate(BaseModel):
+    """User creation schema"""
+    email: EmailStr
+    name: str
+    password: str
+    role: str = "user"
+
+class UserUpdate(BaseModel):
+    """User update schema"""
+    name: Optional[str] = None
+    role: Optional[str] = None
+    password: Optional[str] = None
+
+@router.post("/users")
+async def create_user(user: UserCreate):
+    """
+    Create a new user
+    POST /api/admin/users
+    """
+    current_db = get_db()
+    if current_db is None:
+        raise HTTPException(status_code=503, detail="Database not configured")
+    
+    try:
+        # Check if email already exists
+        existing = await current_db.users.find_one({"email": user.email})
+        if existing:
+            raise HTTPException(status_code=400, detail="Email déjà utilisé")
+        
+        # Hash password
+        hashed_password = pwd_context.hash(user.password)
+        
+        user_record = {
+            "email": user.email,
+            "name": user.name,
+            "password": hashed_password,
+            "role": user.role,
+            "created_at": datetime.now(timezone.utc),
+            "updated_at": datetime.now(timezone.utc),
+            "active": True
+        }
+        
+        result = await current_db.users.insert_one(user_record)
+        logging.info(f"User created: {user.email}")
+        
+        return {
+            "status": "created",
+            "user_id": str(result.inserted_id),
+            "email": user.email,
+            "name": user.name,
+            "role": user.role
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error creating user: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/users")
+async def list_users():
+    """
+    List all users (without passwords)
+    GET /api/admin/users
+    """
+    current_db = get_db()
+    if current_db is None:
+        raise HTTPException(status_code=503, detail="Database not configured")
+    
+    try:
+        users_cursor = current_db.users.find({}, {"password": 0})
+        users = await users_cursor.to_list(100)
+        
+        # Serialize ObjectIds
+        for user in users:
+            user["_id"] = str(user["_id"])
+            if "created_at" in user:
+                user["created_at"] = user["created_at"].isoformat() if hasattr(user["created_at"], 'isoformat') else str(user["created_at"])
+        
+        return {"users": users, "count": len(users)}
+    except Exception as e:
+        logging.error(f"Error listing users: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.delete("/users/{user_id}")
+async def delete_user(user_id: str):
+    """
+    Delete a user
+    DELETE /api/admin/users/{user_id}
+    """
+    current_db = get_db()
+    if current_db is None:
+        raise HTTPException(status_code=503, detail="Database not configured")
+    
+    try:
+        from bson import ObjectId
+        
+        try:
+            result = await current_db.users.delete_one({"_id": ObjectId(user_id)})
+        except:
+            result = await current_db.users.delete_one({"_id": user_id})
+        
+        if result.deleted_count == 0:
+            raise HTTPException(status_code=404, detail="Utilisateur non trouvé")
+        
+        logging.info(f"User deleted: {user_id}")
+        return {"status": "deleted", "user_id": user_id}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error deleting user: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# =============================================================================
+# SETTINGS ROUTES
+# =============================================================================
+
+class SettingsUpdate(BaseModel):
+    """Settings update schema"""
+    site_name: Optional[str] = None
+    default_language: Optional[str] = "fr"
+    timezone: Optional[str] = "Europe/Paris"
+    maintenance_mode: Optional[bool] = False
+    contact_email: Optional[str] = None
+    max_leads_per_day: Optional[int] = 100
+
+@router.get("/settings")
+async def get_settings():
+    """
+    Get site settings
+    GET /api/admin/settings
+    """
+    current_db = get_db()
+    if current_db is None:
+        raise HTTPException(status_code=503, detail="Database not configured")
+    
+    try:
+        settings = await current_db.settings.find_one({"_id": "main"})
+        
+        if settings is None:
+            # Return default settings
+            return {
+                "_id": "main",
+                "site_name": "Israel Growth Venture",
+                "default_language": "fr",
+                "timezone": "Europe/Paris",
+                "maintenance_mode": False,
+                "contact_email": "contact@israelgrowthventure.com",
+                "max_leads_per_day": 100
+            }
+        
+        return settings
+    except Exception as e:
+        logging.error(f"Error getting settings: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.put("/settings")
+async def update_settings(settings: SettingsUpdate):
+    """
+    Update site settings
+    PUT /api/admin/settings
+    """
+    current_db = get_db()
+    if current_db is None:
+        raise HTTPException(status_code=503, detail="Database not configured")
+    
+    try:
+        update_data = {k: v for k, v in settings.dict().items() if v is not None}
+        update_data["updated_at"] = datetime.now(timezone.utc)
+        
+        await current_db.settings.update_one(
+            {"_id": "main"},
+            {"$set": update_data},
+            upsert=True
+        )
+        
+        logging.info(f"Settings updated: {list(update_data.keys())}")
+        return {"status": "updated", "updated_fields": list(update_data.keys())}
+    except Exception as e:
+        logging.error(f"Error updating settings: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))

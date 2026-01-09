@@ -191,3 +191,126 @@ async def crm_health_check():
             "db_connected": False,
             "error": str(e)
         }
+
+
+# =============================================================================
+# NOTES ROUTES - Contact Notes Management
+# =============================================================================
+
+class NoteCreate(BaseModel):
+    """Note creation schema"""
+    content: str
+
+@router.post("/contacts/{contact_id}/notes")
+async def create_note(contact_id: str, note: NoteCreate):
+    """
+    Create a new note for a contact
+    POST /api/contacts/{contact_id}/notes
+    """
+    current_db = get_db()
+    if current_db is None:
+        raise HTTPException(status_code=503, detail="Database not configured")
+    
+    try:
+        from bson import ObjectId
+        
+        note_record = {
+            "content": note.content,
+            "contact_id": contact_id,
+            "created_at": datetime.now(timezone.utc),
+            "updated_at": datetime.now(timezone.utc)
+        }
+        result = await current_db.notes.insert_one(note_record)
+        
+        # Also update the contact's notes array
+        try:
+            await current_db.contacts.update_one(
+                {"_id": ObjectId(contact_id)},
+                {"$push": {"notes": str(result.inserted_id)}}
+            )
+        except:
+            # Try with string ID
+            await current_db.contacts.update_one(
+                {"_id": contact_id},
+                {"$push": {"notes": str(result.inserted_id)}}
+            )
+        
+        logging.info(f"Note created for contact {contact_id}: {result.inserted_id}")
+        return {
+            "status": "created",
+            "note_id": str(result.inserted_id),
+            "content": note.content,
+            "created_at": note_record["created_at"].isoformat()
+        }
+    except Exception as e:
+        logging.error(f"Error creating note: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/contacts/{contact_id}/notes")
+async def get_notes(contact_id: str):
+    """
+    Get all notes for a contact
+    GET /api/contacts/{contact_id}/notes
+    """
+    current_db = get_db()
+    if current_db is None:
+        raise HTTPException(status_code=503, detail="Database not configured")
+    
+    try:
+        notes_cursor = current_db.notes.find({"contact_id": contact_id}).sort("created_at", -1)
+        notes = await notes_cursor.to_list(100)
+        
+        # Serialize ObjectIds
+        for note in notes:
+            note["_id"] = str(note["_id"])
+            if "created_at" in note:
+                note["created_at"] = note["created_at"].isoformat() if hasattr(note["created_at"], 'isoformat') else str(note["created_at"])
+        
+        return {"notes": notes, "count": len(notes)}
+    except Exception as e:
+        logging.error(f"Error fetching notes: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.delete("/contacts/{contact_id}/notes/{note_id}")
+async def delete_note(contact_id: str, note_id: str):
+    """
+    Delete a note
+    DELETE /api/contacts/{contact_id}/notes/{note_id}
+    """
+    current_db = get_db()
+    if current_db is None:
+        raise HTTPException(status_code=503, detail="Database not configured")
+    
+    try:
+        from bson import ObjectId
+        
+        # Delete the note
+        try:
+            result = await current_db.notes.delete_one({"_id": ObjectId(note_id)})
+        except:
+            result = await current_db.notes.delete_one({"_id": note_id})
+        
+        if result.deleted_count == 0:
+            raise HTTPException(status_code=404, detail="Note not found")
+        
+        # Remove from contact's notes array
+        try:
+            await current_db.contacts.update_one(
+                {"_id": ObjectId(contact_id)},
+                {"$pull": {"notes": note_id}}
+            )
+        except:
+            await current_db.contacts.update_one(
+                {"_id": contact_id},
+                {"$pull": {"notes": note_id}}
+            )
+        
+        logging.info(f"Note {note_id} deleted from contact {contact_id}")
+        return {"status": "deleted", "note_id": note_id}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error deleting note: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))

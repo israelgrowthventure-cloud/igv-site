@@ -1,14 +1,7 @@
-/**
- * CmsAdminButton Styles - Wix-style embeddable CMS
- * Design: Purple gradient matching admin aesthetic
- */
-
 .cms-admin-button {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 10px;
-  width: 100%;
+  gap: 8px;
   padding: 10px 16px;
   background: linear-gradient(135deg, #4F46E5, #7C3AED);
   color: white;
@@ -20,46 +13,46 @@
   font-weight: 500;
   box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
   transition: all 0.2s ease;
+  position: relative;
 }
 
-.cms-admin-button:hover {
-  transform: translateY(-1px);
+.cms-admin-button:hover:not(:disabled) {
+  transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(79, 70, 229, 0.4);
-  background: linear-gradient(135deg, #5B54E8, #8B4EF3);
 }
 
-.cms-admin-button:active {
-  transform: translateY(0);
+.cms-admin-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
-.cms-admin-icon {
-  flex-shrink: 0;
+.cms-admin-button.has-error {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
 }
 
-.cms-admin-text {
-  font-weight: 600;
-  white-space: nowrap;
+.error-badge {
+  background: white;
+  color: #ef4444;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: bold;
+  position: absolute;
+  top: -5px;
+  right: -5px;
 }
 
-/* Collapsed state - icon only */
-.cms-admin-button.cms-admin-collapsed {
-  padding: 10px;
-  width: auto;
-  margin: 0 auto;
-}
-
-.cms-admin-button.cms-admin-collapsed .cms-admin-text {
-  display: none;
-}
-
-/* Responsive */
 @media (max-width: 768px) {
-  .cms-admin-text {
+  .cms-admin-button span:not(.error-badge) {
     display: none;
   }
   
-  .cms-admin-button {
-    padding: 10px;
-    width: auto;
+  .cms-admin-button::after {
+    content: '⚙️';
+    font-size: 18px;
   }
 }

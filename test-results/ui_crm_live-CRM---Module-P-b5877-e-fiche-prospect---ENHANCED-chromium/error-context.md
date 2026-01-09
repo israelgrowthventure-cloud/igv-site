@@ -23,7 +23,7 @@
                 - img [ref=e23]
                 - generic [ref=e28]: Dashboard
             - listitem [ref=e29]:
-              - button "Leads" [active] [ref=e30] [cursor=pointer]:
+              - button "Leads" [ref=e30] [cursor=pointer]:
                 - img [ref=e31]
                 - generic [ref=e36]: Leads
             - listitem [ref=e37]:
@@ -110,30 +110,30 @@
                     - columnheader "Created" [ref=e165]
                     - columnheader [ref=e166]
                 - rowgroup [ref=e167]:
-                  - row "Test Mission Complet Converti en contact test_mission_1767655033@audit.igv Mission Test 1767655033 Tech CONVERTED B 1/5/2026" [ref=e168] [cursor=pointer]:
-                    - cell "Test Mission Complet Converti en contact" [ref=e169]:
+                  - row "Mic Ben Converti en contact israel.growth.venture@gmail.com Bzilsbbs Retail (non-food) CONVERTED C 1/6/2026" [ref=e168] [cursor=pointer]:
+                    - cell "Mic Ben Converti en contact" [ref=e169]:
                       - generic [ref=e170]:
-                        - text: Test Mission Complet
+                        - text: Mic Ben
                         - img "Converti en contact" [ref=e171]
-                    - cell "test_mission_1767655033@audit.igv" [ref=e176]
-                    - cell "Mission Test 1767655033" [ref=e177]
-                    - cell "Tech" [ref=e178]
+                    - cell "israel.growth.venture@gmail.com" [ref=e176]
+                    - cell "Bzilsbbs" [ref=e177]
+                    - cell "Retail (non-food)" [ref=e178]
                     - cell "CONVERTED" [ref=e179]
-                    - cell "B" [ref=e180]
-                    - cell "1/5/2026" [ref=e181]
+                    - cell "C" [ref=e180]
+                    - cell "1/6/2026" [ref=e181]
                     - cell [ref=e182]:
                       - generic [ref=e183]:
                         - img [ref=e184]
                         - button "Voir le contact créé" [ref=e188]:
                           - img [ref=e189]
-                  - row "- Converti en contact test@test.fr test test CONVERTED B 1/5/2026" [ref=e194] [cursor=pointer]:
-                    - cell "- Converti en contact" [ref=e195]:
+                  - row "Test Mission Complet Converti en contact test_mission_1767655033@audit.igv Mission Test 1767655033 Tech CONVERTED B 1/5/2026" [ref=e194] [cursor=pointer]:
+                    - cell "Test Mission Complet Converti en contact" [ref=e195]:
                       - generic [ref=e196]:
-                        - text: "-"
+                        - text: Test Mission Complet
                         - img "Converti en contact" [ref=e197]
-                    - cell "test@test.fr" [ref=e202]
-                    - cell "test" [ref=e203]
-                    - cell "test" [ref=e204]
+                    - cell "test_mission_1767655033@audit.igv" [ref=e202]
+                    - cell "Mission Test 1767655033" [ref=e203]
+                    - cell "Tech" [ref=e204]
                     - cell "CONVERTED" [ref=e205]
                     - cell "B" [ref=e206]
                     - cell "1/5/2026" [ref=e207]
@@ -142,84 +142,84 @@
                         - img [ref=e210]
                         - button "Voir le contact créé" [ref=e214]:
                           - img [ref=e215]
-                  - row "- contact@israelgrowthventure.com blabla blabla NEW B 1/5/2026" [ref=e220] [cursor=pointer]:
-                    - cell "-" [ref=e221]:
-                      - generic [ref=e222]: "-"
-                    - cell "contact@israelgrowthventure.com" [ref=e223]
-                    - cell "blabla" [ref=e224]
-                    - cell "blabla" [ref=e225]
-                    - cell "NEW" [ref=e226]
-                    - cell "B" [ref=e227]
-                    - cell "1/5/2026" [ref=e228]
-                    - cell [ref=e229]:
-                      - img [ref=e231]
-                  - row "- test_prospect_20260106_2@igvtest.com - - NEW B 1/5/2026" [ref=e235] [cursor=pointer]:
-                    - cell "-" [ref=e236]:
-                      - generic [ref=e237]: "-"
-                    - cell "test_prospect_20260106_2@igvtest.com" [ref=e238]
-                    - cell "-" [ref=e239]
-                    - cell "-" [ref=e240]
-                    - cell "NEW" [ref=e241]
-                    - cell "B" [ref=e242]
-                    - cell "1/5/2026" [ref=e243]
-                    - cell [ref=e244]:
-                      - img [ref=e246]
-                  - row "- test_prospect_20260106@igvtest.com - - NEW B 1/5/2026" [ref=e250] [cursor=pointer]:
-                    - cell "-" [ref=e251]:
-                      - generic [ref=e252]: "-"
-                    - cell "test_prospect_20260106@igvtest.com" [ref=e253]
-                    - cell "-" [ref=e254]
-                    - cell "-" [ref=e255]
-                    - cell "NEW" [ref=e256]
-                    - cell "B" [ref=e257]
-                    - cell "1/5/2026" [ref=e258]
-                    - cell [ref=e259]:
-                      - img [ref=e261]
-                  - row "mickael benmoussa israel.growth.venture@gmail.com bhigcgcg Retail (hors food) GENERATED C 1/4/2026" [ref=e265] [cursor=pointer]:
-                    - cell "mickael benmoussa" [ref=e266]:
-                      - generic [ref=e267]: mickael benmoussa
-                    - cell "israel.growth.venture@gmail.com" [ref=e268]
-                    - cell "bhigcgcg" [ref=e269]
-                    - cell "Retail (hors food)" [ref=e270]
-                    - cell "GENERATED" [ref=e271]
-                    - cell "C" [ref=e272]
-                    - cell "1/4/2026" [ref=e273]
-                    - cell [ref=e274]:
-                      - img [ref=e276]
-                  - row "- guf@ggf.com gyigihvhgi giytiytgi NEW B 1/4/2026" [ref=e280] [cursor=pointer]:
-                    - cell "-" [ref=e281]:
-                      - generic [ref=e282]: "-"
-                    - cell "guf@ggf.com" [ref=e283]
-                    - cell "gyigihvhgi" [ref=e284]
-                    - cell "giytiytgi" [ref=e285]
-                    - cell "NEW" [ref=e286]
-                    - cell "B" [ref=e287]
-                    - cell "1/4/2026" [ref=e288]
-                    - cell [ref=e289]:
-                      - img [ref=e291]
-                  - row "Test Contact Converti en contact TEST_AUDIT_LEAD_1767536622@igvtest.com Test Brand 1767536622 Tech CONVERTED B 1/4/2026" [ref=e295] [cursor=pointer]:
-                    - cell "Test Contact Converti en contact" [ref=e296]:
-                      - generic [ref=e297]:
-                        - text: Test Contact
-                        - img "Converti en contact" [ref=e298]
-                    - cell "TEST_AUDIT_LEAD_1767536622@igvtest.com" [ref=e303]
-                    - cell "Test Brand 1767536622" [ref=e304]
-                    - cell "Tech" [ref=e305]
-                    - cell "CONVERTED" [ref=e306]
-                    - cell "B" [ref=e307]
-                    - cell "1/4/2026" [ref=e308]
-                    - cell [ref=e309]:
-                      - generic [ref=e310]:
-                        - img [ref=e311]
-                        - button "Voir le contact créé" [ref=e315]:
-                          - img [ref=e316]
-                  - row "Test Contact Converti en contact TEST_AUDIT_LEAD_1767536364@igvtest.com Test Brand 1767536364 Tech CONVERTED B 1/4/2026" [ref=e321] [cursor=pointer]:
+                  - row "- Converti en contact test@test.fr test test CONVERTED B 1/5/2026" [ref=e220] [cursor=pointer]:
+                    - cell "- Converti en contact" [ref=e221]:
+                      - generic [ref=e222]:
+                        - text: "-"
+                        - img "Converti en contact" [ref=e223]
+                    - cell "test@test.fr" [ref=e228]
+                    - cell "test" [ref=e229]
+                    - cell "test" [ref=e230]
+                    - cell "CONVERTED" [ref=e231]
+                    - cell "B" [ref=e232]
+                    - cell "1/5/2026" [ref=e233]
+                    - cell [ref=e234]:
+                      - generic [ref=e235]:
+                        - img [ref=e236]
+                        - button "Voir le contact créé" [ref=e240]:
+                          - img [ref=e241]
+                  - row "- contact@israelgrowthventure.com blabla blabla NEW B 1/5/2026" [ref=e246] [cursor=pointer]:
+                    - cell "-" [ref=e247]:
+                      - generic [ref=e248]: "-"
+                    - cell "contact@israelgrowthventure.com" [ref=e249]
+                    - cell "blabla" [ref=e250]
+                    - cell "blabla" [ref=e251]
+                    - cell "NEW" [ref=e252]
+                    - cell "B" [ref=e253]
+                    - cell "1/5/2026" [ref=e254]
+                    - cell [ref=e255]:
+                      - img [ref=e257]
+                  - row "- test_prospect_20260106_2@igvtest.com - - NEW B 1/5/2026" [ref=e261] [cursor=pointer]:
+                    - cell "-" [ref=e262]:
+                      - generic [ref=e263]: "-"
+                    - cell "test_prospect_20260106_2@igvtest.com" [ref=e264]
+                    - cell "-" [ref=e265]
+                    - cell "-" [ref=e266]
+                    - cell "NEW" [ref=e267]
+                    - cell "B" [ref=e268]
+                    - cell "1/5/2026" [ref=e269]
+                    - cell [ref=e270]:
+                      - img [ref=e272]
+                  - row "- test_prospect_20260106@igvtest.com - - NEW B 1/5/2026" [ref=e276] [cursor=pointer]:
+                    - cell "-" [ref=e277]:
+                      - generic [ref=e278]: "-"
+                    - cell "test_prospect_20260106@igvtest.com" [ref=e279]
+                    - cell "-" [ref=e280]
+                    - cell "-" [ref=e281]
+                    - cell "NEW" [ref=e282]
+                    - cell "B" [ref=e283]
+                    - cell "1/5/2026" [ref=e284]
+                    - cell [ref=e285]:
+                      - img [ref=e287]
+                  - row "mickael benmoussa israel.growth.venture@gmail.com bhigcgcg Retail (hors food) GENERATED C 1/4/2026" [ref=e291] [cursor=pointer]:
+                    - cell "mickael benmoussa" [ref=e292]:
+                      - generic [ref=e293]: mickael benmoussa
+                    - cell "israel.growth.venture@gmail.com" [ref=e294]
+                    - cell "bhigcgcg" [ref=e295]
+                    - cell "Retail (hors food)" [ref=e296]
+                    - cell "GENERATED" [ref=e297]
+                    - cell "C" [ref=e298]
+                    - cell "1/4/2026" [ref=e299]
+                    - cell [ref=e300]:
+                      - img [ref=e302]
+                  - row "- guf@ggf.com gyigihvhgi giytiytgi NEW B 1/4/2026" [ref=e306] [cursor=pointer]:
+                    - cell "-" [ref=e307]:
+                      - generic [ref=e308]: "-"
+                    - cell "guf@ggf.com" [ref=e309]
+                    - cell "gyigihvhgi" [ref=e310]
+                    - cell "giytiytgi" [ref=e311]
+                    - cell "NEW" [ref=e312]
+                    - cell "B" [ref=e313]
+                    - cell "1/4/2026" [ref=e314]
+                    - cell [ref=e315]:
+                      - img [ref=e317]
+                  - row "Test Contact Converti en contact TEST_AUDIT_LEAD_1767536622@igvtest.com Test Brand 1767536622 Tech CONVERTED B 1/4/2026" [ref=e321] [cursor=pointer]:
                     - cell "Test Contact Converti en contact" [ref=e322]:
                       - generic [ref=e323]:
                         - text: Test Contact
                         - img "Converti en contact" [ref=e324]
-                    - cell "TEST_AUDIT_LEAD_1767536364@igvtest.com" [ref=e329]
-                    - cell "Test Brand 1767536364" [ref=e330]
+                    - cell "TEST_AUDIT_LEAD_1767536622@igvtest.com" [ref=e329]
+                    - cell "Test Brand 1767536622" [ref=e330]
                     - cell "Tech" [ref=e331]
                     - cell "CONVERTED" [ref=e332]
                     - cell "B" [ref=e333]
@@ -229,13 +229,13 @@
                         - img [ref=e337]
                         - button "Voir le contact créé" [ref=e341]:
                           - img [ref=e342]
-                  - row "Test Contact Converti en contact testlead_1767535257@igvtest.com Test Brand 1767535257 Tech CONVERTED B 1/4/2026" [ref=e347] [cursor=pointer]:
+                  - row "Test Contact Converti en contact TEST_AUDIT_LEAD_1767536364@igvtest.com Test Brand 1767536364 Tech CONVERTED B 1/4/2026" [ref=e347] [cursor=pointer]:
                     - cell "Test Contact Converti en contact" [ref=e348]:
                       - generic [ref=e349]:
                         - text: Test Contact
                         - img "Converti en contact" [ref=e350]
-                    - cell "testlead_1767535257@igvtest.com" [ref=e355]
-                    - cell "Test Brand 1767535257" [ref=e356]
+                    - cell "TEST_AUDIT_LEAD_1767536364@igvtest.com" [ref=e355]
+                    - cell "Test Brand 1767536364" [ref=e356]
                     - cell "Tech" [ref=e357]
                     - cell "CONVERTED" [ref=e358]
                     - cell "B" [ref=e359]
@@ -245,13 +245,13 @@
                         - img [ref=e363]
                         - button "Voir le contact créé" [ref=e367]:
                           - img [ref=e368]
-                  - row "Test Contact Converti en contact testlead_1767533599@igvtest.com Test Brand 1767533599 Tech CONVERTED B 1/4/2026" [ref=e373] [cursor=pointer]:
+                  - row "Test Contact Converti en contact testlead_1767535257@igvtest.com Test Brand 1767535257 Tech CONVERTED B 1/4/2026" [ref=e373] [cursor=pointer]:
                     - cell "Test Contact Converti en contact" [ref=e374]:
                       - generic [ref=e375]:
                         - text: Test Contact
                         - img "Converti en contact" [ref=e376]
-                    - cell "testlead_1767533599@igvtest.com" [ref=e381]
-                    - cell "Test Brand 1767533599" [ref=e382]
+                    - cell "testlead_1767535257@igvtest.com" [ref=e381]
+                    - cell "Test Brand 1767535257" [ref=e382]
                     - cell "Tech" [ref=e383]
                     - cell "CONVERTED" [ref=e384]
                     - cell "B" [ref=e385]
@@ -261,448 +261,453 @@
                         - img [ref=e389]
                         - button "Voir le contact créé" [ref=e393]:
                           - img [ref=e394]
-                  - row "mickael benmoussa micnat2007@gmail.com hcqvigozaajbkj קמעונאות (ללא מזון) GENERATED C 1/4/2026" [ref=e399] [cursor=pointer]:
-                    - cell "mickael benmoussa" [ref=e400]:
-                      - generic [ref=e401]: mickael benmoussa
-                    - cell "micnat2007@gmail.com" [ref=e402]
-                    - cell "hcqvigozaajbkj" [ref=e403]
-                    - cell "קמעונאות (ללא מזון)" [ref=e404]
-                    - cell "GENERATED" [ref=e405]
-                    - cell "C" [ref=e406]
-                    - cell "1/4/2026" [ref=e407]
-                    - cell [ref=e408]:
-                      - img [ref=e410]
-                  - row "דוד כהן contact@israelgrowthventure.com בית קפה פריזאי Restauration / Food GENERATED C 1/4/2026" [ref=e414] [cursor=pointer]:
-                    - cell "דוד כהן" [ref=e415]:
-                      - generic [ref=e416]: דוד כהן
-                    - cell "contact@israelgrowthventure.com" [ref=e417]
-                    - cell "בית קפה פריזאי" [ref=e418]
-                    - cell "Restauration / Food" [ref=e419]
-                    - cell "GENERATED" [ref=e420]
-                    - cell "C" [ref=e421]
-                    - cell "1/4/2026" [ref=e422]
-                    - cell [ref=e423]:
-                      - img [ref=e425]
-                  - row "- Converti en contact contact@israelgrowthventure.com TestCafeHE Restauration CONVERTED C 1/4/2026" [ref=e429] [cursor=pointer]:
-                    - cell "- Converti en contact" [ref=e430]:
-                      - generic [ref=e431]:
+                  - row "Test Contact Converti en contact testlead_1767533599@igvtest.com Test Brand 1767533599 Tech CONVERTED B 1/4/2026" [ref=e399] [cursor=pointer]:
+                    - cell "Test Contact Converti en contact" [ref=e400]:
+                      - generic [ref=e401]:
+                        - text: Test Contact
+                        - img "Converti en contact" [ref=e402]
+                    - cell "testlead_1767533599@igvtest.com" [ref=e407]
+                    - cell "Test Brand 1767533599" [ref=e408]
+                    - cell "Tech" [ref=e409]
+                    - cell "CONVERTED" [ref=e410]
+                    - cell "B" [ref=e411]
+                    - cell "1/4/2026" [ref=e412]
+                    - cell [ref=e413]:
+                      - generic [ref=e414]:
+                        - img [ref=e415]
+                        - button "Voir le contact créé" [ref=e419]:
+                          - img [ref=e420]
+                  - row "mickael benmoussa micnat2007@gmail.com hcqvigozaajbkj קמעונאות (ללא מזון) GENERATED C 1/4/2026" [ref=e425] [cursor=pointer]:
+                    - cell "mickael benmoussa" [ref=e426]:
+                      - generic [ref=e427]: mickael benmoussa
+                    - cell "micnat2007@gmail.com" [ref=e428]
+                    - cell "hcqvigozaajbkj" [ref=e429]
+                    - cell "קמעונאות (ללא מזון)" [ref=e430]
+                    - cell "GENERATED" [ref=e431]
+                    - cell "C" [ref=e432]
+                    - cell "1/4/2026" [ref=e433]
+                    - cell [ref=e434]:
+                      - img [ref=e436]
+                  - row "דוד כהן contact@israelgrowthventure.com בית קפה פריזאי Restauration / Food GENERATED C 1/4/2026" [ref=e440] [cursor=pointer]:
+                    - cell "דוד כהן" [ref=e441]:
+                      - generic [ref=e442]: דוד כהן
+                    - cell "contact@israelgrowthventure.com" [ref=e443]
+                    - cell "בית קפה פריזאי" [ref=e444]
+                    - cell "Restauration / Food" [ref=e445]
+                    - cell "GENERATED" [ref=e446]
+                    - cell "C" [ref=e447]
+                    - cell "1/4/2026" [ref=e448]
+                    - cell [ref=e449]:
+                      - img [ref=e451]
+                  - row "- Converti en contact contact@israelgrowthventure.com TestCafeHE Restauration CONVERTED C 1/4/2026" [ref=e455] [cursor=pointer]:
+                    - cell "- Converti en contact" [ref=e456]:
+                      - generic [ref=e457]:
                         - text: "-"
-                        - img "Converti en contact" [ref=e432]
-                    - cell "contact@israelgrowthventure.com" [ref=e437]
-                    - cell "TestCafeHE" [ref=e438]
-                    - cell "Restauration" [ref=e439]
-                    - cell "CONVERTED" [ref=e440]
-                    - cell "C" [ref=e441]
-                    - cell "1/4/2026" [ref=e442]
-                    - cell [ref=e443]:
-                      - generic [ref=e444]:
-                        - img [ref=e445]
-                        - button "Voir le contact créé" [ref=e449]:
-                          - img [ref=e450]
-                  - row "Test Diag test@test.com DiagnosticHE Restauration GENERATED C 1/4/2026" [ref=e455] [cursor=pointer]:
-                    - cell "Test Diag" [ref=e456]:
-                      - generic [ref=e457]: Test Diag
-                    - cell "test@test.com" [ref=e458]
-                    - cell "DiagnosticHE" [ref=e459]
-                    - cell "Restauration" [ref=e460]
-                    - cell "GENERATED" [ref=e461]
-                    - cell "C" [ref=e462]
-                    - cell "1/4/2026" [ref=e463]
-                    - cell [ref=e464]:
-                      - img [ref=e466]
-                  - row "Test Hebreu postmaster@israelgrowthventure.com TestHebreu Restauration GENERATED C 1/4/2026" [ref=e470] [cursor=pointer]:
-                    - cell "Test Hebreu" [ref=e471]:
-                      - generic [ref=e472]: Test Hebreu
-                    - cell "postmaster@israelgrowthventure.com" [ref=e473]
-                    - cell "TestHebreu" [ref=e474]
-                    - cell "Restauration" [ref=e475]
-                    - cell "GENERATED" [ref=e476]
-                    - cell "C" [ref=e477]
-                    - cell "1/4/2026" [ref=e478]
-                    - cell [ref=e479]:
-                      - img [ref=e481]
-                  - row "mickael benmoussa Converti en contact micnat2007@gmail.com KQBKJFWJQKBKJ Retail (non-food) CONVERTED C 1/3/2026" [ref=e485] [cursor=pointer]:
-                    - cell "mickael benmoussa Converti en contact" [ref=e486]:
-                      - generic [ref=e487]:
+                        - img "Converti en contact" [ref=e458]
+                    - cell "contact@israelgrowthventure.com" [ref=e463]
+                    - cell "TestCafeHE" [ref=e464]
+                    - cell "Restauration" [ref=e465]
+                    - cell "CONVERTED" [ref=e466]
+                    - cell "C" [ref=e467]
+                    - cell "1/4/2026" [ref=e468]
+                    - cell [ref=e469]:
+                      - generic [ref=e470]:
+                        - img [ref=e471]
+                        - button "Voir le contact créé" [ref=e475]:
+                          - img [ref=e476]
+                  - row "Test Diag test@test.com DiagnosticHE Restauration GENERATED C 1/4/2026" [ref=e481] [cursor=pointer]:
+                    - cell "Test Diag" [ref=e482]:
+                      - generic [ref=e483]: Test Diag
+                    - cell "test@test.com" [ref=e484]
+                    - cell "DiagnosticHE" [ref=e485]
+                    - cell "Restauration" [ref=e486]
+                    - cell "GENERATED" [ref=e487]
+                    - cell "C" [ref=e488]
+                    - cell "1/4/2026" [ref=e489]
+                    - cell [ref=e490]:
+                      - img [ref=e492]
+                  - row "Test Hebreu postmaster@israelgrowthventure.com TestHebreu Restauration GENERATED C 1/4/2026" [ref=e496] [cursor=pointer]:
+                    - cell "Test Hebreu" [ref=e497]:
+                      - generic [ref=e498]: Test Hebreu
+                    - cell "postmaster@israelgrowthventure.com" [ref=e499]
+                    - cell "TestHebreu" [ref=e500]
+                    - cell "Restauration" [ref=e501]
+                    - cell "GENERATED" [ref=e502]
+                    - cell "C" [ref=e503]
+                    - cell "1/4/2026" [ref=e504]
+                    - cell [ref=e505]:
+                      - img [ref=e507]
+                  - row "mickael benmoussa Converti en contact micnat2007@gmail.com KQBKJFWJQKBKJ Retail (non-food) CONVERTED C 1/3/2026" [ref=e511] [cursor=pointer]:
+                    - cell "mickael benmoussa Converti en contact" [ref=e512]:
+                      - generic [ref=e513]:
                         - text: mickael benmoussa
-                        - img "Converti en contact" [ref=e488]
-                    - cell "micnat2007@gmail.com" [ref=e493]
-                    - cell "KQBKJFWJQKBKJ" [ref=e494]
-                    - cell "Retail (non-food)" [ref=e495]
-                    - cell "CONVERTED" [ref=e496]
-                    - cell "C" [ref=e497]
-                    - cell "1/3/2026" [ref=e498]
-                    - cell [ref=e499]:
-                      - generic [ref=e500]:
-                        - img [ref=e501]
-                        - button "Voir le contact créé" [ref=e505]:
-                          - img [ref=e506]
-                  - row "mickael benmoussa micnat2007@gmail.com vj<fnlndkzB קמעונאות (ללא מזון) GENERATED C 1/3/2026" [ref=e511] [cursor=pointer]:
-                    - cell "mickael benmoussa" [ref=e512]:
-                      - generic [ref=e513]: mickael benmoussa
-                    - cell "micnat2007@gmail.com" [ref=e514]
-                    - cell "vj<fnlndkzB" [ref=e515]
-                    - cell "קמעונאות (ללא מזון)" [ref=e516]
-                    - cell "GENERATED" [ref=e517]
-                    - cell "C" [ref=e518]
-                    - cell "1/3/2026" [ref=e519]
-                    - cell [ref=e520]:
-                      - img [ref=e522]
-                  - row "mickael benmoussa micnat2007@gmail.com gfxbkj iih Retail (hors food) GENERATED C 1/3/2026" [ref=e526] [cursor=pointer]:
-                    - cell "mickael benmoussa" [ref=e527]:
-                      - generic [ref=e528]: mickael benmoussa
-                    - cell "micnat2007@gmail.com" [ref=e529]
-                    - cell "gfxbkj iih" [ref=e530]
-                    - cell "Retail (hors food)" [ref=e531]
-                    - cell "GENERATED" [ref=e532]
-                    - cell "C" [ref=e533]
-                    - cell "1/3/2026" [ref=e534]
-                    - cell [ref=e535]:
-                      - img [ref=e537]
-                  - row "דוד כהן test210000@gmail.com קפה תל אביב restauration GENERATED C 1/3/2026" [ref=e541] [cursor=pointer]:
-                    - cell "דוד כהן" [ref=e542]:
-                      - generic [ref=e543]: דוד כהן
-                    - cell "test210000@gmail.com" [ref=e544]
-                    - cell "קפה תל אביב" [ref=e545]
-                    - cell "restauration" [ref=e546]
-                    - cell "GENERATED" [ref=e547]
-                    - cell "C" [ref=e548]
-                    - cell "1/3/2026" [ref=e549]
-                    - cell [ref=e550]:
-                      - img [ref=e552]
-                  - row "John Smith test210000@gmail.com London Coffee Shop restauration GENERATED C 1/3/2026" [ref=e556] [cursor=pointer]:
-                    - cell "John Smith" [ref=e557]:
-                      - generic [ref=e558]: John Smith
-                    - cell "test210000@gmail.com" [ref=e559]
-                    - cell "London Coffee Shop" [ref=e560]
-                    - cell "restauration" [ref=e561]
-                    - cell "GENERATED" [ref=e562]
-                    - cell "C" [ref=e563]
-                    - cell "1/3/2026" [ref=e564]
-                    - cell [ref=e565]:
-                      - img [ref=e567]
-                  - row "Jean Dupont test210000@gmail.com Café Parisien restauration GENERATED C 1/3/2026" [ref=e571] [cursor=pointer]:
-                    - cell "Jean Dupont" [ref=e572]:
-                      - generic [ref=e573]: Jean Dupont
-                    - cell "test210000@gmail.com" [ref=e574]
-                    - cell "Café Parisien" [ref=e575]
-                    - cell "restauration" [ref=e576]
-                    - cell "GENERATED" [ref=e577]
-                    - cell "C" [ref=e578]
-                    - cell "1/3/2026" [ref=e579]
-                    - cell [ref=e580]:
-                      - img [ref=e582]
-                  - row "יוסי כהן test210000@gmail.com בית קפה ירושלים restauration GENERATED C 1/3/2026" [ref=e586] [cursor=pointer]:
-                    - cell "יוסי כהן" [ref=e587]:
-                      - generic [ref=e588]: יוסי כהן
-                    - cell "test210000@gmail.com" [ref=e589]
-                    - cell "בית קפה ירושלים" [ref=e590]
-                    - cell "restauration" [ref=e591]
-                    - cell "GENERATED" [ref=e592]
-                    - cell "C" [ref=e593]
-                    - cell "1/3/2026" [ref=e594]
-                    - cell [ref=e595]:
-                      - img [ref=e597]
-                  - row "Test Hebrew test210000@gmail.com TestRTL_234455 Restauration GENERATED C 1/3/2026" [ref=e601] [cursor=pointer]:
-                    - cell "Test Hebrew" [ref=e602]:
-                      - generic [ref=e603]: Test Hebrew
-                    - cell "test210000@gmail.com" [ref=e604]
-                    - cell "TestRTL_234455" [ref=e605]
-                    - cell "Restauration" [ref=e606]
-                    - cell "GENERATED" [ref=e607]
-                    - cell "C" [ref=e608]
-                    - cell "1/3/2026" [ref=e609]
-                    - cell [ref=e610]:
-                      - img [ref=e612]
-                  - row "Test Hebrew test210000@gmail.com ValidationHE_211302 Restauration GENERATED C 1/3/2026" [ref=e616] [cursor=pointer]:
-                    - cell "Test Hebrew" [ref=e617]:
-                      - generic [ref=e618]: Test Hebrew
-                    - cell "test210000@gmail.com" [ref=e619]
-                    - cell "ValidationHE_211302" [ref=e620]
-                    - cell "Restauration" [ref=e621]
-                    - cell "GENERATED" [ref=e622]
-                    - cell "C" [ref=e623]
-                    - cell "1/3/2026" [ref=e624]
-                    - cell [ref=e625]:
-                      - img [ref=e627]
-                  - row "Test Hebrew test.he.210718@gmail.com TestHE_BiDi_210718 Restauration GENERATED C 1/3/2026" [ref=e631] [cursor=pointer]:
-                    - cell "Test Hebrew" [ref=e632]:
-                      - generic [ref=e633]: Test Hebrew
-                    - cell "test.he.210718@gmail.com" [ref=e634]
-                    - cell "TestHE_BiDi_210718" [ref=e635]
-                    - cell "Restauration" [ref=e636]
-                    - cell "GENERATED" [ref=e637]
-                    - cell "C" [ref=e638]
-                    - cell "1/3/2026" [ref=e639]
-                    - cell [ref=e640]:
-                      - img [ref=e642]
-                  - row "????? ????? test210000@gmail.com TestHE_AfterFix_210000 Restauration GENERATED C 1/3/2026" [ref=e646] [cursor=pointer]:
-                    - cell "????? ?????" [ref=e647]:
-                      - generic [ref=e648]: "????? ?????"
-                    - cell "test210000@gmail.com" [ref=e649]
-                    - cell "TestHE_AfterFix_210000" [ref=e650]
-                    - cell "Restauration" [ref=e651]
-                    - cell "GENERATED" [ref=e652]
-                    - cell "C" [ref=e653]
-                    - cell "1/3/2026" [ref=e654]
-                    - cell [ref=e655]:
-                      - img [ref=e657]
-                  - row "????? ????? test205441@gmail.com TestHE_205441 Restauration GENERATED C 1/3/2026" [ref=e661] [cursor=pointer]:
-                    - cell "????? ?????" [ref=e662]:
-                      - generic [ref=e663]: "????? ?????"
-                    - cell "test205441@gmail.com" [ref=e664]
-                    - cell "TestHE_205441" [ref=e665]
-                    - cell "Restauration" [ref=e666]
-                    - cell "GENERATED" [ref=e667]
-                    - cell "C" [ref=e668]
-                    - cell "1/3/2026" [ref=e669]
-                    - cell [ref=e670]:
-                      - img [ref=e672]
-                  - row "Test English test205229@gmail.com TestEN_205229 Restauration GENERATED C 1/3/2026" [ref=e676] [cursor=pointer]:
-                    - cell "Test English" [ref=e677]:
-                      - generic [ref=e678]: Test English
-                    - cell "test205229@gmail.com" [ref=e679]
-                    - cell "TestEN_205229" [ref=e680]
-                    - cell "Restauration" [ref=e681]
-                    - cell "GENERATED" [ref=e682]
-                    - cell "C" [ref=e683]
-                    - cell "1/3/2026" [ref=e684]
-                    - cell [ref=e685]:
-                      - img [ref=e687]
-                  - row "- test@example.com TestProdEN_639030679685019739 Restauration GENERATED C 1/3/2026" [ref=e691] [cursor=pointer]:
-                    - cell "-" [ref=e692]:
-                      - generic [ref=e693]: "-"
-                    - cell "test@example.com" [ref=e694]
-                    - cell "TestProdEN_639030679685019739" [ref=e695]
-                    - cell "Restauration" [ref=e696]
-                    - cell "GENERATED" [ref=e697]
-                    - cell "C" [ref=e698]
-                    - cell "1/3/2026" [ref=e699]
-                    - cell [ref=e700]:
-                      - img [ref=e702]
-                  - row "- test@example.com TestProdFR_639030679257500228 Restauration GENERATED C 1/3/2026" [ref=e706] [cursor=pointer]:
-                    - cell "-" [ref=e707]:
-                      - generic [ref=e708]: "-"
-                    - cell "test@example.com" [ref=e709]
-                    - cell "TestProdFR_639030679257500228" [ref=e710]
-                    - cell "Restauration" [ref=e711]
-                    - cell "GENERATED" [ref=e712]
-                    - cell "C" [ref=e713]
-                    - cell "1/3/2026" [ref=e714]
-                    - cell [ref=e715]:
-                      - img [ref=e717]
-                  - row "mickael benmoussa israel.growth.venture@gmail.com xwdsygjbkvk שירותים GENERATED C 1/3/2026" [ref=e721] [cursor=pointer]:
-                    - cell "mickael benmoussa" [ref=e722]:
-                      - generic [ref=e723]: mickael benmoussa
-                    - cell "israel.growth.venture@gmail.com" [ref=e724]
-                    - cell "xwdsygjbkvk" [ref=e725]
-                    - cell "שירותים" [ref=e726]
-                    - cell "GENERATED" [ref=e727]
-                    - cell "C" [ref=e728]
-                    - cell "1/3/2026" [ref=e729]
-                    - cell [ref=e730]:
-                      - img [ref=e732]
-                  - row "TestHE Hebrew testanalysis20260103he@example.com BrandHEFix שירותים GENERATED C 1/3/2026" [ref=e736] [cursor=pointer]:
-                    - cell "TestHE Hebrew" [ref=e737]:
-                      - generic [ref=e738]: TestHE Hebrew
-                    - cell "testanalysis20260103he@example.com" [ref=e739]
-                    - cell "BrandHEFix" [ref=e740]
-                    - cell "שירותים" [ref=e741]
-                    - cell "GENERATED" [ref=e742]
-                    - cell "C" [ref=e743]
-                    - cell "1/3/2026" [ref=e744]
-                    - cell [ref=e745]:
-                      - img [ref=e747]
-                  - row "Test Agent testanalysis20260103en@example.com BrandENFix Services GENERATED C 1/3/2026" [ref=e751] [cursor=pointer]:
-                    - cell "Test Agent" [ref=e752]:
-                      - generic [ref=e753]: Test Agent
-                    - cell "testanalysis20260103en@example.com" [ref=e754]
-                    - cell "BrandENFix" [ref=e755]
-                    - cell "Services" [ref=e756]
-                    - cell "GENERATED" [ref=e757]
-                    - cell "C" [ref=e758]
-                    - cell "1/3/2026" [ref=e759]
-                    - cell [ref=e760]:
-                      - img [ref=e762]
-                  - row "TestHE Hebrew israel.growth.venture@gmail.com BrandHE שירותים GENERATED C 1/3/2026" [ref=e766] [cursor=pointer]:
-                    - cell "TestHE Hebrew" [ref=e767]:
-                      - generic [ref=e768]: TestHE Hebrew
-                    - cell "israel.growth.venture@gmail.com" [ref=e769]
-                    - cell "BrandHE" [ref=e770]
-                    - cell "שירותים" [ref=e771]
-                    - cell "GENERATED" [ref=e772]
-                    - cell "C" [ref=e773]
-                    - cell "1/3/2026" [ref=e774]
-                    - cell [ref=e775]:
-                      - img [ref=e777]
-                  - row "TestFR French israel.growth.venture@gmail.com BrandFR Services GENERATED C 1/3/2026" [ref=e781] [cursor=pointer]:
-                    - cell "TestFR French" [ref=e782]:
-                      - generic [ref=e783]: TestFR French
-                    - cell "israel.growth.venture@gmail.com" [ref=e784]
-                    - cell "BrandFR" [ref=e785]
-                    - cell "Services" [ref=e786]
-                    - cell "GENERATED" [ref=e787]
-                    - cell "C" [ref=e788]
-                    - cell "1/3/2026" [ref=e789]
-                    - cell [ref=e790]:
-                      - img [ref=e792]
-                  - row "Test New igvtestmininew1@example.com BrandNew1 Services GENERATED C 1/3/2026" [ref=e796] [cursor=pointer]:
-                    - cell "Test New" [ref=e797]:
-                      - generic [ref=e798]: Test New
-                    - cell "igvtestmininew1@example.com" [ref=e799]
-                    - cell "BrandNew1" [ref=e800]
-                    - cell "Services" [ref=e801]
-                    - cell "GENERATED" [ref=e802]
-                    - cell "C" [ref=e803]
-                    - cell "1/3/2026" [ref=e804]
-                    - cell [ref=e805]:
-                      - img [ref=e807]
-                  - row "TestEN MiniEN igvtestmini20260103en@example.com BrandMiniEn Services GENERATED C 1/3/2026" [ref=e811] [cursor=pointer]:
-                    - cell "TestEN MiniEN" [ref=e812]:
-                      - generic [ref=e813]: TestEN MiniEN
-                    - cell "igvtestmini20260103en@example.com" [ref=e814]
-                    - cell "BrandMiniEn" [ref=e815]
-                    - cell "Services" [ref=e816]
-                    - cell "GENERATED" [ref=e817]
-                    - cell "C" [ref=e818]
-                    - cell "1/3/2026" [ref=e819]
-                    - cell [ref=e820]:
-                      - img [ref=e822]
-                  - row "- Converti en contact igvtestcrm20260103lead2@example.com Brand2 Technolyogy CONVERTED B 1/3/2026" [ref=e826] [cursor=pointer]:
-                    - cell "- Converti en contact" [ref=e827]:
-                      - generic [ref=e828]:
+                        - img "Converti en contact" [ref=e514]
+                    - cell "micnat2007@gmail.com" [ref=e519]
+                    - cell "KQBKJFWJQKBKJ" [ref=e520]
+                    - cell "Retail (non-food)" [ref=e521]
+                    - cell "CONVERTED" [ref=e522]
+                    - cell "C" [ref=e523]
+                    - cell "1/3/2026" [ref=e524]
+                    - cell [ref=e525]:
+                      - generic [ref=e526]:
+                        - img [ref=e527]
+                        - button "Voir le contact créé" [ref=e531]:
+                          - img [ref=e532]
+                  - row "mickael benmoussa micnat2007@gmail.com vj<fnlndkzB קמעונאות (ללא מזון) GENERATED C 1/3/2026" [ref=e537] [cursor=pointer]:
+                    - cell "mickael benmoussa" [ref=e538]:
+                      - generic [ref=e539]: mickael benmoussa
+                    - cell "micnat2007@gmail.com" [ref=e540]
+                    - cell "vj<fnlndkzB" [ref=e541]
+                    - cell "קמעונאות (ללא מזון)" [ref=e542]
+                    - cell "GENERATED" [ref=e543]
+                    - cell "C" [ref=e544]
+                    - cell "1/3/2026" [ref=e545]
+                    - cell [ref=e546]:
+                      - img [ref=e548]
+                  - row "mickael benmoussa micnat2007@gmail.com gfxbkj iih Retail (hors food) GENERATED C 1/3/2026" [ref=e552] [cursor=pointer]:
+                    - cell "mickael benmoussa" [ref=e553]:
+                      - generic [ref=e554]: mickael benmoussa
+                    - cell "micnat2007@gmail.com" [ref=e555]
+                    - cell "gfxbkj iih" [ref=e556]
+                    - cell "Retail (hors food)" [ref=e557]
+                    - cell "GENERATED" [ref=e558]
+                    - cell "C" [ref=e559]
+                    - cell "1/3/2026" [ref=e560]
+                    - cell [ref=e561]:
+                      - img [ref=e563]
+                  - row "דוד כהן test210000@gmail.com קפה תל אביב restauration GENERATED C 1/3/2026" [ref=e567] [cursor=pointer]:
+                    - cell "דוד כהן" [ref=e568]:
+                      - generic [ref=e569]: דוד כהן
+                    - cell "test210000@gmail.com" [ref=e570]
+                    - cell "קפה תל אביב" [ref=e571]
+                    - cell "restauration" [ref=e572]
+                    - cell "GENERATED" [ref=e573]
+                    - cell "C" [ref=e574]
+                    - cell "1/3/2026" [ref=e575]
+                    - cell [ref=e576]:
+                      - img [ref=e578]
+                  - row "John Smith test210000@gmail.com London Coffee Shop restauration GENERATED C 1/3/2026" [ref=e582] [cursor=pointer]:
+                    - cell "John Smith" [ref=e583]:
+                      - generic [ref=e584]: John Smith
+                    - cell "test210000@gmail.com" [ref=e585]
+                    - cell "London Coffee Shop" [ref=e586]
+                    - cell "restauration" [ref=e587]
+                    - cell "GENERATED" [ref=e588]
+                    - cell "C" [ref=e589]
+                    - cell "1/3/2026" [ref=e590]
+                    - cell [ref=e591]:
+                      - img [ref=e593]
+                  - row "Jean Dupont test210000@gmail.com Café Parisien restauration GENERATED C 1/3/2026" [ref=e597] [cursor=pointer]:
+                    - cell "Jean Dupont" [ref=e598]:
+                      - generic [ref=e599]: Jean Dupont
+                    - cell "test210000@gmail.com" [ref=e600]
+                    - cell "Café Parisien" [ref=e601]
+                    - cell "restauration" [ref=e602]
+                    - cell "GENERATED" [ref=e603]
+                    - cell "C" [ref=e604]
+                    - cell "1/3/2026" [ref=e605]
+                    - cell [ref=e606]:
+                      - img [ref=e608]
+                  - row "יוסי כהן test210000@gmail.com בית קפה ירושלים restauration GENERATED C 1/3/2026" [ref=e612] [cursor=pointer]:
+                    - cell "יוסי כהן" [ref=e613]:
+                      - generic [ref=e614]: יוסי כהן
+                    - cell "test210000@gmail.com" [ref=e615]
+                    - cell "בית קפה ירושלים" [ref=e616]
+                    - cell "restauration" [ref=e617]
+                    - cell "GENERATED" [ref=e618]
+                    - cell "C" [ref=e619]
+                    - cell "1/3/2026" [ref=e620]
+                    - cell [ref=e621]:
+                      - img [ref=e623]
+                  - row "Test Hebrew test210000@gmail.com TestRTL_234455 Restauration GENERATED C 1/3/2026" [ref=e627] [cursor=pointer]:
+                    - cell "Test Hebrew" [ref=e628]:
+                      - generic [ref=e629]: Test Hebrew
+                    - cell "test210000@gmail.com" [ref=e630]
+                    - cell "TestRTL_234455" [ref=e631]
+                    - cell "Restauration" [ref=e632]
+                    - cell "GENERATED" [ref=e633]
+                    - cell "C" [ref=e634]
+                    - cell "1/3/2026" [ref=e635]
+                    - cell [ref=e636]:
+                      - img [ref=e638]
+                  - row "Test Hebrew test210000@gmail.com ValidationHE_211302 Restauration GENERATED C 1/3/2026" [ref=e642] [cursor=pointer]:
+                    - cell "Test Hebrew" [ref=e643]:
+                      - generic [ref=e644]: Test Hebrew
+                    - cell "test210000@gmail.com" [ref=e645]
+                    - cell "ValidationHE_211302" [ref=e646]
+                    - cell "Restauration" [ref=e647]
+                    - cell "GENERATED" [ref=e648]
+                    - cell "C" [ref=e649]
+                    - cell "1/3/2026" [ref=e650]
+                    - cell [ref=e651]:
+                      - img [ref=e653]
+                  - row "Test Hebrew test.he.210718@gmail.com TestHE_BiDi_210718 Restauration GENERATED C 1/3/2026" [ref=e657] [cursor=pointer]:
+                    - cell "Test Hebrew" [ref=e658]:
+                      - generic [ref=e659]: Test Hebrew
+                    - cell "test.he.210718@gmail.com" [ref=e660]
+                    - cell "TestHE_BiDi_210718" [ref=e661]
+                    - cell "Restauration" [ref=e662]
+                    - cell "GENERATED" [ref=e663]
+                    - cell "C" [ref=e664]
+                    - cell "1/3/2026" [ref=e665]
+                    - cell [ref=e666]:
+                      - img [ref=e668]
+                  - row "????? ????? test210000@gmail.com TestHE_AfterFix_210000 Restauration GENERATED C 1/3/2026" [ref=e672] [cursor=pointer]:
+                    - cell "????? ?????" [ref=e673]:
+                      - generic [ref=e674]: "????? ?????"
+                    - cell "test210000@gmail.com" [ref=e675]
+                    - cell "TestHE_AfterFix_210000" [ref=e676]
+                    - cell "Restauration" [ref=e677]
+                    - cell "GENERATED" [ref=e678]
+                    - cell "C" [ref=e679]
+                    - cell "1/3/2026" [ref=e680]
+                    - cell [ref=e681]:
+                      - img [ref=e683]
+                  - row "????? ????? test205441@gmail.com TestHE_205441 Restauration GENERATED C 1/3/2026" [ref=e687] [cursor=pointer]:
+                    - cell "????? ?????" [ref=e688]:
+                      - generic [ref=e689]: "????? ?????"
+                    - cell "test205441@gmail.com" [ref=e690]
+                    - cell "TestHE_205441" [ref=e691]
+                    - cell "Restauration" [ref=e692]
+                    - cell "GENERATED" [ref=e693]
+                    - cell "C" [ref=e694]
+                    - cell "1/3/2026" [ref=e695]
+                    - cell [ref=e696]:
+                      - img [ref=e698]
+                  - row "Test English test205229@gmail.com TestEN_205229 Restauration GENERATED C 1/3/2026" [ref=e702] [cursor=pointer]:
+                    - cell "Test English" [ref=e703]:
+                      - generic [ref=e704]: Test English
+                    - cell "test205229@gmail.com" [ref=e705]
+                    - cell "TestEN_205229" [ref=e706]
+                    - cell "Restauration" [ref=e707]
+                    - cell "GENERATED" [ref=e708]
+                    - cell "C" [ref=e709]
+                    - cell "1/3/2026" [ref=e710]
+                    - cell [ref=e711]:
+                      - img [ref=e713]
+                  - row "- test@example.com TestProdEN_639030679685019739 Restauration GENERATED C 1/3/2026" [ref=e717] [cursor=pointer]:
+                    - cell "-" [ref=e718]:
+                      - generic [ref=e719]: "-"
+                    - cell "test@example.com" [ref=e720]
+                    - cell "TestProdEN_639030679685019739" [ref=e721]
+                    - cell "Restauration" [ref=e722]
+                    - cell "GENERATED" [ref=e723]
+                    - cell "C" [ref=e724]
+                    - cell "1/3/2026" [ref=e725]
+                    - cell [ref=e726]:
+                      - img [ref=e728]
+                  - row "- test@example.com TestProdFR_639030679257500228 Restauration GENERATED C 1/3/2026" [ref=e732] [cursor=pointer]:
+                    - cell "-" [ref=e733]:
+                      - generic [ref=e734]: "-"
+                    - cell "test@example.com" [ref=e735]
+                    - cell "TestProdFR_639030679257500228" [ref=e736]
+                    - cell "Restauration" [ref=e737]
+                    - cell "GENERATED" [ref=e738]
+                    - cell "C" [ref=e739]
+                    - cell "1/3/2026" [ref=e740]
+                    - cell [ref=e741]:
+                      - img [ref=e743]
+                  - row "mickael benmoussa israel.growth.venture@gmail.com xwdsygjbkvk שירותים GENERATED C 1/3/2026" [ref=e747] [cursor=pointer]:
+                    - cell "mickael benmoussa" [ref=e748]:
+                      - generic [ref=e749]: mickael benmoussa
+                    - cell "israel.growth.venture@gmail.com" [ref=e750]
+                    - cell "xwdsygjbkvk" [ref=e751]
+                    - cell "שירותים" [ref=e752]
+                    - cell "GENERATED" [ref=e753]
+                    - cell "C" [ref=e754]
+                    - cell "1/3/2026" [ref=e755]
+                    - cell [ref=e756]:
+                      - img [ref=e758]
+                  - row "TestHE Hebrew testanalysis20260103he@example.com BrandHEFix שירותים GENERATED C 1/3/2026" [ref=e762] [cursor=pointer]:
+                    - cell "TestHE Hebrew" [ref=e763]:
+                      - generic [ref=e764]: TestHE Hebrew
+                    - cell "testanalysis20260103he@example.com" [ref=e765]
+                    - cell "BrandHEFix" [ref=e766]
+                    - cell "שירותים" [ref=e767]
+                    - cell "GENERATED" [ref=e768]
+                    - cell "C" [ref=e769]
+                    - cell "1/3/2026" [ref=e770]
+                    - cell [ref=e771]:
+                      - img [ref=e773]
+                  - row "Test Agent testanalysis20260103en@example.com BrandENFix Services GENERATED C 1/3/2026" [ref=e777] [cursor=pointer]:
+                    - cell "Test Agent" [ref=e778]:
+                      - generic [ref=e779]: Test Agent
+                    - cell "testanalysis20260103en@example.com" [ref=e780]
+                    - cell "BrandENFix" [ref=e781]
+                    - cell "Services" [ref=e782]
+                    - cell "GENERATED" [ref=e783]
+                    - cell "C" [ref=e784]
+                    - cell "1/3/2026" [ref=e785]
+                    - cell [ref=e786]:
+                      - img [ref=e788]
+                  - row "TestHE Hebrew israel.growth.venture@gmail.com BrandHE שירותים GENERATED C 1/3/2026" [ref=e792] [cursor=pointer]:
+                    - cell "TestHE Hebrew" [ref=e793]:
+                      - generic [ref=e794]: TestHE Hebrew
+                    - cell "israel.growth.venture@gmail.com" [ref=e795]
+                    - cell "BrandHE" [ref=e796]
+                    - cell "שירותים" [ref=e797]
+                    - cell "GENERATED" [ref=e798]
+                    - cell "C" [ref=e799]
+                    - cell "1/3/2026" [ref=e800]
+                    - cell [ref=e801]:
+                      - img [ref=e803]
+                  - row "TestFR French israel.growth.venture@gmail.com BrandFR Services GENERATED C 1/3/2026" [ref=e807] [cursor=pointer]:
+                    - cell "TestFR French" [ref=e808]:
+                      - generic [ref=e809]: TestFR French
+                    - cell "israel.growth.venture@gmail.com" [ref=e810]
+                    - cell "BrandFR" [ref=e811]
+                    - cell "Services" [ref=e812]
+                    - cell "GENERATED" [ref=e813]
+                    - cell "C" [ref=e814]
+                    - cell "1/3/2026" [ref=e815]
+                    - cell [ref=e816]:
+                      - img [ref=e818]
+                  - row "Test New igvtestmininew1@example.com BrandNew1 Services GENERATED C 1/3/2026" [ref=e822] [cursor=pointer]:
+                    - cell "Test New" [ref=e823]:
+                      - generic [ref=e824]: Test New
+                    - cell "igvtestmininew1@example.com" [ref=e825]
+                    - cell "BrandNew1" [ref=e826]
+                    - cell "Services" [ref=e827]
+                    - cell "GENERATED" [ref=e828]
+                    - cell "C" [ref=e829]
+                    - cell "1/3/2026" [ref=e830]
+                    - cell [ref=e831]:
+                      - img [ref=e833]
+                  - row "TestEN MiniEN igvtestmini20260103en@example.com BrandMiniEn Services GENERATED C 1/3/2026" [ref=e837] [cursor=pointer]:
+                    - cell "TestEN MiniEN" [ref=e838]:
+                      - generic [ref=e839]: TestEN MiniEN
+                    - cell "igvtestmini20260103en@example.com" [ref=e840]
+                    - cell "BrandMiniEn" [ref=e841]
+                    - cell "Services" [ref=e842]
+                    - cell "GENERATED" [ref=e843]
+                    - cell "C" [ref=e844]
+                    - cell "1/3/2026" [ref=e845]
+                    - cell [ref=e846]:
+                      - img [ref=e848]
+                  - row "- Converti en contact igvtestcrm20260103lead2@example.com Brand2 Technolyogy CONVERTED B 1/3/2026" [ref=e852] [cursor=pointer]:
+                    - cell "- Converti en contact" [ref=e853]:
+                      - generic [ref=e854]:
                         - text: "-"
-                        - img "Converti en contact" [ref=e829]
-                    - cell "igvtestcrm20260103lead2@example.com" [ref=e834]
-                    - cell "Brand2" [ref=e835]
-                    - cell "Technolyogy" [ref=e836]
-                    - cell "CONVERTED" [ref=e837]
-                    - cell "B" [ref=e838]
-                    - cell "1/3/2026" [ref=e839]
-                    - cell [ref=e840]:
-                      - generic [ref=e841]:
-                        - img [ref=e842]
-                        - button "Voir le contact créé" [ref=e846]:
-                          - img [ref=e847]
-                  - row "- igvtestcrm20260103@example.com TestBrand2026 Services NEW B 1/3/2026" [ref=e852] [cursor=pointer]:
-                    - cell "-" [ref=e853]:
-                      - generic [ref=e854]: "-"
-                    - cell "igvtestcrm20260103@example.com" [ref=e855]
-                    - cell "TestBrand2026" [ref=e856]
-                    - cell "Services" [ref=e857]
-                    - cell "NEW" [ref=e858]
-                    - cell "B" [ref=e859]
-                    - cell "1/3/2026" [ref=e860]
-                    - cell [ref=e861]:
-                      - img [ref=e863]
-                  - row "- igvtestcrm20260103@example.com 123456789 - NEW B 1/3/2026" [ref=e867] [cursor=pointer]:
-                    - cell "-" [ref=e868]:
-                      - generic [ref=e869]: "-"
-                    - cell "igvtestcrm20260103@example.com" [ref=e870]
-                    - cell "123456789" [ref=e871]
-                    - cell "-" [ref=e872]
-                    - cell "NEW" [ref=e873]
-                    - cell "B" [ref=e874]
-                    - cell "1/3/2026" [ref=e875]
-                    - cell [ref=e876]:
-                      - img [ref=e878]
-                  - row "mickael benmoussa postmaster@israelgrowthventure.com cyduhon Services GENERATED C 1/2/2026" [ref=e882] [cursor=pointer]:
-                    - cell "mickael benmoussa" [ref=e883]:
-                      - generic [ref=e884]: mickael benmoussa
-                    - cell "postmaster@israelgrowthventure.com" [ref=e885]
-                    - cell "cyduhon" [ref=e886]
-                    - cell "Services" [ref=e887]
-                    - cell "GENERATED" [ref=e888]
-                    - cell "C" [ref=e889]
-                    - cell "1/2/2026" [ref=e890]
-                    - cell [ref=e891]:
-                      - img [ref=e893]
-                  - row "Final Test israel.growth.venture@gmail.com Final Test 1767348387 Restauration GENERATED C 1/2/2026" [ref=e897] [cursor=pointer]:
-                    - cell "Final Test" [ref=e898]:
-                      - generic [ref=e899]: Final Test
-                    - cell "israel.growth.venture@gmail.com" [ref=e900]
-                    - cell "Final Test 1767348387" [ref=e901]
-                    - cell "Restauration" [ref=e902]
-                    - cell "GENERATED" [ref=e903]
-                    - cell "C" [ref=e904]
-                    - cell "1/2/2026" [ref=e905]
-                    - cell [ref=e906]:
-                      - img [ref=e908]
-                  - row "Email Test israel.growth.venture@gmail.com Test Email 1767348294 Restauration GENERATED C 1/2/2026" [ref=e912] [cursor=pointer]:
-                    - cell "Email Test" [ref=e913]:
-                      - generic [ref=e914]: Email Test
-                    - cell "israel.growth.venture@gmail.com" [ref=e915]
-                    - cell "Test Email 1767348294" [ref=e916]
-                    - cell "Restauration" [ref=e917]
-                    - cell "GENERATED" [ref=e918]
-                    - cell "C" [ref=e919]
-                    - cell "1/2/2026" [ref=e920]
-                    - cell [ref=e921]:
-                      - img [ref=e923]
-                  - row "Email Test israel.growth.venture@gmail.com Test Email 1767348136 Restauration GENERATED C 1/2/2026" [ref=e927] [cursor=pointer]:
-                    - cell "Email Test" [ref=e928]:
-                      - generic [ref=e929]: Email Test
-                    - cell "israel.growth.venture@gmail.com" [ref=e930]
-                    - cell "Test Email 1767348136" [ref=e931]
-                    - cell "Restauration" [ref=e932]
-                    - cell "GENERATED" [ref=e933]
-                    - cell "C" [ref=e934]
-                    - cell "1/2/2026" [ref=e935]
-                    - cell [ref=e936]:
-                      - img [ref=e938]
-                  - row "Email Test israel.growth.venture@gmail.com Test Email 1767347788 Restauration GENERATED C 1/2/2026" [ref=e942] [cursor=pointer]:
-                    - cell "Email Test" [ref=e943]:
-                      - generic [ref=e944]: Email Test
-                    - cell "israel.growth.venture@gmail.com" [ref=e945]
-                    - cell "Test Email 1767347788" [ref=e946]
-                    - cell "Restauration" [ref=e947]
-                    - cell "GENERATED" [ref=e948]
-                    - cell "C" [ref=e949]
-                    - cell "1/2/2026" [ref=e950]
-                    - cell [ref=e951]:
-                      - img [ref=e953]
-                  - row "Proof Test proof@test.com Test Proof 1767347675 Restauration GENERATED C 1/2/2026" [ref=e957] [cursor=pointer]:
-                    - cell "Proof Test" [ref=e958]:
-                      - generic [ref=e959]: Proof Test
-                    - cell "proof@test.com" [ref=e960]
-                    - cell "Test Proof 1767347675" [ref=e961]
-                    - cell "Restauration" [ref=e962]
-                    - cell "GENERATED" [ref=e963]
-                    - cell "C" [ref=e964]
-                    - cell "1/2/2026" [ref=e965]
-                    - cell [ref=e966]:
-                      - img [ref=e968]
-                  - row "mickael benmoussa israel.growth.venture@gmail.com ovihbdjfwvgfunlbkj Services NEW C 1/2/2026" [ref=e972] [cursor=pointer]:
-                    - cell "mickael benmoussa" [ref=e973]:
-                      - generic [ref=e974]: mickael benmoussa
-                    - cell "israel.growth.venture@gmail.com" [ref=e975]
-                    - cell "ovihbdjfwvgfunlbkj" [ref=e976]
-                    - cell "Services" [ref=e977]
-                    - cell "NEW" [ref=e978]
-                    - cell "C" [ref=e979]
-                    - cell "1/2/2026" [ref=e980]
-                    - cell [ref=e981]:
-                      - img [ref=e983]
-                  - row "mickael benmoussa israel.growth.venture@gmail.com ovihbdjfw Services NEW C 1/2/2026" [ref=e987] [cursor=pointer]:
-                    - cell "mickael benmoussa" [ref=e988]:
-                      - generic [ref=e989]: mickael benmoussa
-                    - cell "israel.growth.venture@gmail.com" [ref=e990]
-                    - cell "ovihbdjfw" [ref=e991]
-                    - cell "Services" [ref=e992]
-                    - cell "NEW" [ref=e993]
-                    - cell "C" [ref=e994]
-                    - cell "1/2/2026" [ref=e995]
-                    - cell [ref=e996]:
-                      - img [ref=e998]
-                  - row "Email Test israel.growth.venture@gmail.com Test Email 1767346257 Restauration GENERATED C 1/2/2026" [ref=e1002] [cursor=pointer]:
-                    - cell "Email Test" [ref=e1003]:
-                      - generic [ref=e1004]: Email Test
-                    - cell "israel.growth.venture@gmail.com" [ref=e1005]
-                    - cell "Test Email 1767346257" [ref=e1006]
-                    - cell "Restauration" [ref=e1007]
-                    - cell "GENERATED" [ref=e1008]
-                    - cell "C" [ref=e1009]
-                    - cell "1/2/2026" [ref=e1010]
-                    - cell [ref=e1011]:
-                      - img [ref=e1013]
+                        - img "Converti en contact" [ref=e855]
+                    - cell "igvtestcrm20260103lead2@example.com" [ref=e860]
+                    - cell "Brand2" [ref=e861]
+                    - cell "Technolyogy" [ref=e862]
+                    - cell "CONVERTED" [ref=e863]
+                    - cell "B" [ref=e864]
+                    - cell "1/3/2026" [ref=e865]
+                    - cell [ref=e866]:
+                      - generic [ref=e867]:
+                        - img [ref=e868]
+                        - button "Voir le contact créé" [ref=e872]:
+                          - img [ref=e873]
+                  - row "- igvtestcrm20260103@example.com TestBrand2026 Services NEW B 1/3/2026" [ref=e878] [cursor=pointer]:
+                    - cell "-" [ref=e879]:
+                      - generic [ref=e880]: "-"
+                    - cell "igvtestcrm20260103@example.com" [ref=e881]
+                    - cell "TestBrand2026" [ref=e882]
+                    - cell "Services" [ref=e883]
+                    - cell "NEW" [ref=e884]
+                    - cell "B" [ref=e885]
+                    - cell "1/3/2026" [ref=e886]
+                    - cell [ref=e887]:
+                      - img [ref=e889]
+                  - row "- igvtestcrm20260103@example.com 123456789 - NEW B 1/3/2026" [ref=e893] [cursor=pointer]:
+                    - cell "-" [ref=e894]:
+                      - generic [ref=e895]: "-"
+                    - cell "igvtestcrm20260103@example.com" [ref=e896]
+                    - cell "123456789" [ref=e897]
+                    - cell "-" [ref=e898]
+                    - cell "NEW" [ref=e899]
+                    - cell "B" [ref=e900]
+                    - cell "1/3/2026" [ref=e901]
+                    - cell [ref=e902]:
+                      - img [ref=e904]
+                  - row "mickael benmoussa postmaster@israelgrowthventure.com cyduhon Services GENERATED C 1/2/2026" [ref=e908] [cursor=pointer]:
+                    - cell "mickael benmoussa" [ref=e909]:
+                      - generic [ref=e910]: mickael benmoussa
+                    - cell "postmaster@israelgrowthventure.com" [ref=e911]
+                    - cell "cyduhon" [ref=e912]
+                    - cell "Services" [ref=e913]
+                    - cell "GENERATED" [ref=e914]
+                    - cell "C" [ref=e915]
+                    - cell "1/2/2026" [ref=e916]
+                    - cell [ref=e917]:
+                      - img [ref=e919]
+                  - row "Final Test israel.growth.venture@gmail.com Final Test 1767348387 Restauration GENERATED C 1/2/2026" [ref=e923] [cursor=pointer]:
+                    - cell "Final Test" [ref=e924]:
+                      - generic [ref=e925]: Final Test
+                    - cell "israel.growth.venture@gmail.com" [ref=e926]
+                    - cell "Final Test 1767348387" [ref=e927]
+                    - cell "Restauration" [ref=e928]
+                    - cell "GENERATED" [ref=e929]
+                    - cell "C" [ref=e930]
+                    - cell "1/2/2026" [ref=e931]
+                    - cell [ref=e932]:
+                      - img [ref=e934]
+                  - row "Email Test israel.growth.venture@gmail.com Test Email 1767348294 Restauration GENERATED C 1/2/2026" [ref=e938] [cursor=pointer]:
+                    - cell "Email Test" [ref=e939]:
+                      - generic [ref=e940]: Email Test
+                    - cell "israel.growth.venture@gmail.com" [ref=e941]
+                    - cell "Test Email 1767348294" [ref=e942]
+                    - cell "Restauration" [ref=e943]
+                    - cell "GENERATED" [ref=e944]
+                    - cell "C" [ref=e945]
+                    - cell "1/2/2026" [ref=e946]
+                    - cell [ref=e947]:
+                      - img [ref=e949]
+                  - row "Email Test israel.growth.venture@gmail.com Test Email 1767348136 Restauration GENERATED C 1/2/2026" [ref=e953] [cursor=pointer]:
+                    - cell "Email Test" [ref=e954]:
+                      - generic [ref=e955]: Email Test
+                    - cell "israel.growth.venture@gmail.com" [ref=e956]
+                    - cell "Test Email 1767348136" [ref=e957]
+                    - cell "Restauration" [ref=e958]
+                    - cell "GENERATED" [ref=e959]
+                    - cell "C" [ref=e960]
+                    - cell "1/2/2026" [ref=e961]
+                    - cell [ref=e962]:
+                      - img [ref=e964]
+                  - row "Email Test israel.growth.venture@gmail.com Test Email 1767347788 Restauration GENERATED C 1/2/2026" [ref=e968] [cursor=pointer]:
+                    - cell "Email Test" [ref=e969]:
+                      - generic [ref=e970]: Email Test
+                    - cell "israel.growth.venture@gmail.com" [ref=e971]
+                    - cell "Test Email 1767347788" [ref=e972]
+                    - cell "Restauration" [ref=e973]
+                    - cell "GENERATED" [ref=e974]
+                    - cell "C" [ref=e975]
+                    - cell "1/2/2026" [ref=e976]
+                    - cell [ref=e977]:
+                      - img [ref=e979]
+                  - row "Proof Test proof@test.com Test Proof 1767347675 Restauration GENERATED C 1/2/2026" [ref=e983] [cursor=pointer]:
+                    - cell "Proof Test" [ref=e984]:
+                      - generic [ref=e985]: Proof Test
+                    - cell "proof@test.com" [ref=e986]
+                    - cell "Test Proof 1767347675" [ref=e987]
+                    - cell "Restauration" [ref=e988]
+                    - cell "GENERATED" [ref=e989]
+                    - cell "C" [ref=e990]
+                    - cell "1/2/2026" [ref=e991]
+                    - cell [ref=e992]:
+                      - img [ref=e994]
+                  - row "mickael benmoussa israel.growth.venture@gmail.com ovihbdjfwvgfunlbkj Services NEW C 1/2/2026" [ref=e998] [cursor=pointer]:
+                    - cell "mickael benmoussa" [ref=e999]:
+                      - generic [ref=e1000]: mickael benmoussa
+                    - cell "israel.growth.venture@gmail.com" [ref=e1001]
+                    - cell "ovihbdjfwvgfunlbkj" [ref=e1002]
+                    - cell "Services" [ref=e1003]
+                    - cell "NEW" [ref=e1004]
+                    - cell "C" [ref=e1005]
+                    - cell "1/2/2026" [ref=e1006]
+                    - cell [ref=e1007]:
+                      - img [ref=e1009]
+                  - row "mickael benmoussa israel.growth.venture@gmail.com ovihbdjfw Services NEW C 1/2/2026" [ref=e1013] [cursor=pointer]:
+                    - cell "mickael benmoussa" [ref=e1014]:
+                      - generic [ref=e1015]: mickael benmoussa
+                    - cell "israel.growth.venture@gmail.com" [ref=e1016]
+                    - cell "ovihbdjfw" [ref=e1017]
+                    - cell "Services" [ref=e1018]
+                    - cell "NEW" [ref=e1019]
+                    - cell "C" [ref=e1020]
+                    - cell "1/2/2026" [ref=e1021]
+                    - cell [ref=e1022]:
+                      - img [ref=e1024]
 ```

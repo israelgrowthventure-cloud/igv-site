@@ -333,3 +333,52 @@ async def get_user(user_id: str, user: Dict = Depends(require_admin)):
     except Exception as e:
         logging.error(f"Error fetching user: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/users/change-password")
+async def change_password(
+    data: Dict,
+    user: Dict = Depends(get_current_user)
+):
+    """Change current user's password"""
+    current_db = get_db()
+    if current_db is None:
+        raise HTTPException(status_code=500, detail="Database not configured")
+    
+    current_password = data.get("current_password")
+    new_password = data.get("new_password")
+    
+    if not current_password or not new_password:
+        raise HTTPException(status_code=400, detail="Both passwords required")
+    
+    if len(new_password) < 6:
+        raise HTTPException(status_code=400, detail="Password must be at least 6 characters")
+    
+    try:
+        # Get user from DB
+        obj_id = ObjectId(user["_id"]) if isinstance(user["_id"], str) else user["_id"]
+        db_user = await current_db.crm_users.find_one({"_id": obj_id})
+        
+        if not db_user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        # Verify current password
+        if not bcrypt.checkpw(current_password.encode('utf-8'), db_user["password"].encode('utf-8')):
+            raise HTTPException(status_code=400, detail="Current password is incorrect")
+        
+        # Hash new password
+        new_hashed = bcrypt.hashpw(new_password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+        
+        # Update password
+        await current_db.crm_users.update_one(
+            {"_id": obj_id},
+            {"$set": {"password": new_hashed, "updated_at": datetime.utcnow()}}
+        )
+        
+        return {"message": "Password changed successfully"}
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error changing password: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))

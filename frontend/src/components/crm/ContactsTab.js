@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, Mail, Phone, Building, MapPin, X, Loader2, Plus, Users, Edit, Trash2, Save, Send } from 'lucide-react';
 import { toast } from 'sonner';
@@ -17,6 +17,20 @@ const ContactsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, 
   const [editingContact, setEditingContact] = useState(null);
   const [formData, setFormData] = useState({ name: '', email: '', phone: '', position: '', language: 'fr' });
   const navigate = useNavigate();
+
+  // Filter contacts by search term
+  const filteredContacts = useMemo(() => {
+    if (!data?.contacts) return [];
+    if (!searchTerm?.trim()) return data.contacts;
+    
+    const term = searchTerm.toLowerCase().trim();
+    return data.contacts.filter(contact => 
+      contact.name?.toLowerCase().includes(term) ||
+      contact.email?.toLowerCase().includes(term) ||
+      contact.phone?.includes(term) ||
+      contact.position?.toLowerCase().includes(term)
+    );
+  }, [data?.contacts, searchTerm]);
 
   const handleCreate = async (e) => {
     e.preventDefault();
@@ -226,7 +240,7 @@ const ContactsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, 
               </tr>
             </thead>
             <tbody>
-              {data?.contacts?.length > 0 ? data.contacts.map(contact => (
+              {filteredContacts.length > 0 ? filteredContacts.map(contact => (
                 <tr key={contact._id || contact.contact_id} className="border-b hover:bg-gray-50">
                   <td 
                     className="px-4 py-3 cursor-pointer hover:text-blue-600"

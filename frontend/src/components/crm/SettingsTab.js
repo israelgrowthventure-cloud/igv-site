@@ -15,7 +15,7 @@ const SettingsTab = ({ data, onRefresh, t }) => {
     e.preventDefault();
     try {
       setLoadingAction(true);
-      await api.post('/api/crm/settings/users', formData);
+      await api.post('/api/admin/users', formData);
       toast.success(t('admin.crm.settings.user_created'));
       setShowForm(false);
       setFormData({});
@@ -31,7 +31,7 @@ const SettingsTab = ({ data, onRefresh, t }) => {
     if (!window.confirm(t('admin.crm.settings.confirm_delete_user'))) return;
     try {
       setLoadingAction(true);
-      await api.delete(`/api/crm/settings/users/${userId}`);
+      await api.delete(`/api/admin/users/${userId}`);
       toast.success(t('admin.crm.settings.user_deleted'));
       await onRefresh();
     } catch (error) {
@@ -53,7 +53,7 @@ const SettingsTab = ({ data, onRefresh, t }) => {
     }
     try {
       setLoadingAction(true);
-      await api.post('/api/crm/settings/users/change-password', {
+      await api.post('/api/admin/users/change-password', {
         current_password: passwordForm.current,
         new_password: passwordForm.new
       });

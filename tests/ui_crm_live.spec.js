@@ -366,38 +366,19 @@ test.describe('CRM - Module Prospects (LIVE)', () => {
           await page.waitForTimeout(2000);
           
           // CRITIQUE: Après reload, on est revenu à la liste des leads
-          // Il faut RE-OUVRIR le même prospect (chercher par nom)
-          console.log('📂 Réouverture du MÊME prospect après reload...');
+          // Il faut RE-OUVRIR le même prospect (cliquer sur la première ligne)
+          console.log('📂 Réouverture du MÊME prospect après reload (première ligne)...');
           
-          if (firstProspectData && firstProspectData.name) {
-            // Chercher le bouton Voir pour ce prospect spécifique
-            console.log(`🔍 Recherche du bouton Voir pour: "${firstProspectData.name}"`);
-            
-            // Utiliser Playwright locator (pas page.evaluate)
-            const viewButtonForProspect = page.locator(`tr:has-text("${firstProspectData.name}") button:has-text("Voir")`).first();
-            
-            if (await viewButtonForProspect.count() > 0) {
-              await viewButtonForProspect.click();
-              await page.waitForTimeout(2000);
-              console.log(`✅ Prospect réouvert après reload: ${firstProspectData.name}`);
-            } else {
-              console.log('⚠️  Bouton Voir non trouvé pour le bon prospect, utilisation du premier');
-              const viewButtonFallback = page.locator('button:has-text("Voir"), button[title*="Voir"]').first();
-              if (await viewButtonFallback.count() > 0) {
-                await viewButtonFallback.click();
-                await page.waitForTimeout(2000);
-              }
-            }
+          // STRATÉGIE: Toujours cliquer sur la première ligne (comme à l'ouverture initiale)
+          // Les leads sont triés par created_at desc, donc le premier est toujours le même
+          const firstRowAfterReload = page.locator('tbody tr').first();
+          
+          if (await firstRowAfterReload.count() > 0) {
+            await firstRowAfterReload.click();
+            await page.waitForTimeout(2000);
+            console.log('✅ Prospect réouvert après reload (première ligne cliquée)');
           } else {
-            // Fallback: prendre le premier comme avant
-            console.log('⚠️  Pas de nom de prospect mémorisé, utilisation du premier');
-            const viewButtonAfterReload = page.locator('button:has-text("Voir"), button[title*="Voir"]').first();
-            
-            if (await viewButtonAfterReload.count() > 0) {
-              await viewButtonAfterReload.click();
-              await page.waitForTimeout(2000);
-              console.log('✅ Prospect réouvert après reload (premier de la liste)');
-            }
+            throw new Error('Aucune ligne de prospect trouvée après reload');
           }
           
           // Rouvrir l'onglet Notes après reload

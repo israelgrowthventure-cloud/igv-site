@@ -1196,28 +1196,6 @@ async def add_tag(tag: str = Body(..., embed=True), user: Dict = Depends(get_cur
     return {"message": "Tag added successfully"}
 
 
-@router.get("/settings/pipeline-stages")
-async def get_pipeline_stages(user: Dict = Depends(get_current_user)):
-    """Get pipeline stages configuration"""
-    current_db = get_db()
-    if current_db is None:
-        raise HTTPException(status_code=500, detail="Database not configured")
-    
-    settings = await current_db.crm_settings.find_one({}) or {}
-    stages = settings.get("pipeline_stages", [
-        "initial_interest",
-        "info_requested",
-        "first_call",
-        "pitch_delivered",
-        "proposal_sent",
-        "negotiation",
-        "verbal_commitment",
-        "won"
-    ])
-    
-    return {"stages": stages}
-
-
 # ==========================================
 # TASKS MODULE (COMPLETE)
 # ==========================================
@@ -1654,6 +1632,7 @@ async def send_crm_email(
         raise HTTPException(status_code=500, detail=f"Failed to send email: {str(e)}")
 
 
+@router.get("/settings/pipeline-stages")
 async def get_pipeline_stages(user: Dict = Depends(get_current_user)):
     """Get pipeline stages configuration"""
     current_db = get_db()

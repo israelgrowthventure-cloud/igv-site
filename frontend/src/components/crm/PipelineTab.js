@@ -1,11 +1,95 @@
-import React, { useState } from 'react';
-import { DollarSign, Calendar, TrendingUp, Loader2, X, Save } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { DollarSign, Calendar, TrendingUp, Loader2, X, Save, GripVertical } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '../../utils/api';
+import { DndContext, DragOverlay, closestCenter, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { useDraggable, useDroppable } from '@dnd-kit/core';
+
+// Draggable opportunity card component
+const DraggableOppCard = ({ opp, onClick, stageNames, t }) => {
+  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
+    id: opp.opportunity_id,
+    data: { opp }
+  });
+
+  const style = transform ? {
+    transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
+    opacity: isDragging ? 0.5 : 1,
+  } : undefined;
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={`p-4 border rounded-lg bg-white hover:bg-gray-50 cursor-pointer ${isDragging ? 'shadow-lg ring-2 ring-blue-400' : ''}`}
+    >
+      <div className="flex items-start gap-2">
+        <div {...listeners} {...attributes} className="cursor-grab hover:bg-gray-200 p-1 rounded mt-1">
+          <GripVertical className="w-4 h-4 text-gray-400" />
+        </div>
+        <div className="flex-1" onClick={onClick}>
+          <div className="flex justify-between items-start">
+            <div>
+              <h4 className="font-semibold">{opp.title}</h4>
+              <p className="text-sm text-gray-600">{opp.company_name || opp.contact_name}</p>
+            </div>
+            <div className="text-right">
+              <p className="font-bold text-green-600">${(opp.estimated_value || 0).toLocaleString()}</p>
+              {opp.expected_close_date && (
+                <p className="text-xs text-gray-500">
+                  <Calendar className="w-3 h-3 inline mr-1" />
+                  {new Date(opp.expected_close_date).toLocaleDateString()}
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Droppable stage column component
+const DroppableStage = ({ stage, children, stageNames, opps, t }) => {
+  const { isOver, setNodeRef } = useDroppable({
+    id: stage
+  });
+
+  const stageValue = opps.reduce((sum, opp) => sum + (opp.estimated_value || 0), 0);
+
+  return (
+    <div
+      ref={setNodeRef}
+      className={`bg-white rounded-lg shadow border transition-all ${isOver ? 'ring-2 ring-blue-400 bg-blue-50' : ''}`}
+    >
+      <div className="px-6 py-4 border-b bg-gray-50">
+        <div className="flex justify-between items-center">
+          <h3 className="font-semibold">{stageNames[stage]}</h3>
+          <div className="flex items-center gap-4">
+            <span className="text-sm text-gray-600">{opps.length} {t('admin.crm.pipeline.opportunities')}</span>
+            <span className="font-semibold text-green-600">${stageValue.toLocaleString()}</span>
+          </div>
+        </div>
+      </div>
+      <div className="p-4 min-h-[100px]">
+        {children}
+      </div>
+    </div>
+  );
+};
 
 const PipelineTab = ({ data, onRefresh, t }) => {
   const [selectedOpp, setSelectedOpp] = useState(null);
   const [loadingAction, setLoadingAction] = useState(false);
+  const [activeId, setActiveId] = useState(null);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    })
+  );
 
   const stages = [
     'INITIAL_INTEREST',
@@ -32,6 +116,36 @@ const PipelineTab = ({ data, onRefresh, t }) => {
     }
   };
 
+  // Find opportunity by ID across all stages
+  const findOppById = (id) => {
+    for (const stage of stages) {
+      const opps = pipelineData.stages?.[stage] || [];
+      const opp = opps.find(o => o.opportunity_id === id);
+      if (opp) return opp;
+    }
+    return null;
+  };
+
+  // Drag and drop handlers
+  const handleDragStart = (event) => {
+    setActiveId(event.active.id);
+  };
+
+  const handleDragEnd = async (event) => {
+    const { active, over } = event;
+    setActiveId(null);
+
+    if (!over) return;
+
+    const oppId = active.id;
+    const newStage = over.id;
+    const opp = findOppById(oppId);
+
+    if (opp && opp.stage !== newStage && stages.includes(newStage)) {
+      await handleStageChange(oppId, newStage);
+    }
+  };
+
   const stageNames = {
     INITIAL_INTEREST: t('admin.crm.pipeline.stages.initial_interest'),
     INFO_REQUESTED: t('admin.crm.pipeline.stages.info_requested'),
@@ -46,7 +160,16 @@ const PipelineTab = ({ data, onRefresh, t }) => {
   // Use default empty data instead of showing spinner
   const pipelineData = data || { stages: {}, summary: {} };
 
+  // Get the actively dragged opportunity for DragOverlay
+  const activeOpp = activeId ? findOppById(activeId) : null;
+
   return (
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCenter}
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+    >
     <div className="space-y-4">
       {!selectedOpp ? (
         <>
@@ -72,49 +195,44 @@ const PipelineTab = ({ data, onRefresh, t }) => {
           <div className="space-y-6">
             {stages.map(stage => {
               const opps = pipelineData.stages?.[stage] || [];
-              const stageValue = opps.reduce((sum, opp) => sum + (opp.estimated_value || 0), 0);
               return (
-                <div key={stage} className="bg-white rounded-lg shadow border">
-                  <div className="px-6 py-4 border-b bg-gray-50">
-                    <div className="flex justify-between items-center">
-                      <h3 className="font-semibold">{stageNames[stage]}</h3>
-                      <div className="flex items-center gap-4">
-                        <span className="text-sm text-gray-600">{opps.length} {t('admin.crm.pipeline.opportunities')}</span>
-                        <span className="font-semibold text-green-600">${stageValue.toLocaleString()}</span>
-                      </div>
+                <DroppableStage key={stage} stage={stage} stageNames={stageNames} opps={opps} t={t}>
+                  {opps.length === 0 ? (
+                    <p className="text-center text-gray-500 py-4">{t('admin.crm.common.no_data')}</p>
+                  ) : (
+                    <div className="space-y-2">
+                      {opps.map(opp => (
+                        <DraggableOppCard
+                          key={opp.opportunity_id}
+                          opp={opp}
+                          onClick={() => setSelectedOpp(opp)}
+                          stageNames={stageNames}
+                          t={t}
+                        />
+                      ))}
                     </div>
-                  </div>
-                  <div className="p-4">
-                    {opps.length === 0 ? (
-                      <p className="text-center text-gray-500 py-4">{t('admin.crm.common.no_data')}</p>
-                    ) : (
-                      <div className="space-y-2">
-                        {opps.map(opp => (
-                          <div key={opp.opportunity_id} onClick={() => setSelectedOpp(opp)} className="p-4 border rounded-lg hover:bg-gray-50 cursor-pointer">
-                            <div className="flex justify-between items-start">
-                              <div>
-                                <h4 className="font-semibold">{opp.title}</h4>
-                                <p className="text-sm text-gray-600">{opp.company_name || opp.contact_name}</p>
-                              </div>
-                              <div className="text-right">
-                                <p className="font-bold text-green-600">${(opp.estimated_value || 0).toLocaleString()}</p>
-                                {opp.expected_close_date && (
-                                  <p className="text-xs text-gray-500">
-                                    <Calendar className="w-3 h-3 inline mr-1" />
-                                    {new Date(opp.expected_close_date).toLocaleDateString()}
-                                  </p>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </div>
+                  )}
+                </DroppableStage>
               );
             })}
           </div>
+          
+          {/* Drag overlay for visual feedback */}
+          <DragOverlay>
+            {activeOpp ? (
+              <div className="p-4 border rounded-lg bg-white shadow-xl ring-2 ring-blue-500 opacity-90">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h4 className="font-semibold">{activeOpp.title}</h4>
+                    <p className="text-sm text-gray-600">{activeOpp.company_name || activeOpp.contact_name}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-bold text-green-600">${(activeOpp.estimated_value || 0).toLocaleString()}</p>
+                  </div>
+                </div>
+              </div>
+            ) : null}
+          </DragOverlay>
         </>
       ) : (
         <div className="bg-white rounded-lg shadow border p-6">
@@ -168,6 +286,7 @@ const PipelineTab = ({ data, onRefresh, t }) => {
         </div>
       )}
     </div>
+    </DndContext>
   );
 };
 

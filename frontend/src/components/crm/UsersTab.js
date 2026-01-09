@@ -316,7 +316,7 @@ const UsersTab = () => {
                           <Edit className="w-5 h-5" />
                         </button>
                         <button
-                          onClick={() => handleDelete(user.id)}
+                          onClick={() => handleDelete(user._id || user.id)}
                           className="text-red-600 hover:text-red-900 p-1 hover:bg-red-50 rounded"
                           title="Supprimer"
                         >

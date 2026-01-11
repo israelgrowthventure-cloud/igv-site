@@ -104,10 +104,13 @@ const AdminCRMComplete = () => {
           email: 'postmaster@israelgrowthventure.com',
           password: 'Admin@igv2025#'
         };
-        const response = await api.adminLogin(credentials);
-        token = response.access_token; // Correction: utiliser access_token
+        const loginResponse = await api.adminLogin(credentials);
+        token = loginResponse.access_token;
         localStorage.setItem('admin_token', token);
-        setUser(response.user);
+        
+        // IMPORTANT: Fetch user data after login since API only returns access_token
+        const verifyResponse = await api.adminVerifyToken();
+        setUser(verifyResponse.user);
       } catch (error) {
         console.error('Auto-login failed:', error);
         toast.error('Erreur d\'authentification');
@@ -119,8 +122,8 @@ const AdminCRMComplete = () => {
     
     // Vérifier le token existant
     try {
-      const response = await api.adminVerifyToken();
-      setUser(response.user);
+      const verifyResponse = await api.adminVerifyToken();
+      setUser(verifyResponse.user);
     } catch (error) {
       // Token invalide, se reconnecter automatiquement
       localStorage.removeItem('admin_token');
@@ -129,9 +132,12 @@ const AdminCRMComplete = () => {
           email: 'postmaster@israelgrowthventure.com',
           password: 'Admin@igv2025#'
         };
-        const response = await api.adminLogin(credentials);
-        localStorage.setItem('admin_token', response.access_token);
-        setUser(response.user);
+        const loginResponse = await api.adminLogin(credentials);
+        localStorage.setItem('admin_token', loginResponse.access_token);
+        
+        // IMPORTANT: Fetch user data after login
+        const verifyResponse = await api.adminVerifyToken();
+        setUser(verifyResponse.user);
       } catch (loginError) {
         console.error('Re-login failed:', loginError);
         toast.error('Erreur d\'authentification');

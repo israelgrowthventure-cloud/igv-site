@@ -560,17 +560,15 @@ async def convert_lead_to_contact(lead_id: str, user: Dict = Depends(get_current
     if lead.get("converted_to_contact_id"):
         raise HTTPException(status_code=400, detail="Lead already converted")
     
-    # Validate required fields
-    if not lead.get("email") and not lead.get("name") and not lead.get("brand_name"):
+    # Validate required fields (check both 'name' and 'contact_name' from frontend)
+    if not lead.get("email") and not lead.get("name") and not lead.get("contact_name") and not lead.get("brand_name"):
         raise HTTPException(
             status_code=400, 
             detail="Lead must have at least email, name, or brand_name to convert"
         )
     
-    # Create contact
-    contact_doc = {
-        "email": lead.get("email"),  # Email is optional
-        "name": lead.get("name") or lead.get("brand_name") or "Contact sans nom",
+    # Create contact - use contact_name if name is not present (frontend compatibility)
+    contact_name = lead.get("name") or lead.get("contact_name") or lead.get("brand_name") or "Contact sans nom"
         "phone": lead.get("phone"),
         "language": lead.get("language", "fr"),
         "tags": lead.get("tags", []),

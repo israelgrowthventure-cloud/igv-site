@@ -158,6 +158,10 @@ const LeadsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, sea
   };
 
   const handleConvertToContact = async (leadId) => {
+    // Demander confirmation avant conversion
+    if (!window.confirm('Êtes-vous sûr de vouloir convertir ce prospect en contact ? Cette action est irréversible.')) {
+      return;
+    }
     try {
       setLoadingAction(true);
       const response = await api.post(`/api/crm/leads/${leadId}/convert-to-contact`);
@@ -165,7 +169,7 @@ const LeadsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, sea
       
       // Afficher le contact créé avec un lien direct
       if (response.contact_id) {
-        toast.success(`Contact créé avec ID: ${response.contact_id}`, {
+        toast.success(`Contact créé avec succès !`, {
           duration: 5000,
           action: {
             label: "Voir le contact",
@@ -188,6 +192,8 @@ const LeadsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, sea
         toast.error('Ce prospect a déjà été converti en contact');
       } else if (errorMsg.includes('not found')) {
         toast.error('Prospect introuvable');
+      } else if (errorMsg.includes('at least email, name')) {
+        toast.error('Ce prospect manque d\'informations obligatoires (email ou nom) pour être converti');
       } else {
         toast.error(t('admin.crm.errors.convert_failed') || 'Échec de la conversion du prospect');
       }

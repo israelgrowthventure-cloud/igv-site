@@ -30,8 +30,8 @@ const UsersTab = () => {
   const loadUsers = async () => {
     try {
       setLoading(true);
-      const response = await api.get('/api/admin/users');
-      setUsers(response.users || response.data.users || response.data);
+      const response = await api.get('/api/crm/settings/users');
+      setUsers(response.users || response.data?.users || response.data || []);
     } catch (error) {
       console.error('Erreur chargement users:', error);
       toast.error('Erreur lors du chargement des utilisateurs');
@@ -58,15 +58,25 @@ const UsersTab = () => {
       
       if (editingUser) {
         // Update existing user
-        const updateData = { ...formData };
-        if (!updateData.password) {
-          delete updateData.password; // Don't send empty password
+        const updateData = { 
+          name: `${formData.first_name} ${formData.last_name}`.trim(),
+          role: formData.role,
+          is_active: formData.is_active
+        };
+        if (updateData.password) {
+          updateData.password = formData.password;
         }
-        await api.put(`/api/admin/users/${editingUser._id || editingUser.id}`, updateData);
+        await api.put(`/api/crm/settings/users/${editingUser._id || editingUser.id}`, updateData);
         toast.success('Utilisateur modifié avec succès');
       } else {
-        // Create new user
-        await api.post('/api/admin/users', formData);
+        // Create new user - use correct format for backend
+        const userData = {
+          email: formData.email,
+          name: `${formData.first_name} ${formData.last_name}`.trim(),
+          password: formData.password,
+          role: formData.role
+        };
+        await api.post('/api/crm/settings/users', userData);
         toast.success('Utilisateur créé avec succès');
       }
       
@@ -90,7 +100,7 @@ const UsersTab = () => {
 
     try {
       setLoadingAction(true);
-      await api.delete(`/api/admin/users/${userId}`);
+      await api.delete(`/api/crm/settings/users/${userId}`);
       toast.success('Utilisateur supprimé avec succès');
       await loadUsers();
     } catch (error) {

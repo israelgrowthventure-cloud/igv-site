@@ -36,8 +36,10 @@ const ContactsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, 
   const fetchNotes = async (contactId) => {
     try {
       setLoadingNotes(true);
-      const response = await api.get(`/api/contacts/${contactId}/notes`);
-      setNotes(response.data?.notes || []);
+      const response = await api.get(`/api/crm/contacts/${contactId}/notes`);
+      // Handle both response formats: {notes: [...]} or direct response
+      const notesData = response.notes || response.data?.notes || response.data || [];
+      setNotes(Array.isArray(notesData) ? notesData : []);
     } catch (error) {
       console.error('Error fetching notes:', error);
       setNotes([]);
@@ -52,7 +54,7 @@ const ContactsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, 
     
     try {
       setLoadingAction(true);
-      await api.post(`/api/contacts/${contactId}/notes`, { content: newNote.trim() });
+      await api.post(`/api/crm/contacts/${contactId}/notes`, { content: newNote.trim() });
       toast.success(t('admin.crm.notes.added', 'Note ajoutée'));
       setNewNote('');
       setShowNoteInput(false);
@@ -70,7 +72,7 @@ const ContactsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, 
     
     try {
       setLoadingAction(true);
-      await api.delete(`/api/contacts/${contactId}/notes/${noteId}`);
+      await api.delete(`/api/crm/contacts/${contactId}/notes/${noteId}`);
       toast.success(t('admin.crm.notes.deleted', 'Note supprimée'));
       await fetchNotes(contactId);
     } catch (error) {

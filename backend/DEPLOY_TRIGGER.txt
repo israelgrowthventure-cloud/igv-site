@@ -1,10 +1,1 @@
-DEPLOY TRIGGER - IGV Backend
-Last deployment: 2026-01-12 05:15:00 UTC
-Reason: Phase 1 Complete Fix - User object + Settings page
-- CORRECTION PRINCIPALE: Fetch user data via adminVerifyToken après login
-- Correction Settings page vide (user?.role === 'admin' était false)
-- UsersTab, ContactsTab (notes), LeadsTab (modales) vérifiés
-- Navigation Sidebar avec navigate() vérifiée
-Build: PHASE1-COMPLETE-20260112-0515
-Deploy 3f1d851
-Force redeploy - Fix ConfigDict import
+Full deployment - All phases complete with fixes - Mon Jan 12 07:19:42 CST 2026

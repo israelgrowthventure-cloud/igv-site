@@ -569,6 +569,10 @@ async def convert_lead_to_contact(lead_id: str, user: Dict = Depends(get_current
     
     # Create contact - use contact_name if name is not present (frontend compatibility)
     contact_name = lead.get("name") or lead.get("contact_name") or lead.get("brand_name") or "Contact sans nom"
+    
+    contact_doc = {
+        "email": lead.get("email"),  # Email is optional
+        "name": contact_name,
         "phone": lead.get("phone"),
         "language": lead.get("language", "fr"),
         "tags": lead.get("tags", []),

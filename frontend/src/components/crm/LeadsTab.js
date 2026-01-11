@@ -123,9 +123,8 @@ const LeadsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, sea
         action: {
           label: "Voir l'opportunité",
           onClick: () => {
-            // Switch vers l'onglet opportunities
-            window.location.hash = '#opportunities';
-            setTimeout(() => setSelectedItem({ type: 'opportunity', id: response.opportunity_id }), 100);
+            // Use navigate for proper routing instead of window.location.hash
+            navigate('/admin/crm?tab=opportunities');
           }
         }
       });
@@ -165,7 +164,7 @@ const LeadsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, sea
     try {
       setLoadingAction(true);
       const response = await api.post(`/api/crm/leads/${leadId}/convert-to-contact`);
-      toast.success(t('admin.crm.leads.converted'));
+      toast.success('Prospect converti en contact avec succès');
       
       // Afficher le contact créé avec un lien direct
       if (response.contact_id) {
@@ -174,9 +173,8 @@ const LeadsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, sea
           action: {
             label: "Voir le contact",
             onClick: () => {
-              // Switch vers l'onglet contacts et chercher ce contact
-              window.location.hash = '#contacts';
-              setTimeout(() => setSelectedItem({ type: 'contact', id: response.contact_id }), 100);
+              // Use navigate for proper routing instead of window.location.hash
+              navigate(`/admin/crm/contacts/${response.contact_id}`);
             }
           }
         });
@@ -195,7 +193,7 @@ const LeadsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, sea
       } else if (errorMsg.includes('at least email, name')) {
         toast.error('Ce prospect manque d\'informations obligatoires (email ou nom) pour être converti');
       } else {
-        toast.error(t('admin.crm.errors.convert_failed') || 'Échec de la conversion du prospect');
+        toast.error('Erreur lors de la conversion du prospect');
       }
     } finally {
       setLoadingAction(false);
@@ -386,9 +384,8 @@ const LeadsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, sea
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            // Navigate to contact
-                            window.location.hash = '#contacts';
-                            setTimeout(() => setSelectedItem({ type: 'contact', id: lead.converted_to_contact_id }), 100);
+                            // Use navigate for proper routing instead of window.location.hash
+                            navigate(`/admin/crm/contacts/${lead.converted_to_contact_id}`);
                           }}
                           className="text-green-600 hover:text-green-800"
                           title="Voir le contact créé"
@@ -545,9 +542,8 @@ const LeadsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, sea
                 {selectedItem.converted_to_contact_id && (
                   <button
                     onClick={() => {
-                      // Navigate to contacts tab and highlight the contact
-                      window.location.hash = '#contacts';
-                      setTimeout(() => setSelectedItem({ type: 'contact', id: selectedItem.converted_to_contact_id }), 100);
+                      // Use navigate for proper routing instead of window.location.hash
+                      navigate(`/admin/crm/contacts/${selectedItem.converted_to_contact_id}`);
                     }}
                     className="ml-2 text-green-700 hover:text-green-900 underline text-sm"
                   >

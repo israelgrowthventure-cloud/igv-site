@@ -156,12 +156,16 @@ const UsersTab = () => {
 
   // Filter users
   const filteredUsers = users.filter(user => {
+    // Handle both first_name/last_name and name (full name) formats
+    const displayName = user.first_name && user.last_name 
+      ? `${user.first_name} ${user.last_name}` 
+      : user.name || '';
+    
     const matchesSearch = 
       user.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.first_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.last_name?.toLowerCase().includes(searchTerm.toLowerCase());
+      displayName.toLowerCase().includes(searchTerm.toLowerCase());
     
-    const matchesRole = filterRole === 'all' || user.role === filterRole;
+    const matchesRole = filterRole === 'all' || user.role?.toLowerCase() === filterRole.toLowerCase();
     const matchesStatus = filterStatus === 'all' || 
       (filterStatus === 'active' && user.is_active) ||
       (filterStatus === 'inactive' && !user.is_active);
@@ -170,12 +174,29 @@ const UsersTab = () => {
   });
 
   const getRoleBadgeColor = (role) => {
+    // Handle case-insensitive role matching
+    const normalizedRole = role?.toLowerCase() || '';
     const colors = {
-      admin: 'bg-red-100 text-red-800',
-      commercial: 'bg-blue-100 text-blue-800',
-      support: 'bg-green-100 text-green-800'
+      'admin': 'bg-red-100 text-red-800',
+      'commercial': 'bg-blue-100 text-blue-800',
+      'support': 'bg-green-100 text-green-800',
+      'viewer': 'bg-gray-100 text-gray-800',
+      'sales': 'bg-purple-100 text-purple-800'
     };
-    return colors[role] || 'bg-gray-100 text-gray-800';
+    return colors[normalizedRole] || 'bg-gray-100 text-gray-800';
+  };
+
+  // Get role display name
+  const getRoleDisplayName = (role) => {
+    const normalizedRole = role?.toLowerCase() || '';
+    const displayNames = {
+      'admin': 'Admin',
+      'commercial': 'Commercial',
+      'support': 'Support',
+      'viewer': 'Consultation',
+      'sales': 'Commercial'
+    };
+    return displayNames[normalizedRole] || role || 'Consultation';
   };
 
   if (loading) {
@@ -279,12 +300,17 @@ const UsersTab = () => {
                       <div className="flex items-center">
                         <div className="flex-shrink-0 h-10 w-10">
                           <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white font-semibold">
-                            {user.first_name?.charAt(0)}{user.last_name?.charAt(0)}
+                            {/* Get initials from first_name/last_name or full name */}
+                            {(user.first_name?.charAt(0) || user.name?.charAt(0) || '?')}
+                            {(user.last_name?.charAt(0) || '')}
                           </div>
                         </div>
                         <div className="ml-4">
                           <div className="text-sm font-medium text-gray-900">
-                            {user.first_name} {user.last_name}
+                            {/* Handle both first_name/last_name and name (full name) formats */}
+                            {user.first_name && user.last_name 
+                              ? `${user.first_name} ${user.last_name}`
+                              : user.name || 'Sans nom'}
                           </div>
                         </div>
                       </div>
@@ -297,7 +323,7 @@ const UsersTab = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getRoleBadgeColor(user.role)}`}>
-                        {user.role}
+                        {getRoleDisplayName(user.role)}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">

@@ -23,6 +23,16 @@ const ContactsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, 
   const [loadingNotes, setLoadingNotes] = useState(false);
   const [newNote, setNewNote] = useState('');
   const [showNoteInput, setShowNoteInput] = useState(false);
+  
+  // Helper function for translations with fallback
+  const tt = (key, fallback) => {
+    const translation = t(key);
+    // If translation returns the key itself (missing translation), return fallback
+    if (translation === key || !translation) {
+      return fallback || key;
+    }
+    return translation;
+  };
 
   // Fetch notes when selectedItem changes
   useEffect(() => {
@@ -55,28 +65,28 @@ const ContactsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, 
     try {
       setLoadingAction(true);
       await api.post(`/api/crm/contacts/${contactId}/notes`, { content: newNote.trim() });
-      toast.success(t('admin.crm.notes.added', 'Note ajoutée'));
+      toast.success('Note ajoutée avec succès');
       setNewNote('');
       setShowNoteInput(false);
       await fetchNotes(contactId);
     } catch (error) {
-      toast.error(t('admin.crm.notes.add_failed', 'Erreur lors de l\'ajout de la note'));
+      toast.error('Erreur lors de l\'ajout de la note');
     } finally {
       setLoadingAction(false);
     }
   };
 
   const handleDeleteNote = async (noteId) => {
-    if (!window.confirm(t('admin.crm.notes.confirm_delete', 'Supprimer cette note?'))) return;
+    if (!window.confirm('Êtes-vous sûr de vouloir supprimer cette note ?')) return;
     const contactId = selectedItem._id || selectedItem.contact_id;
     
     try {
       setLoadingAction(true);
       await api.delete(`/api/crm/contacts/${contactId}/notes/${noteId}`);
-      toast.success(t('admin.crm.notes.deleted', 'Note supprimée'));
+      toast.success('Note supprimée avec succès');
       await fetchNotes(contactId);
     } catch (error) {
-      toast.error(t('admin.crm.notes.delete_failed', 'Erreur lors de la suppression'));
+      toast.error('Erreur lors de la suppression de la note');
     } finally {
       setLoadingAction(false);
     }
@@ -101,12 +111,12 @@ const ContactsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, 
     try {
       setLoadingAction(true);
       await api.post('/api/crm/contacts', formData);
-      toast.success(t('admin.crm.contacts.created'));
+      toast.success('Contact créé avec succès');
       setShowCreateModal(false);
       setFormData({ name: '', email: '', phone: '', position: '', language: 'fr' });
       await onRefresh();
     } catch (error) {
-      toast.error(t('admin.crm.errors.create_failed'));
+      toast.error('Erreur lors de la création du contact');
     } finally {
       setLoadingAction(false);
     }
@@ -117,27 +127,27 @@ const ContactsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, 
     try {
       setLoadingAction(true);
       await api.put(`/api/crm/contacts/${editingContact._id || editingContact.contact_id}`, formData);
-      toast.success(t('admin.crm.contacts.updated'));
+      toast.success('Contact modifié avec succès');
       setShowEditModal(false);
       setEditingContact(null);
       setFormData({ name: '', email: '', phone: '', position: '', language: 'fr' });
       await onRefresh();
     } catch (error) {
-      toast.error(t('admin.crm.errors.update_failed'));
+      toast.error('Erreur lors de la modification du contact');
     } finally {
       setLoadingAction(false);
     }
   };
 
   const handleDelete = async (contactId) => {
-    if (!window.confirm(t('admin.crm.common.confirm_delete'))) return;
+    if (!window.confirm('Êtes-vous sûr de vouloir supprimer ce contact ?')) return;
     try {
       setLoadingAction(true);
       await api.delete(`/api/crm/contacts/${contactId}`);
-      toast.success(t('admin.crm.contacts.deleted'));
+      toast.success('Contact supprimé avec succès');
       await onRefresh();
     } catch (error) {
-      toast.error(t('admin.crm.errors.delete_failed'));
+      toast.error('Erreur lors de la suppression du contact');
     } finally {
       setLoadingAction(false);
     }
@@ -156,18 +166,19 @@ const ContactsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, 
         expected_close_date: new Date(Date.now() + 30*24*60*60*1000).toISOString()
       });
       
-      toast.success(t('admin.crm.opportunities.created'), {
+      toast.success('Opportunité créée avec succès !', {
         duration: 5000,
         action: {
-          label: t('admin.crm.common.view'),
+          label: "Voir l'opportunité",
           onClick: () => {
-            window.location.hash = '#opportunities';
+            // Use navigate for proper routing
+            navigate('/admin/crm?tab=opportunities');
           }
         }
       });
       await onRefresh();
     } catch (error) {
-      toast.error(t('admin.crm.errors.create_failed'));
+      toast.error('Erreur lors de la création de l\'opportunité');
     } finally {
       setLoadingAction(false);
     }
@@ -190,7 +201,7 @@ const ContactsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, 
       <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-lg font-semibold">
-            {isEdit ? t('admin.crm.contacts.edit_contact') : t('admin.crm.contacts.new_contact')}
+            {isEdit ? 'Modifier le contact' : 'Nouveau contact'}
           </h3>
           <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded">
             <X className="w-5 h-5" />
@@ -199,7 +210,7 @@ const ContactsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, 
         <form onSubmit={onSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              {t('admin.crm.contacts.columns.name')} *
+              Nom *
             </label>
             <input
               type="text"
@@ -211,7 +222,7 @@ const ContactsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, 
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              {t('admin.crm.contacts.columns.email')} *
+              Email *
             </label>
             <input
               type="email"
@@ -223,7 +234,7 @@ const ContactsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, 
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              {t('admin.crm.contacts.columns.phone')}
+              Téléphone
             </label>
             <input
               type="tel"
@@ -234,7 +245,7 @@ const ContactsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, 
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              {t('admin.crm.contacts.details.position')}
+              Fonction
             </label>
             <input
               type="text"
@@ -250,14 +261,14 @@ const ContactsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, 
               className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
             >
               {loadingAction ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-              {t('common.save')}
+              Enregistrer
             </button>
             <button
               type="button"
               onClick={onClose}
               className="px-4 py-2 border rounded-lg hover:bg-gray-100"
             >
-              {t('common.cancel')}
+              Annuler
             </button>
           </div>
         </form>
@@ -273,7 +284,7 @@ const ContactsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, 
           <Search className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
           <input
             type="text"
-            placeholder={t('admin.crm.contacts.search')}
+            placeholder="Rechercher un contact..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full pl-10 pr-4 py-2 border rounded-lg"
@@ -284,7 +295,7 @@ const ContactsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, 
           className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
         >
           <Plus className="w-4 h-4" />
-          {t('admin.crm.contacts.new_contact')}
+          Nouveau contact
         </button>
       </div>
 
@@ -295,12 +306,12 @@ const ContactsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, 
           <table className="w-full">
             <thead className="bg-gray-50 border-b">
               <tr>
-                <th className="px-4 py-3 text-left text-sm font-semibold">{t('admin.crm.contacts.columns.name')}</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">{t('admin.crm.contacts.columns.email')}</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">{t('admin.crm.contacts.columns.phone')}</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">{t('admin.crm.contacts.details.tags')}</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">{t('admin.crm.contacts.columns.created')}</th>
-                <th className="px-4 py-3 text-right text-sm font-semibold">{t('admin.crm.common.actions')}</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold">Nom</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold">Email</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold">Téléphone</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold">Tags</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold">Créé le</th>
+                <th className="px-4 py-3 text-right text-sm font-semibold">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -330,26 +341,26 @@ const ContactsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, 
                       <button
                         onClick={(e) => { e.stopPropagation(); setEmailContact(contact); setShowEmailModal(true); }}
                         className="p-1.5 text-green-600 hover:bg-green-50 rounded"
-                        title={t('admin.crm.emails.send')}
+                        title="Envoyer un email"
                       >
                         <Send className="w-4 h-4" />
                       </button>
                       <button
                         onClick={(e) => { e.stopPropagation(); openEditModal(contact); }}
                         className="p-1.5 text-blue-600 hover:bg-blue-50 rounded flex items-center gap-1"
-                        title={t('common.edit')}
+                        title="Modifier"
                       >
                         <Edit className="w-4 h-4" />
-                        <span className="text-xs">{t('common.edit')}</span>
+                        <span className="text-xs">Modifier</span>
                       </button>
                       <button
                         onClick={(e) => { e.stopPropagation(); handleDelete(contact._id || contact.contact_id); }}
                         disabled={loadingAction}
                         className="p-1.5 text-red-600 hover:bg-red-50 rounded disabled:opacity-50 flex items-center gap-1"
-                        title={t('common.delete')}
+                        title="Supprimer"
                       >
                         <Trash2 className="w-4 h-4" />
-                        <span className="text-xs">{t('common.delete')}</span>
+                        <span className="text-xs">Supprimer</span>
                       </button>
                     </div>
                   </td>
@@ -358,14 +369,14 @@ const ContactsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, 
                 <tr><td colSpan="6" className="px-4 py-12 text-center">
                   <div className="text-gray-500">
                     <Users className="w-12 h-12 mx-auto mb-3 text-gray-300" />
-                    <p className="font-medium">{t('admin.crm.contacts.empty_title')}</p>
-                    <p className="text-sm mt-1">{t('admin.crm.contacts.empty_subtitle')}</p>
+                    <p className="font-medium">Aucun contact trouvé</p>
+                    <p className="text-sm mt-1">Créez votre premier contact pour commencer</p>
                     <button
                       onClick={() => { setFormData({ name: '', email: '', phone: '', position: '', language: 'fr' }); setShowCreateModal(true); }}
                       className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                     >
                       <Plus className="w-4 h-4" />
-                      {t('admin.crm.contacts.new_contact')}
+                      Nouveau contact
                     </button>
                   </div>
                 </td></tr>
@@ -387,7 +398,7 @@ const ContactsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, 
                 disabled={loadingAction}
               >
                 <Plus className="w-5 h-5" />
-                {t('admin.crm.contacts.new_opportunity')}
+                Nouvelle opportunité
               </button>
               <button onClick={() => openEditModal(selectedItem)} className="p-2 hover:bg-blue-50 rounded-lg text-blue-600">
                 <Edit className="w-5 h-5" />
@@ -403,7 +414,7 @@ const ContactsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, 
               <div className="flex items-start gap-3">
                 <Mail className="w-5 h-5 text-gray-400 mt-1" />
                 <div>
-                  <p className="text-sm text-gray-600">{t('admin.crm.contacts.details.email')}</p>
+                  <p className="text-sm text-gray-600">Email</p>
                   <p className="font-medium">{selectedItem.email}</p>
                 </div>
               </div>
@@ -411,7 +422,7 @@ const ContactsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, 
                 <div className="flex items-start gap-3">
                   <Phone className="w-5 h-5 text-gray-400 mt-1" />
                   <div>
-                    <p className="text-sm text-gray-600">{t('admin.crm.contacts.details.phone')}</p>
+                    <p className="text-sm text-gray-600">Téléphone</p>
                     <p className="font-medium">{selectedItem.phone}</p>
                   </div>
                 </div>
@@ -420,7 +431,7 @@ const ContactsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, 
                 <div className="flex items-start gap-3">
                   <Building className="w-5 h-5 text-gray-400 mt-1" />
                   <div>
-                    <p className="text-sm text-gray-600">{t('admin.crm.contacts.details.position')}</p>
+                    <p className="text-sm text-gray-600">Fonction</p>
                     <p className="font-medium">{selectedItem.position}</p>
                   </div>
                 </div>
@@ -429,7 +440,7 @@ const ContactsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, 
                 <div className="flex items-start gap-3">
                   <MapPin className="w-5 h-5 text-gray-400 mt-1" />
                   <div>
-                    <p className="text-sm text-gray-600">{t('admin.crm.contacts.details.location')}</p>
+                    <p className="text-sm text-gray-600">Localisation</p>
                     <p className="font-medium">{selectedItem.location}</p>
                   </div>
                 </div>
@@ -439,7 +450,7 @@ const ContactsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, 
             <div>
               {selectedItem.tags && selectedItem.tags.length > 0 && (
                 <div className="mb-4">
-                  <p className="text-sm text-gray-600 mb-2">{t('admin.crm.contacts.details.tags')}</p>
+                  <p className="text-sm text-gray-600 mb-2">Tags</p>
                   <div className="flex flex-wrap gap-2">
                     {selectedItem.tags.map(tag => (
                       <span key={tag} className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">{tag}</span>
@@ -452,13 +463,13 @@ const ContactsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, 
 
           {selectedItem.converted_from_lead_id && (
             <div className="mt-6 p-4 bg-green-50 rounded-lg">
-              <p className="text-sm font-semibold text-green-900">{t('admin.crm.contacts.converted_from_lead')}</p>
-              <p className="text-sm text-green-800 mt-1">{t('admin.crm.contacts.lead_id')}: {selectedItem.converted_from_lead_id}</p>
+              <p className="text-sm font-semibold text-green-900">Converti depuis un prospect</p>
+              <p className="text-sm text-green-800 mt-1">ID: {selectedItem.converted_from_lead_id}</p>
             </div>
           )}
 
           <div className="mt-6 border-t pt-6">
-            <h3 className="font-semibold mb-4">{t('admin.crm.contacts.recent_activities')}</h3>
+            <h3 className="font-semibold mb-4">Activités récentes</h3>
             <div className="space-y-2">
               {selectedItem.activities?.slice(0, 5).map((activity, idx) => (
                 <div key={idx} className="p-3 bg-gray-50 rounded-lg">
@@ -466,7 +477,7 @@ const ContactsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, 
                   <p className="text-xs text-gray-600 mt-1">{activity.description}</p>
                   <p className="text-xs text-gray-500 mt-1">{new Date(activity.created_at).toLocaleString()}</p>
                 </div>
-              )) || <p className="text-gray-500 text-sm">{t('admin.crm.common.no_activities')}</p>}
+              )) || <p className="text-gray-500 text-sm">Aucune activité</p>}
             </div>
           </div>
 
@@ -475,14 +486,14 @@ const ContactsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, 
             <div className="flex justify-between items-center mb-4">
               <h3 className="font-semibold flex items-center gap-2">
                 <StickyNote className="w-5 h-5 text-yellow-500" />
-                {t('admin.crm.notes.title', 'Notes')}
+                Notes
               </h3>
               <button
                 onClick={() => setShowNoteInput(!showNoteInput)}
                 className="flex items-center gap-2 px-3 py-1.5 bg-yellow-100 text-yellow-700 rounded-lg hover:bg-yellow-200 text-sm"
               >
                 <Plus className="w-4 h-4" />
-                {t('admin.crm.notes.add', 'Ajouter une note')}
+                Ajouter une note
               </button>
             </div>
 
@@ -492,7 +503,7 @@ const ContactsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, 
                 <textarea
                   value={newNote}
                   onChange={(e) => setNewNote(e.target.value)}
-                  placeholder={t('admin.crm.notes.placeholder', 'Écrivez votre note ici...')}
+                  placeholder="Écrivez votre note ici..."
                   className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-yellow-500 resize-none"
                   rows={3}
                 />
@@ -503,13 +514,13 @@ const ContactsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, 
                     className="flex items-center gap-2 px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 disabled:opacity-50"
                   >
                     {loadingAction ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                    {t('common.save', 'Enregistrer')}
+                    Enregistrer
                   </button>
                   <button
                     onClick={() => { setShowNoteInput(false); setNewNote(''); }}
                     className="px-4 py-2 border rounded-lg hover:bg-gray-100"
                   >
-                    {t('common.cancel', 'Annuler')}
+                    Annuler
                   </button>
                 </div>
               </div>
@@ -534,7 +545,7 @@ const ContactsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, 
                       <button
                         onClick={() => handleDeleteNote(note._id)}
                         className="p-1.5 text-red-500 hover:bg-red-50 rounded opacity-0 group-hover:opacity-100 transition-opacity"
-                        title={t('common.delete', 'Supprimer')}
+                        title="Supprimer"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -544,7 +555,7 @@ const ContactsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, 
               ) : (
                 <div className="text-center py-8 text-gray-500">
                   <MessageSquare className="w-10 h-10 mx-auto mb-2 text-gray-300" />
-                  <p className="text-sm">{t('admin.crm.notes.empty', 'Aucune note pour ce contact')}</p>
+                  <p className="text-sm">Aucune note pour ce contact</p>
                 </div>
               )}
             </div>
@@ -575,7 +586,10 @@ const ContactsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, 
         <EmailModal 
           contact={emailContact}
           onClose={() => { setShowEmailModal(false); setEmailContact(null); }}
-          t={t}
+          t={(key, fallback) => {
+            const translation = t(key);
+            return translation === key || !translation ? (fallback || key) : translation;
+          }}
           language={i18n?.language || 'fr'}
         />
       )}

@@ -56,7 +56,10 @@ const AdminCRMComplete = () => {
     stats: null, // null = not loaded yet, object = loaded
     leads: [],
     contacts: [],
-    pipeline: { stages: {}, summary: {} }
+    pipeline: { stages: {}, summary: {} },
+    users: [],
+    tags: [],
+    stages: []
   });
   const [selectedItem, setSelectedItem] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -162,12 +165,16 @@ const AdminCRMComplete = () => {
           setData(prev => ({ ...prev, contacts: Array.isArray(contacts?.contacts) ? contacts.contacts : [], total: contacts?.total || 0 }));
           break;
         case 'settings':
-          const [users, tags, stages] = await Promise.all([
+          const [usersRes, tagsRes, stagesRes] = await Promise.all([
             api.get('/api/crm/settings/users'),
             api.get('/api/crm/settings/tags'),
             api.get('/api/crm/settings/pipeline-stages')
           ]);
-          setData(prev => ({ ...prev, users: users.users || [], tags: tags.tags || [], stages: stages.stages || [] }));
+          // Handle different response formats
+          const usersData = usersRes?.users || usersRes?.data?.users || usersRes?.data || [];
+          const tagsData = tagsRes?.tags || tagsRes?.data?.tags || tagsRes?.data || [];
+          const stagesData = stagesRes?.stages || stagesRes?.data?.stages || stagesRes?.data || [];
+          setData(prev => ({ ...prev, users: Array.isArray(usersData) ? usersData : [], tags: Array.isArray(tagsData) ? tagsData : [], stages: Array.isArray(stagesData) ? stagesData : [] }));
           break;
         default:
           break;

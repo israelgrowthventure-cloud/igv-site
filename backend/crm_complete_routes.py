@@ -1051,9 +1051,16 @@ async def create_crm_user(user_data: UserCreate, user: Dict = Depends(get_curren
     import bcrypt
     password_hash = bcrypt.hashpw(user_data.password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
     
+    # Split name into first_name and last_name for frontend compatibility
+    name_parts = user_data.name.strip().split(' ', 1)
+    first_name = name_parts[0] if name_parts else ""
+    last_name = name_parts[1] if len(name_parts) > 1 else ""
+    
     user_doc = {
         "email": user_data.email,
         "name": user_data.name,
+        "first_name": first_name,
+        "last_name": last_name,
         "role": user_data.role,
         "password_hash": password_hash,
         "is_active": True,

@@ -41,6 +41,7 @@ from crm_complete_routes import router as crm_complete_router
 from gdpr_routes import router as gdpr_router
 from quota_queue_routes import router as quota_router
 from admin_user_routes import router as admin_user_router
+from cms_routes import router as cms_router  # Phase 5: CMS, Media & Auth
 
 # New routers with error handling
 INVOICE_ROUTER_ERROR = None
@@ -905,6 +906,13 @@ app.include_router(gdpr_router)  # GDPR Consent & Privacy
 app.include_router(quota_router)  # Gemini Quota Queue
 app.include_router(tracking_router)  # Tracking & Analytics
 app.include_router(admin_router)  # Admin Dashboard & Stats
+
+# Phase 5: CMS, Media Library & Password Recovery
+try:
+    app.include_router(cms_router)
+    logging.info("✓ CMS/Media/Auth router registered")
+except Exception as e:
+    logging.error(f"✗ Failed to load cms_routes: {e}")
 
 # Include new routers only if loaded successfully
 if INVOICE_ROUTER_LOADED and invoice_router:

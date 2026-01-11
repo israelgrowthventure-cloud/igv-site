@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { Check, Mail, CreditCard } from 'lucide-react';
+import { Check, Mail, User, Sparkles, Phone } from 'lucide-react';
 import { api } from '../utils/api';
 import { getPricing } from '../utils/pricing';
 import { toast } from 'sonner';
@@ -33,39 +33,45 @@ const Packs = () => {
       description: t('packs.analyse.description'),
       features: t('packs.analyse.features', { returnObjects: true }),
       note: t('packs.analyse.note'),
-      highlighted: false
+      highlighted: false,
+      packName: t('packs.analyse.name')
     },
     {
       id: 'succursales',
       name: t('packs.succursales.name'),
       description: t('packs.succursales.description'),
       features: t('packs.succursales.features', { returnObjects: true }),
-      highlighted: true
+      highlighted: true,
+      packName: t('packs.succursales.name')
     },
     {
       id: 'franchise',
       name: t('packs.franchise.name'),
       description: t('packs.franchise.description'),
       features: t('packs.franchise.features', { returnObjects: true }),
-      highlighted: false
+      highlighted: false,
+      packName: t('packs.franchise.name')
     }
   ];
 
-  const handleBuyPack = (packId) => {
-    // Redirect to demande rappel page (Monetico en attente CIC)
-    navigate(`/demande-rappel?pack=${packId}`);
+  // Rediriger vers la page de contact expert avec le pack sélectionné
+  const handleContactExpert = (packId, packName) => {
+    navigate(`/contact-expert?pack=${encodeURIComponent(packId)}&packName=${encodeURIComponent(packName)}`);
   };
 
-  const handleContactAboutPack = (packId, packName) => {
-    // Redirect to demande rappel page instead of mailto
-    navigate(`/demande-rappel?pack=${packId}&subject=question`);
+  // Rediriger vers la mini-analyse avec le pack pré-sélectionné
+  const handleMiniAnalysis = (packId, packName) => {
+    navigate(`/mini-analyse?pack=${encodeURIComponent(packId)}&packName=${encodeURIComponent(packName)}`);
   };
 
   return (
     <>
       <Helmet>
-        <meta name="robots" content="noindex, nofollow" />
+        <title>{t('packs.title')} | Israel Growth Venture</title>
+        <meta name="description" content={t('packs.subtitle')} />
+        <meta name="robots" content="index, follow" />
       </Helmet>
+      
       <div className="min-h-screen pt-20">
       {/* Hero */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 to-white">
@@ -73,7 +79,7 @@ const Packs = () => {
           <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6">
             {t('packs.title')}
           </h1>
-          <p className="text-lg text-gray-600 mb-4">
+          <p className="text-lg text-gray-600 mb-4 max-w-3xl mx-auto">
             {t('packs.subtitle')}
           </p>
           {loading ? (
@@ -173,31 +179,47 @@ const Packs = () => {
                     </p>
                   )}
 
-                  {/* CTAs */}
+                  {/* CTAs - Double bouton pour conversion conseil high-ticket */}
                   <div className="space-y-3">
+                    {/* Bouton principal : Prendre contact avec un expert */}
                     <button
-                      onClick={() => handleBuyPack(pack.id)}
+                      onClick={() => handleContactExpert(pack.id, pack.packName)}
                       className={`w-full py-3 px-4 rounded-lg font-semibold transition-colors flex items-center justify-center space-x-2 ${
                         pack.highlighted
                           ? 'bg-white text-blue-600 hover:bg-gray-100'
                           : 'bg-blue-600 text-white hover:bg-blue-700'
                       }`}
-                      data-testid={`buy-${pack.id}`}
+                      data-testid={`contact-expert-${pack.id}`}
                     >
-                      <CreditCard className="w-4 h-4" />
-                      <span>{t('packs.cta')}</span>
+                      <User className="w-4 h-4" />
+                      <span>{t('packs.ctaContactExpert', 'Discuter avec un expert')}</span>
                     </button>
+                    
+                    {/* Bouton secondaire : Démarrer une mini-analyse */}
                     <button
-                      onClick={() => handleContactAboutPack(pack.id, pack.name)}
+                      onClick={() => handleMiniAnalysis(pack.id, pack.packName)}
                       className={`w-full py-3 px-4 rounded-lg font-semibold transition-colors flex items-center justify-center space-x-2 ${
                         pack.highlighted
                           ? 'border-2 border-white text-white hover:bg-white/10'
                           : 'border-2 border-blue-600 text-blue-600 hover:bg-blue-50'
                       }`}
-                      data-testid={`talk-about-${pack.id}`}
+                      data-testid={`mini-analysis-${pack.id}`}
                     >
-                      <Mail className="w-4 h-4" />
-                      <span>{t('packs.ctaTalk')}</span>
+                      <Sparkles className="w-4 h-4" />
+                      <span>{t('packs.ctaMiniAnalysis', 'Obtenir ma mini-analyse gratuite')}</span>
+                    </button>
+                  </div>
+                  
+                  {/* Lien supplémentaire pour appeler directement */}
+                  <div className="mt-4 text-center">
+                    <button
+                      onClick={() => navigate('/appointment')}
+                      className={`text-sm flex items-center justify-center gap-2 mx-auto ${
+                        pack.highlighted ? 'text-blue-200 hover:text-white' : 'text-blue-600 hover:text-blue-700'
+                      }`}
+                    >
+                      <Phone className="w-3 h-3" />
+                      {t('packs.orBookCall', 'Ou réserver un appel')}
                     </button>
                   </div>
                 </div>
@@ -211,13 +233,13 @@ const Packs = () => {
       <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gray-50">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">
-            {t('packs.customPack.title', 'Besoin d\'un pack personalisé ?')}
+            {t('packs.customPack.title', 'Besoin d\'un pack personnalisé ?')}
           </h2>
           <p className="text-base text-gray-600 mb-6">
             {t('packs.customPack.description', 'Chaque projet est unique. Contactez-nous pour discuter d\'une solution sur mesure adaptée à vos besoins spécifiques.')}
           </p>
           <button
-            onClick={() => navigate('/demande-rappel?pack=custom')}
+            onClick={() => navigate('/contact')}
             className="inline-flex items-center px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
             data-testid="custom-pack-contact"
           >

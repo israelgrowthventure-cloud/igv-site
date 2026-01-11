@@ -7,7 +7,7 @@ import './i18n/config';
 import './App.css';
 import './styles/rtl.css';
 
-// Build trigger: 2026-01-02-phase2-auth-rbac
+// Build trigger: 2026-01-12-phase1-refactor-crm-modular
 
 // Layout Components
 import Header from './components/Header';
@@ -17,13 +17,13 @@ import CookieConsentBanner from './components/CookieConsentBanner';
 import PrivateRoute from './components/PrivateRoute';
 
 // Pages - Loaded immediately (public facing)
-import NewHome from './pages/NewHome';  // NOUVELLE landing page
-import Home from './pages/Home';  // Ancienne home (conservée en arrière-plan)
+import NewHome from './pages/NewHome';  // NOUVELLE landing page (canonical)
 import MiniAnalysis from './pages/MiniAnalysis'; // New i18n mini-analysis page
 import About from './pages/About';
 import Packs from './pages/Packs';
 import FutureCommerce from './pages/FutureCommerce';
 import Contact from './pages/Contact';
+import ContactExpert from './pages/ContactExpert'; // Phase 2: High-Ticket Consulting route
 import Appointment from './pages/Appointment';
 import Terms from './pages/Terms';
 import PrivacyPolicy from './pages/PrivacyPolicy';
@@ -32,32 +32,44 @@ import PaymentReturn from './pages/PaymentReturn';
 import Payment from './pages/Payment';
 import Checkout from './pages/Checkout';
 import DemandeRappel from './pages/DemandeRappel';
+import SitemapView from './pages/SitemapView'; // SEO sitemap page
 
 // Layouts
 import AdminLayout from './layouts/AdminLayout';
 
 // Admin Pages - Lazy loaded for performance (code splitting)
 const AdminLogin = lazy(() => import('./pages/admin/Login'));
+const ForgotPassword = lazy(() => import('./pages/ForgotPassword'));
+const ResetPassword = lazy(() => import('./pages/ResetPassword'));
 const AdminDashboard = lazy(() => import('./pages/admin/Dashboard'));
 const DashboardPage = lazy(() => import('./pages/admin/DashboardPage'));
 const LeadsPage = lazy(() => import('./pages/admin/LeadsPage'));
 const ContactsPage = lazy(() => import('./pages/admin/ContactsPage'));
 const UsersPage = lazy(() => import('./pages/admin/UsersPage'));
-const AdminCRMComplete = lazy(() => import('./pages/admin/AdminCRMComplete'));
 const LeadDetail = lazy(() => import('./pages/admin/LeadDetail'));
 const ContactDetail = lazy(() => import('./pages/admin/ContactDetail'));
 const Pipeline = lazy(() => import('./pages/admin/Pipeline'));
 const AdminInvoices = lazy(() => import('./pages/AdminInvoices'));
 const AdminPayments = lazy(() => import('./pages/AdminPayments'));
 const AdminTasks = lazy(() => import('./pages/AdminTasks'));
+const MediaLibrary = lazy(() => import('./pages/admin/MediaLibrary'));
+
+// CRM Modular Pages (Phase 1 Refactor)
+const OpportunitiesPage = lazy(() => import('./pages/admin/OpportunitiesPage'));
+const EmailsPage = lazy(() => import('./pages/admin/EmailsPage'));
+const ActivitiesPage = lazy(() => import('./pages/admin/ActivitiesPage'));
+const SettingsPage = lazy(() => import('./pages/admin/SettingsPage'));
 
 // Preload admin components on hover/focus for instant navigation
 export const preloadAdminComponents = () => {
-  import('./pages/admin/AdminCRMComplete');
   import('./pages/admin/LeadDetail');
   import('./pages/admin/ContactDetail');
   import('./pages/admin/Pipeline');
   import('./pages/admin/Dashboard');
+  import('./pages/admin/OpportunitiesPage');
+  import('./pages/admin/EmailsPage');
+  import('./pages/admin/ActivitiesPage');
+  import('./pages/admin/SettingsPage');
 };
 
 // 404 Page with i18n
@@ -143,7 +155,7 @@ function AppContent() {
         {!isAdminRoute && <Header />}
         <main>
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<NewHome />} />
             <Route path="/mini-analyse" element={<MiniAnalysis />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
@@ -155,57 +167,72 @@ function AppContent() {
             <Route path="/future-commerce" element={<FutureCommerce />} />
             <Route path="/terms" element={<Terms />} />
             <Route path="/demande-rappel" element={<DemandeRappel />} />
-          <Route path="/checkout" element={<Checkout />} />
-          <Route path="/payment" element={<Payment />} />
-          <Route path="/payment/return" element={<PaymentReturn />} />
-          <Route path="/payment-success" element={<PaymentReturn />} />
-          <Route path="/admin" element={<Navigate to="/admin/crm/dashboard" replace />} />
-          <Route path="/admin/login" element={
-            <Suspense fallback={<Loading />}><AdminLogin /></Suspense>
-          } />
-          
-          {/* Admin CRM Routes with AdminLayout */}
-          <Route path="/admin/crm" element={
-            <PrivateRoute>
-              <Suspense fallback={<AdminLoading />}>
-                <AdminLayout />
+            <Route path="/sitemap-igv" element={<SitemapView />} />
+            <Route path="/checkout" element={<Checkout />} />
+            <Route path="/payment" element={<Payment />} />
+            <Route path="/payment/return" element={<PaymentReturn />} />
+            <Route path="/payment-success" element={<PaymentReturn />} />
+            <Route path="/contact-expert" element={<ContactExpert />} />
+            <Route path="/admin" element={<Navigate to="/admin/crm/dashboard" replace />} />
+            <Route path="/admin/login" element={
+              <Suspense fallback={<Loading />}><AdminLogin /></Suspense>
+            } />
+            
+            {/* Admin CRM Routes with AdminLayout */}
+            <Route path="/admin/crm" element={
+              <PrivateRoute>
+                <Suspense fallback={<AdminLoading />}>
+                  <AdminLayout />
+                </Suspense>
+              </PrivateRoute>
+            }>
+              <Route index element={<Navigate to="/admin/crm/dashboard" replace />} />
+              <Route path="dashboard" element={<DashboardPage />} />
+              <Route path="leads" element={<LeadsPage />} />
+              <Route path="contacts" element={<ContactsPage />} />
+              <Route path="users" element={<UsersPage />} />
+              <Route path="opportunities" element={<OpportunitiesPage />} />
+              <Route path="pipeline" element={<Pipeline />} />
+              <Route path="emails" element={<EmailsPage />} />
+              <Route path="activities" element={<ActivitiesPage />} />
+              <Route path="settings" element={<SettingsPage />} />
+            </Route>
+            
+            <Route path="/admin/dashboard" element={
+              <PrivateRoute><Suspense fallback={<AdminLoading />}><Navigate to="/admin/crm/dashboard" replace /></Suspense></PrivateRoute>
+            } />
+            <Route path="/admin/crm/leads/:id" element={
+              <PrivateRoute><Suspense fallback={<AdminLoading />}><LeadDetail /></Suspense></PrivateRoute>
+            } />
+            <Route path="/admin/crm/contacts/:id" element={
+              <PrivateRoute><Suspense fallback={<AdminLoading />}><ContactDetail /></Suspense></PrivateRoute>
+            } />
+            <Route path="/admin/invoices" element={
+              <PrivateRoute><Suspense fallback={<AdminLoading />}><AdminInvoices /></Suspense></PrivateRoute>
+            } />
+            <Route path="/admin/payments" element={
+              <PrivateRoute><Suspense fallback={<AdminLoading />}><AdminPayments /></Suspense></PrivateRoute>
+            } />
+            <Route path="/admin/tasks" element={
+              <PrivateRoute><Suspense fallback={<AdminLoading />}><AdminTasks /></Suspense></PrivateRoute>
+            } />
+            <Route path="/admin/media" element={
+              <PrivateRoute><Suspense fallback={<AdminLoading />}><MediaLibrary /></Suspense></PrivateRoute>
+            } />
+            <Route path="/admin/forgot-password" element={
+              <Suspense fallback={<Loading />}>
+                <ForgotPassword />
               </Suspense>
-            </PrivateRoute>
-          }>
-            <Route index element={<Navigate to="/admin/crm/dashboard" replace />} />
-            <Route path="dashboard" element={<DashboardPage />} />
-            <Route path="leads" element={<LeadsPage />} />
-            <Route path="contacts" element={<ContactsPage />} />
-            <Route path="users" element={<UsersPage />} />
-            <Route path="opportunities" element={<AdminCRMComplete />} />
-            <Route path="pipeline" element={<Pipeline />} />
-            <Route path="emails" element={<AdminCRMComplete />} />
-            <Route path="activities" element={<AdminCRMComplete />} />
-            <Route path="settings" element={<AdminCRMComplete />} />
-          </Route>
-          
-          <Route path="/admin/dashboard" element={
-            <PrivateRoute><Suspense fallback={<AdminLoading />}><AdminDashboard /></Suspense></PrivateRoute>
-          } />
-          <Route path="/admin/crm/leads/:id" element={
-            <PrivateRoute><Suspense fallback={<AdminLoading />}><LeadDetail /></Suspense></PrivateRoute>
-          } />
-          <Route path="/admin/crm/contacts/:id" element={
-            <PrivateRoute><Suspense fallback={<AdminLoading />}><ContactDetail /></Suspense></PrivateRoute>
-          } />
-          <Route path="/admin/invoices" element={
-            <PrivateRoute><Suspense fallback={<AdminLoading />}><AdminInvoices /></Suspense></PrivateRoute>
-          } />
-          <Route path="/admin/payments" element={
-            <PrivateRoute><Suspense fallback={<AdminLoading />}><AdminPayments /></Suspense></PrivateRoute>
-          } />
-          <Route path="/admin/tasks" element={
-            <PrivateRoute><Suspense fallback={<AdminLoading />}><AdminTasks /></Suspense></PrivateRoute>
-          } />
-          <Route path="*" element={<NotFoundPage />} />
-        </Routes>
-      </main>
-      {!isAdminRoute && <Footer />}
+            } />
+            <Route path="/reset-password" element={
+              <Suspense fallback={<Loading />}>
+                <ResetPassword />
+              </Suspense>
+            } />
+            <Route path="*" element={<NotFoundPage />} />
+          </Routes>
+        </main>
+        {!isAdminRoute && <Footer />}
       </div>
     </AuthProvider>
   );

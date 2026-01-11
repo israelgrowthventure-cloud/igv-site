@@ -199,19 +199,6 @@ export const api = {
     return response.data;
   },
 
-  post: async (endpoint, data, config = {}) => {
-    const token = localStorage.getItem('admin_token');
-    const response = await axios.post(`${BACKEND_URL}${endpoint}`, data, {
-      ...config,
-      timeout: config.timeout || 8000,
-      headers: { 
-        Authorization: token ? `Bearer ${token}` : '',
-        ...config.headers 
-      }
-    });
-    return response.data;
-  },
-
   put: async (endpoint, data, config = {}) => {
     const token = localStorage.getItem('admin_token');
     const response = await axios.put(`${BACKEND_URL}${endpoint}`, data, {
@@ -234,6 +221,104 @@ export const api = {
         Authorization: token ? `Bearer ${token}` : '',
         ...config.headers 
       }
+    });
+    return response.data;
+  },
+
+  // ==========================================
+  // CMS, Media Library & Password Recovery
+  // ==========================================
+
+  // Password Recovery
+  forgotPassword: async (email) => {
+    const response = await axios.post(`${API}/auth/forgot-password`, { email });
+    return response.data;
+  },
+
+  resetPassword: async (token, email, newPassword) => {
+    const response = await axios.post(`${API}/auth/reset-password`, {
+      token,
+      email,
+      new_password: newPassword
+    });
+    return response.data;
+  },
+
+  verifyResetToken: async (email, token) => {
+    const response = await axios.get(`${API}/auth/verify-reset-token`, {
+      params: { email, token }
+    });
+    return response.data;
+  },
+
+  // CMS Content Management
+  getPageContent: async (page, language = 'fr') => {
+    const token = localStorage.getItem('admin_token');
+    const response = await axios.get(`${API}/pages/${page}`, {
+      params: { language },
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  },
+
+  updatePageContent: async (page, language, section, content, version = null) => {
+    const token = localStorage.getItem('admin_token');
+    const response = await axios.post(`${API}/pages/update`, {
+      page,
+      language,
+      section,
+      content,
+      version
+    }, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  },
+
+  listPages: async () => {
+    const token = localStorage.getItem('admin_token');
+    const response = await axios.get(`${API}/pages/list`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  },
+
+  getPageHistory: async (page, language = 'fr', limit = 10) => {
+    const token = localStorage.getItem('admin_token');
+    const response = await axios.get(`${API}/pages/${page}/history`, {
+      params: { language, limit },
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  },
+
+  // Media Library
+  listMedia: async (page = 1, limit = 20) => {
+    const token = localStorage.getItem('admin_token');
+    const response = await axios.get(`${API}/admin/media`, {
+      params: { page, limit },
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  },
+
+  uploadMedia: async (file) => {
+    const token = localStorage.getItem('admin_token');
+    const formData = new FormData();
+    formData.append('file', file);
+    const response = await axios.post(`${API}/admin/media/upload`, formData, {
+      headers: { 
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+    return response.data;
+  },
+
+  deleteMedia: async (filename) => {
+    const token = localStorage.getItem('admin_token');
+    const response = await axios.delete(`${API}/admin/media/${filename}`, {
+      headers: { Authorization: `Bearer ${token}` }
     });
     return response.data;
   }

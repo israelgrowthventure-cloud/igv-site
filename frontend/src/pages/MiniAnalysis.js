@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
-import { ArrowRight, Sparkles, Download, Check, Mail, Loader2 } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
+import { ArrowRight, Sparkles, Download, Check, Mail, Loader2, MapPin, Store } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '../utils/api';
 import BrandName from '../components/BrandName';
@@ -9,6 +10,11 @@ import BrandName from '../components/BrandName';
 const MiniAnalysis = () => {
   const { t, i18n } = useTranslation();
   const currentLang = i18n.language || 'fr';
+  const [searchParams] = useSearchParams();
+  
+  // Phase 3: URL Parameter Capture
+  const packParam = searchParams.get('pack');
+  const packNameParam = searchParams.get('packName');
   
   const [formData, setFormData] = useState({
     email: '',
@@ -25,7 +31,12 @@ const MiniAnalysis = () => {
     modele_actuel: '',
     differenciation: '',
     objectif_israel: '',
-    contraintes: ''
+    contraintes: '',
+    // Phase 3: Type de projet (auto-filled from pack parameter)
+    type_de_projet: '',
+    // Phase 3: Israel-specific fields
+    nombre_points_vente: '',
+    villes_cibles: ''
   });
   
   const [loading, setLoading] = useState(false);
@@ -35,6 +46,42 @@ const MiniAnalysis = () => {
   const [showContactModal, setShowContactModal] = useState(false);
   const [pdfLoading, setPdfLoading] = useState(false);
   const [emailLoading, setEmailLoading] = useState(false);
+  const [israelFieldsVisible, setIsraelFieldsVisible] = useState(false);
+
+  // Phase 3: Map pack parameters to project types
+  const packToProjectType = {
+    analyse: { fr: 'Diagnostic Stratégique', en: 'Strategic Assessment', he: 'הערכה אסטרטגית' },
+    succursales: { fr: 'Ouverture de Succursales', en: 'Branch Opening', he: 'פתיחת סניפים' },
+    franchise: { fr: 'Développement Franchise', en: 'Franchise Development', he: 'פיתוח זכיינות' }
+  };
+
+  // Phase 3: Capture pack parameter on mount and pre-fill project type
+  useEffect(() => {
+    if (packParam && packToProjectType[packParam]) {
+      const projectType = packToProjectType[packParam][currentLang] || packToProjectType[packParam]['fr'];
+      setFormData(prev => ({
+        ...prev,
+        type_de_projet: projectType
+      }));
+      
+      // Show toast notification
+      toast.info(
+        currentLang === 'he' 
+          ? `נבחרה חבילה: ${packNameParam || projectType}`
+          : currentLang === 'en'
+            ? `Selected pack: ${packNameParam || projectType}`
+            : `Pack sélectionné : ${packNameParam || projectType}`,
+        { duration: 3000 }
+      );
+    }
+  }, [packParam, packNameParam, currentLang]);
+
+  // Phase 3: Check if country is Israel to show additional fields
+  useEffect(() => {
+    const country = formData.pays_dorigine?.toLowerCase().trim();
+    const israelVariants = ['israel', 'ישראל', 'israel🇮🇱'];
+    setIsraelFieldsVisible(israelVariants.includes(country));
+  }, [formData.pays_dorigine]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -92,10 +139,11 @@ const MiniAnalysis = () => {
     const loadingToastId = toast.loading(t('miniAnalysis.toast.analyzing'));
     
     try {
-      // Add language to request
+      // Add language to request and pack information
       const requestData = {
         ...formData,
-        language: currentLang
+        language: currentLang,
+        pack_source: packParam || null
       };
       
       const data = await api.sendMiniAnalysis(requestData);
@@ -324,6 +372,21 @@ const MiniAnalysis = () => {
         <section className="pb-20 px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto">
             <div className="bg-white rounded-2xl shadow-xl p-8 sm:p-12">
+              {/* Phase 3: Pack Selection Banner */}
+              {packParam && formData.type_de_projet && (
+                <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg flex items-center gap-3">
+                  <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                    <Sparkles className="w-5 h-5 text-green-600" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-green-700 font-medium">
+                      {currentLang === 'he' ? 'חבילה נבחרה מהדף הקודם' : currentLang === 'en' ? 'Pack selected from previous page' : 'Pack sélectionné depuis la page précédente'}
+                    </p>
+                    <p className="font-semibold text-green-800">{packNameParam || formData.type_de_projet}</p>
+                  </div>
+                </div>
+              )}
+              
               {/* Quota Information - Multilingual */}
               <div className={`mb-6 p-4 bg-blue-50 border-l-4 border-blue-500 rounded ${currentLang === 'he' ? 'text-right' : 'text-left'}`} dir={currentLang === 'he' ? 'rtl' : 'ltr'}>
                 <p className="text-sm text-blue-800 font-medium mb-2">
@@ -424,6 +487,32 @@ const MiniAnalysis = () => {
                   />
                 </div>
 
+                {/* Phase 3: Project Type (auto-filled from pack parameter, read-only) */}
+                <div>
+                  <label htmlFor="type_de_projet" className="block text-sm font-semibold text-gray-700 mb-2">
+                    {currentLang === 'he' ? 'סוג הפרויקט' : currentLang === 'en' ? 'Project Type' : 'Type de projet'}
+                  </label>
+                  <input
+                    type="text"
+                    id="type_de_projet"
+                    name="type_de_projet"
+                    value={formData.type_de_projet}
+                    readOnly={!!packParam}
+                    onChange={handleChange}
+                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                      packParam 
+                        ? 'bg-gray-100 text-gray-500 cursor-not-allowed border-gray-300' 
+                        : 'border-gray-300'
+                    }`}
+                    placeholder={currentLang === 'he' ? 'בחר סוג פרויקט' : currentLang === 'en' ? 'Select project type' : 'Sélectionnez le type de projet'}
+                  />
+                  {packParam && (
+                    <p className="text-xs text-gray-500 mt-1">
+                      {currentLang === 'he' ? 'נבחר אוטומטית מהחבילה שנבחרה' : currentLang === 'en' ? 'Auto-selected from chosen pack' : 'Sélectionné automatiquement depuis le pack choisi'}
+                    </p>
+                  )}
+                </div>
+
                 {/* Sector */}
                 <div>
                   <label htmlFor="secteur" className="block text-sm font-semibold text-gray-700 mb-2">
@@ -500,6 +589,54 @@ const MiniAnalysis = () => {
                     placeholder={t('miniAnalysis.form.originCountryPlaceholder')}
                   />
                 </div>
+
+                {/* Phase 3: Israel-specific fields - visible when Israel is selected */}
+                {israelFieldsVisible && (
+                  <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-6 space-y-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <MapPin className="w-5 h-5 text-indigo-600" />
+                      <h3 className="font-semibold text-indigo-900">
+                        {currentLang === 'he' ? 'פרטים ספציפיים לישראל' : currentLang === 'en' ? 'Israel-Specific Details' : 'Détails spécifiques à Israël'}
+                      </h3>
+                    </div>
+                    
+                    {/* Number of stores desired */}
+                    <div>
+                      <label htmlFor="nombre_points_vente" className="block text-sm font-semibold text-indigo-800 mb-2">
+                        {currentLang === 'he' ? 'מספר נקודות המכירה הרצויות' : currentLang === 'en' ? 'Number of desired store locations' : 'Nombre de points de vente souhaités'}
+                      </label>
+                      <input
+                        type="number"
+                        id="nombre_points_vente"
+                        name="nombre_points_vente"
+                        min="1"
+                        value={formData.nombre_points_vente}
+                        onChange={handleChange}
+                        className="w-full px-4 py-3 border border-indigo-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                        placeholder={currentLang === 'he' ? 'הכנס מספר' : currentLang === 'en' ? 'Enter number' : 'Entrez un nombre'}
+                      />
+                    </div>
+
+                    {/* Target cities */}
+                    <div>
+                      <label htmlFor="villes_cibles" className="block text-sm font-semibold text-indigo-800 mb-2">
+                        {currentLang === 'he' ? 'ערים יעד' : currentLang === 'en' ? 'Target cities' : 'Villes cibles'}
+                      </label>
+                      <textarea
+                        id="villes_cibles"
+                        name="villes_cibles"
+                        rows={3}
+                        value={formData.villes_cibles}
+                        onChange={handleChange}
+                        className="w-full px-4 py-3 border border-indigo-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none"
+                        placeholder={currentLang === 'he' ? 'רשום את הערים היעד' : currentLang === 'en' ? 'List your target cities' : 'Listez vos villes cibles'}
+                      />
+                      <p className="text-xs text-indigo-600 mt-1">
+                        {currentLang === 'he' ? 'לדוגמה: תל אביב, ירושלים, חיפה' : currentLang === 'en' ? 'E.g., Tel Aviv, Jerusalem, Haifa' : 'Ex: Tel Aviv, Jérusalem, Haïfa'}
+                      </p>
+                    </div>
+                  </div>
+                )}
 
                 {/* Concept */}
                 <div>

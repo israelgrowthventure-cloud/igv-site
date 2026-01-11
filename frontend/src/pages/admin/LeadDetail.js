@@ -14,6 +14,8 @@ const LeadDetail = () => {
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
   const [lead, setLead] = useState(null);
+  const [notes, setNotes] = useState([]);
+  const [notesLoading, setNotesLoading] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [editing, setEditing] = useState(false);
@@ -31,6 +33,13 @@ const LeadDetail = () => {
     fetchLead();
   }, [id]);
 
+  // Fetch notes separately via dedicated API endpoint
+  useEffect(() => {
+    if (lead && lead.lead_id) {
+      fetchNotes();
+    }
+  }, [lead]);
+
   const fetchLead = async () => {
     try {
       setLoading(true);
@@ -43,6 +52,20 @@ const LeadDetail = () => {
       navigate('/admin/crm');
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Fetch notes via dedicated API endpoint (Action 2 fix)
+  const fetchNotes = async () => {
+    try {
+      setNotesLoading(true);
+      const response = await api.get(`/api/crm/leads/${id}/notes`);
+      setNotes(response?.notes || response || []);
+    } catch (error) {
+      console.error('Error fetching notes:', error);
+      // Don't show error toast for notes - not critical
+    } finally {
+      setNotesLoading(false);
     }
   };
 
@@ -389,34 +412,43 @@ const LeadDetail = () => {
               <MessageSquare className="w-5 h-5" />
               {t('admin.crm.leads.details.notes') || 'Notes'}
             </h2>
-            <div className="space-y-3 mb-4">
-              {lead.notes && lead.notes.length > 0 ? lead.notes.map((note, idx) => (
-                <div key={idx} className="p-3 bg-gray-50 rounded-lg">
-                  <p className="text-sm">{note.note_text}</p>
-                  <p className="text-xs text-gray-500 mt-1">
-                    {new Date(note.created_at).toLocaleString()} • {note.created_by}
-                  </p>
+            {notesLoading ? (
+              <div className="flex items-center gap-2 py-4">
+                <Loader2 className="w-4 h-4 animate-spin text-gray-400" />
+                <span className="text-sm text-gray-500">{t('admin.crm.common.loading') || 'Loading...'}</span>
+              </div>
+            ) : (
+              <>
+                <div className="space-y-3 mb-4">
+                  {notes && notes.length > 0 ? notes.map((note, idx) => (
+                    <div key={idx} className="p-3 bg-gray-50 rounded-lg">
+                      <p className="text-sm">{note.note_text}</p>
+                      <p className="text-xs text-gray-500 mt-1">
+                        {new Date(note.created_at).toLocaleString()} • {note.created_by}
+                      </p>
+                    </div>
+                  )) : (
+                    <p className="text-gray-500 text-sm">{t('admin.crm.common.no_notes') || 'No notes yet'}</p>
+                  )}
                 </div>
-              )) : (
-                <p className="text-gray-500 text-sm">{t('admin.crm.common.no_notes') || 'No notes yet'}</p>
-              )}
-            </div>
-            <div className="flex gap-2">
-              <input 
-                type="text" 
-                placeholder={t('admin.crm.leads.add_note_placeholder') || 'Add a note...'} 
-                value={noteText} 
-                onChange={(e) => setNoteText(e.target.value)} 
-                className="flex-1 px-3 py-2 border rounded-lg" 
-              />
-              <button 
-                onClick={handleAddNote} 
-                disabled={!noteText.trim() || saving} 
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
-              >
-                {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : t('admin.crm.common.add') || 'Add'}
-              </button>
-            </div>
+                <div className="flex gap-2">
+                  <input 
+                    type="text" 
+                    placeholder={t('admin.crm.leads.add_note_placeholder') || 'Add a note...'} 
+                    value={noteText} 
+                    onChange={(e) => setNoteText(e.target.value)} 
+                    className="flex-1 px-3 py-2 border rounded-lg" 
+                  />
+                  <button 
+                    onClick={handleAddNote} 
+                    disabled={!noteText.trim() || saving} 
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                  >
+                    {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : t('admin.crm.common.add') || 'Add'}
+                  </button>
+                </div>
+              </>
+            )}
           </div>
 
           {/* Actions */}

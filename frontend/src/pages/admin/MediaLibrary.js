@@ -6,7 +6,7 @@ import {
   Loader2, CheckCircle, AlertCircle, Grid, List, X, Copy
 } from 'lucide-react';
 import { toast } from 'sonner';
-import api from '../utils/api';
+import api from '../../utils/api';
 
 const MediaLibrary = () => {
   const { t } = useTranslation();

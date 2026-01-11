@@ -7,3 +7,4 @@ Reason: Phase 1 Complete Fix - User object + Settings page
 - Navigation Sidebar avec navigate() vérifiée
 Build: PHASE1-COMPLETE-20260112-0515
 Deploy 3f1d851
+Force redeploy - Fix ConfigDict import

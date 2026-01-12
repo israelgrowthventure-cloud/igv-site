@@ -671,9 +671,25 @@
         },
         "refreshed": "היסטוריית המיילים עודכנה",
         "deleted": "רשומת מייל נמחקה",
+        "tabs": {
+          "sent": "נשלחו",
+          "received": "התקבלו",
+          "templates": "תבניות"
+        },
+        "received_title": "מיילים שהתקבלו",
+        "received_description": "קבלת מיילים טרם מומשה ב-CRM זה",
+        "received_tab": "דואר נכנס",
+        "templates_count": "תבניות זמינות",
+        "templates_info": "תבניות אלו זמינות באנגלית, צרפתית ועברית. ניתן להשתמש בהן בעת כתיבת מיילים חדשים.",
+        "no_templates": "אין תבניות זמינות",
+        "no_templates_description": "תבניות מיילים יופיעו כאן",
+        "template_detail": "פרטי תבנית",
         "errors": {
-          "load_failed": "טעינת היסטוריית המיילים נכשלה"
-        }
+          "load_failed": "טעינת היסטוריית המיילים נכשלה",
+          "templates_load_failed": "טעינת התבניות נכשלה",
+          "delete_failed": "מחיקת רשומת המייל נכשלה"
+        },
+        "delete_confirm": "האם אתה בטוח שברצונך למחוק רשומת מייל זו?"
       },
       "common": {
         "filters": "מסננים",

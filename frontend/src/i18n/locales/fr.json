@@ -753,9 +753,25 @@
         },
         "refreshed": "Historique des emails mis à jour",
         "deleted": "Enregistrement d'email supprimé",
+        "tabs": {
+          "sent": "Envoyés",
+          "received": "Reçus",
+          "templates": "Modèles"
+        },
+        "received_title": "Emails Reçus",
+        "received_description": "La réception d'emails n'est pas encore implémentée dans ce CRM",
+        "received_tab": "Boîte de réception",
+        "templates_count": "modèles disponibles",
+        "templates_info": "Ces modèles sont disponibles en anglais, français et hébreu. Ils peuvent être utilisés lors de la rédaction de nouveaux emails.",
+        "no_templates": "Aucun modèle disponible",
+        "no_templates_description": "Les modèles d'emails apparaîtront ici",
+        "template_detail": "Détails du Modèle",
         "errors": {
-          "load_failed": "Échec du chargement de l'historique des emails"
-        }
+          "load_failed": "Échec du chargement de l'historique des emails",
+          "templates_load_failed": "Échec du chargement des modèles",
+          "delete_failed": "Échec de la suppression de l'enregistrement"
+        },
+        "delete_confirm": "Voulez-vous vraiment supprimer cet enregistrement ?"
       },
       "common": {
         "filters": "Filtres",

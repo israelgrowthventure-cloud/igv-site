@@ -727,6 +727,36 @@
           "status": "Statut"
         }
       },
+      "emails": {
+        "title": "Historique des Emails",
+        "history_title": "Historique des Emails",
+        "sent_count": "emails envoyés",
+        "empty_title": "Aucun email envoyé",
+        "empty_description": "Les emails envoyés aux prospects apparaîtront ici",
+        "detail_title": "Détails de l'Email",
+        "columns": {
+          "recipient": "Destinataire",
+          "subject": "Sujet",
+          "date": "Date",
+          "status": "Statut",
+          "sent_by": "Envoyé Par",
+          "from": "De",
+          "to": "À"
+        },
+        "status": {
+          "sent": "Envoyé",
+          "delivered": "Distribué",
+          "opened": "Ouvert",
+          "clicked": "Cliqué",
+          "failed": "Échoué",
+          "bounced": "Rejeté"
+        },
+        "refreshed": "Historique des emails mis à jour",
+        "deleted": "Enregistrement d'email supprimé",
+        "errors": {
+          "load_failed": "Échec du chargement de l'historique des emails"
+        }
+      },
       "common": {
         "filters": "Filtres",
         "all_statuses": "Tous les Statuts",

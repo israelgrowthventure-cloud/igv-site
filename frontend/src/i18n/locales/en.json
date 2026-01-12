@@ -623,6 +623,36 @@
           "closed_lost": "Closed Lost"
         }
       },
+      "emails": {
+        "title": "Email History",
+        "history_title": "Email History",
+        "sent_count": "emails sent",
+        "empty_title": "No emails sent yet",
+        "empty_description": "Emails sent to leads will appear here",
+        "detail_title": "Email Details",
+        "columns": {
+          "recipient": "Recipient",
+          "subject": "Subject",
+          "date": "Date",
+          "status": "Status",
+          "sent_by": "Sent By",
+          "from": "From",
+          "to": "To"
+        },
+        "status": {
+          "sent": "Sent",
+          "delivered": "Delivered",
+          "opened": "Opened",
+          "clicked": "Clicked",
+          "failed": "Failed",
+          "bounced": "Bounced"
+        },
+        "refreshed": "Email history refreshed",
+        "deleted": "Email record deleted",
+        "errors": {
+          "load_failed": "Failed to load email history"
+        }
+      },
       "settings": {
         "title": "CRM Settings",
         "user_created": "User created successfully",

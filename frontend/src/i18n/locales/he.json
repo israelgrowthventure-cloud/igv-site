@@ -645,6 +645,36 @@
           "stages": "שלבי הצינור"
         }
       },
+      "emails": {
+        "title": "היסטוריית מיילים",
+        "history_title": "היסטוריית מיילים",
+        "sent_count": "מיילים שנשלחו",
+        "empty_title": "עדיין לא נשלחו מיילים",
+        "empty_description": "מיילים שנשלחו ללידים יופיעו כאן",
+        "detail_title": "פרטי מייל",
+        "columns": {
+          "recipient": "נמען",
+          "subject": "נושא",
+          "date": "תאריך",
+          "status": "סטטוס",
+          "sent_by": "נשלח על ידי",
+          "from": "מאת",
+          "to": "אל"
+        },
+        "status": {
+          "sent": "נשלח",
+          "delivered": "התקבל",
+          "opened": "נפתח",
+          "clicked": "נלחץ",
+          "failed": "נכשל",
+          "bounced": "הוחזר"
+        },
+        "refreshed": "היסטוריית המיילים עודכנה",
+        "deleted": "רשומת מייל נמחקה",
+        "errors": {
+          "load_failed": "טעינת היסטוריית המיילים נכשלה"
+        }
+      },
       "common": {
         "filters": "מסננים",
         "all_statuses": "כל הסטטוסים",

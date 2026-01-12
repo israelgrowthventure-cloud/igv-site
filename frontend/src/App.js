@@ -17,7 +17,8 @@ import CookieConsentBanner from './components/CookieConsentBanner';
 import PrivateRoute from './components/PrivateRoute';
 
 // Pages - Loaded immediately (public facing)
-import NewHome from './pages/NewHome';  // NOUVELLE landing page (canonical)
+import Home from './pages/Home';  // Page d'accueil originale restaurée
+import NewHome from './pages/NewHome';  // Page de mini-analyse (gardée pour référence)
 import MiniAnalysis from './pages/MiniAnalysis'; // New i18n mini-analysis page
 import About from './pages/About';
 import Packs from './pages/Packs';
@@ -155,7 +156,7 @@ function AppContent() {
         {!isAdminRoute && <Header />}
         <main>
           <Routes>
-            <Route path="/" element={<NewHome />} />
+            <Route path="/" element={<Home />} />
             <Route path="/mini-analyse" element={<MiniAnalysis />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />

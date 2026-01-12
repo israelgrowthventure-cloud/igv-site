@@ -5,8 +5,10 @@ import { toast } from 'sonner';
 import api from '../../utils/api';
 import { SkeletonTable } from './Skeleton';
 import EmailModal from './EmailModal';
+import { useTranslation } from 'react-i18next';
 
 const LeadsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, searchTerm, setSearchTerm, filters, setFilters, t }) => {
+  const { i18n } = useTranslation();
   const navigate = useNavigate();
   const [showFilters, setShowFilters] = useState(false);
   const [noteText, setNoteText] = useState('');
@@ -609,7 +611,8 @@ const LeadsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, sea
             email: selectedItem.email 
           }} 
           onClose={() => setShowEmailModal(false)} 
-          t={t} 
+          t={t}
+          language={i18n.language}
         />
       )}
     </div>

@@ -399,7 +399,7 @@ const EmailModal = ({ contact, onClose, t, language = 'fr' }) => {
             onClick={onClose}
             className="px-4 py-2 border rounded-lg hover:bg-gray-100"
           >
-            {t('admin.crm.common.cancel')}
+                        {t('common.cancel')}
           </button>
           <button
             onClick={handleSend}

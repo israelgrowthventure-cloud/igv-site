@@ -85,6 +85,8 @@ const Sidebar = ({ collapsed, onToggle }) => {
             return (
               <li key={item.id}>
                 <button
+                  data-testid={`nav-${item.id}`}
+                  data-nav-item={item.id}
                   onClick={() => {
                     // Force navigation even if already on the same path
                     // This triggers useEffect in LeadsPage to reset selectedItem
@@ -105,6 +107,7 @@ const Sidebar = ({ collapsed, onToggle }) => {
                     ${collapsed ? 'justify-center' : ''}
                   `}
                   title={collapsed ? item.label : ''}
+                  aria-label={item.label}
                 >
                   <Icon className="w-5 h-5 flex-shrink-0" />
                   {!collapsed && (

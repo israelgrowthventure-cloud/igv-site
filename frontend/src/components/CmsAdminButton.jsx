@@ -33,7 +33,7 @@ const CmsAdminButton = ({ collapsed = false }) => {
       };
 
       setTimeout(() => {
-        if (!window.LiveCMS) {
+        if (!window.LiveCMS && !error) {
           setError('Timeout - CMS non charge');
           setIsLoading(false);
         }
@@ -47,11 +47,6 @@ const CmsAdminButton = ({ collapsed = false }) => {
   }, []);
 
   const handleClick = () => {
-    if (error) {
-      alert(`Erreur: ${error}. Veuillez rafraichir la page.`);
-      return;
-    }
-
     if (isLoading) {
       alert('CMS en cours de chargement...');
       return;
@@ -59,6 +54,9 @@ const CmsAdminButton = ({ collapsed = false }) => {
 
     if (window.LiveCMS && typeof window.LiveCMS.openAdmin === 'function') {
       window.LiveCMS.openAdmin();
+    } else if (error) {
+      // Fallback: ouvrir dans une nouvelle fenêtre ou afficher un message
+      alert(`Le CMS n'est pas disponible actuellement. ${error}`);
     } else {
       alert('CMS non disponible. Rafraichissez la page.');
     }
@@ -67,8 +65,9 @@ const CmsAdminButton = ({ collapsed = false }) => {
   return (
     <button 
       onClick={handleClick} 
+      data-testid="btn-cms-edit"
+      aria-label="Modifier le Site"
       className={`cms-admin-button ${error ? 'has-error' : ''}`}
-      disabled={isLoading || !!error}
       title={error || (isLoading ? 'Chargement...' : 'Ouvrir l\'editeur de site')}
     >
       <Palette />

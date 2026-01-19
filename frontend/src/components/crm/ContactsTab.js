@@ -197,17 +197,17 @@ const ContactsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, 
   };
 
   const ContactModal = ({ isEdit, onSubmit, onClose }) => (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" data-testid="contact-modal">
       <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-lg font-semibold">
             {isEdit ? 'Modifier le contact' : 'Nouveau contact'}
           </h3>
-          <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded">
+          <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded" data-testid="btn-close-modal">
             <X className="w-5 h-5" />
           </button>
         </div>
-        <form onSubmit={onSubmit} className="space-y-4">
+        <form onSubmit={onSubmit} className="space-y-4" data-testid="form-contact">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Nom *
@@ -217,6 +217,7 @@ const ContactsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, 
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               required
+              data-testid="input-contact-name"
               className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -229,6 +230,7 @@ const ContactsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, 
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               required
+              data-testid="input-contact-email"
               className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -258,6 +260,7 @@ const ContactsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, 
             <button
               type="submit"
               disabled={loadingAction}
+              data-testid="btn-save-contact"
               className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
             >
               {loadingAction ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
@@ -266,6 +269,7 @@ const ContactsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, 
             <button
               type="button"
               onClick={onClose}
+              data-testid="btn-cancel-contact"
               className="px-4 py-2 border rounded-lg hover:bg-gray-100"
             >
               Annuler
@@ -292,6 +296,7 @@ const ContactsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, 
         </div>
         <button
           onClick={() => { setFormData({ name: '', email: '', phone: '', position: '', language: 'fr' }); setShowCreateModal(true); }}
+          data-testid="btn-new-contact"
           className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
         >
           <Plus className="w-4 h-4" />
@@ -302,8 +307,8 @@ const ContactsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, 
       {loading ? (
         <SkeletonTable rows={6} columns={6} />
       ) : !selectedItem ? (
-        <div className="bg-white rounded-lg shadow border overflow-hidden">
-          <table className="w-full">
+        <div className="bg-white rounded-lg shadow border overflow-hidden" data-testid="contacts-list">
+          <table className="w-full" data-testid="contacts-table">
             <thead className="bg-gray-50 border-b">
               <tr>
                 <th className="px-4 py-3 text-left text-sm font-semibold">Nom</th>
@@ -316,14 +321,15 @@ const ContactsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, 
             </thead>
             <tbody>
               {filteredContacts.length > 0 ? filteredContacts.map(contact => (
-                <tr key={contact._id || contact.contact_id} className="border-b hover:bg-gray-50">
+                <tr key={contact._id || contact.contact_id} data-testid={`contact-row-${contact._id || contact.contact_id}`} data-contact-name={contact.name} className="border-b hover:bg-gray-50">
                   <td 
                     className="px-4 py-3 cursor-pointer hover:text-blue-600"
                     onClick={() => navigate(`/admin/crm/contacts/${contact._id || contact.contact_id}`)}
+                    data-testid="contact-name"
                   >
                     {contact.name}
                   </td>
-                  <td className="px-4 py-3">{contact.email}</td>
+                  <td className="px-4 py-3" data-testid="contact-email">{contact.email}</td>
                   <td className="px-4 py-3">{contact.phone || '-'}</td>
                   <td className="px-4 py-3">
                     <div className="flex flex-wrap gap-1">

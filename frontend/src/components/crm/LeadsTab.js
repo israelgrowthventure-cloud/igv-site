@@ -234,7 +234,7 @@ const LeadsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, sea
             <Download className="w-4 h-4" />
             {t('admin.crm.leads.export')}
           </button>
-          <button onClick={() => setShowNewLeadForm(true)} className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+          <button onClick={() => setShowNewLeadForm(true)} data-testid="btn-new-prospect" className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
             <Plus className="w-4 h-4" />
             {t('admin.crm.leads.new_lead')}
           </button>
@@ -265,13 +265,14 @@ const LeadsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, sea
               <X className="w-5 h-5" />
             </button>
           </div>
-          <form onSubmit={handleCreateLead} className="space-y-4">
+          <form onSubmit={handleCreateLead} className="space-y-4" data-testid="form-new-prospect">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium mb-1">{t('admin.crm.leads.columns.email')} *</label>
                 <input
                   type="email"
                   required
+                  data-testid="input-prospect-email"
                   value={newLeadData.email}
                   onChange={(e) => setNewLeadData({...newLeadData, email: e.target.value})}
                   className="w-full px-3 py-2 border rounded-lg"
@@ -281,6 +282,7 @@ const LeadsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, sea
                 <label className="block text-sm font-medium mb-1">{t('admin.crm.leads.columns.name')}</label>
                 <input
                   type="text"
+                  data-testid="input-prospect-name"
                   value={newLeadData.contact_name}
                   onChange={(e) => setNewLeadData({...newLeadData, contact_name: e.target.value})}
                   className="w-full px-3 py-2 border rounded-lg"
@@ -290,6 +292,7 @@ const LeadsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, sea
                 <label className="block text-sm font-medium mb-1">{t('admin.crm.leads.columns.brand')}</label>
                 <input
                   type="text"
+                  data-testid="input-prospect-brand"
                   value={newLeadData.brand_name}
                   onChange={(e) => setNewLeadData({...newLeadData, brand_name: e.target.value})}
                   className="w-full px-3 py-2 border rounded-lg"
@@ -330,6 +333,7 @@ const LeadsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, sea
               <button
                 type="submit"
                 disabled={loadingAction}
+                data-testid="btn-save-prospect"
                 className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 flex items-center gap-2"
               >
                 {loadingAction ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
@@ -338,6 +342,7 @@ const LeadsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, sea
               <button
                 type="button"
                 onClick={() => setShowNewLeadForm(false)}
+                data-testid="btn-cancel-prospect"
                 className="px-6 py-2 border rounded-lg hover:bg-gray-50"
               >
                 {t('admin.crm.common.cancel')}
@@ -348,8 +353,8 @@ const LeadsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, sea
       ) : loading ? (
         <SkeletonTable rows={8} columns={8} />
       ) : !selectedItem ? (
-        <div className="bg-white rounded-lg shadow border overflow-hidden">
-          <table className="w-full">
+        <div className="bg-white rounded-lg shadow border overflow-hidden" data-testid="prospects-list">
+          <table className="w-full" data-testid="prospects-table">
             <thead className="bg-gray-50 border-b">
               <tr>
                 <th className="px-4 py-3 text-left text-sm font-semibold">{t('admin.crm.leads.columns.name')}</th>
@@ -364,8 +369,8 @@ const LeadsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, sea
             </thead>
             <tbody>
               {leads.length > 0 ? leads.map(lead => (
-                <tr key={lead.lead_id} className={`border-b hover:bg-gray-50 cursor-pointer ${lead.status === 'CONVERTED' ? 'bg-green-50' : ''}`} onClick={() => setSelectedItem(lead)}>
-                  <td className="px-4 py-3">
+                <tr key={lead.lead_id} data-testid={`prospect-row-${lead.lead_id}`} data-prospect-name={lead.contact_name || lead.email} className={`border-b hover:bg-gray-50 cursor-pointer ${lead.status === 'CONVERTED' ? 'bg-green-50' : ''}`} onClick={() => setSelectedItem(lead)}>
+                  <td className="px-4 py-3" data-testid="prospect-name">
                     <div className="flex items-center gap-2">
                       {lead.contact_name || '-'}
                       {lead.status === 'CONVERTED' && (
@@ -373,7 +378,7 @@ const LeadsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, sea
                       )}
                     </div>
                   </td>
-                  <td className="px-4 py-3">{lead.email}</td>
+                  <td className="px-4 py-3" data-testid="prospect-email">{lead.email}</td>
                   <td className="px-4 py-3">{lead.brand_name || '-'}</td>
                   <td className="px-4 py-3">{lead.sector || '-'}</td>
                   <td className="px-4 py-3"><StatusBadge status={lead.status} /></td>

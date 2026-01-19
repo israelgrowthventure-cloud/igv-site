@@ -216,6 +216,7 @@ const UsersTab = () => {
         </div>
         <button
           onClick={handleCreateNew}
+          data-testid="btn-new-user"
           className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
         >
           <Plus className="w-5 h-5" />
@@ -261,9 +262,9 @@ const UsersTab = () => {
       </div>
 
       {/* Users Table */}
-      <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+      <div className="bg-white rounded-lg shadow-sm overflow-hidden" data-testid="users-list">
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
+          <table className="min-w-full divide-y divide-gray-200" data-testid="users-table">
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">

@@ -86,7 +86,7 @@ const CmsAdminButton = ({ collapsed = false }) => {
       {showPasswordModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-96 shadow-xl">
-            <h3 className="text-lg font-semibold mb-4">Accès CMS protégé</h3>
+            <h3 className="text-lg font-semibold mb-4 text-gray-900">Accès CMS protégé</h3>
             <p className="text-sm text-gray-600 mb-4">
               Entrez le mot de passe CMS pour accéder à l'éditeur.
             </p>
@@ -96,7 +96,7 @@ const CmsAdminButton = ({ collapsed = false }) => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Mot de passe CMS"
-                className="w-full px-3 py-2 border rounded-lg mb-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg mb-3 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900 placeholder-gray-400"
                 autoFocus
               />
               {error && (
@@ -106,7 +106,7 @@ const CmsAdminButton = ({ collapsed = false }) => {
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="flex-1 px-4 py-2 border rounded-lg hover:bg-gray-100"
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 text-gray-700 bg-white"
                 >
                   Annuler
                 </button>
@@ -129,7 +129,7 @@ const CmsAdminButton = ({ collapsed = false }) => {
             <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <Palette className="w-8 h-8 text-blue-600" />
             </div>
-            <h2 className="text-2xl font-bold mb-3">CMS bientôt disponible</h2>
+            <h2 className="text-2xl font-bold mb-3 text-gray-900">CMS bientôt disponible</h2>
             <p className="text-gray-600 mb-6">
               L'éditeur de contenu est en cours de développement.<br />
               Cette fonctionnalité sera disponible prochainement.

@@ -40,16 +40,15 @@ try:
     
     PDF_AVAILABLE = True
     
-    # Register Hebrew font - NotoSansHebrew (downloaded during build) or DejaVuSans fallback
+    # Register Hebrew font - Use DejaVuSans (pre-installed on most Linux systems)
+    # DejaVuSans has excellent Hebrew support
     try:
-        # Try local font first (downloaded by download_fonts.sh)
-        ROOT_DIR = Path(__file__).parent
+        # Try system font paths (Render uses Debian-based container)
         font_paths = [
-            str(ROOT_DIR / 'fonts' / 'NotoSansHebrew-Regular.ttf'),  # Local download
-            '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',  # Debian/Ubuntu
-            '/usr/share/fonts/TTF/DejaVuSans.ttf',  # Arch Linux
+            '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',
+            '/usr/share/fonts/TTF/DejaVuSans.ttf',
             '/System/Library/Fonts/Supplemental/DejaVuSans.ttf',  # macOS
-            'C:\\Windows\\Fonts\\arial.ttf'  # Windows fallback
+            'C:\\Windows\\Fonts\\DejaVuSans.ttf'  # Windows (dev)
         ]
         
         hebrew_font_registered = False
@@ -61,7 +60,7 @@ try:
                 break
         
         if not hebrew_font_registered:
-            logging.error("❌ No Hebrew font found - Hebrew PDFs will show squares")
+            logging.error("❌ DejaVuSans font not found - Hebrew PDFs will show squares")
     
     except Exception as e:
         logging.error(f"❌ Could not setup Hebrew font: {e}")

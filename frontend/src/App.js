@@ -131,22 +131,22 @@ function AppContent() {
     }
   }, [isAdminRoute]);
 
-  // Load embeddable CMS script (Wix-style)
-  useEffect(() => {
-    const script = document.createElement('script');
-    script.src = 'https://4vm404m082y6.space.minimax.io/livecms.js';
-    script.async = true;
-    script.onload = () => console.log('✅ CMS embeddable chargé');
-    script.onerror = () => console.warn('⚠️ CMS embeddable non disponible');
-    document.body.appendChild(script);
-    
-    return () => {
-      // Cleanup on unmount
-      if (document.body.contains(script)) {
-        document.body.removeChild(script);
-      }
-    };
-  }, []);
+  // DISABLED: CMS embeddable script (bulle crayon WYSIWYG)
+  // Commenté pour Mission 2 - sera réactivé quand le CMS sera prêt
+  // useEffect(() => {
+  //   const script = document.createElement('script');
+  //   script.src = 'https://4vm404m082y6.space.minimax.io/livecms.js';
+  //   script.async = true;
+  //   script.onload = () => console.log('✅ CMS embeddable chargé');
+  //   script.onerror = () => console.warn('⚠️ CMS embeddable non disponible');
+  //   document.body.appendChild(script);
+  //   
+  //   return () => {
+  //     if (document.body.contains(script)) {
+  //       document.body.removeChild(script);
+  //     }
+  //   };
+  // }, []);
 
   return (
     <AuthProvider>

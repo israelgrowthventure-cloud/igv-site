@@ -26,6 +26,53 @@ JWT_SECRET = os.getenv('JWT_SECRET')
 JWT_ALGORITHM = 'HS256'
 PASSWORD_RESET_EXPIRATION_HOURS = 1
 
+# CMS Password (separate from CRM login)
+CMS_PASSWORD = os.getenv('CMS_PASSWORD')
+
+# ==========================================
+# CMS ACCESS PROTECTION
+# ==========================================
+
+class CmsPasswordVerify(BaseModel):
+    password: str
+
+@router.post("/cms/verify-password")
+async def verify_cms_password(
+    data: CmsPasswordVerify,
+    user: Dict = Depends(get_current_user)
+):
+    """
+    Verify the separate CMS password for accessing the editor.
+    Only admin/technique roles can access this endpoint.
+    
+    The CMS_PASSWORD environment variable must be set on Render.
+    """
+    # Check user role
+    if user.get('role') not in ['admin', 'technique', 'tech', 'developer']:
+        raise HTTPException(
+            status_code=403, 
+            detail="Access denied - admin/technique role required"
+        )
+    
+    # Check if CMS password is configured
+    if not CMS_PASSWORD:
+        logging.error("CMS_PASSWORD not configured in environment")
+        raise HTTPException(
+            status_code=503, 
+            detail="CMS not configured"
+        )
+    
+    # Verify password
+    if data.password == CMS_PASSWORD:
+        logging.info(f"CMS access granted to {user.get('email')}")
+        return {"success": True, "message": "Access granted"}
+    else:
+        logging.warning(f"CMS access denied for {user.get('email')} - wrong password")
+        raise HTTPException(
+            status_code=401, 
+            detail="Invalid password"
+        )
+
 # ==========================================
 # CMS CONTENT ENDPOINTS
 # ==========================================

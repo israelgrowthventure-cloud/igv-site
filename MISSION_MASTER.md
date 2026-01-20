@@ -1,7 +1,7 @@
 # MISSION MASTER - Analyse, Nettoyage et Suivi Complet
 **Date création:** 2026-01-20  
 **Dernière mise à jour:** 2026-01-20  
-**Statut global:** ✅ MISSION 3 TERMINÉE - PRÊT POUR DÉPLOIEMENT
+**Statut global:** ✅ MISSION 5 TERMINÉE - PRÊT POUR DÉPLOIEMENT FINAL
 
 ---
 
@@ -19,6 +19,8 @@
 10. [Mission 2 - Protection CMS](#10-mission-2---protection-cms)
 11. [Mission 2.1 - Correction Bug CMS Password](#11-mission-21---correction-bug-cms-password)
 12. [Mission 3 - Séparation Frontend/Backend](#12-mission-3---séparation-frontendbackend)
+13. [Mission 4 - Traductions CRM FR/EN/HE](#13-mission-4---traductions-crm-frenhe)
+14. [Mission 5 - Annulation igv-site et préparation déploiement](#14-mission-5---annulation-igv-site-et-préparation-déploiement)
 
 ---
 
@@ -769,13 +771,144 @@ Séparer le monorepo en 2 repos distincts pour un déploiement plus propre sur R
 
 ---
 
+## 13. Mission 4 - Traductions CRM FR/EN/HE
+
+### Objectif
+Compléter toutes les traductions FR/EN/HE pour le site public et le CRM, corriger l'encodage CMS, et supporter l'hébreu RTL dans les PDFs.
+
+### Statut: ✅ TERMINÉE (sur repos séparés uniquement)
+
+### Modifications effectuées
+
+#### en.json
+- Fusion des deux blocs `admin` dupliqués
+- Ajout clés pipeline manquantes : `opportunities`, `stage_updated`, `total_opps`, `avg_deal`, `close_rate`, `current_stage`, `estimated_value`, `description`, `stage_history`
+- Ajout étapes pipeline : `initial_interest`, `info_requested`, `first_call`, `pitch_delivered`, `proposal_sent`, `verbal_commitment`, `won`
+- Ajout `no_history` et `stage_failed`
+
+#### fr.json
+- Ajout complet section `admin.crm` (tabs, dashboard, leads, contacts, opportunities, pipeline, settings, common, errors, statuses, priorities)
+- 169 nouvelles clés de traduction CRM en français
+
+#### he.json
+- Ajout étapes pipeline en hébreu (עניין ראשוני, מידע התבקש, שיחה ראשונה, etc.)
+- Ajout `no_history` (אין היסטוריה זמינה) et `stage_failed` (נכשל עדכון השלב)
+
+#### Backend (Hebrew PDF)
+- mini_analysis_routes.py : Ajout chemin local `fonts/NotoSansHebrew-Regular.ttf`
+- download_fonts.sh : Correction chemin avec `$SCRIPT_DIR/fonts/`
+
+### Commits
+
+| Repo | Commit | SHA |
+|------|--------|-----|
+| igv-frontend | Mission 4: Complete CRM translations | `aae664b` |
+| igv-backend | Mission 4: Fix Hebrew font path | `3dc3da6` |
+
+### ⚠️ Note importante
+Les changements Mission 4 n'ont PAS été conservés sur igv-site (revert effectué en Mission 5).
+La source de vérité est uniquement sur les repos séparés.
+
+---
+
+## 14. Mission 5 - Annulation igv-site et préparation déploiement
+
+### Objectif
+Annuler tout travail sur igv-site et préparer uniquement les 2 déploiements réels.
+
+### Statut: ✅ TERMINÉE
+
+### Actions effectuées
+
+#### 1. Audit des commits
+| Repo | Commit Mission 4 | Action |
+|------|------------------|--------|
+| igv-site | `89b131f` | ❌ REVERT effectué |
+| igv-frontend | `aae664b` | ✅ Conservé (source de vérité) |
+| igv-backend | `3dc3da6` | ✅ Conservé (source de vérité) |
+
+#### 2. Revert sur igv-site
+- Commit revert : `eef349f`
+- Commit DEPRECATED : `27d4cac`
+- Fichier DEPRECATED.md ajouté
+
+#### 3. Tests de validation
+
+| Repo | Test | Résultat |
+|------|------|----------|
+| igv-frontend | `npm ci` | ✅ OK |
+| igv-frontend | `npm run build` | ✅ OK (171.85 kB gzip) |
+| igv-backend | `pip install` | ✅ OK |
+| igv-backend | `import server` | ✅ OK (warnings normaux sans env vars) |
+
+---
+
+## 🚀 DÉPLOIEMENTS À EFFECTUER
+
+### Déploiement #1 : igv-frontend
+
+| Paramètre | Valeur |
+|-----------|--------|
+| **Repo GitHub** | https://github.com/israelgrowthventure-cloud/igv-frontend |
+| **Branche** | `main` |
+| **SHA à déployer** | `aae664b` |
+| **Service Render** | igv-frontend (Static Site) |
+| **Action** | Deploy latest commit |
+
+### Déploiement #2 : igv-cms-backend
+
+| Paramètre | Valeur |
+|-----------|--------|
+| **Repo GitHub** | https://github.com/israelgrowthventure-cloud/igv-backend |
+| **Branche** | `main` |
+| **SHA à déployer** | `3dc3da6` |
+| **Service Render** | igv-cms-backend (Web Service) |
+| **Action** | Deploy latest commit |
+
+### Variables d'environnement requises (Backend)
+
+| Variable | Description |
+|----------|-------------|
+| `MONGODB_URI` | URI MongoDB Atlas |
+| `DB_NAME` | Nom de la base |
+| `JWT_SECRET` | Secret JWT |
+| `CMS_PASSWORD` | `LuE1lN-aYvn5JOrq4JhGnQ` |
+| `CORS_ALLOWED_ORIGINS` | `https://israelgrowthventure.com` |
+| `GEMINI_API_KEY` | Clé API Gemini |
+| `SMTP_*` | Configuration SMTP |
+
+### Variables d'environnement requises (Frontend)
+
+| Variable | Description |
+|----------|-------------|
+| `REACT_APP_API_URL` | `https://igv-cms-backend.onrender.com` |
+
+---
+
+## ⛔ igv-site RETIRÉ DU CIRCUIT
+
+### Preuves
+
+| Action | Commit | Date |
+|--------|--------|------|
+| Revert Mission 4 | `eef349f` | 2026-01-20 |
+| Ajout DEPRECATED.md | `27d4cac` | 2026-01-20 |
+
+### Ce repo ne doit plus :
+- Recevoir de commits
+- Être déployé
+- Servir de référence
+
+---
+
 ## 🔗 Références
 
-- Repo GitHub (monorepo): https://github.com/israelgrowthventure-cloud/igv-site
+- ⛔ ~~Repo GitHub (monorepo): https://github.com/israelgrowthventure-cloud/igv-site~~ **DEPRECATED**
 - Production: https://israelgrowthventure.com
 - Backend: https://igv-cms-backend.onrender.com
 - Render Dashboard: (accès admin requis)
 
-### Futurs repos (après séparation)
-- Frontend: https://github.com/israelgrowthventure-cloud/igv-frontend
+### Repos actifs (SOURCE DE VÉRITÉ)
+- ✅ **Frontend:** https://github.com/israelgrowthventure-cloud/igv-frontend (SHA: `aae664b`)
+- ✅ **Backend:** https://github.com/israelgrowthventure-cloud/igv-backend (SHA: `3dc3da6`)
 - Backend: https://github.com/israelgrowthventure-cloud/igv-backend

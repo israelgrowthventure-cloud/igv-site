@@ -1,7 +1,7 @@
 # MISSION MASTER - Analyse, Nettoyage et Suivi Complet
 **Date création:** 2026-01-20  
 **Dernière mise à jour:** 2026-01-20  
-**Statut global:** 🟡 MISSION 3 EN COURS
+**Statut global:** ✅ MISSION 3 TERMINÉE - PRÊT POUR DÉPLOIEMENT
 
 ---
 
@@ -462,7 +462,14 @@ git revert HEAD
 | 2026-01-20 | Mission 3: Création config standalone backend | ✅ |
 | 2026-01-20 | Mission 3: Commit 1a17ce4 | ✅ |
 | 2026-01-20 | Mission 3: Push vers GitHub | ✅ |
-| 2026-01-20 | Mission 3: En attente création repos GitHub | 🟡 |
+| 2026-01-20 | Mission 3: En attente création repos GitHub | ✅ |
+| 2026-01-20 | Mission 3: Repos igv-frontend et igv-backend créés | ✅ |
+| 2026-01-20 | Mission 3: Code migré vers repos séparés | ✅ |
+| 2026-01-20 | Mission 3: Frontend commit 79cf753 | ✅ |
+| 2026-01-20 | Mission 3: Backend commit d5202b0 | ✅ |
+| 2026-01-20 | Mission 3: Build frontend OK | ✅ |
+| 2026-01-20 | Mission 3: Backend imports OK | ✅ |
+| 2026-01-20 | Mission 3: Prêt pour déploiement Render | ✅ |
 
 ---
 
@@ -574,59 +581,45 @@ Modification de `CmsAdminButton.jsx` pour ajouter des classes Tailwind explicite
 ### Objectif
 Séparer le monorepo en 2 repos distincts pour un déploiement plus propre sur Render.
 
-### Statut: 🟡 EN PRÉPARATION
+### Statut: ✅ CODE MIGRÉ - PRÊT POUR DÉPLOIEMENT RENDER
 
-### Configuration standalone créée
+### Repos GitHub créés
 
-| Dossier | Fichiers ajoutés |
-|---------|------------------|
-| `frontend/` | `README_STANDALONE.md`, `render.yaml` |
-| `backend/` | `README_STANDALONE.md`, `render.yaml` |
+| Repo | URL | SHA | Date |
+|------|-----|-----|------|
+| **igv-frontend** | https://github.com/israelgrowthventure-cloud/igv-frontend | `79cf753` | 2026-01-20 |
+| **igv-backend** | https://github.com/israelgrowthventure-cloud/igv-backend | `d5202b0` | 2026-01-20 |
 
-### Commits effectués
+### Commits effectués (Monorepo)
 
 | Commit | Message |
 |--------|---------|
 | `5e9d9e0` | fix(cms): Fix password input white-on-white text and modal styling |
 | `1a17ce4` | config: Add standalone render.yaml and README for frontend/backend separation |
+| `afb57c0` | docs: Update MISSION_MASTER.md with Mission 2.1 and 3 progress |
 
-### Prochaines étapes (à effectuer par l'utilisateur)
+### Commits effectués (Repos séparés)
 
-#### 1. Créer les repos GitHub
-```bash
-# Créer sur GitHub:
-# - israelgrowthventure-cloud/igv-frontend
-# - israelgrowthventure-cloud/igv-backend
-```
+| Repo | Commit | Message |
+|------|--------|---------|
+| igv-frontend | `79cf753` | Initial commit - Frontend separated from igv-site monorepo |
+| igv-backend | `d5202b0` | Initial commit - Backend separated from igv-site monorepo |
 
-#### 2. Cloner et séparer
-```bash
-# Frontend
-mkdir igv-frontend
-cd igv-frontend
-git init
-cp -r ../igv-site/frontend/* .
-git add .
-git commit -m "Initial commit - Frontend separated from monorepo"
-git remote add origin https://github.com/israelgrowthventure-cloud/igv-frontend.git
-git push -u origin main
+### Tests de validation
 
-# Backend
-mkdir igv-backend
-cd igv-backend
-git init
-cp -r ../igv-site/backend/* .
-git add .
-git commit -m "Initial commit - Backend separated from monorepo"
-git remote add origin https://github.com/israelgrowthventure-cloud/igv-backend.git
-git push -u origin main
-```
+| Test | Résultat |
+|------|----------|
+| Frontend `npm ci` | ✅ OK |
+| Frontend `npm run build` | ✅ OK (166 kB gzip) |
+| Backend `python -c "import server"` | ✅ OK (warnings normaux) |
 
-#### 3. Configurer Render
-- Supprimer l'ancien service monorepo
-- Créer un nouveau Static Site pointant vers `igv-frontend`
-- Créer un nouveau Web Service pointant vers `igv-backend`
-- Configurer les variables d'environnement sur chaque service
+### Mission 2.1 intégrée
+- Fix du champ mot de passe CMS (texte blanc sur blanc)
+- Ajout de styles inline pour forcer la visibilité
+- `caretColor: "#111827"` pour le curseur visible
+- `backgroundColor: "#ffffff"` forcé sur les modals
+
+### Configuration Render à créer
 
 ### Variables d'environnement (Backend)
 

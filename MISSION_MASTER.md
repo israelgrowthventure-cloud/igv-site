@@ -1,7 +1,7 @@
 # MISSION MASTER - Analyse, Nettoyage et Suivi Complet
 **Date création:** 2026-01-20  
 **Dernière mise à jour:** 2026-01-20  
-**Statut global:** ✅ TERMINÉ
+**Statut global:** 🟡 MISSION 3 EN COURS
 
 ---
 
@@ -17,6 +17,8 @@
 8. [Validation build et déploiement](#8-validation-build-et-déploiement)
 9. [Checklist finale](#9-checklist-finale)
 10. [Mission 2 - Protection CMS](#10-mission-2---protection-cms)
+11. [Mission 2.1 - Correction Bug CMS Password](#11-mission-21---correction-bug-cms-password)
+12. [Mission 3 - Séparation Frontend/Backend](#12-mission-3---séparation-frontendbackend)
 
 ---
 
@@ -454,6 +456,13 @@ git revert HEAD
 | 2026-01-20 | Mission 2: Protection bouton CMS (rôle + password) | ✅ |
 | 2026-01-20 | Mission 2: Commit e27d521 | ✅ |
 | 2026-01-20 | Mission 2 terminée | ✅ |
+| 2026-01-20 | Mission 2.1: Fix CMS password blanc sur blanc | ✅ |
+| 2026-01-20 | Mission 2.1: Commit 5e9d9e0 | ✅ |
+| 2026-01-20 | Mission 3: Création config standalone frontend | ✅ |
+| 2026-01-20 | Mission 3: Création config standalone backend | ✅ |
+| 2026-01-20 | Mission 3: Commit 1a17ce4 | ✅ |
+| 2026-01-20 | Mission 3: Push vers GitHub | ✅ |
+| 2026-01-20 | Mission 3: En attente création repos GitHub | 🟡 |
 
 ---
 
@@ -541,9 +550,239 @@ e27d521 - feat(cms): Protect CMS button + disable WYSIWYG bubble - Mission 2
 
 ---
 
+---
+
+## 11. Mission 2.1 - Correction Bug CMS Password
+
+### Problème identifié
+Le champ de mot de passe CMS avait du texte blanc sur fond blanc (illisible).
+
+### Correction effectuée
+Modification de `CmsAdminButton.jsx` pour ajouter des classes Tailwind explicites :
+- Input: `text-gray-900 bg-white border-gray-300 placeholder-gray-400`
+- Boutons: couleurs explicites pour Annuler et Valider
+
+### Commit
+```
+5e9d9e0 - fix(cms): Fix password input white-on-white text and modal styling
+```
+
+---
+
+## 12. Mission 3 - Séparation Frontend/Backend
+
+### Objectif
+Séparer le monorepo en 2 repos distincts pour un déploiement plus propre sur Render.
+
+### Statut: 🟡 EN PRÉPARATION
+
+### Configuration standalone créée
+
+| Dossier | Fichiers ajoutés |
+|---------|------------------|
+| `frontend/` | `README_STANDALONE.md`, `render.yaml` |
+| `backend/` | `README_STANDALONE.md`, `render.yaml` |
+
+### Commits effectués
+
+| Commit | Message |
+|--------|---------|
+| `5e9d9e0` | fix(cms): Fix password input white-on-white text and modal styling |
+| `1a17ce4` | config: Add standalone render.yaml and README for frontend/backend separation |
+
+### Prochaines étapes (à effectuer par l'utilisateur)
+
+#### 1. Créer les repos GitHub
+```bash
+# Créer sur GitHub:
+# - israelgrowthventure-cloud/igv-frontend
+# - israelgrowthventure-cloud/igv-backend
+```
+
+#### 2. Cloner et séparer
+```bash
+# Frontend
+mkdir igv-frontend
+cd igv-frontend
+git init
+cp -r ../igv-site/frontend/* .
+git add .
+git commit -m "Initial commit - Frontend separated from monorepo"
+git remote add origin https://github.com/israelgrowthventure-cloud/igv-frontend.git
+git push -u origin main
+
+# Backend
+mkdir igv-backend
+cd igv-backend
+git init
+cp -r ../igv-site/backend/* .
+git add .
+git commit -m "Initial commit - Backend separated from monorepo"
+git remote add origin https://github.com/israelgrowthventure-cloud/igv-backend.git
+git push -u origin main
+```
+
+#### 3. Configurer Render
+- Supprimer l'ancien service monorepo
+- Créer un nouveau Static Site pointant vers `igv-frontend`
+- Créer un nouveau Web Service pointant vers `igv-backend`
+- Configurer les variables d'environnement sur chaque service
+
+### Variables d'environnement (Backend)
+
+| Variable | Description |
+|----------|-------------|
+| `MONGODB_URI` | URI MongoDB Atlas |
+| `DB_NAME` | Nom de la base |
+| `JWT_SECRET` | Secret JWT |
+| `CMS_PASSWORD` | `LuE1lN-aYvn5JOrq4JhGnQ` |
+| `CORS_ALLOWED_ORIGINS` | `https://israelgrowthventure.com` |
+| `GEMINI_API_KEY` | Clé API Gemini |
+| `SMTP_*` | Configuration SMTP |
+
+### Variables d'environnement (Frontend)
+
+| Variable | Description |
+|----------|-------------|
+| `REACT_APP_API_URL` | `https://igv-cms-backend.onrender.com` |
+
+### Endpoints Backend (Map complète)
+
+#### Health & Root
+| Method | Route | Description |
+|--------|-------|-------------|
+| GET | `/` | Root |
+| GET | `/health` | Health check simple |
+| GET | `/api/health` | Health avec status MongoDB |
+| GET | `/debug/routers` | Debug routes |
+
+#### Auth (admin_routes.py)
+| Method | Route | Description |
+|--------|-------|-------------|
+| POST | `/api/admin/login` | Login admin |
+| GET | `/api/admin/verify` | Vérifier token |
+| POST | `/api/admin/bootstrap` | Bootstrap premier user |
+| POST | `/api/admin/forgot-password` | Mot de passe oublié |
+| POST | `/api/admin/reset-password` | Réinitialiser mot de passe |
+
+#### CRM Leads (crm_routes.py)
+| Method | Route | Description |
+|--------|-------|-------------|
+| GET | `/api/crm/leads` | Liste prospects |
+| POST | `/api/crm/leads` | Créer prospect |
+| GET | `/api/crm/leads/{id}` | Détail prospect |
+| PUT | `/api/crm/leads/{id}` | Modifier prospect |
+| DELETE | `/api/crm/leads/{id}` | Supprimer prospect |
+| POST | `/api/crm/leads/{id}/notes` | Ajouter note |
+| DELETE | `/api/crm/leads/{id}/notes/{note_id}` | Supprimer note |
+
+#### CRM Contacts (crm_routes.py)
+| Method | Route | Description |
+|--------|-------|-------------|
+| GET | `/api/crm/contacts` | Liste contacts |
+| POST | `/api/crm/contacts` | Créer contact |
+| GET | `/api/crm/contacts/{id}` | Détail contact |
+| PUT | `/api/crm/contacts/{id}` | Modifier contact |
+| DELETE | `/api/crm/contacts/{id}` | Supprimer contact |
+
+#### CRM Opportunités (crm_complete_routes.py)
+| Method | Route | Description |
+|--------|-------|-------------|
+| GET | `/api/crm/opportunities` | Liste opportunités |
+| POST | `/api/crm/opportunities` | Créer opportunité |
+| GET | `/api/crm/opportunities/{id}` | Détail |
+| PUT | `/api/crm/opportunities/{id}` | Modifier |
+| DELETE | `/api/crm/opportunities/{id}` | Supprimer |
+
+#### CRM Pipeline
+| Method | Route | Description |
+|--------|-------|-------------|
+| GET | `/api/crm/pipeline` | Vue pipeline |
+| GET | `/api/crm/pipeline/stats` | Statistiques pipeline |
+
+#### CRM Tâches
+| Method | Route | Description |
+|--------|-------|-------------|
+| GET | `/api/crm/tasks` | Liste tâches |
+| POST | `/api/crm/tasks` | Créer tâche |
+| PUT | `/api/crm/tasks/{id}` | Modifier tâche |
+| DELETE | `/api/crm/tasks/{id}` | Supprimer tâche |
+
+#### CRM Emails
+| Method | Route | Description |
+|--------|-------|-------------|
+| GET | `/api/crm/emails/templates` | Templates email |
+| POST | `/api/crm/emails/send` | Envoyer email |
+| GET | `/api/crm/emails/history` | Historique |
+
+#### CRM Users (admin_user_routes.py)
+| Method | Route | Description |
+|--------|-------|-------------|
+| GET | `/api/crm/users` | Liste utilisateurs |
+| POST | `/api/crm/users` | Créer utilisateur |
+| GET | `/api/crm/users/{id}` | Détail utilisateur |
+| PUT | `/api/crm/users/{id}` | Modifier utilisateur |
+| DELETE | `/api/crm/users/{id}` | Supprimer utilisateur |
+
+#### CMS (cms_routes.py)
+| Method | Route | Description |
+|--------|-------|-------------|
+| POST | `/api/cms/verify-password` | Vérifier password CMS |
+| GET | `/api/cms/pages` | Liste pages CMS |
+| GET | `/api/cms/pages/{slug}` | Contenu page |
+| PUT | `/api/cms/pages/{slug}` | Modifier page |
+
+#### Media (cms_routes.py)
+| Method | Route | Description |
+|--------|-------|-------------|
+| GET | `/api/media` | Liste médias |
+| POST | `/api/media/upload` | Upload média |
+| DELETE | `/api/media/{id}` | Supprimer média |
+
+#### Mini-Analyse (mini_analysis_routes.py)
+| Method | Route | Description |
+|--------|-------|-------------|
+| POST | `/api/mini-analysis` | Générer analyse Gemini |
+| POST | `/api/pdf/generate` | Générer PDF |
+| POST | `/api/email/send-pdf` | Envoyer PDF par email |
+
+#### Contact (extended_routes.py)
+| Method | Route | Description |
+|--------|-------|-------------|
+| POST | `/api/contact` | Formulaire contact |
+| GET | `/api/contacts` | Liste contacts public |
+
+#### Paiements (monetico_routes.py)
+| Method | Route | Description |
+|--------|-------|-------------|
+| POST | `/api/monetico/init` | Initialiser paiement |
+| POST | `/api/monetico/return` | Retour paiement |
+| POST | `/api/monetico/notify` | Notification paiement |
+
+#### GDPR (gdpr_routes.py)
+| Method | Route | Description |
+|--------|-------|-------------|
+| POST | `/api/gdpr/consent` | Enregistrer consentement |
+| GET | `/api/gdpr/consent/{email}` | Récupérer consentement |
+| DELETE | `/api/gdpr/data/{email}` | Supprimer données |
+
+#### Factures (invoice_routes.py)
+| Method | Route | Description |
+|--------|-------|-------------|
+| GET | `/api/invoices` | Liste factures |
+| POST | `/api/invoices` | Créer facture |
+| GET | `/api/invoices/{id}` | Détail facture |
+| GET | `/api/invoices/{id}/pdf` | Télécharger PDF |
+
+---
+
 ## 🔗 Références
 
-- Repo GitHub: https://github.com/israelgrowthventure-cloud/igv-site
+- Repo GitHub (monorepo): https://github.com/israelgrowthventure-cloud/igv-site
 - Production: https://israelgrowthventure.com
 - Backend: https://igv-cms-backend.onrender.com
 - Render Dashboard: (accès admin requis)
+
+### Futurs repos (après séparation)
+- Frontend: https://github.com/israelgrowthventure-cloud/igv-frontend
+- Backend: https://github.com/israelgrowthventure-cloud/igv-backend

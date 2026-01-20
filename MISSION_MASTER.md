@@ -16,6 +16,7 @@
 7. [Retour arrière](#7-retour-arrière)
 8. [Validation build et déploiement](#8-validation-build-et-déploiement)
 9. [Checklist finale](#9-checklist-finale)
+10. [Mission 2 - Protection CMS](#10-mission-2---protection-cms)
 
 ---
 
@@ -448,7 +449,95 @@ git revert HEAD
 | 2026-01-20 | Push vers GitHub | ✅ |
 | 2026-01-20 | Validation site live OK | ✅ |
 | 2026-01-20 | Validation backend health OK | ✅ |
-| 2026-01-20 | Mission terminée | ✅ |
+| 2026-01-20 | Mission 1 terminée | ✅ |
+| 2026-01-20 | Mission 2: Désactivation bulle WYSIWYG | ✅ |
+| 2026-01-20 | Mission 2: Protection bouton CMS (rôle + password) | ✅ |
+| 2026-01-20 | Mission 2: Commit e27d521 | ✅ |
+| 2026-01-20 | Mission 2 terminée | ✅ |
+
+---
+
+## 10. Mission 2 - Protection CMS
+
+### Objectif
+Mettre de côté les accès CMS cassés (bouton "Modifier le site" + bulle crayon) en attendant le futur CMS.
+
+### Éléments identifiés
+
+| Élément | Source | Action |
+|---------|--------|--------|
+| Bouton "Modifier le Site" | `frontend/src/components/CmsAdminButton.jsx` | Protégé par rôle + mot de passe |
+| Bulle crayon WYSIWYG | Script `livecms.js` dans `App.js` | Désactivé (commenté) |
+
+### Modifications effectuées
+
+#### 1. Désactivation bulle crayon (App.js)
+```javascript
+// DISABLED: CMS embeddable script (bulle crayon WYSIWYG)
+// Commenté pour Mission 2 - sera réactivé quand le CMS sera prêt
+```
+
+#### 2. Protection bouton CMS (CmsAdminButton.jsx)
+- **Condition de visibilité**: Seulement pour rôles `admin`, `technique`, `tech`, `developer`
+- **Commerciaux**: Ne voient pas le bouton
+- **Mot de passe séparé**: Demandé au clic, vérifié via backend
+- **Placeholder**: Page "CMS bientôt disponible" si mot de passe correct
+
+#### 3. Endpoint backend (cms_routes.py)
+```
+POST /api/cms/verify-password
+- Body: { "password": "..." }
+- Réponse: 200 si correct, 401 si incorrect
+- Rôles autorisés: admin, technique, tech, developer
+```
+
+### Configuration requise sur Render
+
+⚠️ **IMPORTANT**: Ajouter la variable d'environnement suivante sur Render:
+
+| Variable | Valeur |
+|----------|--------|
+| `CMS_PASSWORD` | `LuE1lN-aYvn5JOrq4JhGnQ` |
+
+### Mot de passe CMS
+
+🔐 **Mot de passe CMS (à communiquer à l'admin):**
+```
+LuE1lN-aYvn5JOrq4JhGnQ
+```
+
+### Prompts Gemini
+
+Les prompts Gemini sont bien à leur place d'origine:
+```
+backend/prompts/
+├── MASTER_PROMPT_RESTAURATION.txt
+├── MASTER_PROMPT_RESTAURATION_EN.txt
+├── MASTER_PROMPT_RESTAURATION_HE.txt
+├── MASTER_PROMPT_RETAIL_NON_FOOD.txt
+├── MASTER_PROMPT_RETAIL_NON_FOOD_EN.txt
+├── MASTER_PROMPT_RETAIL_NON_FOOD_HE.txt
+├── MASTER_PROMPT_SERVICES_PARAMEDICAL.txt
+├── MASTER_PROMPT_SERVICES_PARAMEDICAL_EN.txt
+└── MASTER_PROMPT_SERVICES_PARAMEDICAL_HE.txt
+```
+
+### Validation
+
+- [x] Bulle crayon désactivée (script commenté)
+- [x] Bouton CMS caché pour commerciaux
+- [x] Bouton CMS visible pour admin/technique
+- [x] Mot de passe requis au clic
+- [x] Placeholder "CMS bientôt disponible" affiché
+- [x] Prompts Gemini en place
+- [x] Build frontend OK
+- [x] Build backend OK
+- [x] Commit e27d521 poussé
+
+### Commit
+```
+e27d521 - feat(cms): Protect CMS button + disable WYSIWYG bubble - Mission 2
+```
 
 ---
 

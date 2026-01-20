@@ -1,0 +1,47 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - region "Notifications alt+T"
+    - generic [ref=e6]:
+      - paragraph [ref=e7]: We use cookies to improve your experience. You can choose which types of cookies you accept.
+      - generic [ref=e8]:
+        - button "Accept All" [ref=e9] [cursor=pointer]
+        - button "Refuse All" [ref=e10] [cursor=pointer]
+        - link "Learn More" [ref=e11] [cursor=pointer]:
+          - /url: /privacy
+    - main [ref=e12]:
+      - img [ref=e14]
+  - button "Éditer le site (Ctrl+Shift+E)" [ref=e16] [cursor=pointer]:
+    - img [ref=e17]
+  - generic [ref=e20]:
+    - generic [ref=e21]:
+      - heading "Éditeur WYSIWYG" [level=3] [ref=e22]
+      - button [ref=e23] [cursor=pointer]:
+        - img
+    - generic [ref=e26]:
+      - generic [ref=e27]:
+        - generic [ref=e28]: Aperçu
+        - button "Mode Aperçu" [ref=e29] [cursor=pointer]:
+          - img [ref=e30]
+          - text: Mode Aperçu
+      - generic [ref=e33]:
+        - generic [ref=e34]: Ajouter un élément
+        - generic [ref=e35]:
+          - button "Titre" [ref=e36] [cursor=pointer]:
+            - img [ref=e37]
+            - generic [ref=e39]: Titre
+          - button "Paragraphe" [ref=e40] [cursor=pointer]:
+            - img [ref=e41]
+            - generic [ref=e43]: Paragraphe
+          - button "Image" [ref=e44] [cursor=pointer]:
+            - img [ref=e45]
+            - generic [ref=e49]: Image
+          - button "Bloc" [ref=e50] [cursor=pointer]:
+            - img [ref=e51]
+            - generic [ref=e53]: Bloc
+    - button "Sauvegarder les modifications" [ref=e55] [cursor=pointer]:
+      - img [ref=e56]
+      - text: Sauvegarder les modifications
+```

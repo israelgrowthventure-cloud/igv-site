@@ -284,22 +284,78 @@ MISSION_MASTER.md         # CE FICHIER (source de vérité)
 ## 6. Nettoyage effectué
 
 ### Branche de sauvegarde créée
-- [ ] Branche: `backup/pre-cleanup-20260120`
-- [ ] Tag: `v1.0.0-pre-cleanup`
+- [x] Branche: `backup/pre-cleanup-20260120`
+- [x] Tag: `v1.0.0-pre-cleanup`
 
 ### Dossier /archive créé
-- [ ] Création de `/archive`
-- [ ] Déplacement des fichiers inutiles
+- [x] Création de `/archive`
+- [x] Déplacement des fichiers inutiles
 
-### Fichiers déplacés vers /archive
-| Fichier/Dossier | Raison |
-|-----------------|--------|
-| (à remplir) | |
+### Structure archive/
+```
+archive/
+├── audit_out/           # Audits précédents complets
+├── audit_out.zip        # Archive zip
+├── deploy_scripts/      # Scripts de déploiement
+├── pdfs_test/           # PDFs de test
+├── reports_old/         # 17 rapports markdown obsolètes
+├── results_json/        # 5 fichiers JSON de résultats
+├── test-results/        # Résultats Playwright
+└── tests_scripts/       # 44 scripts Python/JS de test
+```
+
+### Fichiers déplacés vers archive/tests_scripts/ (44 fichiers)
+| Type | Fichiers |
+|------|----------|
+| Python tests | test_*.py (35 fichiers) |
+| Python utils | analyze_pdf_content.py, check_deploy_status.py, create_email_templates.py, diagnostic_*.py, wait_render_deploy.py |
+| JS tests | test_*.js (4 fichiers), check_admin_role.js |
+
+### Fichiers déplacés vers archive/reports_old/ (17 fichiers)
+| Fichier | Raison |
+|---------|--------|
+| CRM_AUDIT.md | Audit obsolète |
+| ENV_VARS_REQUIRED.md | Dupliqué dans RENDER_ENV_VARS_REQUIRED |
+| GUIDE_TEST_FRONTEND_LIVE.md | Guide de test ponctuel |
+| MENAGE_IGV.md | Notes de ménage anciennes |
+| MISSION_*.md | Anciennes missions terminées |
+| PHASE1_4_VALIDATION_REPORT.md | Validation phase ancienne |
+| RAPPORT_*.md | Rapports d'audit anciens (5 fichiers) |
+| RENDER_ENV_VARS_REQUIRED.md | Remplacé par render.yaml |
+| REPORT_MIDWAY_CMD.md | Rapport intermédiaire |
+| SITEMAP_COMPLET.md | Sitemap maintenant dans ce fichier |
+| TODO_MASTER.md | Remplacé par MISSION_MASTER.md |
+
+### Fichiers déplacés vers archive/results_json/ (5 fichiers)
+| Fichier | Raison |
+|---------|--------|
+| crm_audit_results.json | Résultat audit obsolète |
+| test_*.json | Résultats de tests ponctuels |
+
+### Fichiers déplacés vers archive/pdfs_test/ (4 fichiers)
+| Fichier | Raison |
+|---------|--------|
+| mini_analyse_he_*.pdf | PDFs de test générés |
+| PREUVE_PDF_HE_DOWNLOAD.pdf | Preuve de test |
+| test_pdf_long_he.pdf | PDF de test |
+
+### Fichiers déplacés vers archive/deploy_scripts/ (5 fichiers)
+| Fichier | Raison |
+|---------|--------|
+| deploy.ps1, deploy.sh | Scripts manuels (Render auto-deploy) |
+| monitor_deploy.ps1, monitor_deploy.py | Scripts de monitoring manuels |
+| test_crm_production.ps1 | Script de test production |
+
+### Dossiers déplacés
+| Dossier | Raison |
+|---------|--------|
+| audit_out/ | Audits précédents |
+| test-results/ | Résultats Playwright anciens |
 
 ### Fichiers supprimés
 | Fichier | Raison |
 |---------|--------|
-| (à remplir) | |
+| (Aucun) | Conservation de tout dans archive pour sécurité |
 
 ---
 

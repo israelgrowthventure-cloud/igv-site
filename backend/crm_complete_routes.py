@@ -1690,11 +1690,68 @@ async def get_activities(
     activities = await cursor.to_list(length=limit)
     total = await current_db.activities.count_documents(filter_query)
     
-    # Convert ObjectId to string
+    # Collect all lead_ids and contact_ids to fetch names in batch
+    lead_ids = set()
+    contact_ids = set()
+    for activity in activities:
+        if activity.get("lead_id"):
+            try:
+                lead_ids.add(activity["lead_id"])
+            except:
+                pass
+        if activity.get("contact_id"):
+            try:
+                contact_ids.add(activity["contact_id"])
+            except:
+                pass
+    
+    # Fetch lead names
+    lead_names = {}
+    if lead_ids:
+        for lid in lead_ids:
+            try:
+                lead = await current_db.leads.find_one({"_id": ObjectId(lid)})
+                if lead:
+                    lead_names[lid] = lead.get("contact_name") or lead.get("name") or lead.get("brand_name") or lead.get("email") or f"Prospect #{lid[:8]}"
+            except:
+                pass
+    
+    # Fetch contact names
+    contact_names = {}
+    if contact_ids:
+        for cid in contact_ids:
+            try:
+                contact = await current_db.contacts.find_one({"_id": ObjectId(cid)})
+                if contact:
+                    contact_names[cid] = contact.get("name") or contact.get("company") or contact.get("email") or f"Contact #{cid[:8]}"
+            except:
+                pass
+    
+    # Convert ObjectId to string and enrich with names
     for activity in activities:
         activity["_id"] = str(activity["_id"])
+        activity["activity_id"] = activity["_id"]
         if "created_at" in activity and isinstance(activity["created_at"], datetime):
             activity["created_at"] = activity["created_at"].isoformat()
+        
+        # Add lead_name if lead_id exists
+        if activity.get("lead_id"):
+            activity["lead_name"] = lead_names.get(activity["lead_id"], f"Prospect #{activity['lead_id'][:8]}")
+        
+        # Add contact_name if contact_id exists
+        if activity.get("contact_id"):
+            activity["contact_name"] = contact_names.get(activity["contact_id"], f"Contact #{activity['contact_id'][:8]}")
+        
+        # Set default status if not present
+        if not activity.get("status"):
+            activity["status"] = "completed"
+        
+        # For notes, use description as subject if subject is generic
+        if activity.get("type") == "note" and activity.get("subject") in ["Note added", "Note"]:
+            desc = activity.get("description") or activity.get("note_text") or ""
+            if desc:
+                # Use first 50 chars of description as subject
+                activity["subject"] = desc[:50] + ("..." if len(desc) > 50 else "")
     
     return {
         "activities": activities,

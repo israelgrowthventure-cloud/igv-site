@@ -1,0 +1,538 @@
+﻿      toast.success(t('admin.crm.leads.export_success'));
+      toast.error(t('admin.crm.leads.export_error'));
+      toast.success(t('admin.crm.leads.update_success'));
+      toast.error(t('admin.crm.leads.update_error'));
+      toast.success(t('admin.crm.leads.note_added'));
+      toast.error(t('admin.crm.leads.note_error'));
+    if (!window.confirm(t('admin.crm.leads.confirm_convert'))) return;
+      toast.success(t('admin.crm.leads.convert_success'));
+      toast.error(t('admin.crm.leads.convert_error'));
+        {t(`admin.crm.status.${status.toLowerCase()}`)}
+              placeholder={t('admin.crm.leads.search_placeholder')}
+            {t('admin.crm.leads.filters')}
+            {t('admin.crm.leads.export')}
+              <label className="block text-sm font-medium mb-2">{t('admin.crm.leads.filter_status')}</label>
+                <option value="">{t('admin.crm.leads.all_statuses')}</option>
+              <label className="block text-sm font-medium mb-2">{t('admin.crm.leads.filter_stage')}</label>
+                <option value="">{t('admin.crm.leads.all_stages')}</option>
+                {t('admin.crm.leads.apply_filters')}
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('admin.crm.leads.col_brand')}</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('admin.crm.leads.col_email')}</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('admin.crm.leads.col_sector')}</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('admin.crm.leads.col_status')}</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('admin.crm.leads.col_created')}</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('admin.crm.leads.col_actions')}</th>
+                    {t('admin.crm.leads.no_leads')}
+          <h3 className="font-semibold text-lg">{t('admin.crm.leads.info')}</h3>
+            <p><strong>{t('admin.crm.leads.email')}:</strong> {lead.email}</p>
+            <p><strong>{t('admin.crm.leads.phone')}:</strong> {lead.phone || '-'}</p>
+            <p><strong>{t('admin.crm.leads.sector')}:</strong> {lead.sector || '-'}</p>
+            <p><strong>{t('admin.crm.leads.language')}:</strong> {lead.language?.toUpperCase()}</p>
+            <p><strong>{t('admin.crm.leads.created')}:</strong> {new Date(lead.created_at).toLocaleString()}</p>
+              <label className="block text-sm font-medium mb-2">{t('admin.crm.leads.status')}</label>
+            {t('admin.crm.leads.convert_to_contact')}
+          <h3 className="font-semibold text-lg">{t('admin.crm.leads.add_note')}</h3>
+            placeholder={t('admin.crm.leads.note_placeholder')}
+            {t('admin.crm.leads.save_note')}
+            <h4 className="font-semibold mb-2">{t('admin.crm.leads.activities')}</h4>
+              )) || <p className="text-gray-500">{t('admin.crm.leads.no_activities')}</p>}
+    { id: 'dashboard', path: '/admin/crm/dashboard', icon: LayoutDashboard, label: t('admin.crm.nav.dashboard') },
+    { id: 'leads', path: '/admin/crm/leads', icon: Users, label: t('admin.crm.nav.leads') },
+    { id: 'contacts', path: '/admin/crm/contacts', icon: UserCheck, label: t('admin.crm.nav.contacts') },
+    { id: 'opportunities', path: '/admin/crm/opportunities', icon: Target, label: t('admin.crm.nav.opportunities') },
+    { id: 'pipeline', path: '/admin/crm/pipeline', icon: BarChart3, label: t('admin.crm.nav.pipeline') },
+    { id: 'activities', path: '/admin/crm/activities', icon: Activity, label: t('admin.crm.nav.activities') },
+    { id: 'emails', path: '/admin/crm/emails', icon: Mail, label: t('admin.crm.nav.emails') },
+    { id: 'users', path: '/admin/crm/users', icon: UserCog, label: t('admin.crm.nav.users'), adminOnly: true },
+    { id: 'settings', path: '/admin/crm/settings', icon: Settings, label: t('admin.crm.nav.settings') }
+          title={collapsed ? t('admin.crm.sidebar.expand') : t('admin.crm.sidebar.collapse')}
+              <span className="text-sm">{t('admin.crm.sidebar.collapse')}</span>
+      toast.error(t('admin.crm.emails.error_empty'));
+      toast.success(t('admin.crm.emails.sent_success'));
+      toast.error(t('admin.crm.emails.send_failed'));
+            <h3 className="text-lg font-semibold">{t('admin.crm.emails.compose')}</h3>
+            <p className="text-sm text-gray-600">{t('admin.crm.emails.to')}: {contact.name} &lt;{contact.email}&gt;</p>
+                <span>{selectedTemplate ? selectedTemplate.name : t('admin.crm.emails.select_template')}</span>
+                    <span className="text-blue-600 opacity-0 group-hover:opacity-100 text-sm">{t('admin.crm.emails.use')}</span>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('admin.crm.emails.subject')}</label>
+              placeholder={t('admin.crm.emails.subject_placeholder')}
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('admin.crm.emails.message')}</label>
+              placeholder={t('admin.crm.emails.message_placeholder')}
+                {t('admin.crm.emails.sending')}
+                {t('admin.crm.emails.send')}
+      toast.success(t('admin.crm.leads.created'));
+      toast.error(t('admin.crm.errors.create_failed'));
+      toast.success(t('admin.crm.leads.export_success'));
+      toast.error(t('admin.crm.errors.export_failed'));
+      toast.success(t('admin.crm.leads.note_added'));
+      toast.error(t('admin.crm.errors.note_failed'));
+      toast.success(t('admin.crm.leads.status_updated'));
+      toast.error(t('admin.crm.errors.status_failed'));
+        name: `${t('admin.crm.opportunities.title')} - ${selectedItem.brand_name || selectedItem.contact_name}`,
+        description: `${t('admin.crm.opportunities.created')} - ${leadId}`,
+      toast.success(t('admin.crm.leads.toast.opportunity_created'), {
+          label: t('admin.crm.leads.toast.view_opportunity'),
+      toast.error(t('admin.crm.errors.create_failed'));
+    if (!window.confirm(t('admin.crm.common.confirm_delete'))) {
+      toast.success(t('admin.crm.leads.deleted'));
+      toast.error(t('admin.crm.errors.delete_failed'));
+    if (!window.confirm(t('admin.crm.common.confirm_delete'))) {
+      toast.success(t('admin.crm.leads.toast.convert_success'));
+        toast.success(t('admin.crm.leads.toast.contact_created'), {
+            label: t('admin.crm.leads.toast.view_contact'),
+        toast.error(t('admin.crm.leads.toast.already_converted'));
+        toast.error(t('admin.crm.leads.toast.lead_not_found'));
+        toast.error(t('admin.crm.leads.toast.missing_info'));
+        toast.error(t('admin.crm.leads.toast.convert_error'));
+                placeholder={t('admin.crm.leads.search')}
+            {t('admin.crm.common.filters')}
+            {t('admin.crm.leads.export')}
+            {t('admin.crm.leads.new_lead')}
+              <option value="">{t('admin.crm.common.all_statuses')}</option>
+              {statuses.map(s => <option key={s} value={s}>{t(`admin.crm.statuses.${s}`)}</option>)}
+              <option value="">{t('admin.crm.common.all_priorities')}</option>
+              {priorities.map(p => <option key={p} value={p}>{t(`admin.crm.priorities.${p}`)}</option>)}
+            <input type="text" placeholder={t('admin.crm.leads.filter_sector')} value={filters.sector || ''} onChange={(e) => setFilters({ ...filters, sector: e.target.value })} className="px-3 py-2 border rounded-lg" />
+            <button onClick={() => setFilters({})} className="px-4 py-2 border rounded-lg hover:bg-gray-50">{t('admin.crm.common.reset')}</button>
+            <h2 className="text-2xl font-bold">{t('admin.crm.leads.new_lead')}</h2>
+                <label className="block text-sm font-medium mb-1">{t('admin.crm.leads.columns.email')} *</label>
+                <label className="block text-sm font-medium mb-1">{t('admin.crm.leads.columns.name')}</label>
+                <label className="block text-sm font-medium mb-1">{t('admin.crm.leads.columns.brand')}</label>
+                <label className="block text-sm font-medium mb-1">{t('admin.crm.leads.columns.sector')}</label>
+                <label className="block text-sm font-medium mb-1">{t('admin.crm.leads.phone')}</label>
+                <label className="block text-sm font-medium mb-1">{t('admin.crm.leads.columns.priority')}</label>
+                  {priorities.map(p => <option key={p} value={p}>{t(`admin.crm.priorities.${p}`)}</option>)}
+                {t('admin.crm.common.save')}
+                {t('admin.crm.common.cancel')}
+                <th className="px-4 py-3 text-left text-sm font-semibold">{t('admin.crm.leads.columns.name')}</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold">{t('admin.crm.leads.columns.email')}</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold">{t('admin.crm.leads.columns.brand')}</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold">{t('admin.crm.leads.columns.sector')}</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold">{t('admin.crm.leads.columns.status')}</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold">{t('admin.crm.leads.columns.priority')}</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold">{t('admin.crm.leads.columns.created')}</th>
+                        <Users className="w-4 h-4 text-green-600" title={t('admin.crm.leads.converted')} />
+                          title={t('admin.crm.leads.view_contact')}
+                    <p className="font-medium">{t('admin.crm.leads.empty_title')}</p>
+                    <p className="text-sm mt-1">{t('admin.crm.leads.empty_subtitle')}</p>
+                      {t('admin.crm.leads.new_lead')}
+                {t('admin.crm.common.back_to_list')}
+            <button onClick={() => setSelectedItem(null)} className="p-2 hover:bg-gray-100 rounded-lg" title={t('admin.crm.common.close')}>
+                <div><p className="text-sm text-gray-600">{t('admin.crm.leads.details.email')}</p><p className="font-medium">{selectedItem.email}</p></div>
+                  <div><p className="text-sm text-gray-600">{t('admin.crm.leads.details.phone')}</p><p className="font-medium">{selectedItem.phone}</p></div>
+                  <div><p className="text-sm text-gray-600">{t('admin.crm.leads.details.sector')}</p><p className="font-medium">{selectedItem.sector}</p></div>
+                  <div><p className="text-sm text-gray-600">{t('admin.crm.leads.details.city')}</p><p className="font-medium">{selectedItem.target_city}</p></div>
+                <label className="text-sm text-gray-600">{t('admin.crm.leads.details.status')}</label>
+                  {statuses.map(s => <option key={s} value={s}>{t(`admin.crm.statuses.${s}`)}</option>)}
+                <label className="text-sm text-gray-600">{t('admin.crm.leads.details.priority')}</label>
+                  {priorities.map(p => <option key={p} value={p}>{t(`admin.crm.priorities.${p}`)}</option>)}
+              <p className="text-sm font-semibold text-blue-900">{t('admin.crm.leads.details.focus_notes')}</p>
+                <h3 className="font-semibold text-blue-900">{t('admin.crm.leads.mini_analysis')}</h3>
+                  {t('admin.crm.leads.language')}: {selectedItem.analysis_language.toUpperCase()}
+                  {t('admin.crm.leads.generated_on')}: {new Date(selectedItem.analysis_date).toLocaleString()}
+              {t('admin.crm.leads.details.notes')}
+                !loadingNotes && <p className="text-gray-500 text-sm">{t('admin.crm.common.no_notes')}</p>
+              <input type="text" placeholder={t('admin.crm.leads.add_note_placeholder')} value={noteText} onChange={(e) => setNoteText(e.target.value)} className="flex-1 px-3 py-2 border rounded-lg" />
+              <button onClick={() => handleAddNote(selectedItem.lead_id)} disabled={!noteText.trim() || loadingAction} className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50">{loadingAction ? <Loader2 className="w-4 h-4 animate-spin" /> : t('admin.crm.common.add')}</button>
+                <span className="font-medium">{t('admin.crm.leads.already_converted')}</span>
+                    {t('admin.crm.leads.view_contact')}
+                    <span>{t('admin.crm.leads.converting')}</span>
+                    <span>{t('admin.crm.leads.convert_to_contact')}</span>
+              <span>{t('admin.crm.leads.create_opportunity')}</span>
+              <span>{t('admin.crm.common.send_email')}</span>
+              <span>{t('admin.crm.common.delete')}</span>
+  return <span className={`px-2 py-1 rounded text-xs font-semibold ${colors[status] || 'bg-gray-100 text-gray-800'}`}>{t(`admin.crm.statuses.${status}`, status)}</span>;
+  return <span className={`px-2 py-1 rounded text-xs font-semibold ${colors[priority] || 'bg-gray-100 text-gray-800'}`}>{t(`admin.crm.priorities.${priority}`, priority)}</span>;
+    { id: 'qualification', label: t('admin.crm.opportunities.stages.qualification'), color: 'bg-gray-100 text-gray-800' },
+    { id: 'proposal', label: t('admin.crm.opportunities.stages.proposal'), color: 'bg-blue-100 text-blue-800' },
+    { id: 'negotiation', label: t('admin.crm.opportunities.stages.negotiation'), color: 'bg-yellow-100 text-yellow-800' },
+    { id: 'closed_won', label: t('admin.crm.opportunities.stages.closed_won'), color: 'bg-green-100 text-green-800' },
+    { id: 'closed_lost', label: t('admin.crm.opportunities.stages.closed_lost'), color: 'bg-red-100 text-red-800' }
+      toast.success(t('admin.crm.opportunities.created'));
+      toast.error(t('admin.crm.errors.create_failed'));
+      toast.success(t('admin.crm.opportunities.updated'));
+      toast.error(t('admin.crm.errors.update_failed'));
+    if (!window.confirm(t('admin.crm.common.confirm_delete'))) return;
+      toast.success(t('admin.crm.opportunities.deleted'));
+      toast.error(t('admin.crm.errors.delete_failed'));
+    toast.success(t('admin.crm.opportunities.exported'));
+            {isEdit ? t('admin.crm.opportunities.edit') : t('admin.crm.opportunities.new')}
+              {t('admin.crm.opportunities.name')} *
+                {t('admin.crm.opportunities.value')} *
+                {t('admin.crm.opportunities.probability')} *
+              {t('admin.crm.opportunities.stage')}
+              {t('admin.crm.opportunities.expected_close')}
+              {t('admin.crm.opportunities.notes')}
+              <p className="text-sm text-gray-600">{t('admin.crm.opportunities.total_count')}</p>
+              <p className="text-sm text-gray-600">{t('admin.crm.opportunities.total_value')}</p>
+              <p className="text-sm text-gray-600">{t('admin.crm.opportunities.weighted_value')}</p>
+            placeholder={t('admin.crm.opportunities.search')}
+            {t('admin.crm.common.export')}
+            {t('admin.crm.opportunities.new')}
+                <th className="px-4 py-3 text-left text-sm font-semibold">{t('admin.crm.opportunities.name')}</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold">{t('admin.crm.opportunities.value')}</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold">{t('admin.crm.opportunities.probability')}</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold">{t('admin.crm.opportunities.stage')}</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold">{t('admin.crm.opportunities.expected_close')}</th>
+                <th className="px-4 py-3 text-right text-sm font-semibold">{t('admin.crm.common.actions')}</th>
+                      <p className="font-medium">{t('admin.crm.opportunities.empty_title')}</p>
+                      <p className="text-sm mt-1">{t('admin.crm.opportunities.empty_subtitle')}</p>
+                        {t('admin.crm.opportunities.new')}
+                <p className="text-sm text-gray-600 mb-1">{t('admin.crm.opportunities.value')}</p>
+                <p className="text-sm text-gray-600 mb-1">{t('admin.crm.opportunities.weighted_value')}</p>
+                  <p className="text-sm text-gray-600">{t('admin.crm.opportunities.probability')}</p>
+                    <p className="text-sm text-gray-600">{t('admin.crm.opportunities.expected_close')}</p>
+                  <p className="text-sm text-gray-600 mb-2">{t('admin.crm.opportunities.notes')}</p>
+            <span className="text-sm text-gray-600">{opps.length} {t('admin.crm.pipeline.opportunities')}</span>
+      toast.success(t('admin.crm.pipeline.stage_updated'));
+      toast.error(t('admin.crm.errors.stage_failed'));
+    INITIAL_INTEREST: t('admin.crm.pipeline.stages.initial_interest'),
+    INFO_REQUESTED: t('admin.crm.pipeline.stages.info_requested'),
+    FIRST_CALL_SCHEDULED: t('admin.crm.pipeline.stages.first_call'),
+    PITCH_DELIVERED: t('admin.crm.pipeline.stages.pitch_delivered'),
+    PROPOSAL_SENT: t('admin.crm.pipeline.stages.proposal_sent'),
+    NEGOTIATION: t('admin.crm.pipeline.stages.negotiation'),
+    VERBAL_COMMITMENT: t('admin.crm.pipeline.stages.verbal_commitment'),
+    WON: t('admin.crm.pipeline.stages.won')
+              <p className="text-sm text-gray-600">{t('admin.crm.pipeline.total_opps')}</p>
+              <p className="text-sm text-gray-600">{t('admin.crm.pipeline.total_value')}</p>
+              <p className="text-sm text-gray-600">{t('admin.crm.pipeline.avg_deal')}</p>
+              <p className="text-sm text-gray-600">{t('admin.crm.pipeline.close_rate')}</p>
+                    <p className="text-center text-gray-500 py-4">{t('admin.crm.common.no_data')}</p>
+              <label className="text-sm text-gray-600">{t('admin.crm.pipeline.current_stage')}</label>
+              <label className="text-sm text-gray-600">{t('admin.crm.pipeline.estimated_value')}</label>
+              <label className="text-sm text-gray-600">{t('admin.crm.pipeline.description')}</label>
+            <h3 className="font-semibold mb-4">{t('admin.crm.pipeline.stage_history')}</h3>
+              )) || <p className="text-gray-500 text-sm">{t('admin.crm.common.no_history')}</p>}
+      toast.error(t('admin.crm.users.errors.load_failed'));
+      toast.error(t('admin.crm.users.errors.email_required'));
+      toast.error(t('admin.crm.users.errors.password_required'));
+        toast.success(t('admin.crm.users.updated'));
+        toast.success(t('admin.crm.users.created'));
+      const errorMsg = error.response?.data?.detail || t('admin.crm.users.errors.update_failed');
+    if (!window.confirm(t('admin.crm.users.delete_confirm'))) {
+      toast.success(t('admin.crm.users.deleted'));
+      const errorMsg = error.response?.data?.detail || t('admin.crm.users.errors.delete_failed');
+    return t(`admin.crm.users.roles.${normalizedRole}`, role || 'User');
+          <h2 className="text-2xl font-bold text-gray-800">{t('admin.crm.users.title')}</h2>
+          {t('admin.crm.users.new')}
+              placeholder={t('admin.crm.users.search_placeholder')}
+            <option value="all">{t('admin.crm.users.all_roles')}</option>
+            <option value="admin">{t('admin.crm.users.roles.admin')}</option>
+            <option value="commercial">{t('admin.crm.users.roles.commercial')}</option>
+            <option value="support">{t('admin.crm.users.roles.support')}</option>
+            <option value="all">{t('admin.crm.users.all_statuses')}</option>
+            <option value="active">{t('admin.crm.users.active')}</option>
+            <option value="inactive">{t('admin.crm.users.inactive')}</option>
+                  {t('admin.crm.users.columns.user')}
+                  {t('admin.crm.users.columns.email')}
+                  {t('admin.crm.users.columns.role')}
+                  {t('admin.crm.users.columns.status')}
+                  {t('admin.crm.users.columns.assigned_leads')}
+                  {t('admin.crm.users.columns.actions')}
+                    {t('admin.crm.users.empty')}
+                              : user.name || t('admin.crm.users.no_name')}
+                          {t('admin.crm.users.active')}
+                          {t('admin.crm.users.inactive')}
+                          title={t('admin.crm.common.edit')}
+                          title={t('admin.crm.common.delete')}
+                {editingUser ? t('admin.crm.users.edit') : t('admin.crm.users.new')}
+                  {t('admin.crm.users.form.email')} *
+                  {t('admin.crm.users.form.first_name')} *
+                  {t('admin.crm.users.form.last_name')} *
+                  {editingUser ? t('admin.crm.users.form.password_edit') : t('admin.crm.users.form.password')} {!editingUser && '*'}
+                  {t('admin.crm.users.form.role')} *
+                  <option value="commercial">{t('admin.crm.users.roles.commercial')}</option>
+                  <option value="support">{t('admin.crm.users.roles.support')}</option>
+                  <option value="admin">{t('admin.crm.users.roles.admin')}</option>
+                  {t('admin.crm.users.form.active_account')}
+                  {t('admin.crm.users.buttons.cancel')}
+                  {editingUser ? t('admin.crm.users.buttons.modify') : t('admin.crm.users.buttons.create')}
+        <title>{t('admin.crm.title')} | IGV CRM</title>
+                { id: 'dashboard', icon: TrendingUp, label: t('admin.crm.tabs.dashboard') },
+                { id: 'leads', icon: Users, label: t('admin.crm.tabs.leads') },
+                { id: 'pipeline', icon: Target, label: t('admin.crm.tabs.pipeline') },
+                { id: 'contacts', icon: Mail, label: t('admin.crm.tabs.contacts') },
+                  { id: 'settings', icon: Settings, label: t('admin.crm.tabs.settings') }
+      label: t('admin.crm.dashboard.leads_today'),
+      label: t('admin.crm.dashboard.leads_7d'),
+      label: t('admin.crm.dashboard.pipeline_value'),
+      label: t('admin.crm.dashboard.tasks_overdue'),
+        <h3 className="text-lg font-semibold mb-4">{t('admin.crm.dashboard.top_sources')}</h3>
+              <span className="text-gray-700">{source.source || t('admin.crm.dashboard.direct')}</span>
+        <h3 className="text-lg font-semibold mb-4">{t('admin.crm.dashboard.stage_distribution')}</h3>
+              <span className="text-gray-700">{t(`admin.crm.stages.${stage.stage}`)}</span>
+      toast.error(t('admin.crm.activities.errors.load_failed') || 'Failed to load activities');
+      toast.success(t('admin.crm.activities.created') || 'Activity created');
+      toast.error(t('admin.crm.activities.errors.create_failed') || 'Failed to create activity');
+      toast.success(t('admin.crm.activities.completed') || 'Activity completed');
+      toast.error(t('admin.crm.activities.errors.update_failed') || 'Failed to update activity');
+    if (!window.confirm(t('admin.crm.activities.delete_confirm') || 'Delete this activity?')) return;
+      toast.success(t('admin.crm.activities.deleted') || 'Activity deleted');
+      toast.error(t('admin.crm.activities.errors.delete_failed') || 'Failed to delete activity');
+      call: t('admin.crm.activities.types.call') || 'Appel',
+      meeting: t('admin.crm.activities.types.meeting') || 'Rֳ©union',
+      email: t('admin.crm.activities.types.email') || 'Email',
+      task: t('admin.crm.activities.types.task') || 'Tֳ¢che',
+      pending: t('admin.crm.activities.status.pending') || 'En attente',
+      completed: t('admin.crm.activities.status.completed') || 'Terminֳ©',
+      cancelled: t('admin.crm.activities.status.cancelled') || 'Annulֳ©',
+      overdue: t('admin.crm.activities.status.overdue') || 'En retard'
+        <title>{t('admin.crm.activities.title') || 'Activitֳ©s'} | IGV CRM</title>
+                  {t('admin.crm.activities.title') || 'Activitֳ©s'}
+                  {filteredActivities.length} {t('admin.crm.activities.count') || 'activitֳ©s'}
+                  {t('admin.crm.common.refresh') || 'Actualiser'}
+                  {t('admin.crm.activities.add') || 'Ajouter une activitֳ©'}
+                { id: 'all', label: t('admin.crm.activities.tabs.all') || 'Toutes' },
+                { id: 'call', label: t('admin.crm.activities.tabs.calls') || 'Appels' },
+                { id: 'meeting', label: t('admin.crm.activities.tabs.meetings') || 'Rֳ©unions' },
+                { id: 'task', label: t('admin.crm.activities.tabs.tasks') || 'Tֳ¢ches' }
+              placeholder={t('admin.crm.common.search') || 'Rechercher...'}
+              <p className="text-gray-600">{t('admin.crm.activities.empty') || 'Aucune activitֳ©'}</p>
+                      {t('admin.crm.activities.columns.type') || 'Type'}
+                      {t('admin.crm.activities.columns.subject') || 'Sujet'}
+                      {t('admin.crm.activities.columns.related') || 'Liֳ© ֳ '}
+                      {t('admin.crm.activities.columns.due_date') || 'Date limite'}
+                      {t('admin.crm.activities.columns.status') || 'Statut'}
+                      {t('admin.crm.common.actions') || 'Actions'}
+                                title={t('admin.crm.activities.complete') || 'Terminer'}
+                              title={t('admin.crm.common.delete') || 'Supprimer'}
+              <h3 className="text-lg font-bold mb-4">{t('admin.crm.activities.add') || 'Ajouter une activitֳ©'}</h3>
+                    {t('admin.crm.activities.columns.type') || 'Type'}
+                    <option value="call">{t('admin.crm.activities.types.call') || 'Appel'}</option>
+                    <option value="meeting">{t('admin.crm.activities.types.meeting') || 'Rֳ©union'}</option>
+                    <option value="email">{t('admin.crm.activities.types.email') || 'Email'}</option>
+                    <option value="task">{t('admin.crm.activities.types.task') || 'Tֳ¢che'}</option>
+                    {t('admin.crm.activities.columns.subject') || 'Sujet'}
+                    {t('admin.crm.activities.columns.due_date') || 'Date limite'}
+                    {t('admin.crm.activities.columns.notes') || 'Notes'}
+                    {t('admin.crm.common.cancel') || 'Annuler'}
+                    {t('admin.crm.common.create') || 'Crֳ©er'}
+      toast.error(t('admin.crm.errors.load_failed') || 'Failed to load contact');
+      toast.success(t('admin.crm.contacts.updated') || 'Contact updated successfully');
+      toast.error(t('admin.crm.errors.update_failed') || 'Failed to update contact');
+      toast.success(t('admin.crm.contacts.deleted') || 'Contact deleted successfully');
+      toast.error(t('admin.crm.errors.delete_failed') || 'Failed to delete contact');
+      toast.success(t('admin.crm.opportunities.created') || 'Opportunity created');
+      toast.error(t('admin.crm.errors.create_failed') || 'Failed to create opportunity');
+          <p className="text-gray-600 mb-4">{t('admin.crm.contacts.not_found') || 'Contact not found'}</p>
+            {t('admin.crm.common.back') || 'Back to CRM'}
+                <p className="text-sm text-gray-600">{contact.company_name || t('admin.crm.contacts.no_company') || 'No company'}</p>
+                      {t('admin.crm.common.edit') || 'Edit'}
+                      {t('admin.crm.common.delete') || 'Delete'}
+                      {t('admin.crm.common.save') || 'Save'}
+                      {t('admin.crm.common.cancel') || 'Cancel'}
+            <h2 className="font-semibold mb-4">{t('admin.crm.contacts.details.contact_info') || 'Contact Information'}</h2>
+                    <p className="text-sm text-gray-600">{t('admin.crm.contacts.columns.name') || 'Name'}</p>
+                    <p className="text-sm text-gray-600">{t('admin.crm.contacts.columns.email') || 'Email'}</p>
+                    <p className="text-sm text-gray-600">{t('admin.crm.contacts.columns.phone') || 'Phone'}</p>
+                    <p className="text-sm text-gray-600">{t('admin.crm.contacts.columns.company') || 'Company'}</p>
+                    <p className="text-sm text-gray-600">{t('admin.crm.contacts.details.position') || 'Position'}</p>
+                    <p className="text-sm text-gray-600">{t('admin.crm.contacts.details.location') || 'Location'}</p>
+                {t('admin.crm.contacts.details.tags') || 'Tags'}
+              <h2 className="font-semibold text-green-900 mb-2">{t('admin.crm.contacts.converted_from_lead') || 'Converted from Lead'}</h2>
+              <p className="text-green-800">{t('admin.crm.contacts.lead_id') || 'Lead ID'}: {contact.converted_from_lead_id}</p>
+                {t('admin.crm.contacts.opportunities') || 'Opportunities'} ({opportunities.length})
+                {t('admin.crm.opportunities.new') || 'New Opportunity'}
+                <p className="text-gray-500 text-sm text-center py-4">{t('admin.crm.common.no_opportunities') || 'No opportunities yet'}</p>
+              {t('admin.crm.contacts.recent_activities') || 'Recent Activities'}
+                <p className="text-gray-500 text-sm">{t('admin.crm.common.no_activities') || 'No activities yet'}</p>
+                <p className="font-medium">{t('admin.crm.common.created') || 'Created'}</p>
+                  <p className="font-medium">{t('admin.crm.common.updated') || 'Updated'}</p>
+            <h3 className="text-lg font-bold mb-2">{t('admin.crm.contacts.delete_confirm_title') || 'Delete Contact?'}</h3>
+              {t('admin.crm.contacts.delete_confirm_message') || 'This action cannot be undone. Are you sure you want to delete this contact?'}
+                {t('admin.crm.common.cancel') || 'Cancel'}
+                {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : t('admin.crm.common.delete') || 'Delete'}
+            <h3 className="text-lg font-bold mb-4">{t('admin.crm.opportunities.new') || 'New Opportunity'}</h3>
+                <label className="block text-sm text-gray-600 mb-1">{t('admin.crm.opportunities.name') || 'Name'}</label>
+                <label className="block text-sm text-gray-600 mb-1">{t('admin.crm.opportunities.value') || 'Value (ג‚¬)'}</label>
+                <label className="block text-sm text-gray-600 mb-1">{t('admin.crm.opportunities.probability') || 'Probability (%)'}</label>
+                <label className="block text-sm text-gray-600 mb-1">{t('admin.crm.opportunities.stage') || 'Stage'}</label>
+                  <option value="qualification">{t('admin.crm.opportunities.stages.qualification') || 'Qualification'}</option>
+                  <option value="proposal">{t('admin.crm.opportunities.stages.proposal') || 'Proposal'}</option>
+                  <option value="negotiation">{t('admin.crm.opportunities.stages.negotiation') || 'Negotiation'}</option>
+                  {t('admin.crm.common.cancel') || 'Cancel'}
+                  {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : t('admin.crm.common.create') || 'Create'}
+      toast.error(t('admin.crm.errors.load_failed', 'Erreur de chargement'));
+      toast.error(t('admin.crm.errors.load_failed', 'Erreur de chargement'));
+      toast.error(t('admin.crm.emails.errors.load_failed') || 'Failed to load email history');
+      toast.error(t('admin.crm.emails.errors.templates_load_failed') || 'Failed to load templates');
+    if (!window.confirm(t('admin.crm.emails.delete_confirm') || 'Delete this email record?')) return;
+      toast.success(t('admin.crm.emails.deleted') || 'Email record deleted');
+      toast.error(t('admin.crm.emails.errors.delete_failed') || 'Failed to delete email record');
+    toast.success(t('admin.crm.common.refreshed') || 'Data refreshed');
+            placeholder={t('admin.crm.common.search') || 'Search emails...'}
+            <p className="mt-2 text-gray-600">{t('admin.crm.common.loading') || 'Loading...'}</p>
+            {t('admin.crm.emails.empty_title') || 'No emails sent yet'}
+            {t('admin.crm.emails.empty_description') || 'Emails sent to leads will appear here'}
+                  {t('admin.crm.emails.columns.recipient') || 'Recipient'}
+                  {t('admin.crm.emails.columns.subject') || 'Subject'}
+                  {t('admin.crm.emails.columns.date') || 'Date'}
+                  {t('admin.crm.emails.columns.status') || 'Status'}
+                  {t('admin.crm.emails.columns.sent_by') || 'Sent By'}
+                  {t('admin.crm.common.actions') || 'Actions'}
+                      {t(`admin.crm.emails.status.${email.status}`) || email.status || 'sent'}
+                        title={t('admin.crm.common.view') || 'View'}
+                        title={t('admin.crm.common.delete') || 'Delete'}
+        {t('admin.crm.emails.received_title') || 'Received Emails'}
+        {t('admin.crm.emails.received_description') || 'Email reception is not yet implemented in this CRM'}
+          {t('admin.crm.emails.templates_info') || 'These templates are available in English, French, and Hebrew. They can be used when composing new emails.'}
+            <p className="mt-2 text-gray-600">{t('admin.crm.common.loading') || 'Loading...'}</p>
+            {t('admin.crm.emails.no_templates') || 'No templates available'}
+            {t('admin.crm.emails.no_templates_description') || 'Email templates will appear here'}
+                        {t('admin.crm.emails.available_languages') || 'Available in:'}
+                  {t('admin.crm.common.view') || 'View'}
+        <title>{t('admin.crm.emails.title') || 'Emails'} | IGV CRM</title>
+                    {t('admin.crm.emails.title') || 'Emails'}
+                    {activeTab === 'sent' && `${emails.length} ${t('admin.crm.emails.sent_count') || 'emails sent'}`}
+                    {activeTab === 'received' && t('admin.crm.emails.received_tab') || 'Inbox'}
+                    {activeTab === 'templates' && `${templates.length} ${t('admin.crm.emails.templates_count') || 'templates available'}`}
+                    {t('admin.crm.common.refresh') || 'Refresh'}
+                {renderTabButton('sent', <Send className="w-4 h-4" />, 'admin.crm.emails.tabs.sent')}
+                {renderTabButton('received', <Inbox className="w-4 h-4" />, 'admin.crm.emails.tabs.received')}
+                {renderTabButton('templates', <FileText className="w-4 h-4" />, 'admin.crm.emails.tabs.templates')}
+                    ? (t('admin.crm.emails.template_detail') || 'Template Details')
+                    : (t('admin.crm.emails.detail_title') || 'Email Details')}
+                      {selectedEmail.isTemplate ? 'Name:' : t('admin.crm.emails.columns.subject') || 'Subject'}:
+                          <span className="text-sm text-gray-600">{t('admin.crm.emails.columns.recipient') || 'To'}:</span>
+                          <span className="text-sm text-gray-600">{t('admin.crm.emails.columns.date') || 'Date'}:</span>
+                          <span className="text-sm text-gray-600">{t('admin.crm.emails.columns.status') || 'Status'}:</span>
+                            {t(`admin.crm.emails.status.${selectedEmail.status}`) || selectedEmail.status || 'sent'}
+                            <span className="text-sm text-gray-600">{t('admin.crm.emails.columns.sent_by') || 'Sent By'}:</span>
+                      <span>{t('admin.crm.common.reference') || 'Reference'}:</span> {selectedEmail.request_id}
+                  {t('admin.crm.common.close') || 'Close'}
+      toast.error(t('admin.crm.errors.load_failed') || 'Failed to load lead');
+      toast.success(t('admin.crm.leads.updated') || 'Lead updated successfully');
+      toast.error(t('admin.crm.errors.update_failed') || 'Failed to update lead');
+      toast.success(t('admin.crm.leads.deleted') || 'Lead deleted successfully');
+      toast.error(t('admin.crm.errors.delete_failed') || 'Failed to delete lead');
+      toast.success(t('admin.crm.leads.note_added') || 'Note added');
+      toast.error(t('admin.crm.errors.note_failed') || 'Failed to add note');
+      toast.success(t('admin.crm.leads.converted') || 'Lead converted to contact');
+      toast.error(t('admin.crm.errors.convert_failed') || 'Failed to convert lead');
+      toast.success(t('admin.crm.opportunities.created') || 'Opportunity created');
+      toast.error(t('admin.crm.errors.create_failed') || 'Failed to create opportunity');
+          <p className="text-gray-600 mb-4">{t('admin.crm.leads.not_found') || 'Lead not found'}</p>
+            {t('admin.crm.common.back') || 'Back to CRM'}
+                <p className="text-sm text-gray-600">{lead.brand_name || t('admin.crm.leads.no_brand') || 'No brand'}</p>
+                      {t('admin.crm.common.edit') || 'Edit'}
+                      {t('admin.crm.common.delete') || 'Delete'}
+                      {t('admin.crm.common.save') || 'Save'}
+                      {t('admin.crm.common.cancel') || 'Cancel'}
+            <h2 className="font-semibold mb-4">{t('admin.crm.leads.details.status_priority') || 'Status & Priority'}</h2>
+                <label className="block text-sm text-gray-600 mb-1">{t('admin.crm.leads.columns.status') || 'Status'}</label>
+                    {statuses.map(s => <option key={s} value={s}>{t(`admin.crm.statuses.${s}`) || s}</option>)}
+                <label className="block text-sm text-gray-600 mb-1">{t('admin.crm.leads.columns.priority') || 'Priority'}</label>
+                    {priorities.map(p => <option key={p} value={p}>{t(`admin.crm.priorities.${p}`) || `Priority ${p}`}</option>)}
+            <h2 className="font-semibold mb-4">{t('admin.crm.leads.details.contact_info') || 'Contact Information'}</h2>
+                    <p className="text-sm text-gray-600">{t('admin.crm.leads.columns.email') || 'Email'}</p>
+                    <p className="text-sm text-gray-600">{t('admin.crm.leads.phone') || 'Phone'}</p>
+                    <p className="text-sm text-gray-600">{t('admin.crm.leads.columns.brand') || 'Brand'}</p>
+                    <p className="text-sm text-gray-600">{t('admin.crm.leads.columns.sector') || 'Sector'}</p>
+                {t('admin.crm.leads.mini_analysis') || 'Mini-Analyse IGV'}
+                    <strong>{t('admin.crm.leads.generated_on') || 'Gֳ©nֳ©rֳ©e le'} :</strong>{' '}
+                      <strong>{t('admin.crm.leads.language') || 'Langue'} :</strong>{' '}
+              <h2 className="font-semibold mb-4">{t('admin.crm.leads.details.additional') || 'Additional Information'}</h2>
+                  <label className="block text-sm text-gray-600 mb-1">{t('admin.crm.leads.columns.name') || 'Contact Name'}</label>
+                  <label className="block text-sm text-gray-600 mb-1">{t('admin.crm.leads.target_city') || 'Target City'}</label>
+              <h2 className="font-semibold text-blue-900 mb-2">{t('admin.crm.leads.details.focus_notes') || 'Focus Notes'}</h2>
+              {t('admin.crm.leads.details.notes') || 'Notes'}
+                <span className="text-sm text-gray-500">{t('admin.crm.common.loading') || 'Loading...'}</span>
+                    <p className="text-gray-500 text-sm">{t('admin.crm.common.no_notes') || 'No notes yet'}</p>
+                    placeholder={t('admin.crm.leads.add_note_placeholder') || 'Add a note...'} 
+                    {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : t('admin.crm.common.add') || 'Add'}
+              <h2 className="font-semibold mb-4">{t('admin.crm.leads.actions') || 'Actions'}</h2>
+                  {t('admin.crm.leads.convert_to_contact') || 'Convert to Contact'}
+                  {t('admin.crm.leads.create_opportunity') || 'Create Opportunity'}
+                <p className="font-medium">{t('admin.crm.common.created') || 'Created'}</p>
+                  <p className="font-medium">{t('admin.crm.common.updated') || 'Updated'}</p>
+                <p className="font-medium">{t('admin.crm.common.language') || 'Language'}</p>
+            <h3 className="text-lg font-bold mb-2">{t('admin.crm.leads.delete_confirm_title') || 'Delete Lead?'}</h3>
+              {t('admin.crm.leads.delete_confirm_message') || 'This action cannot be undone. Are you sure you want to delete this lead?'}
+                {t('admin.crm.common.cancel') || 'Cancel'}
+                {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : t('admin.crm.common.delete') || 'Delete'}
+            <h3 className="text-lg font-bold mb-4">{t('admin.crm.opportunities.new') || 'New Opportunity'}</h3>
+                <label className="block text-sm text-gray-600 mb-1">{t('admin.crm.opportunities.name') || 'Name'}</label>
+                <label className="block text-sm text-gray-600 mb-1">{t('admin.crm.opportunities.value') || 'Value (ג‚¬)'}</label>
+                <label className="block text-sm text-gray-600 mb-1">{t('admin.crm.opportunities.probability') || 'Probability (%)'}</label>
+                <label className="block text-sm text-gray-600 mb-1">{t('admin.crm.opportunities.stage') || 'Stage'}</label>
+                  <option value="qualification">{t('admin.crm.opportunities.stages.qualification') || 'Qualification'}</option>
+                  <option value="proposal">{t('admin.crm.opportunities.stages.proposal') || 'Proposal'}</option>
+                  <option value="negotiation">{t('admin.crm.opportunities.stages.negotiation') || 'Negotiation'}</option>
+                  {t('admin.crm.common.cancel') || 'Cancel'}
+                  {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : t('admin.crm.common.create') || 'Create'}
+      toast.error(t('admin.crm.errors.lead_not_found') || 'Lead not found');
+      toast.error(t('admin.crm.errors.load_failed'));
+          {t('admin.crm.leads.title')}
+          {t('admin.crm.leads.subtitle')}
+      toast.error(t('admin.crm.opportunities.errors.load_failed') || 'Failed to load opportunities');
+    if (!window.confirm(t('admin.crm.opportunities.delete_confirm') || 'Delete this opportunity?')) return;
+      toast.success(t('admin.crm.opportunities.deleted') || 'Opportunity deleted');
+      toast.error(t('admin.crm.opportunities.errors.delete_failed') || 'Failed to delete opportunity');
+      toast.success(t('admin.crm.opportunities.updated') || 'Opportunity updated');
+      toast.error(t('admin.crm.opportunities.errors.update_failed') || 'Failed to update opportunity');
+        <title>{t('admin.crm.opportunities.title') || 'Opportunities'} | IGV CRM</title>
+                  {t('admin.crm.opportunities.title') || 'Opportunities'}
+                  {opportunities.length} {t('admin.crm.opportunities.count') || 'opportunities'}
+                    placeholder={t('admin.crm.common.search') || 'Search...'}
+              <p className="text-gray-600">{t('admin.crm.opportunities.empty') || 'No opportunities yet'}</p>
+                      {t('admin.crm.opportunities.columns.name') || 'Name'}
+                      {t('admin.crm.opportunities.columns.value') || 'Value'}
+                      {t('admin.crm.opportunities.columns.stage') || 'Stage'}
+                      {t('admin.crm.opportunities.columns.probability') || 'Probability'}
+                      {t('admin.crm.opportunities.columns.created') || 'Created'}
+                      {t('admin.crm.common.actions') || 'Actions'}
+                          {t(`admin.crm.opportunities.stages.${opp.stage}`) || opp.stage}
+                            title={t('admin.crm.common.edit') || 'Edit'}
+                            title={t('admin.crm.common.delete') || 'Delete'}
+                {t('admin.crm.opportunities.edit') || 'Edit Opportunity'}
+                    {t('admin.crm.opportunities.columns.name') || 'Name'}
+                    {t('admin.crm.opportunities.columns.value') || 'Value (ג‚¬)'}
+                    {t('admin.crm.opportunities.columns.stage') || 'Stage'}
+                    <option value="qualification">{t('admin.crm.opportunities.stages.qualification') || 'Qualification'}</option>
+                    <option value="proposal">{t('admin.crm.opportunities.stages.proposal') || 'Proposal'}</option>
+                    <option value="negotiation">{t('admin.crm.opportunities.stages.negotiation') || 'Negotiation'}</option>
+                    <option value="closed_won">{t('admin.crm.opportunities.stages.closed_won') || 'Closed Won'}</option>
+                    <option value="closed_lost">{t('admin.crm.opportunities.stages.closed_lost') || 'Closed Lost'}</option>
+                    {t('admin.crm.opportunities.columns.probability') || 'Probability (%)'}
+                  {t('admin.crm.common.cancel') || 'Cancel'}
+                  {t('admin.crm.common.save') || 'Save'}
+      toast.error(t('admin.crm.settings.errors.load_failed') || 'Failed to load settings');
+      toast.success(t('admin.crm.settings.users.updated') || 'User updated');
+      toast.error(t('admin.crm.settings.users.errors.update_failed') || 'Failed to update user');
+      toast.success(t('admin.crm.settings.tags.created') || 'Tag created');
+      toast.error(t('admin.crm.settings.tags.errors.create_failed') || 'Failed to create tag');
+    if (!window.confirm(t('admin.crm.settings.tags.delete_confirm') || 'Delete this tag?')) return;
+      toast.success(t('admin.crm.settings.tags.deleted') || 'Tag deleted');
+      toast.error(t('admin.crm.settings.tags.errors.delete_failed') || 'Failed to delete tag');
+      toast.success(t('admin.crm.settings.stages.created') || 'Stage created');
+      toast.error(t('admin.crm.settings.stages.errors.create_failed') || 'Failed to create stage');
+      toast.success(t('admin.crm.settings.stages.updated') || 'Stage updated');
+      toast.error(t('admin.crm.settings.stages.errors.update_failed') || 'Failed to update stage');
+    if (!window.confirm(t('admin.crm.settings.stages.delete_confirm') || 'Delete this stage?')) return;
+      toast.success(t('admin.crm.settings.stages.deleted') || 'Stage deleted');
+      toast.error(t('admin.crm.settings.stages.errors.delete_failed') || 'Failed to delete stage');
+        <title>{t('admin.crm.settings.title') || 'Settings'} | IGV CRM</title>
+                {t('admin.crm.settings.title') || 'Settings'}
+                {t('admin.crm.settings.subtitle') || 'Manage users, tags, and pipeline stages'}
+                { id: 'users', icon: Users, label: t('admin.crm.settings.tabs.users') || 'Users' },
+                { id: 'tags', icon: Tag, label: t('admin.crm.settings.tabs.tags') || 'Tags' },
+                { id: 'stages', icon: Layers, label: t('admin.crm.settings.tabs.stages') || 'Pipeline Stages' }
+                      {t('admin.crm.settings.users.columns.name') || 'Name'}
+                      {t('admin.crm.settings.users.columns.email') || 'Email'}
+                      {t('admin.crm.settings.users.columns.role') || 'Role'}
+                      {t('admin.crm.settings.users.columns.status') || 'Status'}
+                      {t('admin.crm.settings.users.columns.created') || 'Created'}
+                <h3 className="font-semibold mb-4">{t('admin.crm.settings.tags.add') || 'Add Tag'}</h3>
+                      {t('admin.crm.settings.tags.columns.name') || 'Name'}
+                      {t('admin.crm.settings.tags.columns.color') || 'Color'}
+                    {t('admin.crm.common.add') || 'Add'}
+                        {t('admin.crm.settings.tags.columns.name') || 'Name'}
+                        {t('admin.crm.settings.tags.columns.color') || 'Color'}
+                        {t('admin.crm.settings.tags.columns.count') || 'Usage Count'}
+                        {t('admin.crm.common.actions') || 'Actions'}
+                <h3 className="font-semibold mb-4">{t('admin.crm.settings.stages.add') || 'Add Stage'}</h3>
+                      {t('admin.crm.settings.stages.columns.name') || 'Name'}
+                    {t('admin.crm.common.add') || 'Add'}
+                        {t('admin.crm.settings.stages.columns.name') || 'Name'}
+                        {t('admin.crm.common.actions') || 'Actions'}

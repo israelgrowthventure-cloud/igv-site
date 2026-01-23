@@ -1,0 +1,162 @@
+{
+  "config": {
+    "configFile": "C:\\Users\\PC\\Desktop\\IGV\\igv site\\igv-site\\playwright.config.js",
+    "rootDir": "C:/Users/PC/Desktop/IGV/igv site/igv-site/tests",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "html",
+        {
+          "outputFolder": "audit_out/playwright-report"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "audit_out/test-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "quiet": false,
+    "projects": [
+      {
+        "outputDir": "C:/Users/PC/Desktop/IGV/igv site/igv-site/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "C:/Users/PC/Desktop/IGV/igv site/igv-site/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 60000
+      }
+    ],
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.57.0",
+    "workers": 4,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "test_activities_visual.spec.js",
+      "file": "test_activities_visual.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Activities Page - Notes Display",
+          "file": "test_activities_visual.spec.js",
+          "line": 12,
+          "column": 6,
+          "specs": [
+            {
+              "title": "Notes show content, lead names, and are clickable",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 10534,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "🎯 Testing Activities page notes display...\n"
+                        },
+                        {
+                          "text": "\n📋 STEP 1: Login admin\n"
+                        },
+                        {
+                          "text": "✅ Logged in successfully\n"
+                        },
+                        {
+                          "text": "\n📋 STEP 2: Navigate to Activities page\n"
+                        },
+                        {
+                          "text": "\n📋 STEP 3: Capture Activities page screenshot\n"
+                        },
+                        {
+                          "text": "📸 Screenshot saved: audit_out/activities_notes_display.png\n"
+                        },
+                        {
+                          "text": "\n📋 STEP 4: Verify notes display\n"
+                        },
+                        {
+                          "text": "📊 Found 0 activity items on page\n"
+                        },
+                        {
+                          "text": "🔗 Found 0 external link icons\n"
+                        },
+                        {
+                          "text": "📝 Found 0 note labels\n"
+                        },
+                        {
+                          "text": "\n✅ Activities page captured. Check screenshots for visual verification.\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-01-23T00:26:43.848Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "21b217d9fd5f529761f6-848e71245ae970e503a3",
+              "file": "test_activities_visual.spec.js",
+              "line": 14,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-01-23T00:26:41.066Z",
+    "duration": 16133.158999999998,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

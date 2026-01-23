@@ -84,7 +84,7 @@ const Pipeline = () => {
           <div className="max-w-7xl mx-auto px-4 py-4">
             <div className="flex items-center gap-4">
               <button 
-                onClick={() => navigate('/admin/crm')} 
+                onClick={() => navigate('/admin/crm/pipeline')} 
                 className="p-2 hover:bg-gray-100 rounded-lg"
               >
                 <ArrowLeft className="w-5 h-5" />

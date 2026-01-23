@@ -49,7 +49,7 @@ const LeadDetail = () => {
     } catch (error) {
       console.error('Error fetching lead:', error);
       toast.error(t('admin.crm.errors.load_failed') || 'Failed to load lead');
-      navigate('/admin/crm');
+      navigate('/admin/crm/leads');
     } finally {
       setLoading(false);
     }
@@ -88,7 +88,7 @@ const LeadDetail = () => {
       setSaving(true);
       await api.delete(`/api/crm/leads/${id}`);
       toast.success(t('admin.crm.leads.deleted') || 'Lead deleted successfully');
-      navigate('/admin/crm');
+      navigate('/admin/crm/leads');
     } catch (error) {
       toast.error(t('admin.crm.errors.delete_failed') || 'Failed to delete lead');
     } finally {
@@ -117,7 +117,7 @@ const LeadDetail = () => {
       setSaving(true);
       await api.post(`/api/crm/leads/${id}/convert-to-contact`);
       toast.success(t('admin.crm.leads.converted') || 'Lead converted to contact');
-      navigate('/admin/crm');
+      navigate('/admin/crm/leads');
     } catch (error) {
       toast.error(t('admin.crm.errors.convert_failed') || 'Failed to convert lead');
     } finally {
@@ -139,7 +139,7 @@ const LeadDetail = () => {
       toast.success(t('admin.crm.opportunities.created') || 'Opportunity created');
       setShowOppModal(false);
       setOppForm({ name: '', value: '', probability: 50, stage: 'qualification' });
-      navigate('/admin/crm');
+      navigate('/admin/crm/leads');
     } catch (error) {
       toast.error(t('admin.crm.errors.create_failed') || 'Failed to create opportunity');
     } finally {
@@ -160,8 +160,8 @@ const LeadDetail = () => {
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
           <p className="text-gray-600 mb-4">{t('admin.crm.leads.not_found') || 'Lead not found'}</p>
-          <button onClick={() => navigate('/admin/crm')} className="text-blue-600 hover:underline">
-            {t('admin.crm.common.back') || 'Back to CRM'}
+          <button onClick={() => navigate('/admin/crm/leads')} className="text-blue-600 hover:underline">
+            {t('crm.common.back') || 'Back to CRM'}
           </button>
         </div>
       </div>
@@ -181,7 +181,7 @@ const LeadDetail = () => {
           <div className="max-w-4xl mx-auto px-4 py-4">
             <div className="flex items-center gap-4">
               <button 
-                onClick={() => navigate('/admin/crm')} 
+                onClick={() => navigate('/admin/crm/leads')} 
                 className="p-2 hover:bg-gray-100 rounded-lg"
               >
                 <ArrowLeft className="w-5 h-5" />
@@ -198,14 +198,14 @@ const LeadDetail = () => {
                       className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                     >
                       <Edit2 className="w-4 h-4" />
-                      {t('admin.crm.common.edit') || 'Edit'}
+                      {t('crm.common.edit') || 'Edit'}
                     </button>
                     <button 
                       onClick={() => setShowDeleteConfirm(true)} 
                       className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
                     >
                       <Trash2 className="w-4 h-4" />
-                      {t('admin.crm.common.delete') || 'Delete'}
+                      {t('crm.common.delete') || 'Delete'}
                     </button>
                   </>
                 ) : (
@@ -216,14 +216,14 @@ const LeadDetail = () => {
                       className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50"
                     >
                       {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                      {t('admin.crm.common.save') || 'Save'}
+                      {t('crm.common.save') || 'Save'}
                     </button>
                     <button 
                       onClick={() => { setEditing(false); setEditData(lead); }} 
                       className="flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-gray-50"
                     >
                       <X className="w-4 h-4" />
-                      {t('admin.crm.common.cancel') || 'Cancel'}
+                      {t('crm.common.cancel') || 'Cancel'}
                     </button>
                   </>
                 )}
@@ -415,7 +415,7 @@ const LeadDetail = () => {
             {notesLoading ? (
               <div className="flex items-center gap-2 py-4">
                 <Loader2 className="w-4 h-4 animate-spin text-gray-400" />
-                <span className="text-sm text-gray-500">{t('admin.crm.common.loading') || 'Loading...'}</span>
+                <span className="text-sm text-gray-500">{t('crm.common.loading') || 'Loading...'}</span>
               </div>
             ) : (
               <>
@@ -428,7 +428,7 @@ const LeadDetail = () => {
                       </p>
                     </div>
                   )) : (
-                    <p className="text-gray-500 text-sm">{t('admin.crm.common.no_notes') || 'No notes yet'}</p>
+                    <p className="text-gray-500 text-sm">{t('crm.common.no_notes') || 'No notes yet'}</p>
                   )}
                 </div>
                 <div className="flex gap-2">
@@ -444,7 +444,7 @@ const LeadDetail = () => {
                     disabled={!noteText.trim() || saving} 
                     className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
                   >
-                    {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : t('admin.crm.common.add') || 'Add'}
+                    {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : t('crm.common.add') || 'Add'}
                   </button>
                 </div>
               </>
@@ -480,17 +480,17 @@ const LeadDetail = () => {
           <div className="bg-gray-100 rounded-lg p-4 text-sm text-gray-600">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div>
-                <p className="font-medium">{t('admin.crm.common.created') || 'Created'}</p>
+                <p className="font-medium">{t('crm.common.created') || 'Created'}</p>
                 <p>{new Date(lead.created_at).toLocaleString()}</p>
               </div>
               {lead.updated_at && (
                 <div>
-                  <p className="font-medium">{t('admin.crm.common.updated') || 'Updated'}</p>
+                  <p className="font-medium">{t('crm.common.updated') || 'Updated'}</p>
                   <p>{new Date(lead.updated_at).toLocaleString()}</p>
                 </div>
               )}
               <div>
-                <p className="font-medium">{t('admin.crm.common.language') || 'Language'}</p>
+                <p className="font-medium">{t('crm.common.language') || 'Language'}</p>
                 <p>{lead.language || 'N/A'}</p>
               </div>
               <div>
@@ -515,14 +515,14 @@ const LeadDetail = () => {
                 onClick={() => setShowDeleteConfirm(false)} 
                 className="px-4 py-2 border rounded-lg hover:bg-gray-50"
               >
-                {t('admin.crm.common.cancel') || 'Cancel'}
+                {t('crm.common.cancel') || 'Cancel'}
               </button>
               <button 
                 onClick={handleDelete} 
                 disabled={saving}
                 className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50"
               >
-                {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : t('admin.crm.common.delete') || 'Delete'}
+                {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : t('crm.common.delete') || 'Delete'}
               </button>
             </div>
           </div>
@@ -584,14 +584,14 @@ const LeadDetail = () => {
                   onClick={() => setShowOppModal(false)} 
                   className="px-4 py-2 border rounded-lg hover:bg-gray-50"
                 >
-                  {t('admin.crm.common.cancel') || 'Cancel'}
+                  {t('crm.common.cancel') || 'Cancel'}
                 </button>
                 <button 
                   type="submit"
                   disabled={saving}
                   className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
                 >
-                  {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : t('admin.crm.common.create') || 'Create'}
+                  {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : t('crm.common.create') || 'Create'}
                 </button>
               </div>
             </form>

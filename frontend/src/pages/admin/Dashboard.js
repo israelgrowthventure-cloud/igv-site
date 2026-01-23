@@ -188,7 +188,7 @@ const OverviewTab = ({ stats, t, navigate }) => (
         <ArrowRight className="w-5 h-5" />
       </button>
       <button
-        onClick={() => navigate('/admin/crm')}
+        onClick={() => navigate('/admin/crm/dashboard')}
         className="flex items-center justify-between p-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl hover:from-blue-600 hover:to-blue-700 transition shadow-lg"
       >
         <div className="flex items-center gap-3">
@@ -198,7 +198,7 @@ const OverviewTab = ({ stats, t, navigate }) => (
         <ArrowRight className="w-5 h-5" />
       </button>
       <button
-        onClick={() => navigate('/admin/crm?tab=contacts')}
+        onClick={() => navigate('/admin/crm/contacts')}
         className="flex items-center justify-between p-4 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl hover:from-green-600 hover:to-green-700 transition shadow-lg"
       >
         <div className="flex items-center gap-3">
@@ -283,7 +283,7 @@ const LeadsTab = ({ leads, t, navigate }) => (
     <div className="p-6 border-b border-gray-200 flex justify-between items-center">
       <h2 className="text-xl font-bold text-gray-900">{t('admin.leads.title') || 'Liste des prospects'}</h2>
       <button 
-        onClick={() => navigate('/admin/crm')}
+        onClick={() => navigate('/admin/crm/leads')}
         className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm"
       >
         {t('admin.leads.viewAll') || 'Voir tout le CRM'}
@@ -352,7 +352,7 @@ const ContactsTab = ({ t, navigate }) => (
     <div className="flex justify-between items-center mb-4">
       <h2 className="text-xl font-bold text-gray-900">{t('admin.contacts.title') || 'Contacts'}</h2>
       <button 
-        onClick={() => navigate('/admin/crm')}
+        onClick={() => navigate('/admin/crm/contacts')}
         className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm"
       >
         {t('admin.contacts.viewAll') || 'Gérer les contacts'}

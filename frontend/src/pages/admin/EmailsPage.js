@@ -97,7 +97,7 @@ const EmailsPage = () => {
     } else if (activeTab === 'templates') {
       fetchTemplates();
     }
-    toast.success(t('admin.crm.common.refreshed') || 'Data refreshed');
+    toast.success(t('crm.common.refreshed') || 'Data refreshed');
   };
 
   const getStatusColor = (status) => {
@@ -154,7 +154,7 @@ const EmailsPage = () => {
           <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
           <input
             type="text"
-            placeholder={t('admin.crm.common.search') || 'Search emails...'}
+            placeholder={t('crm.common.search') || 'Search emails...'}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10 pr-4 py-2 border rounded-lg w-full max-w-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -167,7 +167,7 @@ const EmailsPage = () => {
         <div className="flex items-center justify-center py-12">
           <div className="text-center">
             <Loader2 className="w-8 h-8 animate-spin text-blue-600 mx-auto" />
-            <p className="mt-2 text-gray-600">{t('admin.crm.common.loading') || 'Loading...'}</p>
+            <p className="mt-2 text-gray-600">{t('crm.common.loading') || 'Loading...'}</p>
           </div>
         </div>
       ) : emails.length === 0 ? (
@@ -201,7 +201,7 @@ const EmailsPage = () => {
                   {t('admin.crm.emails.columns.sent_by') || 'Sent By'}
                 </th>
                 <th className="px-4 py-3 text-right text-sm font-medium text-gray-600">
-                  {t('admin.crm.common.actions') || 'Actions'}
+                  {t('crm.common.actions') || 'Actions'}
                 </th>
               </tr>
             </thead>
@@ -250,14 +250,14 @@ const EmailsPage = () => {
                       <button
                         onClick={() => setSelectedEmail(email)}
                         className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                        title={t('admin.crm.common.view') || 'View'}
+                        title={t('crm.common.view') || 'View'}
                       >
                         <Eye className="w-4 h-4 text-gray-600" />
                       </button>
                       <button
                         onClick={() => handleDelete(email.id || email._id || email.email_id)}
                         className="p-2 hover:bg-red-50 rounded-lg transition-colors"
-                        title={t('admin.crm.common.delete') || 'Delete'}
+                        title={t('crm.common.delete') || 'Delete'}
                       >
                         <Trash2 className="w-4 h-4 text-red-600" />
                       </button>
@@ -297,7 +297,7 @@ const EmailsPage = () => {
         <div className="flex items-center justify-center py-12">
           <div className="text-center">
             <Loader2 className="w-8 h-8 animate-spin text-blue-600 mx-auto" />
-            <p className="mt-2 text-gray-600">{t('admin.crm.common.loading') || 'Loading...'}</p>
+            <p className="mt-2 text-gray-600">{t('crm.common.loading') || 'Loading...'}</p>
           </div>
         </div>
       ) : templates.length === 0 ? (
@@ -353,7 +353,7 @@ const EmailsPage = () => {
                   onClick={() => setSelectedEmail({ ...template, isTemplate: true })}
                   className="px-3 py-1 border rounded-lg hover:bg-gray-50 text-sm"
                 >
-                  {t('admin.crm.common.view') || 'View'}
+                  {t('crm.common.view') || 'View'}
                 </button>
               </div>
             </div>
@@ -394,7 +394,7 @@ const EmailsPage = () => {
                     className="flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-gray-50 transition-colors"
                   >
                     <RefreshCw className="w-4 h-4" />
-                    {t('admin.crm.common.refresh') || 'Refresh'}
+                    {t('crm.common.refresh') || 'Refresh'}
                   </button>
                 </div>
               </div>
@@ -516,7 +516,7 @@ const EmailsPage = () => {
                   {/* Reference */}
                   {selectedEmail.request_id && (
                     <div className="text-sm text-gray-500">
-                      <span>{t('admin.crm.common.reference') || 'Reference'}:</span> {selectedEmail.request_id}
+                      <span>{t('crm.common.reference') || 'Reference'}:</span> {selectedEmail.request_id}
                     </div>
                   )}
                 </div>
@@ -528,7 +528,7 @@ const EmailsPage = () => {
                   onClick={() => setSelectedEmail(null)}
                   className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg transition-colors"
                 >
-                  {t('admin.crm.common.close') || 'Close'}
+                  {t('crm.common.close') || 'Close'}
                 </button>
               </div>
             </div>

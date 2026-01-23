@@ -132,7 +132,7 @@ const ActivitiesPage = () => {
                   className="flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-gray-50"
                 >
                   <RefreshCw className="w-4 h-4" />
-                  {t('admin.crm.common.refresh') || 'Refresh'}
+                  {t('crm.common.refresh') || 'Refresh'}
                 </button>
                 <button
                   onClick={() => setShowAddModal(true)}
@@ -176,7 +176,7 @@ const ActivitiesPage = () => {
             <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             <input
               type="text"
-              placeholder={t('admin.crm.common.search') || 'Search activities...'}
+              placeholder={t('crm.common.search') || 'Search activities...'}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10 pr-4 py-2 border rounded-lg w-full max-w-md"
@@ -216,7 +216,7 @@ const ActivitiesPage = () => {
                       {t('admin.crm.activities.columns.status') || 'Status'}
                     </th>
                     <th className="px-4 py-3 text-right text-sm font-medium text-gray-600">
-                      {t('admin.crm.common.actions') || 'Actions'}
+                      {t('crm.common.actions') || 'Actions'}
                     </th>
                   </tr>
                 </thead>
@@ -271,7 +271,7 @@ const ActivitiesPage = () => {
                             <button
                               onClick={() => handleDelete(activity.id || activity.activity_id)}
                               className="p-2 hover:bg-red-50 rounded-lg"
-                              title={t('admin.crm.common.delete') || 'Delete'}
+                              title={t('crm.common.delete') || 'Delete'}
                             >
                               <Trash2 className="w-4 h-4 text-red-600" />
                             </button>
@@ -347,13 +347,13 @@ const ActivitiesPage = () => {
                     onClick={() => setShowAddModal(false)}
                     className="px-4 py-2 border rounded-lg hover:bg-gray-50"
                   >
-                    {t('admin.crm.common.cancel') || 'Cancel'}
+                    {t('crm.common.cancel') || 'Cancel'}
                   </button>
                   <button
                     type="submit"
                     className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                   >
-                    {t('admin.crm.common.create') || 'Create'}
+                    {t('crm.common.create') || 'Create'}
                   </button>
                 </div>
               </form>

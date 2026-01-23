@@ -63,6 +63,39 @@
     },
     "users": {
       "subtitle": "Manage users and their permissions"
+    },
+    "common": {
+      "back_to_list": "← Back to list",
+      "search": "Search...",
+      "filter": "Filter",
+      "filters": "Filters",
+      "refresh": "Refresh",
+      "refreshed": "Data refreshed",
+      "save": "Save",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "edit": "Edit",
+      "add": "Add",
+      "create": "Create",
+      "view": "View",
+      "close": "Close",
+      "back": "Back to CRM",
+      "loading": "Loading...",
+      "no_notes": "No notes",
+      "no_data": "No data",
+      "no_history": "No history",
+      "no_opportunities": "No opportunities",
+      "no_activities": "No activities",
+      "actions": "Actions",
+      "created": "Created",
+      "updated": "Updated",
+      "language": "Language",
+      "reference": "Reference",
+      "confirm_delete": "Are you sure you want to delete?",
+      "export": "Export",
+      "all_statuses": "All statuses",
+      "all_priorities": "All priorities",
+      "reset": "Reset"
     }
   },
   "hero": {
@@ -1021,6 +1054,297 @@
       },
       "pageOf": "Page {current} of {total}"
     },
-    "welcome": "Welcome"
+    "welcome": "Welcome",
+    "crm": {
+      "title": "IGV CRM",
+      "tabs": {
+        "dashboard": "Dashboard",
+        "leads": "Leads",
+        "contacts": "Contacts",
+        "pipeline": "Pipeline",
+        "settings": "Settings",
+        "opportunities": "Opportunities",
+        "activities": "Activities",
+        "emails": "Emails",
+        "users": "Users"
+      },
+      "dashboard": {
+        "leads_today": "Leads Today",
+        "leads_7d": "Leads (7 Days)",
+        "pipeline_value": "Pipeline Value",
+        "tasks_overdue": "Overdue Tasks",
+        "top_sources": "Top Sources",
+        "stage_distribution": "Stage Distribution",
+        "direct": "Direct"
+      },
+      "stages": {
+        "new": "New",
+        "contacted": "Contacted",
+        "qualified": "Qualified",
+        "proposal": "Proposal",
+        "negotiation": "Negotiation",
+        "won": "Won",
+        "lost": "Lost"
+      },
+      "statuses": {
+        "new": "New",
+        "contacted": "Contacted",
+        "qualified": "Qualified",
+        "nurturing": "Nurturing",
+        "converted": "Converted",
+        "lost": "Lost",
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "priorities": {
+        "1": "Low",
+        "2": "Normal",
+        "3": "High",
+        "4": "Urgent",
+        "5": "Critical",
+        "low": "Low",
+        "normal": "Normal",
+        "high": "High",
+        "urgent": "Urgent"
+      },
+      "common": {
+        "search": "Search...",
+        "filter": "Filter",
+        "refresh": "Refresh",
+        "refreshed": "Data refreshed",
+        "save": "Save",
+        "cancel": "Cancel",
+        "delete": "Delete",
+        "edit": "Edit",
+        "add": "Add",
+        "create": "Create",
+        "view": "View",
+        "close": "Close",
+        "back": "Back to CRM",
+        "loading": "Loading...",
+        "no_notes": "No notes",
+        "actions": "Actions",
+        "created": "Created",
+        "updated": "Updated",
+        "language": "Language",
+        "reference": "Reference"
+      },
+      "errors": {
+        "load_failed": "Load failed",
+        "update_failed": "Update failed",
+        "delete_failed": "Delete failed",
+        "create_failed": "Create failed",
+        "note_failed": "Failed to add note",
+        "convert_failed": "Conversion failed"
+      },
+      "leads": {
+        "updated": "Lead updated successfully",
+        "deleted": "Lead deleted successfully",
+        "note_added": "Note added",
+        "converted": "Lead converted to contact",
+        "not_found": "Lead not found",
+        "no_brand": "No brand",
+        "phone": "Phone",
+        "mini_analysis": "IGV Mini-Analysis",
+        "generated_on": "Generated on",
+        "language": "Language",
+        "target_city": "Target City",
+        "actions": "Actions",
+        "convert_to_contact": "Convert to Contact",
+        "create_opportunity": "Create Opportunity",
+        "add_note_placeholder": "Add a note...",
+        "delete_confirm_title": "Delete this lead?",
+        "delete_confirm_message": "This action cannot be undone. Are you sure you want to delete this lead?",
+        "columns": {
+          "name": "Contact Name",
+          "email": "Email",
+          "status": "Status",
+          "priority": "Priority",
+          "brand": "Brand",
+          "sector": "Sector"
+        },
+        "details": {
+          "status_priority": "Status & Priority",
+          "contact_info": "Contact Information",
+          "additional": "Additional Information",
+          "focus_notes": "Focus Notes",
+          "notes": "Notes"
+        }
+      },
+      "contacts": {
+        "updated": "Contact updated successfully",
+        "deleted": "Contact deleted successfully",
+        "not_found": "Contact not found",
+        "no_company": "No company"
+      },
+      "opportunities": {
+        "title": "Opportunities",
+        "count": "opportunities",
+        "empty": "No opportunities",
+        "edit": "Edit Opportunity",
+        "new": "New Opportunity",
+        "created": "Opportunity created",
+        "updated": "Opportunity updated",
+        "deleted": "Opportunity deleted",
+        "delete_confirm": "Delete this opportunity?",
+        "name": "Name",
+        "value": "Value (€)",
+        "probability": "Probability (%)",
+        "stage": "Stage",
+        "columns": {
+          "name": "Name",
+          "value": "Value",
+          "stage": "Stage",
+          "probability": "Probability",
+          "created": "Created"
+        },
+        "stages": {
+          "qualification": "Qualification",
+          "proposal": "Proposal",
+          "negotiation": "Negotiation",
+          "closed_won": "Closed Won",
+          "closed_lost": "Closed Lost"
+        },
+        "errors": {
+          "load_failed": "Failed to load opportunities",
+          "update_failed": "Failed to update",
+          "delete_failed": "Failed to delete"
+        }
+      },
+      "settings": {
+        "title": "Settings",
+        "subtitle": "Manage users, tags, and pipeline stages",
+        "tabs": {
+          "users": "Users",
+          "tags": "Tags",
+          "stages": "Pipeline Stages"
+        },
+        "users": {
+          "updated": "User updated",
+          "columns": {
+            "name": "Name",
+            "email": "Email",
+            "role": "Role",
+            "status": "Status",
+            "created": "Created"
+          },
+          "errors": {
+            "update_failed": "Failed to update user"
+          }
+        },
+        "tags": {
+          "add": "Add Tag",
+          "created": "Tag created",
+          "deleted": "Tag deleted",
+          "delete_confirm": "Delete this tag?",
+          "columns": {
+            "name": "Name",
+            "color": "Color",
+            "count": "Usage Count"
+          },
+          "errors": {
+            "create_failed": "Failed to create tag",
+            "delete_failed": "Failed to delete tag"
+          }
+        },
+        "stages": {
+          "add": "Add Stage",
+          "created": "Stage created",
+          "updated": "Stage updated",
+          "deleted": "Stage deleted",
+          "delete_confirm": "Delete this stage?",
+          "columns": {
+            "name": "Name"
+          },
+          "errors": {
+            "create_failed": "Failed to create stage",
+            "update_failed": "Failed to update stage",
+            "delete_failed": "Failed to delete stage"
+          }
+        },
+        "errors": {
+          "load_failed": "Failed to load settings"
+        }
+      },
+      "activities": {
+        "title": "Activities",
+        "empty": "No activities",
+        "new": "New Activity",
+        "created": "Activity created",
+        "updated": "Activity updated",
+        "deleted": "Activity deleted",
+        "completed": "Activity completed",
+        "types": {
+          "call": "Call",
+          "email": "Email",
+          "meeting": "Meeting",
+          "task": "Task",
+          "note": "Note"
+        },
+        "errors": {
+          "load_failed": "Failed to load activities"
+        }
+      },
+      "emails": {
+        "title": "Email History",
+        "history_title": "Email History",
+        "compose": "Compose Email",
+        "to": "To",
+        "sent_count": "emails sent",
+        "empty_title": "No emails sent",
+        "empty_description": "Emails sent to leads will appear here",
+        "detail_title": "Email Details",
+        "select_template": "Select Template",
+        "use": "Use",
+        "subject": "Subject",
+        "subject_placeholder": "Email subject...",
+        "message": "Message",
+        "message_placeholder": "Write your message here...",
+        "sending": "Sending...",
+        "send": "Send",
+        "sent_success": "Email sent successfully",
+        "send_failed": "Failed to send email",
+        "error_empty": "Please fill in subject and message",
+        "available_languages": "Available in:",
+        "columns": {
+          "recipient": "Recipient",
+          "subject": "Subject",
+          "date": "Date",
+          "status": "Status",
+          "sent_by": "Sent By",
+          "from": "From",
+          "to": "To"
+        },
+        "status": {
+          "sent": "Sent",
+          "delivered": "Delivered",
+          "opened": "Opened",
+          "clicked": "Clicked",
+          "failed": "Failed",
+          "bounced": "Bounced"
+        },
+        "refreshed": "Email history refreshed",
+        "deleted": "Email record deleted",
+        "tabs": {
+          "sent": "Sent",
+          "received": "Received",
+          "templates": "Templates"
+        },
+        "received_title": "Received Emails",
+        "received_description": "Email reception is not yet implemented in this CRM",
+        "received_tab": "Inbox",
+        "templates_count": "templates available",
+        "templates_info": "These templates are available in English, French, and Hebrew. They can be used when composing new emails.",
+        "no_templates": "No templates available",
+        "no_templates_description": "Email templates will appear here",
+        "template_detail": "Template Details",
+        "errors": {
+          "load_failed": "Failed to load email history",
+          "templates_load_failed": "Failed to load templates",
+          "delete_failed": "Failed to delete record"
+        },
+        "delete_confirm": "Delete this email record?"
+      }
+    }
   }
 }

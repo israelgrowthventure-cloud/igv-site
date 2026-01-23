@@ -274,7 +274,7 @@ const SettingsPage = () => {
                     className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2"
                   >
                     <Plus className="w-4 h-4" />
-                    {t('admin.crm.common.add') || 'Add'}
+                    {t('crm.common.add') || 'Add'}
                   </button>
                 </form>
               </div>
@@ -294,7 +294,7 @@ const SettingsPage = () => {
                         {t('admin.crm.settings.tags.columns.count') || 'Usage Count'}
                       </th>
                       <th className="px-4 py-3 text-right text-sm font-medium text-gray-600">
-                        {t('admin.crm.common.actions') || 'Actions'}
+                        {t('crm.common.actions') || 'Actions'}
                       </th>
                     </tr>
                   </thead>
@@ -400,7 +400,7 @@ const SettingsPage = () => {
                     className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2"
                   >
                     <Plus className="w-4 h-4" />
-                    {t('admin.crm.common.add') || 'Add'}
+                    {t('crm.common.add') || 'Add'}
                   </button>
                 </form>
               </div>
@@ -418,7 +418,7 @@ const SettingsPage = () => {
                       <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">Probability</th>
                       <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">Color</th>
                       <th className="px-4 py-3 text-right text-sm font-medium text-gray-600">
-                        {t('admin.crm.common.actions') || 'Actions'}
+                        {t('crm.common.actions') || 'Actions'}
                       </th>
                     </tr>
                   </thead>

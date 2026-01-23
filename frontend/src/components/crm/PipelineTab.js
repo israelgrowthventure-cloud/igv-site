@@ -198,7 +198,7 @@ const PipelineTab = ({ data, onRefresh, t }) => {
               return (
                 <DroppableStage key={stage} stage={stage} stageNames={stageNames} opps={opps} t={t}>
                   {opps.length === 0 ? (
-                    <p className="text-center text-gray-500 py-4">{t('admin.crm.common.no_data')}</p>
+                    <p className="text-center text-gray-500 py-4">{t('crm.common.no_data')}</p>
                   ) : (
                     <div className="space-y-2">
                       {opps.map(opp => (
@@ -280,7 +280,7 @@ const PipelineTab = ({ data, onRefresh, t }) => {
                     <p className="text-xs text-gray-500">{new Date(entry.changed_at).toLocaleString()} • {entry.changed_by}</p>
                   </div>
                 </div>
-              )) || <p className="text-gray-500 text-sm">{t('admin.crm.common.no_history')}</p>}
+              )) || <p className="text-gray-500 text-sm">{t('crm.common.no_history')}</p>}
             </div>
           </div>
         </div>

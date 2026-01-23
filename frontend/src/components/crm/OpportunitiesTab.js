@@ -88,7 +88,7 @@ const OpportunitiesTab = ({ data, onRefresh, searchTerm, setSearchTerm, t }) => 
   };
 
   const handleDelete = async (oppId) => {
-    if (!window.confirm(t('admin.crm.common.confirm_delete'))) return;
+    if (!window.confirm(t('crm.common.confirm_delete'))) return;
     try {
       setLoading(true);
       await api.delete(`/api/crm/opportunities/${oppId}`);
@@ -326,7 +326,7 @@ const OpportunitiesTab = ({ data, onRefresh, searchTerm, setSearchTerm, t }) => 
             className="flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-gray-50"
           >
             <Download className="w-4 h-4" />
-            {t('admin.crm.common.export')}
+            {t('crm.common.export')}
           </button>
           <button
             onClick={() => { resetForm(); setShowCreateModal(true); }}
@@ -354,7 +354,7 @@ const OpportunitiesTab = ({ data, onRefresh, searchTerm, setSearchTerm, t }) => 
                 <th className="px-4 py-3 text-left text-sm font-semibold">{t('admin.crm.opportunities.probability')}</th>
                 <th className="px-4 py-3 text-left text-sm font-semibold">{t('admin.crm.opportunities.stage')}</th>
                 <th className="px-4 py-3 text-left text-sm font-semibold">{t('admin.crm.opportunities.expected_close')}</th>
-                <th className="px-4 py-3 text-right text-sm font-semibold">{t('admin.crm.common.actions')}</th>
+                <th className="px-4 py-3 text-right text-sm font-semibold">{t('crm.common.actions')}</th>
               </tr>
             </thead>
             <tbody>

@@ -126,7 +126,7 @@ const LeadsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, sea
           label: "Voir l'opportunité",
           onClick: () => {
             // Use navigate for proper routing instead of window.location.hash
-            navigate('/admin/crm?tab=opportunities');
+            navigate('/admin/crm/opportunities');
           }
         }
       });
@@ -141,7 +141,7 @@ const LeadsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, sea
   };
 
   const handleDeleteLead = async (leadId) => {
-    if (!window.confirm(t('admin.crm.common.confirm_delete'))) {
+    if (!window.confirm(t('crm.common.confirm_delete'))) {
       return;
     }
     try {
@@ -228,7 +228,7 @@ const LeadsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, sea
           </div>
           <button onClick={() => setShowFilters(!showFilters)} className="flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-gray-50">
             <Filter className="w-4 h-4" />
-            {t('admin.crm.common.filters')}
+            {t('crm.common.filters')}
           </button>
           <button onClick={handleExportCSV} disabled={loadingAction} className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50">
             <Download className="w-4 h-4" />
@@ -243,15 +243,15 @@ const LeadsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, sea
         {showFilters && (
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 pt-4 border-t">
             <select value={filters.status || ''} onChange={(e) => setFilters({ ...filters, status: e.target.value })} className="px-3 py-2 border rounded-lg">
-              <option value="">{t('admin.crm.common.all_statuses')}</option>
+              <option value="">{t('crm.common.all_statuses')}</option>
               {statuses.map(s => <option key={s} value={s}>{t(`admin.crm.statuses.${s}`)}</option>)}
             </select>
             <select value={filters.priority || ''} onChange={(e) => setFilters({ ...filters, priority: e.target.value })} className="px-3 py-2 border rounded-lg">
-              <option value="">{t('admin.crm.common.all_priorities')}</option>
+              <option value="">{t('crm.common.all_priorities')}</option>
               {priorities.map(p => <option key={p} value={p}>{t(`admin.crm.priorities.${p}`)}</option>)}
             </select>
             <input type="text" placeholder={t('admin.crm.leads.filter_sector')} value={filters.sector || ''} onChange={(e) => setFilters({ ...filters, sector: e.target.value })} className="px-3 py-2 border rounded-lg" />
-            <button onClick={() => setFilters({})} className="px-4 py-2 border rounded-lg hover:bg-gray-50">{t('admin.crm.common.reset')}</button>
+            <button onClick={() => setFilters({})} className="px-4 py-2 border rounded-lg hover:bg-gray-50">{t('crm.common.reset')}</button>
           </div>
         )}
       </div>
@@ -337,7 +337,7 @@ const LeadsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, sea
                 className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 flex items-center gap-2"
               >
                 {loadingAction ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                {t('admin.crm.common.save')}
+                {t('crm.common.save')}
               </button>
               <button
                 type="button"
@@ -345,7 +345,7 @@ const LeadsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, sea
                 data-testid="btn-cancel-prospect"
                 className="px-6 py-2 border rounded-lg hover:bg-gray-50"
               >
-                {t('admin.crm.common.cancel')}
+                {t('crm.common.cancel')}
               </button>
             </div>
           </form>
@@ -428,7 +428,7 @@ const LeadsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, sea
                 className="flex items-center gap-2 text-blue-600 hover:text-blue-800 mb-2 text-sm"
               >
                 <ArrowLeft className="w-4 h-4" />
-                {t('admin.crm.common.back_to_list', 'Retour à la liste')}
+                {t('crm.common.back_to_list', 'Retour à la liste')}
               </button>
               <h2 className="text-2xl font-bold">
                 {selectedItem.contact_name || selectedItem.name || selectedItem.brand_name || selectedItem.email}
@@ -532,12 +532,12 @@ const LeadsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, sea
                   </div>
                 ))
               ) : (
-                <p className="text-gray-500 text-sm">{t('admin.crm.common.no_notes', 'Aucune note')}</p>
+                <p className="text-gray-500 text-sm">{t('crm.common.no_notes', 'Aucune note')}</p>
               )}
             </div>
             <div className="flex gap-2">
               <input type="text" placeholder={t('admin.crm.leads.add_note_placeholder')} value={noteText} onChange={(e) => setNoteText(e.target.value)} className="flex-1 px-3 py-2 border rounded-lg" />
-              <button onClick={() => handleAddNote(selectedItem.lead_id)} disabled={!noteText.trim() || loadingAction} className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50">{loadingAction ? <Loader2 className="w-4 h-4 animate-spin" /> : t('admin.crm.common.add')}</button>
+              <button onClick={() => handleAddNote(selectedItem.lead_id)} disabled={!noteText.trim() || loadingAction} className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50">{loadingAction ? <Loader2 className="w-4 h-4 animate-spin" /> : t('crm.common.add')}</button>
             </div>
           </div>
 
@@ -602,7 +602,7 @@ const LeadsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, sea
               className="flex items-center gap-2 px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 transition-colors ml-auto"
             >
               <Trash2 className="w-4 h-4" />
-              <span>{t('admin.crm.common.delete', 'Supprimer')}</span>
+              <span>{t('crm.common.delete', 'Supprimer')}</span>
             </button>
           </div>
         </div>

@@ -46,7 +46,7 @@ const ContactDetail = () => {
     } catch (error) {
       console.error('Error fetching contact:', error);
       toast.error(t('admin.crm.errors.load_failed') || 'Failed to load contact');
-      navigate('/admin/crm');
+      navigate('/admin/crm/contacts');
     } finally {
       setLoading(false);
     }
@@ -71,7 +71,7 @@ const ContactDetail = () => {
       setSaving(true);
       await api.delete(`/api/crm/contacts/${id}`);
       toast.success(t('admin.crm.contacts.deleted') || 'Contact deleted successfully');
-      navigate('/admin/crm');
+      navigate('/admin/crm/contacts');
     } catch (error) {
       toast.error(t('admin.crm.errors.delete_failed') || 'Failed to delete contact');
     } finally {
@@ -115,8 +115,8 @@ const ContactDetail = () => {
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
           <p className="text-gray-600 mb-4">{t('admin.crm.contacts.not_found') || 'Contact not found'}</p>
-          <button onClick={() => navigate('/admin/crm')} className="text-blue-600 hover:underline">
-            {t('admin.crm.common.back') || 'Back to CRM'}
+          <button onClick={() => navigate('/admin/crm/contacts')} className="text-blue-600 hover:underline">
+            {t('crm.common.back') || 'Back to CRM'}
           </button>
         </div>
       </div>
@@ -136,7 +136,7 @@ const ContactDetail = () => {
           <div className="max-w-4xl mx-auto px-4 py-4">
             <div className="flex items-center gap-4">
               <button 
-                onClick={() => navigate('/admin/crm')} 
+                onClick={() => navigate('/admin/crm/contacts')} 
                 className="p-2 hover:bg-gray-100 rounded-lg"
               >
                 <ArrowLeft className="w-5 h-5" />
@@ -153,14 +153,14 @@ const ContactDetail = () => {
                       className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                     >
                       <Edit2 className="w-4 h-4" />
-                      {t('admin.crm.common.edit') || 'Edit'}
+                      {t('crm.common.edit') || 'Edit'}
                     </button>
                     <button 
                       onClick={() => setShowDeleteConfirm(true)} 
                       className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
                     >
                       <Trash2 className="w-4 h-4" />
-                      {t('admin.crm.common.delete') || 'Delete'}
+                      {t('crm.common.delete') || 'Delete'}
                     </button>
                   </>
                 ) : (
@@ -171,14 +171,14 @@ const ContactDetail = () => {
                       className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50"
                     >
                       {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                      {t('admin.crm.common.save') || 'Save'}
+                      {t('crm.common.save') || 'Save'}
                     </button>
                     <button 
                       onClick={() => { setEditing(false); setEditData(contact); }} 
                       className="flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-gray-50"
                     >
                       <X className="w-4 h-4" />
-                      {t('admin.crm.common.cancel') || 'Cancel'}
+                      {t('crm.common.cancel') || 'Cancel'}
                     </button>
                   </>
                 )}
@@ -357,7 +357,7 @@ const ContactDetail = () => {
                   </div>
                 </div>
               )) : (
-                <p className="text-gray-500 text-sm text-center py-4">{t('admin.crm.common.no_opportunities') || 'No opportunities yet'}</p>
+                <p className="text-gray-500 text-sm text-center py-4">{t('crm.common.no_opportunities') || 'No opportunities yet'}</p>
               )}
             </div>
           </div>
@@ -376,7 +376,7 @@ const ContactDetail = () => {
                   <p className="text-xs text-gray-500 mt-1">{new Date(activity.created_at).toLocaleString()}</p>
                 </div>
               )) : (
-                <p className="text-gray-500 text-sm">{t('admin.crm.common.no_activities') || 'No activities yet'}</p>
+                <p className="text-gray-500 text-sm">{t('crm.common.no_activities') || 'No activities yet'}</p>
               )}
             </div>
           </div>
@@ -385,12 +385,12 @@ const ContactDetail = () => {
           <div className="bg-gray-100 rounded-lg p-4 text-sm text-gray-600">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div>
-                <p className="font-medium">{t('admin.crm.common.created') || 'Created'}</p>
+                <p className="font-medium">{t('crm.common.created') || 'Created'}</p>
                 <p>{new Date(contact.created_at).toLocaleString()}</p>
               </div>
               {contact.updated_at && (
                 <div>
-                  <p className="font-medium">{t('admin.crm.common.updated') || 'Updated'}</p>
+                  <p className="font-medium">{t('crm.common.updated') || 'Updated'}</p>
                   <p>{new Date(contact.updated_at).toLocaleString()}</p>
                 </div>
               )}
@@ -416,14 +416,14 @@ const ContactDetail = () => {
                 onClick={() => setShowDeleteConfirm(false)} 
                 className="px-4 py-2 border rounded-lg hover:bg-gray-50"
               >
-                {t('admin.crm.common.cancel') || 'Cancel'}
+                {t('crm.common.cancel') || 'Cancel'}
               </button>
               <button 
                 onClick={handleDelete} 
                 disabled={saving}
                 className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50"
               >
-                {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : t('admin.crm.common.delete') || 'Delete'}
+                {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : t('crm.common.delete') || 'Delete'}
               </button>
             </div>
           </div>
@@ -485,14 +485,14 @@ const ContactDetail = () => {
                   onClick={() => setShowOppModal(false)} 
                   className="px-4 py-2 border rounded-lg hover:bg-gray-50"
                 >
-                  {t('admin.crm.common.cancel') || 'Cancel'}
+                  {t('crm.common.cancel') || 'Cancel'}
                 </button>
                 <button 
                   type="submit"
                   disabled={saving}
                   className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
                 >
-                  {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : t('admin.crm.common.create') || 'Create'}
+                  {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : t('crm.common.create') || 'Create'}
                 </button>
               </div>
             </form>

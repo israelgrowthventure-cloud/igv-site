@@ -61,6 +61,9 @@ const EmailsPage = lazy(() => import('./pages/admin/EmailsPage'));
 const ActivitiesPage = lazy(() => import('./pages/admin/ActivitiesPage'));
 const SettingsPage = lazy(() => import('./pages/admin/SettingsPage'));
 
+// CRM Index Redirect - Handles legacy ?tab= URLs
+import CRMIndexRedirect from './components/crm/CRMIndexRedirect';
+
 // Preload admin components on hover/focus for instant navigation
 export const preloadAdminComponents = () => {
   import('./pages/admin/LeadDetail');
@@ -187,7 +190,7 @@ function AppContent() {
                 </Suspense>
               </PrivateRoute>
             }>
-              <Route index element={<Navigate to="/admin/crm/dashboard" replace />} />
+              <Route index element={<CRMIndexRedirect />} />
               <Route path="dashboard" element={<DashboardPage />} />
               <Route path="leads" element={<LeadsPage />} />
               <Route path="contacts" element={<ContactsPage />} />

@@ -143,7 +143,7 @@ const AdminDashboard = () => {
               
               {/* CRM Full Link */}
               <button
-                onClick={() => navigate('/admin/crm')}
+                onClick={() => navigate('/admin/crm/dashboard')}
                 className="ml-auto flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
               >
                 <Settings className="w-4 h-4" />
@@ -200,21 +200,21 @@ const OverviewTab = ({ stats, t, navigate }) => (
       <h3 className="text-lg font-semibold mb-4">{t('admin.quickActions') || 'Actions rapides'}</h3>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <button
-          onClick={() => navigate('/admin/crm')}
+          onClick={() => navigate('/admin/crm/dashboard')}
           className="flex items-center gap-3 p-4 border rounded-lg hover:bg-blue-50 hover:border-blue-300 transition"
         >
           <Users className="w-5 h-5 text-blue-600" />
           <span>{t('admin.actions.manageCRM') || 'Gérer le CRM'}</span>
         </button>
         <button
-          onClick={() => navigate('/admin/crm?tab=leads')}
+          onClick={() => navigate('/admin/crm/leads')}
           className="flex items-center gap-3 p-4 border rounded-lg hover:bg-green-50 hover:border-green-300 transition"
         >
           <TrendingUp className="w-5 h-5 text-green-600" />
           <span>{t('admin.actions.viewLeads') || 'Voir les prospects'}</span>
         </button>
         <button
-          onClick={() => navigate('/admin/crm?tab=pipeline')}
+          onClick={() => navigate('/admin/crm/pipeline')}
           className="flex items-center gap-3 p-4 border rounded-lg hover:bg-purple-50 hover:border-purple-300 transition"
         >
           <FileText className="w-5 h-5 text-purple-600" />

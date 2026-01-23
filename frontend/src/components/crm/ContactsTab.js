@@ -172,7 +172,7 @@ const ContactsTab = ({ data, loading, selectedItem, setSelectedItem, onRefresh, 
           label: "Voir l'opportunité",
           onClick: () => {
             // Use navigate for proper routing
-            navigate('/admin/crm?tab=opportunities');
+            navigate('/admin/crm/opportunities');
           }
         }
       });
